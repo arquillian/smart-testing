@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Formatter;
 
 public class Files {
 
