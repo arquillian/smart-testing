@@ -10,7 +10,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>affected</artifactId>
+  <artifactId>smart-testing-strategy-affected</artifactId>
 
 
 </project>
