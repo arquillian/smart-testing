@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.arquillian.smart.testing</groupId>
+  <artifactId>smart-testing-parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Smart testing</name>
+  <description>Smart testing is a tool that knows which tests you want to run</description>
+
+  <!-- Licenses -->
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <!-- SCM -->
+  <scm>
+    <connection>scm:git:git://git@github.com:arquillian/smart-testing.git</connection>
+    <developerConnection>scm:git:ssh://github.com/arquillian/smart-testing.git</developerConnection>
+    <url>git://github.com/arquillian/smart-testing.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <!-- Developers -->
+  <developers>
+    <developer>
+      <name>Bartosz Majsak</name>
+      <email>bmajsak@redhat.com</email>
+    </developer>
+    <developer>
+      <name>Alex Soto</name>
+      <email>asoto@redhat.com</email>
+    </developer>
+    <developer>
+      <name>Matous Jobanek</name>
+      <email>mjobanek@redhat.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <version.junit>4.12</version.junit>
+    <version.surefire>2.19.1</version.surefire>
+    <version.maven>3.3.9</version.maven>
+
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.argument.target>1.8</maven.compiler.argument.target>
+    <maven.compiler.argument.source>1.8</maven.compiler.argument.source>
+  </properties>
+
+  <modules>
+    <module>core</module>
+    <module>surefire-provider</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+</project>
