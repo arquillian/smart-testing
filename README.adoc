@@ -1,0 +1,5 @@
+= Smart Testing
+
+image:https://travis-ci.org/arquillian/smart-testing.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/smart-testing"]
+
+We know which tests you want to run.
