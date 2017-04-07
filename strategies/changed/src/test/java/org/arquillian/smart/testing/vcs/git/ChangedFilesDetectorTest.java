@@ -9,7 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.arquillian.smart.testing.vcs.git.GitRepositoryUnpacker.unpackRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NewFilesDetectorTest {
+public class ChangedFilesDetectorTest {
 
     @ClassRule
     public static TemporaryFolder gitFolder = new TemporaryFolder();
@@ -23,25 +23,26 @@ public class NewFilesDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
-        final NewFilesDetector newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final ChangedFilesDetector changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
 
         // when
-        final Iterable<String> newTests = newFilesDetector.getTests();
+        final Iterable<String> changedTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(changedTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
     }
 
     @Test
     public void should_find_none_new_classes_in_the_range_of_commits_when_not_matching_pattern() throws Exception {
         // given
-        final NewFilesDetector newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
+        final ChangedFilesDetector changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c",
+            "04d04fe", "**/*IntegrationTest.java");
 
         // when
-        final Iterable<String> newTests = newFilesDetector.getTests();
+        final Iterable<String> changedTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(newTests).isEmpty();
+        assertThat(changedTests).isEmpty();
     }
 
 }

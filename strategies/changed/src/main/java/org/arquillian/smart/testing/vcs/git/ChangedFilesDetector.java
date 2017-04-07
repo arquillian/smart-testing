@@ -3,15 +3,15 @@ package org.arquillian.smart.testing.vcs.git;
 import java.io.File;
 import org.eclipse.jgit.diff.DiffEntry;
 
-public class NewFilesDetector extends GitDetector {
+public class ChangedFilesDetector extends GitDetector {
 
-    public NewFilesDetector(File repoRoot, String previous, String head, String ... globPatterns) {
+    public ChangedFilesDetector(File repoRoot, String previous, String head, String... globPatterns) {
         super(repoRoot, previous, head, globPatterns);
     }
 
+    @Override
     protected boolean isMatching(DiffEntry diffEntry) {
-        return DiffEntry.ChangeType.ADD == diffEntry.getChangeType()
+        return DiffEntry.ChangeType.MODIFY == diffEntry.getChangeType()
             && matchPatterns(diffEntry.getNewPath());
     }
-
 }
