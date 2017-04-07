@@ -6,6 +6,11 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +29,17 @@ public class NewFilesDetector implements TestExecutionPlanner {
     private final File repoRoot;
     private final String previous;
     private final String head;
+    private final List<String> globPatterns;
 
-    public NewFilesDetector(File repoRoot, String previous, String head) {
+    public NewFilesDetector(File repoRoot, String previous, String head, String ... globPatterns) {
         this.previous = previous;
         this.head = head;
         this.repoRoot = repoRoot;
+        if (globPatterns.length > 0) {
+            this.globPatterns = Arrays.asList(globPatterns);
+        } else {
+            this.globPatterns = Collections.singletonList("**/*Test.*");
+        }
     }
 
     @Override
@@ -51,7 +62,7 @@ public class NewFilesDetector implements TestExecutionPlanner {
             final String repoRoot = repository.getDirectory().getParent();
 
             return diffs.stream()
-                .filter(diffEntry -> DiffEntry.ChangeType.ADD == diffEntry.getChangeType())
+                .filter(this::isNewEntryMatchingPattern)
                 .map(diffEntry -> {
                     try {
                         final File sourceFile = new File(repoRoot, diffEntry.getNewPath());
@@ -66,8 +77,27 @@ public class NewFilesDetector implements TestExecutionPlanner {
         }
     }
 
+    private boolean isNewEntryMatchingPattern(DiffEntry diffEntry) {
+        return DiffEntry.ChangeType.ADD == diffEntry.getChangeType()
+            && matchPatterns(diffEntry.getNewPath());
+    }
+
+    private boolean matchPatterns(String path) {
+        for (final String globPattern : this.globPatterns) {
+            if (matchPattern(path, globPattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchPattern(String path, String pattern) {
+        final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
+        return pathMatcher.matches(Paths.get(path));
+    }
+
     private String extractFullyQualifiedName(File sourceFile) throws FileNotFoundException {
-        final CompilationUnit compilationUnit= JavaParser.parse(sourceFile);
+        final CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
         final Optional<ClassOrInterfaceDeclaration> newClass =
             compilationUnit.getClassByName(sourceFile.getName().replaceAll(".java", ""));
         return compilationUnit.getPackageDeclaration().get().getNameAsString() + "." + newClass.get().getNameAsString();
