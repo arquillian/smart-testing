@@ -58,6 +58,7 @@
   <modules>
     <module>core</module>
     <module>surefire-provider</module>
+    <module>strategies/affected</module>
   </modules>
 
   <dependencyManagement>
