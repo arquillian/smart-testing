@@ -1,0 +1,8 @@
+public class FilesTest {
+
+    @Test
+    public void should_compute_sha1_of_file() {
+
+    }
+
+}

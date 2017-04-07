@@ -46,6 +46,8 @@
     <version.surefire>2.19.1</version.surefire>
     <version.maven>3.3.9</version.maven>
     <version.assertj-core>3.6.2</version.assertj-core>
+    <version.javassist>3.21.0-GA</version.javassist>
+    <version.jgrapht>1.0.1</version.jgrapht>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -72,6 +74,21 @@
         <artifactId>assertj-core</artifactId>
         <version>${version.assertj-core}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${version.javassist}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jgrapht</groupId>
+        <artifactId>jgrapht-core</artifactId>
+        <version>${version.jgrapht}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>smart-testing-core</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
