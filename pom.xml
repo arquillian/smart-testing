@@ -12,7 +12,6 @@
   <name>Smart testing</name>
   <description>Smart testing is a tool that knows which tests you want to run</description>
 
-  <!-- Licenses -->
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -20,7 +19,6 @@
     </license>
   </licenses>
 
-  <!-- SCM -->
   <scm>
     <connection>scm:git:git://git@github.com:arquillian/smart-testing.git</connection>
     <developerConnection>scm:git:ssh://github.com/arquillian/smart-testing.git</developerConnection>
@@ -28,11 +26,10 @@
     <tag>HEAD</tag>
   </scm>
 
-  <!-- Developers -->
   <developers>
     <developer>
       <name>Bartosz Majsak</name>
-      <email>bmajsak@redhat.com</email>
+      <email>bartosz@redhat.com</email>
     </developer>
     <developer>
       <name>Alex Soto</name>
