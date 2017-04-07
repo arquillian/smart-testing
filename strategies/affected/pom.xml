@@ -12,5 +12,56 @@
 
   <artifactId>smart-testing-strategy-affected</artifactId>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.javassist</groupId>
+      <artifactId>javassist</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jgrapht</groupId>
+      <artifactId>jgrapht-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-plugin-plugin</artifactId>
+      <configuration>
+        <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+      </configuration>
+      <executions>
+        <execution>
+          <id>mojo-descriptor</id>
+          <phase>process-classes</phase>
+          <goals>
+            <goal>descriptor</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>help-goal</id>
+          <goals>
+            <goal>helpmojo</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    </plugins>
+  </build>
 
 </project>
