@@ -15,9 +15,16 @@
   <properties>
     <version.jgit>4.7.0.201704051617-r</version.jgit>
     <version.javaparser>3.0.1</version.javaparser>
+    <version.arquillian.spacelift>1.0.0.Alpha9</version.arquillian.spacelift>
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
@@ -28,11 +35,6 @@
       <artifactId>javaparser-core</artifactId>
       <version>${version.javaparser}</version>
     </dependency>
-    <dependency>
-      <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>junit</groupId>
@@ -42,6 +44,12 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.spacelift</groupId>
+      <artifactId>arquillian-spacelift</artifactId>
+      <version>${version.arquillian.spacelift}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
