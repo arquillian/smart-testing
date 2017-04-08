@@ -5,7 +5,7 @@ import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public final class JUnit4ProviderInfo extends JUnitProviderInfo {
+public class JUnit4ProviderInfo extends JUnitProviderInfo {
 
     private ProviderParametersParser paramParser;
 
@@ -19,12 +19,10 @@ public final class JUnit4ProviderInfo extends JUnitProviderInfo {
     }
 
     public boolean isApplicable() {
-        return getJunitDepArtifact() != null
-            && isAnyJunit4(getJunitDepArtifact())
-            && paramParser.getSurefireBooterVersion() != null;
+        return getJunitDepVersion() != null && isAnyJunit4() && paramParser.getSurefireApiVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit4:" + paramParser.getSurefireBooterVersion();
+        return "org.apache.maven.surefire:surefire-junit4:" + paramParser.getSurefireApiVersion();
     }
 }

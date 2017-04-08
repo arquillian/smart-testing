@@ -10,7 +10,7 @@ public class ProviderParametersParser {
 
     private String junitVersion;
     private String testNgVersion;
-    private String surefireBooterVersion;
+    private String surefireApiVersion;
 
     private final ProviderParameters providerParameters;
 
@@ -20,7 +20,7 @@ public class ProviderParametersParser {
         Pattern junitPattern = Pattern.compile(".*\\/junit\\/junit\\/.*\\/junit-.*\\.jar");
         Pattern testNgPattern = Pattern.compile(".*\\/org\\/testng\\/testng\\/.*\\/testng-.*\\.jar");
         Pattern surefireBooterPattern =
-            Pattern.compile("\\/org\\/apache\\/maven\\/surefire\\/surefire-booter\\/.*\\/surefire-booter-.*\\.jar");
+            Pattern.compile(".*\\/org\\/apache\\/maven\\/surefire\\/surefire-api\\/.*\\/surefire-api-.*\\.jar");
 
         int i = 0;
         String cpUrl = null;
@@ -31,7 +31,7 @@ public class ProviderParametersParser {
             } else if (testNgPattern.matcher(cpUrl).matches()) {
                 testNgVersion = getVersion(cpUrl, "/org/testng/testng/");
             } else if (surefireBooterPattern.matcher(cpUrl).matches()) {
-                surefireBooterVersion = getVersion(cpUrl, "org/apache/maven/surefire/surefire-booter/");
+                surefireApiVersion = getVersion(cpUrl, "org/apache/maven/surefire/surefire-api/");
             }
         }
     }
@@ -56,7 +56,7 @@ public class ProviderParametersParser {
         return testNgVersion;
     }
 
-    public String getSurefireBooterVersion() {
-        return surefireBooterVersion;
+    public String getSurefireApiVersion() {
+        return surefireApiVersion;
     }
 }

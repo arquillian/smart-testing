@@ -49,6 +49,7 @@
     <version.javassist>3.21.0-GA</version.javassist>
     <version.jgrapht>1.0.1</version.jgrapht>
     <version.shrinkwrap.resolver>3.0.0-alpha-4</version.shrinkwrap.resolver>
+    <version.mockito>2.7.22</version.mockito>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -69,12 +70,19 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>${version.assertj-core}</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <scope>test</scope>
+        <version>${version.mockito}</version>
       </dependency>
       <dependency>
         <groupId>org.javassist</groupId>

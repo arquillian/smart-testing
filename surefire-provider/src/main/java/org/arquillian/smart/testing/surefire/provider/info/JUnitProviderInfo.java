@@ -1,10 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
 
 /**
@@ -12,30 +9,20 @@ import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver
  */
 public abstract class JUnitProviderInfo implements ProviderInfo {
 
-    private Artifact junitDepArtifact;
+    private ArtifactVersion junitDepVersion;
 
     JUnitProviderInfo(String junitVersion) {
         if (junitVersion != null) {
-            junitDepArtifact = createJunitDepArtifact(junitVersion);
+            junitDepVersion = new DefaultArtifactVersion(junitVersion);
         }
     }
 
-    protected boolean isAnyJunit4(Artifact artifact) {
-        return SurefireDependencyResolver.isWithinVersionSpec(artifact, "[4.0,)");
+    protected boolean isAnyJunit4() {
+        return SurefireDependencyResolver.isWithinVersionSpec(junitDepVersion, "[4.0,)");
     }
 
-    protected Artifact getJunitDepArtifact() {
-        return junitDepArtifact;
+    protected ArtifactVersion getJunitDepVersion() {
+        return junitDepVersion;
     }
 
-    private Artifact createJunitDepArtifact(String version) {
-        VersionRange fromVersionSpec = null;
-        try {
-            fromVersionSpec = VersionRange.createFromVersionSpec(version);
-        } catch (InvalidVersionSpecificationException e) {
-            e.printStackTrace();
-        }
-
-        return new DefaultArtifact("junit", "junit", fromVersionSpec, "test", "jar", null, new DefaultArtifactHandler());
-    }
 }

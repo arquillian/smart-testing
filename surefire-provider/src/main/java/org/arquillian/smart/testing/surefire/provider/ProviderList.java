@@ -1,7 +1,5 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.arquillian.smart.testing.surefire.provider.info.JUnit4ProviderInfo;
@@ -13,8 +11,6 @@ import org.arquillian.smart.testing.surefire.provider.info.TestNgProviderInfo;
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
 public class ProviderList {
-
-    private final Log log = new SystemStreamLog();
 
     private final ProviderInfo[] wellKnownProviders;
 

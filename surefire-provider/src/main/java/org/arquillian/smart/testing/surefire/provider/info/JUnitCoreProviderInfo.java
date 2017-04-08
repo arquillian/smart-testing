@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import javax.annotation.Nonnull;
-import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.surefire.booter.ProviderParameterNames;
 import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
@@ -10,7 +9,7 @@ import org.arquillian.smart.testing.surefire.provider.Validate;
 /**
  * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
  */
-public final class JUnitCoreProviderInfo extends JUnitProviderInfo {
+public class JUnitCoreProviderInfo extends JUnitProviderInfo {
 
     private ProviderParametersParser paramParser;
 
@@ -19,32 +18,31 @@ public final class JUnitCoreProviderInfo extends JUnitProviderInfo {
         this.paramParser = paramParser;
     }
 
-    @Nonnull
     public String getProviderClassName() {
         return "org.apache.maven.surefire.junitcore.JUnitCoreProvider";
     }
 
     private boolean is47CompatibleJunitDep() {
-        return getJunitDepArtifact() != null && isJunit47Compatible(getJunitDepArtifact());
+        return getJunitDepVersion() != null && isJunit47Compatible(getJunitDepVersion());
     }
 
     public boolean isApplicable() {
-        Artifact junitDepArtifact = getJunitDepArtifact();
-        if (junitDepArtifact == null) {
+        ArtifactVersion junitDepVersion = getJunitDepVersion();
+        if (junitDepVersion == null) {
             return false;
         }
-        final boolean isJunitArtifact47 = isAnyJunit4(junitDepArtifact) && isJunit47Compatible(junitDepArtifact);
+        final boolean isJunitArtifact47 = isAnyJunit4() && isJunit47Compatible(junitDepVersion);
         final boolean isAny47ProvidersForcers = isAnyConcurrencySelected() || isAnyGroupsSelected();
         return isAny47ProvidersForcers && (isJunitArtifact47 || is47CompatibleJunitDep())
-            && paramParser.getSurefireBooterVersion() != null;
+            && paramParser.getSurefireApiVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit47:" + paramParser.getSurefireBooterVersion();
+        return "org.apache.maven.surefire:surefire-junit47:" + paramParser.getSurefireApiVersion();
     }
 
-    private boolean isJunit47Compatible(Artifact artifact) {
-        return SurefireDependencyResolver.isWithinVersionSpec(artifact, "[4.7,)");
+    private boolean isJunit47Compatible(ArtifactVersion artifactVersion) {
+        return SurefireDependencyResolver.isWithinVersionSpec(artifactVersion, "[4.7,)");
     }
 
     protected boolean isAnyConcurrencySelected() {

@@ -1,33 +1,24 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.arquillian.smart.testing.surefire.provider.info.ProviderInfo;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 public class SurefireDependencyResolver {
 
-    public static boolean isWithinVersionSpec(@Nullable Artifact artifact, @Nonnull String versionSpec) {
-        if (artifact == null) {
+    public static boolean isWithinVersionSpec(ArtifactVersion artifactVersion, String versionSpec) {
+        if (artifactVersion == null) {
             return false;
         }
         try {
             VersionRange range = VersionRange.createFromVersionSpec(versionSpec);
-            try {
-                return range.containsVersion(artifact.getSelectedVersion());
-            } catch (NullPointerException e) {
-                return range.containsVersion(new DefaultArtifactVersion(artifact.getBaseVersion()));
-            }
-        } catch (InvalidVersionSpecificationException | OverConstrainedVersionException e) {
+            return range.containsVersion(artifactVersion);
+        } catch (InvalidVersionSpecificationException e) {
             throw new RuntimeException("Bug in plugin. Please report with stacktrace");
         }
     }
