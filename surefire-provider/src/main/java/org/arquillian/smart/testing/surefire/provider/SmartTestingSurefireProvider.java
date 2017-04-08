@@ -12,27 +12,24 @@ import org.apache.maven.surefire.testset.TestSetFailedException;
  */
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
-    //private JUnitCoreProvider jUnitCoreProvider;
+    private SurefireProvider surefireProvider;
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
-        //new ProviderList().resolve();
-
-        //jUnitCoreProvider = new JUnitCoreProvider(bootParams);
-        //new ProviderList().resolve();
+        Class<SurefireProvider> provider = new ProviderList(bootParams).resolve();
+        surefireProvider =
+            SecurityUtils.newInstance(provider, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
     }
 
     public Iterable<Class<?>> getSuites() {
-        //return jUnitCoreProvider.getSuites();
-        return null;
+        return surefireProvider.getSuites();
     }
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-        //return jUnitCoreProvider.invoke(forkTestSet);
-        return null;
+        return surefireProvider.invoke(forkTestSet);
     }
 
     public void cancel() {
-        //jUnitCoreProvider.cancel();
+        surefireProvider.cancel();
     }
 }

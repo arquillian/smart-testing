@@ -48,6 +48,7 @@
     <version.assertj-core>3.6.2</version.assertj-core>
     <version.javassist>3.21.0-GA</version.javassist>
     <version.jgrapht>1.0.1</version.jgrapht>
+    <version.shrinkwrap.resolver>3.0.0-alpha-4</version.shrinkwrap.resolver>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>

@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.surefire.provider.info;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,11 +19,11 @@ package org.arquillian.smart.testing.surefire.provider;
  * under the License.
  */
 
-/**
- * @author Kristian Rosenvold
- */
-interface ConfigurableProviderInfo
-    extends ProviderInfo
-{
-    ProviderInfo instantiate(String providerName);
+public interface ProviderInfo {
+
+    String getProviderClassName();
+
+    boolean isApplicable();
+
+    String getDepCoordinates();
 }
