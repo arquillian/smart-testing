@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.strategies.affected;
 
-import java.util.Arrays;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,9 +8,7 @@ public class JavaAssistClassParserTest {
 
     @Test
     public void should_resolve_direct_imports() {
-
         // given
-
         final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
 
         // when
@@ -27,9 +24,7 @@ public class JavaAssistClassParserTest {
 
     @Test
     public void should_resolve_different_packages_with_same_class_name_fields() {
-
         // given
-
         final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
 
         // when
@@ -45,7 +40,6 @@ public class JavaAssistClassParserTest {
 
     @Test
     public void should_resolve_different_packages_with_same_class_name_local_variables() {
-
         // given
         final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
 
@@ -63,7 +57,6 @@ public class JavaAssistClassParserTest {
 
     @Test
     public void should_resolve_annotations() {
-
         // given
         final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
 
