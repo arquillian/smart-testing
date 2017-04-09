@@ -62,6 +62,7 @@
     <module>surefire-provider</module>
     <module>strategies/affected</module>
     <module>strategies/changed</module>
+    <module>ftest</module>
   </modules>
 
   <dependencyManagement>
