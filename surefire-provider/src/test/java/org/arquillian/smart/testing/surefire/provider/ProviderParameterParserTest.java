@@ -31,6 +31,11 @@ public class ProviderParameterParserTest {
         providerProperties.put("classPathUrl.1", "/home/mjobanek/.m2/repository/junit/junit/4.12/junit-4.12.jar");
         providerProperties.put("classPathUrl.2",
             "/home/john//.m2/repository/org/apache/maven/surefire/surefire-api/2.19.1/surefire-api-2.19.1.jar");
+        providerProperties.put("includes1", "**/*Test.java");
+        providerProperties.put("includes2", "**/*TestCase.java");
+        providerProperties.put("includes0", "**/Test*.java");
+        providerProperties.put("excludes0", "**/*$*");
+        providerProperties.put("excludes1", "**/*Failing.java");
 
         providerParameters = Mockito.mock(ProviderParameters.class);
         when(providerParameters.getProviderProperties()).thenReturn(providerProperties);
@@ -42,5 +47,10 @@ public class ProviderParameterParserTest {
         softly.assertThat(parametersParser.getSurefireApiVersion()).isEqualTo("2.19.1");
         softly.assertThat(parametersParser.getJunitVersion()).isEqualTo("4.12");
         softly.assertThat(parametersParser.getTestNgVersion()).isEqualTo("6.11");
+    }
+
+    @Test
+    public void parser_should_return_parsed_includes(){
+        // my laptop is dying - I'll finish it later
     }
 }

@@ -33,7 +33,7 @@
         <version>${version.surefire}</version>
         <configuration>
           <properties>
-            <orderStrategy>changed,affected</orderStrategy>
+            <orderStrategy>new,changed</orderStrategy>
           </properties>
         </configuration>
         <dependencies>

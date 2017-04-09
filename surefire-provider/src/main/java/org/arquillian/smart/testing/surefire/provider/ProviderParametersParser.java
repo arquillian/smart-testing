@@ -1,5 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 
@@ -14,6 +16,8 @@ public class ProviderParametersParser {
 
     private String junitVersion;
     private String testNgVersion;
+    private List<String> includes;
+    private List<String> excludes;
 
     private String surefireApiVersion;
     private final ProviderParameters providerParameters;
@@ -33,6 +37,31 @@ public class ProviderParametersParser {
                 surefireApiVersion = getVersion(classpathUrl, "org/apache/maven/surefire/surefire-api/");
             }
         }
+    }
+
+    public List<String> getIncludes() {
+        if (includes == null) {
+            includes = getParameterList("includes");
+        }
+        return includes;
+    }
+
+    public List<String> getExcludes() {
+        if (excludes == null) {
+            excludes = getParameterList("excludes");
+        }
+        return excludes;
+    }
+
+    private List<String> getParameterList(String parameterKeyPrefix) {
+        List<String> paramList = new ArrayList<>();
+
+        int i = 0;
+        String includesPattern = null;
+        while (isNotEmpty(includesPattern = getProperty(parameterKeyPrefix + i++))) {
+            paramList.add(includesPattern);
+        }
+        return paramList;
     }
 
     private String getVersion(String classpathUrl, String prefix) {
