@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.arquillian.smart.testing.surefire.provider.info.JUnit4ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.JUnitCoreProviderInfo;
@@ -11,11 +10,7 @@ public class ProviderList {
 
     private final ProviderInfo[] wellKnownProviders;
 
-    ProviderParametersParser paramParser;
-
-    ProviderList(ProviderParameters providerParameters) {
-        paramParser = new ProviderParametersParser(providerParameters);
-
+    ProviderList(ProviderParametersParser paramParser) {
         wellKnownProviders = new ProviderInfo[] {
             new TestNgProviderInfo(paramParser),
             new JUnitCoreProviderInfo(paramParser),
@@ -32,7 +27,6 @@ public class ProviderList {
                 return (Class<SurefireProvider>) classLoader.loadClass(providerInfo.getProviderClassName());
             }
             return null;
-
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }

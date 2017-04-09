@@ -31,6 +31,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.surefire}</version>
+        <configuration>
+          <properties>
+            <orderStrategy>changed,affected</orderStrategy>
+          </properties>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>org.arquillian.smart.testing</groupId>

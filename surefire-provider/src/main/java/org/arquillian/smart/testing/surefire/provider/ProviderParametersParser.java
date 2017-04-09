@@ -44,7 +44,7 @@ public class ProviderParametersParser {
     }
 
     public String getProperty(String key) {
-        return providerParameters.getProviderProperties().get(key);
+        return trimMultiline(providerParameters.getProviderProperties().get(key));
     }
 
     public String getJunitVersion() {
@@ -57,5 +57,18 @@ public class ProviderParametersParser {
 
     public String getSurefireApiVersion() {
         return surefireApiVersion;
+    }
+
+    private String trimMultiline(String toTrim) {
+        final StringBuilder builder = new StringBuilder(toTrim.length());
+        for (String token : toTrim.split("\\s+")) {
+            if (token != null) {
+                String trimmed = token.trim();
+                if (!trimmed.isEmpty()) {
+                    builder.append(trimmed).append(' ');
+                }
+            }
+        }
+        return builder.toString().trim();
     }
 }
