@@ -60,6 +60,9 @@ public class ProviderParametersParser {
     }
 
     private String trimMultiline(String toTrim) {
+        if (toTrim == null) {
+            return null;
+        }
         final StringBuilder builder = new StringBuilder(toTrim.length());
         for (String token : toTrim.split("\\s+")) {
             if (token != null) {

@@ -23,7 +23,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     private TestsToRun getOrderedTests() {
-        Iterable<Class<?>> testsToRun = getSuites();
+        TestsToRun testsToRun = (TestsToRun) getSuites();
 
         String orderStrategyParam = paramParser.getProperty("orderStrategy");
         String[] orderStrategy = orderStrategyParam.split(",");
@@ -31,15 +31,14 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         return new TestStrategyApplier(testsToRun, paramParser).apply(Arrays.asList(orderStrategy));
     }
 
-
-
     public Iterable<Class<?>> getSuites() {
         return surefireProvider.getSuites();
     }
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-        return surefireProvider.invoke(forkTestSet);
+        TestsToRun orderedTests = getOrderedTests();
+        return surefireProvider.invoke(orderedTests);
     }
 
     public void cancel() {

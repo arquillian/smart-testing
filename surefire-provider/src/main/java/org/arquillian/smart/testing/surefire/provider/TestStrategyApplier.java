@@ -6,16 +6,16 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 public class TestStrategyApplier {
 
-    private Iterable<Class<?>> testsToRun;
+    private TestsToRun testsToRun;
     ProviderParametersParser paramParser;
 
-    public TestStrategyApplier(Iterable<Class<?>> testsToRun, ProviderParametersParser paramParser){
+    public TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramParser){
         this.testsToRun = testsToRun;
         this.paramParser = paramParser;
     }
 
     public TestsToRun apply(List<String> orderStrategy) {
-        return null;
+        return testsToRun;
     }
 
     private TestExecutionPlanner getPlannerForStrategy(String orderStrategy){
