@@ -12,14 +12,19 @@ class SecurityUtils {
      * Create a new instance by finding a constructor that matches the argumentTypes signature
      * using the arguments for instantiation.
      *
-     * @param implClass     Full classname of class to create
-     * @param argumentTypes The constructor argument types
-     * @param arguments     The constructor arguments
+     * @param implClass
+     *     Full classname of class to create
+     * @param argumentTypes
+     *     The constructor argument types
+     * @param arguments
+     *     The constructor arguments
+     *
      * @return a new instance
-     * @throws IllegalArgumentException if className, argumentTypes, or arguments are null
-     * @throws RuntimeException         if any exceptions during creation
-     * @author <a href="mailto:aslak@conduct.no">Aslak Knutsen</a>
-     * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
+     *
+     * @throws IllegalArgumentException
+     *     if className, argumentTypes, or arguments are null
+     * @throws RuntimeException
+     *     if any exceptions during creation
      */
     static <T> T newInstance(final Class<T> implClass, final Class<?>[] argumentTypes,
         final Object[] arguments) {
@@ -54,19 +59,13 @@ class SecurityUtils {
     /**
      * Obtains the Constructor specified from the given Class and argument types
      *
-     * @param clazz
-     * @param argumentTypes
-     * @return
      * @throws NoSuchMethodException
      */
     private static <T> Constructor<T> getConstructor(final Class<T> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
         try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<Constructor<T>>() {
-                public Constructor<T> run() throws NoSuchMethodException {
-                    return clazz.getDeclaredConstructor(argumentTypes);
-                }
-            });
+            return AccessController.doPrivileged(
+                (PrivilegedExceptionAction<Constructor<T>>) () -> clazz.getDeclaredConstructor(argumentTypes));
         }
         // Unwrap
         catch (final PrivilegedActionException pae) {
