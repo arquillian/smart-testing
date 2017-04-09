@@ -2,9 +2,6 @@ package org.arquillian.smart.testing.surefire.provider.info;
 
 import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class TestNgProviderInfo implements ProviderInfo {
 
     private ProviderParametersParser paramParser;
@@ -21,7 +18,6 @@ public class TestNgProviderInfo implements ProviderInfo {
         return paramParser.getTestNgVersion() != null
             && paramParser.getSurefireApiVersion() != null;
     }
-
 
     public String getDepCoordinates() {
         return "org.apache.maven.surefire:surefire-testng:" + paramParser.getSurefireApiVersion();

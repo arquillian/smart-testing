@@ -7,9 +7,6 @@ import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;

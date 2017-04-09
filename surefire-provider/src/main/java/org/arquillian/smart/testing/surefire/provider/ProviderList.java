@@ -7,9 +7,6 @@ import org.arquillian.smart.testing.surefire.provider.info.JUnitCoreProviderInfo
 import org.arquillian.smart.testing.surefire.provider.info.ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.TestNgProviderInfo;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class ProviderList {
 
     private final ProviderInfo[] wellKnownProviders;

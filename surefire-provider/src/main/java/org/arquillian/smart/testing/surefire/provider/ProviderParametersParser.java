@@ -3,9 +3,6 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.util.regex.Pattern;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class ProviderParametersParser {
 
     private String junitVersion;

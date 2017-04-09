@@ -6,9 +6,6 @@ import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
 import org.arquillian.smart.testing.surefire.provider.Validate;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class JUnitCoreProviderInfo extends JUnitProviderInfo {
 
     private ProviderParametersParser paramParser;

@@ -2,9 +2,6 @@ package org.arquillian.smart.testing.surefire.provider.info;
 
 import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 
-/**
- * @author <a href="mailto:mjobanek@redhat.com">Matous Jobanek</a>
- */
 public class JUnit4ProviderInfo extends JUnitProviderInfo {
 
     private ProviderParametersParser paramParser;
