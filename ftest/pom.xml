@@ -30,7 +30,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.19.1</version>
+        <version>${version.surefire}</version>
         <dependencies>
           <dependency>
             <groupId>org.arquillian.smart.testing</groupId>
@@ -38,6 +38,14 @@
             <version>${project.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <!-- This artifact shouldn't be deployed to maven repository -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>
