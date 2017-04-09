@@ -23,7 +23,8 @@ public class NewFilesDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
-        final NewFilesDetector newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewFilesDetector
+            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
 
         // when
         final Iterable<String> newTests = newFilesDetector.getTests();
@@ -35,7 +36,8 @@ public class NewFilesDetectorTest {
     @Test
     public void should_find_none_new_classes_in_the_range_of_commits_when_not_matching_pattern() throws Exception {
         // given
-        final NewFilesDetector newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
+        final NewFilesDetector
+            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
 
         // when
         final Iterable<String> newTests = newFilesDetector.getTests();

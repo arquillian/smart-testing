@@ -23,7 +23,8 @@ public class ChangedFilesDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
-        final ChangedFilesDetector changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
 
         // when
         final Iterable<String> changedTests = changedFilesDetector.getTests();
@@ -35,7 +36,8 @@ public class ChangedFilesDetectorTest {
     @Test
     public void should_find_none_new_classes_in_the_range_of_commits_when_not_matching_pattern() throws Exception {
         // given
-        final ChangedFilesDetector changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c",
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c",
             "04d04fe", "**/*IntegrationTest.java");
 
         // when

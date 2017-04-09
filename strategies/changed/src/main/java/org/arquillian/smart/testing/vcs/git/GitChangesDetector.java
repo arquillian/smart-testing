@@ -24,14 +24,14 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-abstract class GitDetector implements TestExecutionPlanner {
+abstract class GitChangesDetector implements TestExecutionPlanner {
 
     protected final File repoRoot;
     protected final String previous;
     protected final String head;
     protected final List<String> globPatterns;
 
-    GitDetector(File repoRoot, String previous, String head, String... globPatterns) {
+    GitChangesDetector(File repoRoot, String previous, String head, String... globPatterns) {
         this.previous = previous;
         this.head = head;
         this.repoRoot = repoRoot;
