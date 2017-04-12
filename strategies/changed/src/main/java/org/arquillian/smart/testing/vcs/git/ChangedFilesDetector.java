@@ -5,8 +5,8 @@ import org.eclipse.jgit.diff.DiffEntry;
 
 public class ChangedFilesDetector extends GitChangesDetector {
 
-    public ChangedFilesDetector(File repoRoot, String previous, String head, String... globPatterns) {
-        super(repoRoot, previous, head, globPatterns);
+    public ChangedFilesDetector(File currentDir, String previous, String head, String... globPatterns) {
+        super(currentDir, previous, head, globPatterns);
     }
 
     @Override

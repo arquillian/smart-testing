@@ -5,16 +5,20 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 abstract class GitChangesDetector implements TestExecutionPlanner {
 
@@ -24,11 +28,11 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
     private final List<String> globPatterns;
     private final GitDiffFetcher gitDiffFetcher;
 
-    GitChangesDetector(File repoRoot, String previous, String head, String... globPatterns) {
+    GitChangesDetector(File currentDir, String previous, String head, String... globPatterns) {
         this.previous = previous;
         this.head = head;
-        this.repoRoot = repoRoot;
-        this.gitDiffFetcher = new GitDiffFetcher(repoRoot);
+        this.repoRoot = findRepoRoot(currentDir);
+        this.gitDiffFetcher = new GitDiffFetcher(currentDir);
         if (globPatterns.length > 0) {
             this.globPatterns = Arrays.asList(globPatterns);
         } else {
@@ -36,10 +40,19 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         }
     }
 
+    private File findRepoRoot(File currentDir) {
+        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        try (Repository repo = builder.readEnvironment().findGitDir(currentDir).build()) {
+            return repo.getDirectory().getParentFile();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
     protected abstract boolean isMatching(DiffEntry diffEntry);
 
     @Override
-    public Iterable<String> getTests() {
+    public Collection<String> getTests() {
         final List<DiffEntry> diffs = gitDiffFetcher.diff(previous, head);
         return extractEntries(diffs, this.repoRoot);
     }

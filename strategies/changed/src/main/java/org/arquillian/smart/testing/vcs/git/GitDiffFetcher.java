@@ -20,6 +20,8 @@ class GitDiffFetcher {
         this.repoRoot = repoRoot;
     }
 
+
+
     List<DiffEntry> diff(String previous, String head) {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
         try (Repository repository = builder.readEnvironment().findGitDir(repoRoot).build();
