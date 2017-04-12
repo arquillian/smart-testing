@@ -7,6 +7,7 @@ import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
+import org.apache.maven.surefire.util.RunOrderCalculator;
 import org.apache.maven.surefire.util.TestsToRun;
 
 public class SmartTestingSurefireProvider implements SurefireProvider {
@@ -37,8 +38,20 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
+        System.out.println(forkTestSet);
         TestsToRun orderedTests = getOrderedTests();
+        nastyNastyHackToInfluenceOurTestOrder(orderedTests);
         return surefireProvider.invoke(orderedTests);
+    }
+
+    private void nastyNastyHackToInfluenceOurTestOrder(TestsToRun orderedTests) {
+        try {
+            SecurityUtils.setFieldValue(surefireProvider.getClass(), surefireProvider, "runOrderCalculator",
+                (RunOrderCalculator) scannedClasses -> orderedTests);
+            surefireProvider.getSuites();
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void cancel() {
