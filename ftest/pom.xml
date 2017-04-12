@@ -44,6 +44,7 @@
           </dependency>
         </dependencies>
       </plugin>
+      
       <!-- This artifact shouldn't be deployed to maven repository -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
