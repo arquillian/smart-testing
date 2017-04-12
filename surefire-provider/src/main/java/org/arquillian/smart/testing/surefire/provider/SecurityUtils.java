@@ -1,6 +1,9 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -41,11 +44,9 @@ class SecurityUtils {
         try {
             final Constructor<T> constructor = getConstructor(implClass, argumentTypes);
             if (!constructor.isAccessible()) {
-                AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                    public Void run() {
-                        constructor.setAccessible(true);
-                        return null;
-                    }
+                AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+                    constructor.setAccessible(true);
+                    return null;
                 });
             }
             obj = constructor.newInstance(arguments);
@@ -84,5 +85,63 @@ class SecurityUtils {
                 }
             }
         }
+    }
+
+    /**
+     * Set a single Field value
+     *
+     * @param target
+     *     The object to set it on
+     * @param fieldName
+     *     The field name
+     * @param value
+     *     The new value
+     */
+    public static void setFieldValue(final Class<?> source, final Object target, final String fieldName,
+        final Object value) throws NoSuchFieldException {
+        try {
+            AccessController.doPrivileged((PrivilegedExceptionAction<Void>) () -> {
+                Field field = source.getDeclaredField(fieldName);
+                if (!field.isAccessible()) {
+                    field.setAccessible(true);
+                }
+                field.set(target, value);
+                return null;
+            });
+        }
+        // Unwrap
+        catch (final PrivilegedActionException pae) {
+            final Throwable t = pae.getCause();
+            // Rethrow
+            if (t instanceof NoSuchFieldException) {
+                throw (NoSuchFieldException) t;
+            } else {
+                // No other checked Exception thrown by Class.getConstructor
+                try {
+                    throw (RuntimeException) t;
+                }
+                // Just in case we've really messed up
+                catch (final ClassCastException cce) {
+                    throw new RuntimeException("Obtained unchecked Exception; this code should never be reached", t);
+                }
+            }
+        }
+    }
+
+    public static void callMethod(final Class<?> source, Object target, final String methodName, final Class<?>[] paramTypes,
+        final Object[] params) {
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            Method foundMethod = null;
+            try {
+                foundMethod = source.getDeclaredMethod(methodName, paramTypes);
+                if (!foundMethod.isAccessible()) {
+                    foundMethod.setAccessible(true);
+                }
+                foundMethod.invoke(target, params);
+                return null;
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
