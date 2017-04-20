@@ -7,20 +7,20 @@ import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
-import org.apache.maven.surefire.util.RunOrderCalculator;
 import org.apache.maven.surefire.util.TestsToRun;
 
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
     private ProviderParametersParser paramParser;
+    Class<SurefireProvider> providerClass;
+    ProviderParameters bootParams;
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         paramParser = new ProviderParametersParser(bootParams);
-
-        Class<SurefireProvider> provider = new ProviderList(paramParser).resolve();
-        surefireProvider =
-            SecurityUtils.newInstance(provider, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
+        this.bootParams = bootParams;
+        providerClass = new ProviderList(paramParser).resolve();
+        surefireProvider = createSurefireProviderInstance();
     }
 
     private TestsToRun getOrderedTests() {
@@ -38,20 +38,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-        System.out.println(forkTestSet);
         TestsToRun orderedTests = getOrderedTests();
-        nastyNastyHackToInfluenceOurTestOrder(orderedTests);
+        surefireProvider = createSurefireProviderInstance();
         return surefireProvider.invoke(orderedTests);
     }
 
-    private void nastyNastyHackToInfluenceOurTestOrder(TestsToRun orderedTests) {
-        try {
-            SecurityUtils.setFieldValue(surefireProvider.getClass(), surefireProvider, "runOrderCalculator",
-                (RunOrderCalculator) scannedClasses -> orderedTests);
-            surefireProvider.getSuites();
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        }
+    private SurefireProvider createSurefireProviderInstance(){
+        return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
     }
 
     public void cancel() {
