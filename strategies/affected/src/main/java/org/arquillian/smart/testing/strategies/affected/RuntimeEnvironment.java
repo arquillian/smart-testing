@@ -76,6 +76,35 @@ public class RuntimeEnvironment implements ClasspathProvider {
         customArgumentsReader = new FileCustomJvmArgumentReader(workingDirectory);
     }
 
+    @Override
+    public String getCompleteClasspath() {
+        String completeClasspath = getRawClasspath();
+        validateClasspath(completeClasspath);
+        return completeClasspath;
+    }
+
+    @Override
+    public List<File> getClassOutputDirs() {
+        return classOutputDirs;
+    }
+
+    @Override
+    public List<File> classDirectoriesInClasspath() {
+        // RISK Caching this prevents tons of disk access, but we risk caching a
+        // bad set of
+        // classDirs
+        if (classDirs == null) {
+            classDirs = new ArrayList<>();
+            for (String each : getClasspathElements(rawClasspath)) {
+                File classEntry = new File(each);
+                if (classEntry.isDirectory()) {
+                    classDirs.add(classEntry);
+                }
+            }
+        }
+        return classDirs;
+    }
+
     public List<String> createProcessArguments() {
         String memorySetting = "-mx" + getHeapSize() + "m";
         List<String> args = new ArrayList<>(Arrays.asList(getJavaExecutable(), memorySetting));
@@ -93,14 +122,6 @@ public class RuntimeEnvironment implements ClasspathProvider {
     private List<String> addCustomArguments() {
         return customArgumentsReader.readCustomArguments();
     }
-
-    @Override
-    public String getCompleteClasspath() {
-        String completeClasspath = getRawClasspath();
-        validateClasspath(completeClasspath);
-        return completeClasspath;
-    }
-
 
     private void validateClasspath(String completeClasspath) {
         for (String entry : getClasspathElements(completeClasspath)) {
@@ -155,10 +176,6 @@ public class RuntimeEnvironment implements ClasspathProvider {
         return workingDirectory;
     }
 
-    @Override
-    public List<File> getClassOutputDirs() {
-        return classOutputDirs;
-    }
 
     private String getRawClasspath() {
         return rawClasspath;
@@ -190,22 +207,5 @@ public class RuntimeEnvironment implements ClasspathProvider {
             ^ workingDirectory.hashCode()
             ^ rawClasspath.hashCode();
         // CHECKSTYLE:ON
-    }
-
-    @Override
-    public List<File> classDirectoriesInClasspath() {
-        // RISK Caching this prevents tons of disk access, but we risk caching a
-        // bad set of
-        // classDirs
-        if (classDirs == null) {
-            classDirs = new ArrayList<>();
-            for (String each : getClasspathElements(rawClasspath)) {
-                File classEntry = new File(each);
-                if (classEntry.isDirectory()) {
-                    classDirs.add(classEntry);
-                }
-            }
-        }
-        return classDirs;
     }
 }

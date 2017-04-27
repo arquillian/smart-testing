@@ -25,7 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+import org.arquillian.smart.testing.strategies.affected.AbstractJavaClass;
 
 import static javassist.bytecode.AnnotationsAttribute.invisibleTag;
 import static javassist.bytecode.AnnotationsAttribute.visibleTag;

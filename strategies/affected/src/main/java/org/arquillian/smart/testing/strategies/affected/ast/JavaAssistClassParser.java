@@ -25,7 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +42,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.Files;
+import org.arquillian.smart.testing.strategies.affected.MissingClassException;
+import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
 import static java.io.File.pathSeparator;
 

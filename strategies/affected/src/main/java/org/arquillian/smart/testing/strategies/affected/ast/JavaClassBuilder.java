@@ -25,19 +25,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import java.io.IOException;
 import javassist.NotFoundException;
+import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
+import org.arquillian.smart.testing.strategies.affected.MissingClassException;
+import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
 /**
  * @author Ben Rady
  */
-class JavaClassBuilder {
+public class JavaClassBuilder {
     private final JavaAssistClassParser parser;
 
-    JavaClassBuilder(ClasspathProvider classpath) {
+    public JavaClassBuilder(ClasspathProvider classpath) {
         this(new JavaAssistClassParser(classpath.getCompleteClasspath()));
     }
 

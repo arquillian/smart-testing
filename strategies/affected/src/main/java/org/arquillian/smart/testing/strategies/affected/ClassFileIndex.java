@@ -33,6 +33,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
+import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
@@ -40,6 +45,9 @@ import org.jgrapht.graph.DefaultEdge;
 import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassFileIndex {
+
+    private Logger logger = Logger.getLogger(ClassFileIndex.class.getName());
+
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaClass, DefaultEdge> graph;
 
@@ -52,27 +60,27 @@ public class ClassFileIndex {
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
     }
 
-    public Set<JavaClass> findClasses(Collection<File> changedFiles) {
+    public Set<JavaClass> addTestClasses(Collection<File> testClassFiles) {
         // First update class index
-        List<String> changedClassesNames = new ArrayList<String>();
-        for (File changedFile : changedFiles) {
-            String changedClassname = builder.classFileChanged(changedFile);
-            if (changedClassname != null) {
-                changedClassesNames.add(changedClassname);
+        List<String> testClassesNames = new ArrayList<String>();
+        for (File testClassFile : testClassFiles) {
+            String changedTestClassClassname = builder.classFileChanged(testClassFile);
+            if (changedTestClassClassname != null) {
+                testClassesNames.add(changedTestClassClassname);
             }
         }
 
         // Then find dependencies
-        Set<JavaClass> changedClasses = new HashSet<>();
-        for (String changedClassesName : changedClassesNames) {
-            JavaClass javaClass = builder.getClass(changedClassesName);
+        Set<JavaClass> changedTestClasses = new HashSet<>();
+        for (String changedTtestClassesName : testClassesNames) {
+            JavaClass javaClass = builder.getClass(changedTtestClassesName);
             if (javaClass != null) {
                 addToIndex(javaClass);
-                changedClasses.add(javaClass);
+                changedTestClasses.add(javaClass);
             }
         }
         builder.clear();
-        return changedClasses;
+        return changedTestClasses;
     }
 
     public JavaClass findJavaClass(String classname) {
@@ -131,20 +139,29 @@ public class ClassFileIndex {
         }
     }
 
-    // Loop through all changed classes, adding their parents (and their
-    // parents)
-    // to another set of changed classes
-    public Set<JavaClass> findChangedParents(Set<JavaClass> classes) {
-        Set<JavaClass> changedParents = new HashSet<>(classes);
+    public Set<String> findTestsDependingOn(Set<File> classes) {
+        final Set<JavaClass> javaClasses = classes.stream()
+            .map(this.builder::classFileChanged)
+            .map(this.builder::getClass)
+            .collect(Collectors.toSet());
+
+        return findTestsDependingOnAsJavaClass(javaClasses);
+    }
+
+    private Set<String> findTestsDependingOnAsJavaClass(Set<JavaClass> classes) {
+        Set<String> changedParents = new HashSet<>();
         for (JavaClass jclass : classes) {
             findParents(jclass, changedParents);
         }
         return changedParents;
     }
 
-    private void findParents(JavaClass jclass, Set<JavaClass> changedParents) {
+    private void findParents(JavaClass jclass, Set<String> changedParents) {
         for (JavaClass parent : getParents(jclass)) {
-            if (changedParents.add(parent)) {
+            if (changedParents.add(parent.getName())) {
+
+                logger.log(Level.FINEST, String.format("%s test has been added because it depends on %s", parent.getName(), jclass.getName()));
+
                 findParents(parent, changedParents);
             }
         }

@@ -25,13 +25,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected.util;
+package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
 import java.util.List;
-import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
-
-import static org.arquillian.smart.testing.strategies.affected.util.FakeEnvironments.systemClasspath;
 
 public class StandaloneClasspath implements ClasspathProvider {
     private final List<File> classDirs;
@@ -74,5 +71,16 @@ public class StandaloneClasspath implements ClasspathProvider {
 
     public String getSystemClasspath() {
         return systemClasspath();
+    }
+
+    public static String systemClasspath() {
+        // This is a workaround for the maven surefire plugin classpath issue
+        // listed here:
+        // http://jira.codehaus.org/browse/SUREFIRE-435
+        if (System.getProperty("surefire.test.class.path") != null) {
+            return System.getProperty("surefire.test.class.path");
+        }
+
+        return System.getProperty("java.class.path");
     }
 }

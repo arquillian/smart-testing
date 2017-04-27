@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ public class JavaAssistClassParserTest {
         // then
         assertThat(simpleImportsClass.getImports())
             .containsExactlyInAnyOrder("java.util.Arrays", "java.net.MalformedURLException", "java.net.URL",
-                "org.arquillian.smart.testing.strategies.affected.SimpleImportsClass", "java.lang.Object",
+                "org.arquillian.smart.testing.strategies.affected.ast.SimpleImportsClass", "java.lang.Object",
                 "java.util.ArrayList");
     }
 
@@ -34,7 +34,7 @@ public class JavaAssistClassParserTest {
         // then
         assertThat(duplicatedClass.getImports())
             .containsExactlyInAnyOrder("java.nio.file.Files",
-                "org.arquillian.smart.testing.strategies.affected.DuplicateClassNameDifferentPackagesAsField",
+                "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsField",
                 "java.lang.Object", "org.assertj.core.util.Files", "org.arquillian.smart.testing.Files");
     }
 
@@ -51,7 +51,7 @@ public class JavaAssistClassParserTest {
         assertThat(duplicatedClass.getImports())
             .containsExactlyInAnyOrder("java.nio.file.Paths", "java.nio.file.Files",
                 "java.lang.Object", "java.io.IOException", "java.lang.String",
-                "org.arquillian.smart.testing.strategies.affected.DuplicateClassNameDifferentPackagesAsLocal",
+                "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsLocal",
                 "org.arquillian.smart.testing.Files");
     }
 
@@ -67,11 +67,11 @@ public class JavaAssistClassParserTest {
         // then
         assertThat(annotationClass.getImports())
             .containsExactlyInAnyOrder(
-                "org.arquillian.smart.testing.strategies.affected.FullQualifiedNameAnnotationsClass",
-                "org.arquillian.smart.testing.strategies.affected.FieldTestAnnotation",
-                "org.arquillian.smart.testing.strategies.affected.ParameterTestAnnotation", "java.lang.Object",
-                "org.arquillian.smart.testing.strategies.affected.TypeTestAnnotation",
-                "org.arquillian.smart.testing.strategies.affected.DuplicateClassNameDifferentPackagesAsLocal",
+                "org.arquillian.smart.testing.strategies.affected.ast.FullQualifiedNameAnnotationsClass",
+                "org.arquillian.smart.testing.strategies.affected.ast.FieldTestAnnotation",
+                "org.arquillian.smart.testing.strategies.affected.ast.ParameterTestAnnotation", "java.lang.Object",
+                "org.arquillian.smart.testing.strategies.affected.ast.TypeTestAnnotation",
+                "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsLocal",
                 "java.lang.Integer");
     }
 }

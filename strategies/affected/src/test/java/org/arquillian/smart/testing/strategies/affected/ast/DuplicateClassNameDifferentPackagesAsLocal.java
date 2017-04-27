@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.IOException;
 import java.nio.file.Paths;

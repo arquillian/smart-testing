@@ -25,20 +25,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 
 public interface JavaClass {
-	String getName();
+    String getName();
 
-	/**
-	 * Gets the collection on classes that this class depends on. i.e. the list
-	 * of this classes children.
-	 */
-	String[] getImports();
+    /**
+     * Gets the collection on classes that this class depends on. i.e. the list
+     * of this classes children.
+     */
+    String[] getImports();
 
-	boolean locatedInClassFile();
+    boolean locatedInClassFile();
 
-	File getClassFile();
+    File getClassFile();
 }

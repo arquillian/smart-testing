@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.net.MalformedURLException;
 import java.net.URL;
