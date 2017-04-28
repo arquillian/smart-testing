@@ -159,6 +159,7 @@ public class JavaAssistClassParser {
 
     // TODO dirty method to know where the .class is located instead of .java Topic for next cabal?
     // Good points of having this logic here is nobody needs to worry about this conversionin any module, bad point it is too deep
+    // Also setting URL instead of a File implies that in TestClassDetector we need to convert ALL tests toa URL using Class.forName
     private File getClassLocation(File file) {
         final File clazzFile;
         if (file.getName().endsWith("Test.java")) {
