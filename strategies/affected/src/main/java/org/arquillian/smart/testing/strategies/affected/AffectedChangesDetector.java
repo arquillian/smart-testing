@@ -12,19 +12,24 @@ import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetect
 public class AffectedChangesDetector implements TestExecutionPlanner {
 
     private TestClassDetector testClassDetector;
-
     private Set<File> changedClasses = new HashSet<>();
+    private String classpath;
 
     public AffectedChangesDetector(final File projectDirectory, final Set<File> changedClasses) {
+        this(projectDirectory, changedClasses, "");
+    }
+
+    public AffectedChangesDetector(final File projectDirectory, final Set<File> changedClasses, String classpath) {
         this.testClassDetector = new FileSystemTestClassDetector(projectDirectory);
         this.changedClasses.addAll(changedClasses);
+        this.classpath = classpath;
     }
 
     @Override
     public Collection<String> getTests() {
 
         // TODO we need to figure out what really works in terms of classpath locations such as when running on Maven or containing classes inside a JAR file
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""));
+        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath));
 
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
         classFileIndex.addTestClasses(allTestsOfCurrentProject);

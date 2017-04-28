@@ -1,6 +1,8 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -13,6 +15,8 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.strategies.affected.AffectedChangesDetector;
 import org.arquillian.smart.testing.vcs.git.ChangedFilesDetector;
 import org.arquillian.smart.testing.vcs.git.NewFilesDetector;
+import static java.io.File.pathSeparator;
+
 
 public class TestStrategyApplier {
 
@@ -67,10 +71,17 @@ public class TestStrategyApplier {
             mainClasses.addAll(
                 new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles());
 
-            return new AffectedChangesDetector(projectDir, mainClasses);
+            return new AffectedChangesDetector(projectDir, mainClasses, buildClassPath(projectDir));
         }
 
         return Collections::emptyList;
+    }
+
+    public String buildClassPath(File projectDir) {
+        final Path mainClassesPath = projectDir.toPath().resolve("target/classes");
+        final Path testClassesPath = projectDir.toPath().resolve("target/test-classes");
+
+        return mainClassesPath.toString() + pathSeparator + testClassesPath;
     }
 
     private String[] getGlobPatterns() {
