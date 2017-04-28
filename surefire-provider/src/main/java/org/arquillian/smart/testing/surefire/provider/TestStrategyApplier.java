@@ -71,17 +71,10 @@ public class TestStrategyApplier {
             mainClasses.addAll(
                 new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles());
 
-            return new AffectedChangesDetector(projectDir, mainClasses, buildClassPath(projectDir));
+            return new AffectedChangesDetector(projectDir, mainClasses);
         }
 
         return Collections::emptyList;
-    }
-
-    public String buildClassPath(File projectDir) {
-        final Path mainClassesPath = projectDir.toPath().resolve("target/classes");
-        final Path testClassesPath = projectDir.toPath().resolve("target/test-classes");
-
-        return mainClassesPath.toString() + pathSeparator + testClassesPath;
     }
 
     private String[] getGlobPatterns() {

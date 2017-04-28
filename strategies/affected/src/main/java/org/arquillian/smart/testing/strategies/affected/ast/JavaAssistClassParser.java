@@ -30,6 +30,7 @@ package org.arquillian.smart.testing.strategies.affected.ast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -142,9 +143,9 @@ public class JavaAssistClassParser {
             return entry.classname;
         }
 
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
+        final File clazzFile = getClassLocation(file);
+
+        try (InputStream inputStream = new FileInputStream(clazzFile)) {
 
             CtClass ctClass = getClassPool().makeClass(inputStream);
             String classname = ctClass.getName();
@@ -153,11 +154,29 @@ public class JavaAssistClassParser {
             BY_PATH.put(file.getAbsolutePath(), new CacheEntry(sha1, classname));
 
             return classname;
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
         }
+    }
+
+    // TODO dirty method to know where the .class is located instead of .java Topic for next cabal?
+    // Good points of having this logic here is nobody needs to worry about this conversionin any module, bad point it is too deep
+    private File getClassLocation(File file) {
+        final File clazzFile;
+        if (file.getName().endsWith("Test.java")) {
+            clazzFile =
+                new File(
+                    file.getAbsolutePath()
+                        .replace("src/test/java", "target/test-classes")
+                        .replace(".java", ".class")
+                );
+        } else {
+            clazzFile =
+                new File(
+                    file.getAbsolutePath()
+                        .replace("src/main/java", "target/classes")
+                        .replace(".java", ".class")
+                );
+        }
+        return clazzFile;
     }
 
     private boolean unparsableClass(CtClass cachedClass) {
