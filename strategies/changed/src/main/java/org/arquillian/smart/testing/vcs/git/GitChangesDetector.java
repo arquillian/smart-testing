@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -55,6 +56,18 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
     public Collection<String> getTests() {
         final List<DiffEntry> diffs = gitDiffFetcher.diff(previous, head);
         return extractEntries(diffs, this.repoRoot);
+    }
+
+    public Set<File> getFiles() {
+        final List<DiffEntry> diffs = gitDiffFetcher.diff(previous, head);
+        return extractFiles(diffs, this.repoRoot);
+    }
+
+    private Set<File> extractFiles(List<DiffEntry> diffs, File repoRoot) {
+        return diffs.stream()
+            .filter(this::isMatching)
+            .map(diffEntry -> new File(repoRoot, diffEntry.getNewPath()))
+            .collect(Collectors.toSet());
     }
 
     private List<String> extractEntries(List<DiffEntry> diffs, File repoRoot) {
