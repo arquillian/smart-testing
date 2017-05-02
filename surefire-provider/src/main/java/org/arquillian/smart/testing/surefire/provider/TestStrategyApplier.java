@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.strategies.affected.AffectedChangesDetector;
+import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.vcs.git.ChangedFilesDetector;
 import org.arquillian.smart.testing.vcs.git.NewFilesDetector;
 import static java.io.File.pathSeparator;
@@ -64,14 +65,13 @@ public class TestStrategyApplier {
             // TODO in fact there are at least two things to be put in a Context to be reused (git changes (main and test) and graph of dependencies between tests and main classes
 
             // For now we recalculate everything
-            // TODO now they are not tests they are main classes
             final Set<File> mainClasses =
                 new NewFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles();
 
             mainClasses.addAll(
                 new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles());
 
-            return new AffectedChangesDetector(projectDir, mainClasses);
+            return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
         }
 
         return Collections::emptyList;
@@ -79,6 +79,7 @@ public class TestStrategyApplier {
 
     private String[] getGlobPatterns() {
         final List<String> globPatterns = paramParser.getIncludes();
+        // TODO question why exclusions are added too?
         globPatterns.addAll(paramParser.getExcludes());
         return globPatterns.toArray(new String[globPatterns.size()]);
     }

@@ -60,11 +60,11 @@ public class ClassFileIndex {
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
     }
 
-    public Set<JavaClass> addTestClasses(Collection<File> testClassFiles) {
+    public Set<JavaClass> addTestJavaFiles(Collection<File> testJavaFiles) {
         // First update class index
         List<String> testClassesNames = new ArrayList<String>();
-        for (File testClassFile : testClassFiles) {
-            String changedTestClassClassname = builder.classFileChanged(testClassFile);
+        for (File testJavaFile : testJavaFiles) {
+            String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile));
             if (changedTestClassClassname != null) {
                 testClassesNames.add(changedTestClassClassname);
             }
@@ -141,6 +141,7 @@ public class ClassFileIndex {
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
         final Set<JavaClass> javaClasses = classes.stream()
+            .map(JavaToClassLocation::transform)
             .map(this.builder::classFileChanged)
             .map(this.builder::getClass)
             .collect(Collectors.toSet());

@@ -23,10 +23,6 @@ public class FileSystemTestClassDetector implements TestClassDetector {
     private File rootDirectory;
     private List<String> globPatterns;
 
-    public FileSystemTestClassDetector(String... globPatterns) {
-        this(new File("."), globPatterns);
-    }
-
     public FileSystemTestClassDetector(File rootDirectory, String... globPatterns) {
         this.rootDirectory = rootDirectory;
         if (globPatterns.length > 0) {

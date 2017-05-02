@@ -136,6 +136,12 @@ public class JavaAssistClassParser {
         }
     }
 
+    /**
+     * Returns the classname of given .class file.
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public String classFileChanged(File file) throws IOException {
         String sha1 = Files.sha1(file);
         CacheEntry entry = BY_PATH.get(file.getAbsolutePath());
@@ -143,9 +149,7 @@ public class JavaAssistClassParser {
             return entry.classname;
         }
 
-        final File clazzFile = getClassLocation(file);
-
-        try (InputStream inputStream = new FileInputStream(clazzFile)) {
+        try (InputStream inputStream = new FileInputStream(file)) {
 
             CtClass ctClass = getClassPool().makeClass(inputStream);
             String classname = ctClass.getName();
@@ -155,29 +159,6 @@ public class JavaAssistClassParser {
 
             return classname;
         }
-    }
-
-    // TODO dirty method to know where the .class is located instead of .java Topic for next cabal?
-    // Good points of having this logic here is nobody needs to worry about this conversionin any module, bad point it is too deep
-    // Also setting URL instead of a File implies that in TestClassDetector we need to convert ALL tests toa URL using Class.forName
-    private File getClassLocation(File file) {
-        final File clazzFile;
-        if (file.getName().endsWith("Test.java")) {
-            clazzFile =
-                new File(
-                    file.getAbsolutePath()
-                        .replace("src/test/java", "target/test-classes")
-                        .replace(".java", ".class")
-                );
-        } else {
-            clazzFile =
-                new File(
-                    file.getAbsolutePath()
-                        .replace("src/main/java", "target/classes")
-                        .replace(".java", ".class")
-                );
-        }
-        return clazzFile;
     }
 
     private boolean unparsableClass(CtClass cachedClass) {

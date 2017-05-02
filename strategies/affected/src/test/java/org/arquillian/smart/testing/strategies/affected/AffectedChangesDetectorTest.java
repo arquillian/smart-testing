@@ -37,8 +37,7 @@ public class AffectedChangesDetectorTest {
         final Set<File> mainClasses = new HashSet<>();
         mainClasses.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
 
-        final AffectedChangesDetector affectedChangesDetector = new AffectedChangesDetector(new File("."), mainClasses);
-        affectedChangesDetector.setTestClassDetector(testClassDetector);
+        final AffectedChangesDetector affectedChangesDetector = new AffectedChangesDetector(testClassDetector, mainClasses);
 
         // when
 

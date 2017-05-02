@@ -6,22 +6,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
-import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetector;
 
 public class AffectedChangesDetector implements TestExecutionPlanner {
 
     private TestClassDetector testClassDetector;
-    private Set<File> changedClasses = new HashSet<>();
+    private Set<File> changedJavaFiles = new HashSet<>();
     private String classpath;
 
-    public AffectedChangesDetector(final File projectDirectory, final Set<File> changedClasses) {
-        this(projectDirectory, changedClasses, "");
+    public AffectedChangesDetector(final TestClassDetector testClassDetector, final Set<File> changedJavaFiles) {
+        this(testClassDetector, changedJavaFiles, "");
     }
 
-    public AffectedChangesDetector(final File projectDirectory, final Set<File> changedClasses, String classpath) {
-        this.testClassDetector = new FileSystemTestClassDetector(projectDirectory);
-        this.changedClasses.addAll(changedClasses);
+    public AffectedChangesDetector(final TestClassDetector testClassDetector, final Set<File> changedJavaFiles, String classpath) {
+        this.testClassDetector = testClassDetector;
+        this.changedJavaFiles.addAll(changedJavaFiles);
         this.classpath = classpath;
     }
 
@@ -32,16 +31,9 @@ public class AffectedChangesDetector implements TestExecutionPlanner {
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath));
 
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
-        classFileIndex.addTestClasses(allTestsOfCurrentProject);
+        classFileIndex.addTestJavaFiles(allTestsOfCurrentProject);
 
-        return classFileIndex.findTestsDependingOn(this.changedClasses);
+        return classFileIndex.findTestsDependingOn(this.changedJavaFiles);
     }
 
-    /**
-     * Setter for testing purposes
-     * @param testClassDetector
-     */
-    void setTestClassDetector(TestClassDetector testClassDetector) {
-        this.testClassDetector = testClassDetector;
-    }
 }

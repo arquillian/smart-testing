@@ -22,7 +22,7 @@ public class ClassFileIndexTest {
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
-        classFileIndex.addTestClasses(Arrays.asList(new File(testLocation)));
+        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation)));
 
         // when
 
@@ -46,7 +46,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestClasses(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
@@ -72,7 +72,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestClasses(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
@@ -97,7 +97,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestClasses(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
