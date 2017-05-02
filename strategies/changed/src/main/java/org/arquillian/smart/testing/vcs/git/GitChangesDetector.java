@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -22,6 +24,8 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 abstract class GitChangesDetector implements TestExecutionPlanner {
+
+    private static final Logger logger = Logger.getLogger(GitChangesDetector.class.getName());
 
     private final File repoRoot;
     private final String previous;
@@ -81,6 +85,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
                     throw new IllegalArgumentException(e);
                 }
             })
+            .peek(test -> logger.log(Level.FINEST, String.format("%s test added because it has been added or changed between %s and %s Git commit", test, previous, head)))
             .collect(Collectors.toList());
     }
 
