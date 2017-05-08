@@ -14,7 +14,7 @@
 
   <properties>
     <version.jgit>4.7.0.201704051617-r</version.jgit>
-    <version.javaparser>3.0.1</version.javaparser>
+    <version.javaparser>3.2.3</version.javaparser>
     <version.arquillian.spacelift>1.0.0</version.arquillian.spacelift>
   </properties>
 
