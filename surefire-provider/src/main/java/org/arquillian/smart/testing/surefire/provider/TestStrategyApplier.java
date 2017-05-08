@@ -1,9 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,10 +11,9 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.strategies.affected.AffectedChangesDetector;
 import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
+import org.arquillian.smart.testing.strategies.failed.FailedTestsDetector;
 import org.arquillian.smart.testing.vcs.git.ChangedFilesDetector;
 import org.arquillian.smart.testing.vcs.git.NewFilesDetector;
-import static java.io.File.pathSeparator;
-
 
 public class TestStrategyApplier {
 
@@ -72,6 +68,8 @@ public class TestStrategyApplier {
                 new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles());
 
             return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
+        } else if(Objects.equals(orderStrategy, "failed")) {
+            return new FailedTestsDetector();
         }
 
         return Collections::emptyList;
