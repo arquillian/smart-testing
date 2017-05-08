@@ -14,13 +14,13 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
 class GitDiffFetcher {
 
+    private static final String ENSURE_TREE = "^{tree}";
+
     private final File repoRoot;
 
     GitDiffFetcher(File repoRoot) {
         this.repoRoot = repoRoot;
     }
-
-
 
     List<DiffEntry> diff(String previous, String head) {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -28,8 +28,8 @@ class GitDiffFetcher {
              ObjectReader reader = repository.newObjectReader();
              Git git = new Git(repository)) {
 
-            final ObjectId oldHead = repository.resolve(previous + "^{tree}");
-            final ObjectId newHead = repository.resolve(head + "^{tree}");
+            final ObjectId oldHead = repository.resolve(previous + ENSURE_TREE);
+            final ObjectId newHead = repository.resolve(head + ENSURE_TREE);
 
             final CanonicalTreeParser oldTree = new CanonicalTreeParser();
             oldTree.reset(reader, oldHead);
@@ -37,7 +37,6 @@ class GitDiffFetcher {
             newTree.reset(reader, newHead);
 
             return git.diff().setNewTree(newTree).setOldTree(oldTree).call();
-
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
         }
