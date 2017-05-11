@@ -56,7 +56,7 @@ public class TestResult {
         return result;
     }
 
-    public static enum Result {
+    public enum Result {
         PASSED, FAILURE, RE_RUN_FAILURE, SKIPPED, ERROR
     }
 
