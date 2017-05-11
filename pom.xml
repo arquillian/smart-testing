@@ -98,11 +98,6 @@
         <artifactId>jgrapht-core</artifactId>
         <version>${version.jgrapht}</version>
       </dependency>
-      <dependency>
-        <groupId>org.arquillian.smart.testing</groupId>
-        <artifactId>smart-testing-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
