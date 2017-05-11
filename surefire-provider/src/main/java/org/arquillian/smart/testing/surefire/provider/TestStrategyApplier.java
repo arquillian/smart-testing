@@ -22,7 +22,6 @@ class TestStrategyApplier {
     }
 
     TestsToRun apply(List<String> orderStrategy) {
-        // here I should call the planner implementations using getPlannerForStrategy method
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : orderStrategy) {
 
