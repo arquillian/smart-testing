@@ -1,0 +1,2 @@
+org.arquillian.smart.testing.vcs.git.ChangedFilesDetectorFactory
+org.arquillian.smart.testing.vcs.git.NewFilesDetectorFactory
