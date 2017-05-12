@@ -9,34 +9,37 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
 class TestExecutionPlannerLoader {
 
-    private final Map<String, TestExecutionPlanner> availableStrategies = new HashMap<>();
+    private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final String[] globPatterns;
 
     TestExecutionPlannerLoader(String[] globPatterns) { // TODO refactor as inclusion/exclusion fix https://github.com/arquillian/smart-testing/issues/8
         this.globPatterns = globPatterns;
     }
 
-    public TestExecutionPlanner getPlannerForStrategy(String strategy) {
+    TestExecutionPlanner getPlannerForStrategy(String strategy) {
 
         if (availableStrategies.isEmpty()) {
             loadStrategies();
         }
 
         if (availableStrategies.containsKey(strategy)) {
-            return availableStrategies.get(strategy);
+            final File projectDir = new File(System.getProperty("user.dir"));
+            return availableStrategies.get(strategy).create(projectDir, globPatterns);
         }
 
-        throw new IllegalArgumentException("No strategy found for [" + strategy
+        throw new IllegalArgumentException("No strategy found for [" + availableStrategies.keySet()
             + "]. Please make sure you have corresponding dependency defined.");
     }
 
     private void loadStrategies() {
-        for (final TestExecutionPlannerFactory testExecutionPlannerFactory : ServiceLoader.load(TestExecutionPlannerFactory.class)) {
-            final File projectDir = new File(System.getProperty("user.dir"));
-            final TestExecutionPlanner testExecutionPlanner =
-                testExecutionPlannerFactory.create(projectDir, this.globPatterns);
-            availableStrategies.put(testExecutionPlannerFactory.alias(), testExecutionPlanner);
+        final ServiceLoader<TestExecutionPlannerFactory> loadedStrategies = ServiceLoader.load(TestExecutionPlannerFactory.class);
+        for (final TestExecutionPlannerFactory testExecutionPlannerFactory : loadedStrategies) {
+            availableStrategies.put(testExecutionPlannerFactory.alias(), testExecutionPlannerFactory);
         }
 
+        if (availableStrategies.isEmpty()) {
+            throw new IllegalStateException("There is no strategy available. Please make sure you have corresponding "
+                + "dependencies defined.");
+        }
     }
 }
