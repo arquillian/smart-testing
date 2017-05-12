@@ -1,9 +1,10 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,8 +14,8 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
 class TestStrategyApplier {
 
+    private final ProviderParametersParser paramParser;
     private TestsToRun testsToRun;
-    ProviderParametersParser paramParser;
 
     TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramParser) {
         this.testsToRun = testsToRun;
@@ -30,7 +31,7 @@ class TestStrategyApplier {
                 try {
                     return Class.forName(testClass);
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
+                    throw new IllegalStateException("Failed while obtaining strategy for " + strategy, e);
                 }
             }).collect(Collectors.toList());
             orderedTests.addAll(tests);
@@ -49,7 +50,8 @@ class TestStrategyApplier {
             }
         }
 
-        return Collections::emptyList;
+        throw new IllegalArgumentException("No strategy found for [" + orderStrategy
+            + "]. Please make sure you have corresponding dependency defined.");
     }
 
     private String[] getGlobPatterns() {
