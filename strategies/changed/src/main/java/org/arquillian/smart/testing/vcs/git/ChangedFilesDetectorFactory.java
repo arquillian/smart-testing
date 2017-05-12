@@ -7,8 +7,13 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 public class ChangedFilesDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
+    public String alias() {
+        return "changed";
+    }
+
+    @Override
     public boolean isFor(String name) {
-        return "changed".equalsIgnoreCase(name);
+        return alias().equalsIgnoreCase(name);
     }
 
     @Override

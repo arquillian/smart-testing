@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.List;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -29,7 +30,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         String orderStrategyParam = paramParser.getProperty("orderStrategy");
         String[] orderStrategy = orderStrategyParam.split(",");
 
-        return new TestStrategyApplier(testsToRun, paramParser).apply(Arrays.asList(orderStrategy));
+        return new TestStrategyApplier(testsToRun, new TestExecutionPlannerLoader(getGlobPatterns())).apply(Arrays.asList(orderStrategy));
+    }
+    private String[] getGlobPatterns() {
+        final List<String> globPatterns = paramParser.getIncludes();
+        // TODO question why exclusions are added too?
+        globPatterns.addAll(paramParser.getExcludes());
+        return globPatterns.toArray(new String[globPatterns.size()]);
     }
 
     public Iterable<Class<?>> getSuites() {

@@ -11,8 +11,13 @@ import org.arquillian.smart.testing.vcs.git.NewFilesDetector;
 public class AffectedChangesDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
+    public String alias() {
+        return "affected";
+    }
+
+    @Override
     public boolean isFor(String name) {
-        return "affected".equalsIgnoreCase(name);
+        return alias().equalsIgnoreCase(name);
     }
 
     @Override

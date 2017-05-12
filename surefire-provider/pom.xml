@@ -29,21 +29,6 @@
       <artifactId>smart-testing-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-changed</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-affected</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-failed</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>

@@ -7,8 +7,13 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 public class NewFilesDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
+    public String alias() {
+        return "new";
+    }
+
+    @Override
     public boolean isFor(String name) {
-        return "new".equalsIgnoreCase(name);
+        return alias().equalsIgnoreCase(name);
     }
 
     @Override
