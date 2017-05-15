@@ -7,8 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -17,11 +17,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class NewFilesDetectorTest {
 
-    @ClassRule
-    public static TemporaryFolder gitFolder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder gitFolder = new TemporaryFolder();
 
-    @BeforeClass
-    public static void unpack_repo() {
+    @Before
+    public void unpack_repo() {
         final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
         unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
     }
