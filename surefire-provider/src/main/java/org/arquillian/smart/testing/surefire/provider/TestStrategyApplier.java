@@ -1,41 +1,32 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.io.File;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
-import org.arquillian.smart.testing.strategies.affected.AffectedChangesDetector;
-import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
-import org.arquillian.smart.testing.strategies.failed.FailedTestsDetector;
-import org.arquillian.smart.testing.vcs.git.ChangedFilesDetector;
-import org.arquillian.smart.testing.vcs.git.NewFilesDetector;
 
-public class TestStrategyApplier {
+class TestStrategyApplier {
 
+    private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestsToRun testsToRun;
-    ProviderParametersParser paramParser;
 
-    public TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramParser) {
+    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader) {
         this.testsToRun = testsToRun;
-        this.paramParser = paramParser;
+        this.testExecutionPlannerLoader = testExecutionPlannerLoader;
     }
 
-    public TestsToRun apply(List<String> orderStrategy) {
-        // here I should call the planner implementations using getPlannerForStrategy method
+    TestsToRun apply(List<String> orderStrategy) {
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : orderStrategy) {
 
-            final TestExecutionPlanner plannerForStrategy = getPlannerForStrategy(strategy);
+            final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             final List<? extends Class<?>> tests = plannerForStrategy.getTests().stream().map(testClass -> {
                 try {
                     return Class.forName(testClass);
                 } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
+                    throw new IllegalStateException("Failed while obtaining strategy for " + strategy, e);
                 }
             }).collect(Collectors.toList());
             orderedTests.addAll(tests);
@@ -44,41 +35,4 @@ public class TestStrategyApplier {
         return testsToRun;
     }
 
-    // TODO inverse creation of it - shouldn't belong to mvn package
-    private TestExecutionPlanner getPlannerForStrategy(String orderStrategy) {
-        final File projectDir = new File(System.getProperty("user.dir"));
-        final String previousCommit = System.getProperty("git.previous.commit", "HEAD");
-        final String commit = System.getProperty("git.commit", "HEAD");
-
-        final String[] globPatternsAsArray = getGlobPatterns();
-
-        if (Objects.equals(orderStrategy, "new")) {
-            return new NewFilesDetector(projectDir, previousCommit, commit, globPatternsAsArray);
-        } else if (Objects.equals(orderStrategy, "changed")) {
-            return new ChangedFilesDetector(projectDir, previousCommit, commit, globPatternsAsArray);
-        } else if (Objects.equals(orderStrategy, "affected")) {
-            // TODO logic of inspecting git changes should be some where common so it is not recalculated several times
-            // TODO in fact there are at least two things to be put in a Context to be reused (git changes (main and test) and graph of dependencies between tests and main classes
-
-            // For now we recalculate everything
-            final Set<File> mainClasses =
-                new NewFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles();
-
-            mainClasses.addAll(
-                new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java").getFiles());
-
-            return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
-        } else if(Objects.equals(orderStrategy, "failed")) {
-            return new FailedTestsDetector();
-        }
-
-        return Collections::emptyList;
-    }
-
-    private String[] getGlobPatterns() {
-        final List<String> globPatterns = paramParser.getIncludes();
-        // TODO question why exclusions are added too?
-        globPatterns.addAll(paramParser.getExcludes());
-        return globPatterns.toArray(new String[globPatterns.size()]);
-    }
 }

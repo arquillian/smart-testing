@@ -66,7 +66,7 @@ public class ProviderParametersParser {
 
     private String getVersion(String classpathUrl, String prefix) {
         String[] pathSplit = classpathUrl.split(prefix);
-        if (pathSplit != null && pathSplit.length == 2) {
+        if (pathSplit.length == 2) {
             return pathSplit[1].substring(0, pathSplit[1].indexOf("/"));
         }
         return null;
