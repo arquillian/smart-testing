@@ -28,7 +28,9 @@ public class TestExecutionPlannerLoaderTest {
             new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
 
         // when
-        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
+        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
+
+        assertThat(testExecutionPlanner.getTests()).isEmpty();
     }
 
     @Test
@@ -44,10 +46,7 @@ public class TestExecutionPlannerLoaderTest {
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
 
         // when
-        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("new");
-
-        // then
-        assertThat(testExecutionPlanner.getTests()).isEmpty();
+        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new");
     }
 
     @Test
