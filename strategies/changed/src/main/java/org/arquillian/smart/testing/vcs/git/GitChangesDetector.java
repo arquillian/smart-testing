@@ -27,17 +27,17 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
 
     private static final Logger logger = Logger.getLogger(GitChangesDetector.class.getName());
 
-    private final File repoRoot;
     private final String previous;
     private final String head;
     private final List<String> globPatterns;
-    private final GitDiffFetcher gitDiffFetcher;
+    protected final File repoRoot;
+    protected final GitFetcher gitFetcher;
 
     GitChangesDetector(File currentDir, String previous, String head, String... globPatterns) {
         this.previous = previous;
         this.head = head;
         this.repoRoot = findRepoRoot(currentDir);
-        this.gitDiffFetcher = new GitDiffFetcher(currentDir);
+        this.gitFetcher = new GitFetcher(currentDir);
         if (globPatterns.length > 0) {
             this.globPatterns = Arrays.asList(globPatterns);
         } else {
@@ -58,12 +58,12 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<String> getTests() {
-        final List<DiffEntry> diffs = gitDiffFetcher.diff(previous, head);
+        final List<DiffEntry> diffs = gitFetcher.diff(previous, head);
         return extractEntries(diffs, this.repoRoot);
     }
 
     public Set<File> getFiles() {
-        final List<DiffEntry> diffs = gitDiffFetcher.diff(previous, head);
+        final List<DiffEntry> diffs = gitFetcher.diff(previous, head);
         return extractFiles(diffs, this.repoRoot);
     }
 
@@ -103,7 +103,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return pathMatcher.matches(Paths.get(path));
     }
 
-    private String extractFullyQualifiedName(File sourceFile) throws FileNotFoundException {
+    protected String extractFullyQualifiedName(File sourceFile) throws FileNotFoundException {
         final CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
         final Optional<ClassOrInterfaceDeclaration> newClass =
             compilationUnit.getClassByName(sourceFile.getName().replaceAll(".java", ""));
