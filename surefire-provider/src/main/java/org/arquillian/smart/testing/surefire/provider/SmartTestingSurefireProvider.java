@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ServiceLoader;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -30,7 +31,12 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         String orderStrategyParam = paramParser.getProperty("orderStrategy");
         String[] orderStrategy = orderStrategyParam.split(",");
 
-        return new TestStrategyApplier(testsToRun, new TestExecutionPlannerLoader(getGlobPatterns())).apply(Arrays.asList(orderStrategy));
+        return new TestStrategyApplier(testsToRun, new TestExecutionPlannerLoader(new JavaSPILoader() {
+            @Override
+            public <S> Iterable<S> load(Class<S> service) {
+                return ServiceLoader.load(service);
+            }
+        }, getGlobPatterns())).apply(Arrays.asList(orderStrategy));
     }
     private String[] getGlobPatterns() {
         final List<String> globPatterns = paramParser.getIncludes();
