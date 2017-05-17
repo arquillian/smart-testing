@@ -22,7 +22,7 @@ public class NewFilesDetector extends GitChangesDetector {
     public Collection<String> getTests() {
         final Collection<String> tests = super.getTests();
 
-        final Set<String> files = this.gitFetcher.notCommitted();
+        final Set<String> files = this.gitChangeResolver.unCommitted();
         final List<String> notCommitedTests = files.stream()
             .filter(this::matchPatterns)
             .map(file -> {

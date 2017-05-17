@@ -18,13 +18,13 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
-class GitFetcher {
+class GitChangeResolver {
 
     private static final String ENSURE_TREE = "^{tree}";
 
     private final File repoRoot;
 
-    GitFetcher(File repoRoot) {
+    GitChangeResolver(File repoRoot) {
         this.repoRoot = repoRoot;
     }
 
@@ -47,19 +47,19 @@ class GitFetcher {
         }
     }
 
-    Set<String> notCommitted() {
+    Set<String> unCommitted() {
 
         try (Repository repository = getRepository();
              Git git = new Git(repository)) {
 
-            return getNotCommittedFiles(git.status().call());
+            return getUnCommittedFiles(git.status().call());
 
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private Set<String> getNotCommittedFiles(final Status status) {
+    private Set<String> getUnCommittedFiles(final Status status) {
         Set<String> notCommittedFiles = new HashSet<>();
 
         notCommittedFiles.addAll(status.getAdded());
@@ -72,7 +72,6 @@ class GitFetcher {
 
     private Repository getRepository() throws IOException {
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-
         return builder.readEnvironment().findGitDir(repoRoot).build();
     }
 }

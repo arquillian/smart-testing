@@ -31,13 +31,13 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
     private final String head;
     private final List<String> globPatterns;
     protected final File repoRoot;
-    protected final GitFetcher gitFetcher;
+    protected final GitChangeResolver gitChangeResolver;
 
     GitChangesDetector(File currentDir, String previous, String head, String... globPatterns) {
         this.previous = previous;
         this.head = head;
         this.repoRoot = findRepoRoot(currentDir);
-        this.gitFetcher = new GitFetcher(currentDir);
+        this.gitChangeResolver = new GitChangeResolver(currentDir);
         if (globPatterns.length > 0) {
             this.globPatterns = Arrays.asList(globPatterns);
         } else {
@@ -58,12 +58,12 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<String> getTests() {
-        final List<DiffEntry> diffs = gitFetcher.diff(previous, head);
+        final List<DiffEntry> diffs = gitChangeResolver.diff(previous, head);
         return extractEntries(diffs, this.repoRoot);
     }
 
     public Set<File> getFiles() {
-        final List<DiffEntry> diffs = gitFetcher.diff(previous, head);
+        final List<DiffEntry> diffs = gitChangeResolver.diff(previous, head);
         return extractFiles(diffs, this.repoRoot);
     }
 
