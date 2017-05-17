@@ -47,19 +47,19 @@ class GitChangeResolver {
         }
     }
 
-    Set<String> unCommitted() {
+    Set<String> uncommitted() {
 
         try (Repository repository = getRepository();
              Git git = new Git(repository)) {
 
-            return getUnCommittedFiles(git.status().call());
+            return getUncommittedFiles(git.status().call());
 
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private Set<String> getUnCommittedFiles(final Status status) {
+    private Set<String> getUncommittedFiles(final Status status) {
         Set<String> notCommittedFiles = new HashSet<>();
 
         notCommittedFiles.addAll(status.getAdded());

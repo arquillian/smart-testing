@@ -62,7 +62,7 @@ public class GitChangeResolverTest {
         final GitChangeResolver gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.unCommitted();
+        final Set<String> notCommitted = gitChangeResolver.uncommitted();
 
         // then
         assertThat(notCommitted).hasSize(1)
@@ -77,7 +77,7 @@ public class GitChangeResolverTest {
         GitRepositoryOperations.addFile(gitFolder.getRoot(), "newadd.txt");
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.unCommitted();
+        final Set<String> notCommitted = gitChangeResolver.uncommitted();
 
         // then
         assertThat(notCommitted).hasSize(1)
@@ -92,7 +92,7 @@ public class GitChangeResolverTest {
         Files.write(readme, "More".getBytes(), StandardOpenOption.APPEND);
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.unCommitted();
+        final Set<String> notCommitted = gitChangeResolver.uncommitted();
 
         // then
         assertThat(notCommitted).hasSize(1)
