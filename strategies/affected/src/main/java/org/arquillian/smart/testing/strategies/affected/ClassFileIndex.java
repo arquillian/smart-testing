@@ -144,6 +144,7 @@ public class ClassFileIndex {
             .map(JavaToClassLocation::transform)
             .map(this.builder::classFileChanged)
             .map(this.builder::getClass)
+            .filter(graph::containsVertex)
             .collect(Collectors.toSet());
 
         return findTestsDependingOnAsJavaClass(javaClasses);

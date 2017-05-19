@@ -31,6 +31,7 @@ public class AffectedChangesDetector implements TestExecutionPlanner {
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath));
 
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
+
         classFileIndex.addTestJavaFiles(allTestsOfCurrentProject);
 
         return classFileIndex.findTestsDependingOn(this.changedJavaFiles);
