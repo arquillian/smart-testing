@@ -11,13 +11,33 @@ class TestStrategyApplier {
 
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestsToRun testsToRun;
+    private ProviderParametersParser paramsProvider;
 
-    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader) {
+    TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramsProvider, TestExecutionPlannerLoader testExecutionPlannerLoader) {
         this.testsToRun = testsToRun;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
+        this.paramsProvider = paramsProvider;
     }
 
     TestsToRun apply(List<String> orderStrategy) {
+        final Set<Class<?>> smartTests = getTestsByRunningStrategies(orderStrategy);
+
+        if (isOrderingMode()) {
+            final Set<Class<?>> orderedTests = new LinkedHashSet<>(smartTests);
+            testsToRun.iterator().forEachRemaining(orderedTests::add);
+
+            return new TestsToRun(orderedTests);
+        } else {
+            return new TestsToRun(smartTests);
+        }
+
+    }
+
+    private boolean isOrderingMode() {
+        return paramsProvider.getProperty("order") != null && Boolean.parseBoolean(paramsProvider.getProperty("order"));
+    }
+
+    private Set<Class<?>> getTestsByRunningStrategies(List<String> orderStrategy) {
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : orderStrategy) {
 
@@ -31,8 +51,6 @@ class TestStrategyApplier {
             }).collect(Collectors.toList());
             orderedTests.addAll(tests);
         }
-        testsToRun = new TestsToRun(orderedTests);
-        return testsToRun;
+        return orderedTests;
     }
-
 }

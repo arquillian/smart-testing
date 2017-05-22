@@ -31,12 +31,18 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         String orderStrategyParam = paramParser.getProperty("orderStrategy");
         String[] orderStrategy = orderStrategyParam.split(",");
 
-        return new TestStrategyApplier(testsToRun, new TestExecutionPlannerLoader(new JavaSPILoader() {
+        final JavaSPILoader spiLoader = new JavaSPILoader() {
             @Override
             public <S> Iterable<S> load(Class<S> service) {
                 return ServiceLoader.load(service);
             }
-        }, getGlobPatterns())).apply(Arrays.asList(orderStrategy));
+        };
+
+        final TestExecutionPlannerLoader testExecutionPlannerLoader =
+            new TestExecutionPlannerLoader(spiLoader, getGlobPatterns());
+
+        return new TestStrategyApplier(testsToRun, paramParser,
+            testExecutionPlannerLoader).apply(Arrays.asList(orderStrategy));
     }
     private String[] getGlobPatterns() {
         final List<String> globPatterns = paramParser.getIncludes();

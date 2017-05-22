@@ -42,6 +42,9 @@
           <properties>
             <orderStrategy>new,changed</orderStrategy>
           </properties>
+          <includes>
+            <include>**/src/test/java/**/Test*.java</include>
+          </includes>
         </configuration>
         <dependencies>
           <dependency>
