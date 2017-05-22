@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -49,7 +50,9 @@ public class TestStrategyApplierTest {
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, providerParametersParser, testExecutionPlannerLoader);
         final TestsToRun realTestPlanning = testStrategyApplier.apply(Arrays.asList("static"));
 
-        Assertions.assertThat(realTestPlanning.getLocatedClasses())
+        // then
+
+        assertThat(realTestPlanning.getLocatedClasses())
             .hasSize(1)
             .containsExactly(TestExecutionPlannerLoaderTest.class);
 
@@ -79,7 +82,9 @@ public class TestStrategyApplierTest {
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, providerParametersParser, testExecutionPlannerLoader);
         final TestsToRun realTestPlanning = testStrategyApplier.apply(Arrays.asList("static"));
 
-        Assertions.assertThat(realTestPlanning.getLocatedClasses())
+        // then
+
+        assertThat(realTestPlanning.getLocatedClasses())
             .hasSize(3)
             .containsExactly(TestExecutionPlannerLoaderTest.class, ProviderParameterParserTest.class, TestStrategyApplierTest.class);
 
