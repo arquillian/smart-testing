@@ -41,6 +41,22 @@ public class NewFilesDetector extends GitChangesDetector {
         return tests;
     }
 
+    @Override
+    public Set<File> getFiles() {
+
+        final Set<File> files = super.getFiles();
+        final Set<String> uncommittedFiles = this.gitChangeResolver.uncommitted();
+
+        files.addAll(
+                uncommittedFiles.stream()
+                .filter(this::matchPatterns)
+                .map(file -> new File(repoRoot, file))
+                .collect(Collectors.toSet())
+        );
+
+        return files;
+    }
+
     protected boolean isMatching(DiffEntry diffEntry) {
         return DiffEntry.ChangeType.ADD == diffEntry.getChangeType()
             && matchPatterns(diffEntry.getNewPath());
