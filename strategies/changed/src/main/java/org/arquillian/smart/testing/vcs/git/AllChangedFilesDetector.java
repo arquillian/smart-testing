@@ -7,12 +7,12 @@ import java.util.Set;
 /**
  * The intention of this class is not to provide a final strategy to final user but to be used by other strategies that requires all changes of Git commits.
  */
-public class AllChanges {
+public class AllChangedFilesDetector {
 
     private NewFilesDetector newFilesDetector;
     private ChangedFilesDetector changedFilesDetector;
 
-    public AllChanges(File currentDir, String previous, String head, String ... globPatterns) {
+    public AllChangedFilesDetector(File currentDir, String previous, String head, String ... globPatterns) {
         newFilesDetector = new NewFilesDetector(currentDir, previous, head, globPatterns);
         changedFilesDetector = new ChangedFilesDetector(currentDir, previous, head, globPatterns);
     }

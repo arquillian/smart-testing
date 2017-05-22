@@ -5,7 +5,7 @@ import java.util.Set;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
-import org.arquillian.smart.testing.vcs.git.AllChanges;
+import org.arquillian.smart.testing.vcs.git.AllChangedFilesDetector;
 
 public class AffectedChangesDetectorFactory implements TestExecutionPlannerFactory {
 
@@ -28,8 +28,8 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
         final String commit = System.getProperty("git.commit", "HEAD");
 
         // For now we recalculate everything
-        AllChanges allChanges = new AllChanges(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
-        final Set<File> mainClasses = allChanges.getFiles();
+        AllChangedFilesDetector allChangedFilesDetector = new AllChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
+        final Set<File> mainClasses = allChangedFilesDetector.getFiles();
 
         return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
     }
