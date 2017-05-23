@@ -28,7 +28,7 @@ public class TestStrategyApplierTest {
     private TestExecutionPlanner testExecutionPlanner;
 
     @Test
-    public void should_return_tests_from_strategies_by_default() {
+    public void should_return_tests_only_from_strategies_when_filtering_mode_configured() {
 
         // given
 
@@ -37,7 +37,7 @@ public class TestStrategyApplierTest {
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
-        when(providerParametersParser.getProperty("order")).thenReturn(null);
+        when(providerParametersParser.containsProperty(TestStrategyApplier.FILTERING)).thenReturn(true);
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
         final Set<String> strategyTests = new LinkedHashSet<>();
@@ -59,7 +59,7 @@ public class TestStrategyApplierTest {
     }
 
     @Test
-    public void should_return_tests_ordered_first_strategies_then_rest_when_configured_with_order_option() {
+    public void should_return_tests_ordered_by_default() {
 
         // given
 
@@ -69,7 +69,7 @@ public class TestStrategyApplierTest {
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
-        when(providerParametersParser.getProperty("order")).thenReturn("true");
+        when(providerParametersParser.containsProperty(TestStrategyApplier.FILTERING)).thenReturn(false);
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
         final Set<String> strategyTests = new LinkedHashSet<>();

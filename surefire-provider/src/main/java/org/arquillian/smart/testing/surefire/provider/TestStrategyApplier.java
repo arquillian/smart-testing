@@ -9,6 +9,8 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
 
+    static final String FILTERING = "filtering";
+
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestsToRun testsToRun;
     private ProviderParametersParser paramsProvider;
@@ -22,19 +24,19 @@ class TestStrategyApplier {
     TestsToRun apply(List<String> orderStrategy) {
         final Set<Class<?>> smartTests = getTestsByRunningStrategies(orderStrategy);
 
-        if (isOrderingMode()) {
+        if (isFilteringMode()) {
+            return new TestsToRun(smartTests);
+        } else {
             final Set<Class<?>> orderedTests = new LinkedHashSet<>(smartTests);
             testsToRun.iterator().forEachRemaining(orderedTests::add);
 
             return new TestsToRun(orderedTests);
-        } else {
-            return new TestsToRun(smartTests);
         }
 
     }
 
-    private boolean isOrderingMode() {
-        return paramsProvider.getProperty("order") != null && Boolean.parseBoolean(paramsProvider.getProperty("order"));
+    private boolean isFilteringMode() {
+        return paramsProvider.containsProperty(FILTERING);
     }
 
     private Set<Class<?>> getTestsByRunningStrategies(List<String> orderStrategy) {

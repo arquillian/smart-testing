@@ -76,6 +76,10 @@ public class ProviderParametersParser {
         return trimMultiline(providerParameters.getProviderProperties().get(key));
     }
 
+    public boolean containsProperty(String key) {
+        return providerParameters.getProviderProperties().containsKey(key);
+    }
+
     public String getJunitVersion() {
         return junitVersion;
     }
