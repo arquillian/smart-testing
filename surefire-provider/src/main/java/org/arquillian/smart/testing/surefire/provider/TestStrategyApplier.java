@@ -9,7 +9,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
 
-    static final String FILTERING = "filtering";
+    static final String USAGE = "usage";
 
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestsToRun testsToRun;
@@ -21,10 +21,10 @@ class TestStrategyApplier {
         this.paramsProvider = paramsProvider;
     }
 
-    TestsToRun apply(List<String> orderStrategy) {
-        final Set<Class<?>> smartTests = getTestsByRunningStrategies(orderStrategy);
+    TestsToRun apply(List<String> strategies) {
+        final Set<Class<?>> smartTests = getTestsByRunningStrategies(strategies);
 
-        if (isFilteringMode()) {
+        if (isUsageSet() && isSelectingMode()) {
             return new TestsToRun(smartTests);
         } else {
             final Set<Class<?>> orderedTests = new LinkedHashSet<>(smartTests);
@@ -35,13 +35,17 @@ class TestStrategyApplier {
 
     }
 
-    private boolean isFilteringMode() {
-        return paramsProvider.containsProperty(FILTERING);
+    private boolean isSelectingMode() {
+        return RunMode.SELECTING.name().equalsIgnoreCase(paramsProvider.getProperty(USAGE));
     }
 
-    private Set<Class<?>> getTestsByRunningStrategies(List<String> orderStrategy) {
+    private boolean isUsageSet() {
+        return paramsProvider.containsProperty(USAGE);
+    }
+
+    private Set<Class<?>> getTestsByRunningStrategies(List<String> strategies) {
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
-        for (final String strategy : orderStrategy) {
+        for (final String strategy : strategies) {
 
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             final List<? extends Class<?>> tests = plannerForStrategy.getTests().stream().map(testClass -> {

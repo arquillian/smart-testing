@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -37,7 +36,8 @@ public class TestStrategyApplierTest {
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
-        when(providerParametersParser.containsProperty(TestStrategyApplier.FILTERING)).thenReturn(true);
+        when(providerParametersParser.containsProperty(TestStrategyApplier.USAGE)).thenReturn(true);
+        when(providerParametersParser.getProperty(TestStrategyApplier.USAGE)).thenReturn(RunMode.SELECTING.name().toLowerCase());
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
         final Set<String> strategyTests = new LinkedHashSet<>();
@@ -69,7 +69,7 @@ public class TestStrategyApplierTest {
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
-        when(providerParametersParser.containsProperty(TestStrategyApplier.FILTERING)).thenReturn(false);
+        when(providerParametersParser.containsProperty(TestStrategyApplier.USAGE)).thenReturn(false);
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
         final Set<String> strategyTests = new LinkedHashSet<>();

@@ -25,11 +25,11 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         surefireProvider = createSurefireProviderInstance();
     }
 
-    private TestsToRun getOrderedTests() {
+    private TestsToRun getTestsToRun() {
         TestsToRun testsToRun = (TestsToRun) getSuites();
 
-        String orderStrategyParam = paramParser.getProperty("orderStrategy");
-        String[] orderStrategy = orderStrategyParam.split(",");
+        String strategiesParam = paramParser.getProperty("strategies");
+        String[] strategies = strategiesParam.split(",");
 
         final JavaSPILoader spiLoader = new JavaSPILoader() {
             @Override
@@ -42,7 +42,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             new TestExecutionPlannerLoader(spiLoader, getGlobPatterns());
 
         return new TestStrategyApplier(testsToRun, paramParser,
-            testExecutionPlannerLoader).apply(Arrays.asList(orderStrategy));
+            testExecutionPlannerLoader).apply(Arrays.asList(strategies));
     }
     private String[] getGlobPatterns() {
         final List<String> globPatterns = paramParser.getIncludes();
@@ -57,7 +57,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-        TestsToRun orderedTests = getOrderedTests();
+        TestsToRun orderedTests = getTestsToRun();
         surefireProvider = createSurefireProviderInstance();
         return surefireProvider.invoke(orderedTests);
     }

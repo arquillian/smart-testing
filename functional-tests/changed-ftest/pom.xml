@@ -40,7 +40,8 @@
         <version>${version.surefire}</version>
         <configuration>
           <properties>
-            <orderStrategy>new,changed</orderStrategy>
+            <strategies>new,changed</strategies>
+            <usage>selecting</usage>
           </properties>
           <includes>
             <include>**/src/test/java/**/Test*.java</include>

@@ -40,7 +40,8 @@
         <version>${version.surefire}</version>
         <configuration>
           <properties>
-            <orderStrategy>failed</orderStrategy>
+            <strategies>failed</strategies>
+            <usage>selecting</usage>
           </properties>
         </configuration>
         <dependencies>

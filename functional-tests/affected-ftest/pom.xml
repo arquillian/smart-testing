@@ -40,7 +40,8 @@
         <version>${version.surefire}</version>
         <configuration>
           <properties>
-            <orderStrategy>affected</orderStrategy>
+            <strategies>affected</strategies>
+            <usage>selecting</usage>
           </properties>
           <includes>
             <include>**/src/test/java/**/Test*.java</include>
