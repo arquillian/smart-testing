@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -23,8 +24,10 @@ public class NewFilesDetector extends GitChangesDetector {
         final Collection<String> tests = super.getTests();
 
         final Set<String> files = this.gitChangeResolver.uncommitted();
+
+        Predicate<String> predicate = (String s) -> this.matchPatterns(s) && !this.matchMainClassesPattern(s);
         final List<String> notCommitedTests = files.stream()
-            .filter(this::matchPatterns)
+            .filter(predicate)
             .map(file -> {
                 try {
                     final File sourceFile = new File(repoRoot, file);

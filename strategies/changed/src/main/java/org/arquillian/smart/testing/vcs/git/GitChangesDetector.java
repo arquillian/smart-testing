@@ -98,6 +98,10 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return false;
     }
 
+    boolean matchMainClassesPattern(String path) {
+        return matchPattern(path, "**/src/main/java/**/*.java");
+    }
+
     private boolean matchPattern(String path, String pattern) {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
         return pathMatcher.matches(Paths.get(path));
