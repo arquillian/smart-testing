@@ -43,10 +43,6 @@
             <strategies>affected</strategies>
             <usage>selecting</usage>
           </properties>
-          <includes>
-            <include>**/src/test/java/**/Test*.java</include>
-            <include>**/src/test/java/**/*Test.java</include>
-          </includes>
         </configuration>
         <dependencies>
           <dependency>
