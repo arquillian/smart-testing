@@ -50,7 +50,10 @@ public class ProviderParameterParserTest {
     }
 
     @Test
-    public void parser_should_return_parsed_includes(){
-        // my laptop is dying - I'll finish it later
+    public void parser_should_return_parsed_includes_and_excludes() {
+        ProviderParametersParser parametersParser = new ProviderParametersParser(providerParameters);
+        softly.assertThat(parametersParser.getIncludes())
+            .containsExactly("**/Test*.java", "**/*Test.java", "**/*TestCase.java");
+        softly.assertThat(parametersParser.getExcludes()).containsExactly("**/*$*", "**/*Failing.java");
     }
 }
