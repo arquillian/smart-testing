@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
@@ -14,11 +15,14 @@ class TestStrategyApplier {
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestsToRun testsToRun;
     private ProviderParametersParser paramsProvider;
+    private final ClassLoader testClassLoader;
 
-    TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramsProvider, TestExecutionPlannerLoader testExecutionPlannerLoader) {
+    TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramsProvider,
+        TestExecutionPlannerLoader testExecutionPlannerLoader, ProviderParameters bootParams) {
         this.testsToRun = testsToRun;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
         this.paramsProvider = paramsProvider;
+        this.testClassLoader = bootParams.getTestClassLoader();
     }
 
     TestsToRun apply(List<String> strategies) {
@@ -29,10 +33,8 @@ class TestStrategyApplier {
         } else {
             final Set<Class<?>> orderedTests = new LinkedHashSet<>(smartTests);
             testsToRun.iterator().forEachRemaining(orderedTests::add);
-
             return new TestsToRun(orderedTests);
         }
-
     }
 
     private boolean isSelectingMode() {
@@ -48,15 +50,27 @@ class TestStrategyApplier {
         for (final String strategy : strategies) {
 
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
-            final List<? extends Class<?>> tests = plannerForStrategy.getTests().stream().map(testClass -> {
-                try {
-                    return Class.forName(testClass);
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException("Failed while obtaining strategy for " + strategy, e);
-                }
-            }).collect(Collectors.toList());
+            final List<? extends Class<?>> tests = plannerForStrategy.getTests()
+                .stream()
+                .filter(this::presentOnClasspath)
+                .map(testClass -> {
+                    try {
+                        return Class.forName(testClass);
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalStateException("Failed while obtaining strategy for " + strategy, e);
+                    }
+                }).collect(Collectors.toList());
             orderedTests.addAll(tests);
         }
         return orderedTests;
+    }
+
+    private boolean presentOnClasspath(String testClass) {
+        try {
+            Class<?> aClass = testClassLoader.loadClass(testClass);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }
