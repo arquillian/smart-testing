@@ -33,12 +33,12 @@ class TestStrategyApplier {
     }
 
     TestsToRun apply(List<String> strategies) {
-        final Set<Class<?>> smartTests = getTestsByRunningStrategies(strategies);
+        final Set<Class<?>> selectedTests = selectTests(strategies);
 
         if (isUsageSet() && isSelectingMode()) {
-            return new TestsToRun(smartTests);
+            return new TestsToRun(selectedTests);
         } else {
-            final Set<Class<?>> orderedTests = new LinkedHashSet<>(smartTests);
+            final Set<Class<?>> orderedTests = new LinkedHashSet<>(selectedTests);
             testsToRun.iterator().forEachRemaining(orderedTests::add);
             return new TestsToRun(orderedTests);
         }
@@ -52,7 +52,7 @@ class TestStrategyApplier {
         return paramsProvider.containsProperty(USAGE);
     }
 
-    private Set<Class<?>> getTestsByRunningStrategies(List<String> strategies) {
+    private Set<Class<?>> selectTests(List<String> strategies) {
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : strategies) {
 
