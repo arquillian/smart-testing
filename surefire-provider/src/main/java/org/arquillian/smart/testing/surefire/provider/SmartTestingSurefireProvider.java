@@ -49,8 +49,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             new TestExecutionPlannerLoader(spiLoader, getGlobPatterns());
 
         return new TestStrategyApplier(testsToRun, paramParser,
-            testExecutionPlannerLoader).apply(Arrays.asList(strategies));
+            testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));
     }
+
     private String[] getGlobPatterns() {
         final List<String> globPatterns = paramParser.getIncludes();
         // TODO question why exclusions are added too?
