@@ -37,6 +37,7 @@ public class TestStrategyApplierTest {
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
+        defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
@@ -71,6 +72,7 @@ public class TestStrategyApplierTest {
         final Set<Class<?>> defaultTestsToRun = new LinkedHashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
         defaultTestsToRun.add(TestStrategyApplierTest.class);
+        defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 
@@ -102,6 +104,7 @@ public class TestStrategyApplierTest {
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
+        defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
 

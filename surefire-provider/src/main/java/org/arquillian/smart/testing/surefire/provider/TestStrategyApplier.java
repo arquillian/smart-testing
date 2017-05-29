@@ -60,6 +60,7 @@ class TestStrategyApplier {
             final List<? extends Class<?>> tests = plannerForStrategy.getTests()
                 .stream()
                 .filter(this::presentOnClasspath)
+                .filter(this::isInTestToRun)
                 .map(testClass -> {
                     try {
                         return Class.forName(testClass);
@@ -80,5 +81,9 @@ class TestStrategyApplier {
         } catch (ClassNotFoundException e) {
             return false;
         }
+    }
+
+    private boolean isInTestToRun(String testClass) {
+        return testsToRun.getClassByName(testClass) != null;
     }
 }

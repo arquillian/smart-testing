@@ -12,6 +12,7 @@ public class TestNgProviderInfo implements ProviderInfo {
 
     public String getProviderClassName() {
         return "org.apache.maven.surefire.testng.TestNGProvider";
+
     }
 
     public boolean isApplicable() {
