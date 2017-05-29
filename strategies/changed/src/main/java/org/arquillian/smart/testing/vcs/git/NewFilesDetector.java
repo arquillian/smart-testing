@@ -23,7 +23,7 @@ public class NewFilesDetector extends GitChangesDetector {
         final Collection<String> tests = super.getTests();
 
         final Set<String> files = this.gitChangeResolver.uncommitted();
-        final List<String> notCommitedTests = files.stream()
+        final List<String> notCommittedTests = files.stream()
             .filter(this::matchPatterns)
             .map(file -> {
                 try {
@@ -36,7 +36,7 @@ public class NewFilesDetector extends GitChangesDetector {
             .peek(test -> logger.log(Level.FINEST, String.format("%s test added because not committed", test)))
             .collect(Collectors.toList());
 
-        tests.addAll(notCommitedTests);
+        tests.addAll(notCommittedTests);
 
         return tests;
     }
@@ -45,7 +45,7 @@ public class NewFilesDetector extends GitChangesDetector {
     public Set<File> getFiles() {
 
         final Set<File> files = super.getFiles();
-        final Set<String> uncommittedFiles = this.gitChangeResolver.uncommitted();
+        final Set<String> uncommittedFiles = gitChangeResolver.uncommitted();
 
         files.addAll(
                 uncommittedFiles.stream()
