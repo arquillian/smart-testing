@@ -52,6 +52,39 @@
           </dependency>
         </dependencies>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${version.surefire}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/Test*.java</include>
+            <include>**/*Tests.java</include>
+            <include>**/*TestCase.java</include>
+          </includes>
+          <properties>
+            <strategies>failed</strategies>
+            <usage>ordering</usage>
+          </properties>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.arquillian.smart.testing</groupId>
+            <artifactId>smart-testing-surefire-provider</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
       
       <!-- This artifact shouldn't be deployed to maven repository -->
       <plugin>
