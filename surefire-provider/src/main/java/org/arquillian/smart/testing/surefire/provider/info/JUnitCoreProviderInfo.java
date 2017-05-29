@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.surefire.provider.info;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.surefire.booter.ProviderParameterNames;
+import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
 import org.arquillian.smart.testing.surefire.provider.Validate;
@@ -11,7 +12,7 @@ public class JUnitCoreProviderInfo extends JUnitProviderInfo {
     private ProviderParametersParser paramParser;
 
     public JUnitCoreProviderInfo(ProviderParametersParser paramParser) {
-        super(paramParser.getJunitVersion());
+        super(LoaderVersionExtractor.getJunitVersion());
         this.paramParser = paramParser;
     }
 
@@ -31,11 +32,11 @@ public class JUnitCoreProviderInfo extends JUnitProviderInfo {
         final boolean isJunitArtifact47 = isAnyJunit4() && isJunit47Compatible(junitDepVersion);
         final boolean isAny47ProvidersForcers = isAnyConcurrencySelected() || isAnyGroupsSelected();
         return isAny47ProvidersForcers && (isJunitArtifact47 || is47CompatibleJunitDep())
-            && paramParser.getSurefireApiVersion() != null;
+            && LoaderVersionExtractor.getSurefireBooterVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit47:" + paramParser.getSurefireApiVersion();
+        return "org.apache.maven.surefire:surefire-junit47:" + LoaderVersionExtractor.getSurefireBooterVersion();
     }
 
     private boolean isJunit47Compatible(ArtifactVersion artifactVersion) {

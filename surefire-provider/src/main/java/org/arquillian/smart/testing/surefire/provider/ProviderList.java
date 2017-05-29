@@ -12,9 +12,9 @@ public class ProviderList {
 
     ProviderList(ProviderParametersParser paramParser) {
         wellKnownProviders = new ProviderInfo[] {
-            new TestNgProviderInfo(paramParser),
+            new TestNgProviderInfo(),
             new JUnitCoreProviderInfo(paramParser),
-            new JUnit4ProviderInfo(paramParser)};
+            new JUnit4ProviderInfo()};
     }
 
     @SuppressWarnings("unchecked")
