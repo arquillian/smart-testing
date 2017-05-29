@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -13,11 +11,7 @@ import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
 
-import static java.lang.String.format;
-
 public class SmartTestingSurefireProvider implements SurefireProvider {
-
-    private static final Logger logger = Logger.getLogger(SmartTestingSurefireProvider.class.getName());
 
     private SurefireProvider surefireProvider;
     private ProviderParametersParser paramParser;
@@ -35,7 +29,6 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         final TestsToRun testsToRun = (TestsToRun) getSuites();
 
         final String strategiesParam = paramParser.getProperty("strategies");
-        logger.log(Level.INFO, format("Enabled strategies: %s", strategiesParam));
 
         final String[] strategies = strategiesParam.split(",");
         final JavaSPILoader spiLoader = new JavaSPILoader() {
