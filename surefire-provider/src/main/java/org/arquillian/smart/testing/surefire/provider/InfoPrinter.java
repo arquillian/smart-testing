@@ -2,11 +2,14 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
 public class InfoPrinter {
+
+    private final Logger log = Logger.getLogger(InfoPrinter.class.getName());
 
     int length;
     private List<String> strategies;
@@ -23,7 +26,7 @@ public class InfoPrinter {
         String strategiesLine = format("Applied strategies: %s", strategies);
         String usageLine = format("Applied usage: [%s]", isSelecting ? "selecting" : "ordering");
         length = getLongestSize(title, strategiesLine, usageLine);
-        System.out.println(getStringToPrint(strategiesLine, usageLine));
+        log.info("\n" + getStringToPrint(strategiesLine, usageLine));
     }
 
     private int getLongestSize(String... lines) {
@@ -33,9 +36,7 @@ public class InfoPrinter {
     private String getStringToPrint(String... lines) {
         StringBuffer sb = new StringBuffer();
         addAndFillLine(sb, title, surroundingCharacter);
-        addAndFillLine(sb, "", " ");
         Arrays.stream(lines).forEach(line -> addAndFillLine(sb, line, " "));
-        addAndFillLine(sb, "", " ");
         fillWith(sb, length + 10, surroundingCharacter);
         return sb.toString();
     }
