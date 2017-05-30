@@ -7,17 +7,17 @@ import java.util.stream.IntStream;
 
 import static java.lang.String.format;
 
-public class InfoPrinter {
+public class InfoBanner {
 
-    private final Logger log = Logger.getLogger(InfoPrinter.class.getName());
+    private static final Logger log = Logger.getLogger(InfoBanner.class.getName());
 
     int length;
     private List<String> strategies;
     private boolean isSelecting;
-    private String title = "Smart testing";
-    private String surroundingCharacter = "=";
+    private static String title = "Smart testing";
+    private static String surroundingCharacter = "=";
 
-    public InfoPrinter(List<String> strategies, boolean isSelecting) {
+    public InfoBanner(List<String> strategies, boolean isSelecting) {
         this.strategies = strategies;
         this.isSelecting = isSelecting;
     }
@@ -26,14 +26,14 @@ public class InfoPrinter {
         String strategiesLine = format("Applied strategies: %s", strategies);
         String usageLine = format("Applied usage: [%s]", isSelecting ? "selecting" : "ordering");
         length = getLongestSize(title, strategiesLine, usageLine);
-        log.info("\n" + getStringToPrint(strategiesLine, usageLine));
+        log.info("\n" + createInfoBanner(strategiesLine, usageLine));
     }
 
     private int getLongestSize(String... lines) {
         return Arrays.stream(lines).mapToInt(line -> line.length()).max().getAsInt();
     }
 
-    private String getStringToPrint(String... lines) {
+    private String createInfoBanner(String... lines) {
         StringBuffer sb = new StringBuffer();
         addAndFillLine(sb, title, surroundingCharacter);
         Arrays.stream(lines).forEach(line -> addAndFillLine(sb, line, " "));

@@ -62,7 +62,7 @@ class TestStrategyApplier {
                 }).collect(Collectors.toList());
             orderedTests.addAll(tests);
         }
-        new InfoPrinter(strategies, isSelectingMode()).print();
+        new InfoBanner(strategies, isSelectingMode()).print();
         return orderedTests;
     }
 
