@@ -30,7 +30,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
         final String strategiesParam = paramParser.getProperty("strategies");
 
-        final String[] strategies = strategiesParam.split(",");
+        final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
         final JavaSPILoader spiLoader = new JavaSPILoader() {
             @Override
             public <S> Iterable<S> load(Class<S> service) {
