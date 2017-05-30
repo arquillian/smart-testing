@@ -20,13 +20,11 @@ import static java.lang.Thread.currentThread;
  */
 public class LoaderVersionExtractor {
 
-    private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class.getName());
-
     public static final MavenLibrary LIBRARY_SUREFIRE_BOOTER =
         new MavenLibrary("org.apache.maven.surefire", "surefire-booter");
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
-
+    private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class.getName());
     private static Map<ClassLoader, Map<MavenLibrary, String>> loaderWithLibraryVersions = new HashMap<>();
     private static List<MavenLibrary> initLibraries = new ArrayList<>();
 
@@ -50,10 +48,13 @@ public class LoaderVersionExtractor {
 
     /**
      * In the given classloader finds manifest file on a path matching the given groupId and artifactId;
-     * when it the file is matched, then it retrieves and returns a version.
+     * when the file is matched, then it retrieves and returns a version.
      *
-     * @param mavenLibrary Maven library to find
-     * @param loader The classloader the library should be in
+     * @param mavenLibrary
+     *     Maven library to find
+     * @param loader
+     *     The classloader the library should be in
+     *
      * @return Version retrieved from the matched path
      */
     public static String getVersionFromClassLoader(MavenLibrary mavenLibrary, ClassLoader loader) {
@@ -81,7 +82,9 @@ public class LoaderVersionExtractor {
                 String manifestURL = manifests.nextElement().toString();
 
                 Optional<MavenLibrary> matched =
-                    librariesToFind.parallelStream().filter(library -> manifestURL.matches(library.getRegex())).findFirst();
+                    librariesToFind.parallelStream()
+                        .filter(library -> manifestURL.matches(library.getRegex()))
+                        .findFirst();
 
                 if (matched.isPresent()) {
                     MavenLibrary matchedLibrary = matched.get();
