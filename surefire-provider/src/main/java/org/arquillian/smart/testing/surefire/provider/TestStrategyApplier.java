@@ -11,6 +11,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 class TestStrategyApplier {
 
     static final String USAGE = "usage";
+    private static final SmartTestingProviderLogger logger = SmartTestingProviderLogger.getLogger();
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
     private TestsToRun testsToRun;
@@ -62,7 +63,8 @@ class TestStrategyApplier {
                 }).collect(Collectors.toList());
             orderedTests.addAll(tests);
         }
-        new InfoBanner(strategies, isSelectingMode()).print();
+        logger.info("Applied strategies: %s", strategies);
+        logger.info("Applied usage: [%s]", isSelectingMode() ? "selecting" : "ordering");
         return orderedTests;
     }
 
