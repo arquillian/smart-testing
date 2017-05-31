@@ -3,26 +3,19 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-import static java.lang.String.format;
-
 class TestStrategyApplier {
 
-    private static final Logger logger = Logger.getLogger(TestStrategyApplier.class.getName());
-
-
     static final String USAGE = "usage";
-
+    private static final SmartTestingProviderLogger logger = SmartTestingProviderLogger.getLogger();
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
+    private final ClassLoader testClassLoader;
     private TestsToRun testsToRun;
     private ProviderParametersParser paramsProvider;
-    private final ClassLoader testClassLoader;
 
     TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramsProvider,
         TestExecutionPlannerLoader testExecutionPlannerLoader, ProviderParameters bootParams) {
@@ -70,7 +63,8 @@ class TestStrategyApplier {
                 }).collect(Collectors.toList());
             orderedTests.addAll(tests);
         }
-        logger.log(Level.INFO, format("Applied strategies: %s", strategies));
+        logger.info("Applied strategies: %s", strategies);
+        logger.info("Applied usage: [%s]", isSelectingMode() ? "selecting" : "ordering");
         return orderedTests;
     }
 
