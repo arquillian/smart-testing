@@ -50,9 +50,15 @@ public class ClassFileIndex {
 
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaClass, DefaultEdge> graph;
+    private List<String> globPatterns;
 
     public ClassFileIndex(ClasspathProvider classpath) {
         this(new JavaClassBuilder(classpath));
+    }
+
+    public ClassFileIndex(ClasspathProvider classpath, List<String> globPatterns) {
+        this(new JavaClassBuilder(classpath));
+        this.globPatterns = globPatterns;
     }
 
     ClassFileIndex(JavaClassBuilder classBuilder) {
@@ -64,7 +70,7 @@ public class ClassFileIndex {
         // First update class index
         List<String> testClassesNames = new ArrayList<String>();
         for (File testJavaFile : testJavaFiles) {
-            String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile));
+            String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile, globPatterns));
             if (changedTestClassClassname != null) {
                 testClassesNames.add(changedTestClassClassname);
             }
@@ -141,7 +147,7 @@ public class ClassFileIndex {
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
         final Set<JavaClass> javaClasses = classes.stream()
-            .map(JavaToClassLocation::transform)
+            .map(javaClass -> JavaToClassLocation.transform(javaClass, globPatterns))
             .map(this.builder::classFileChanged)
             .map(this.builder::getClass)
             .filter(graph::containsVertex)

@@ -60,4 +60,8 @@ public class FileSystemTestClassDetector implements TestClassDetector {
     private PathMatcher getPathMatcher(String pattern) {
         return FileSystems.getDefault().getPathMatcher("glob:" + pattern);
     }
+
+    public List<String> getGlobPatterns() {
+        return globPatterns;
+    }
 }
