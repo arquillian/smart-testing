@@ -21,8 +21,8 @@ public class NewFilesDetector extends GitChangesDetector {
     public Collection<String> getTests() {
         final Collection<String> tests = super.getTests();
 
-        final Set<String> files = this.gitChangeResolver.uncommitted();
-        final List<String> notCommittedTests = files.stream()
+        final Set<String> files = this.gitChangeResolver.newChanges();
+        final List<String> newLocalTests = files.stream()
             .filter(this::matchPatterns)
             .map(file -> {
                 try {
@@ -32,10 +32,11 @@ public class NewFilesDetector extends GitChangesDetector {
                     throw new IllegalArgumentException(e);
                 }
             })
-            .peek(test -> logger.finest("%s test added because not committed", test))
+            .peek(
+                test -> logger.finest("%s test added either because untracked or staged as new file", test))
             .collect(Collectors.toList());
 
-        tests.addAll(notCommittedTests);
+        tests.addAll(newLocalTests);
 
         return tests;
     }
@@ -44,10 +45,10 @@ public class NewFilesDetector extends GitChangesDetector {
     public Set<File> getFiles() {
 
         final Set<File> files = super.getFiles();
-        final Set<String> uncommittedFiles = gitChangeResolver.uncommitted();
+        final Set<String> newLocalFiles = gitChangeResolver.newChanges();
 
         files.addAll(
-                uncommittedFiles.stream()
+                newLocalFiles.stream()
                 .filter(this::matchPatterns)
                 .map(file -> new File(repoRoot, file))
                 .collect(Collectors.toSet())

@@ -62,10 +62,10 @@ public class GitChangeResolverTest {
         final GitChangeResolver gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.uncommitted();
+        final Set<String> untrackedChanges = gitChangeResolver.newChanges();
 
         // then
-        assertThat(notCommitted).hasSize(1)
+        assertThat(untrackedChanges).hasSize(1)
             .containsExactly("untracked.txt");
     }
 
@@ -77,10 +77,10 @@ public class GitChangeResolverTest {
         GitRepositoryOperations.addFile(gitFolder.getRoot(), "newadd.txt");
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.uncommitted();
+        final Set<String> newStagedChanges = gitChangeResolver.newChanges();
 
         // then
-        assertThat(notCommitted).hasSize(1)
+        assertThat(newStagedChanges).hasSize(1)
             .containsExactly("newadd.txt");
     }
 
@@ -92,10 +92,10 @@ public class GitChangeResolverTest {
         Files.write(readme, "More".getBytes(), StandardOpenOption.APPEND);
 
         // when
-        final Set<String> notCommitted = gitChangeResolver.uncommitted();
+        final Set<String> modifiedChanges = gitChangeResolver.modifiedChanges();
 
         // then
-        assertThat(notCommitted).hasSize(1)
+        assertThat(modifiedChanges).hasSize(1)
             .containsExactly("README.adoc");
     }
 
