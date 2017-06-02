@@ -1,8 +1,16 @@
 package org.arquillian.smart.testing.vcs.git;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collection;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
@@ -11,17 +19,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ChangedFilesDetectorTest {
 
-    @ClassRule
-    public static TemporaryFolder gitFolder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder gitFolder = new TemporaryFolder();
 
-    @BeforeClass
-    public static void unpack_repo() {
+    @Before
+    public void unpack_repo() {
         final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
         unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
     }
 
     @Test
-    public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
+    public void should_find_all_modified_files_in_the_range_of_commits() throws Exception {
         // given
         final ChangedFilesDetector
             changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
@@ -47,4 +55,82 @@ public class ChangedFilesDetectorTest {
         assertThat(changedTests).isEmpty();
     }
 
+    @Test
+    public void should_find_all_local_modified_files_as_changed() throws IOException {
+        //given
+        final Path testFile =
+            Paths.get(gitFolder.getRoot().getAbsolutePath(),
+                "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
+        Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
+
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+
+        //when
+        final Collection<String> modifiedTests = changedFilesDetector.getTests();
+
+        // then
+        assertThat(modifiedTests).containsExactly("org.arquillian.smart.testing.FilesTest");
+    }
+
+    @Test
+    public void should_find_modified_staged_files_as_changed() throws IOException, GitAPIException {
+        //given
+        final Path testFile =
+            Paths.get(gitFolder.getRoot().getAbsolutePath(),
+                "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
+        Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
+        GitRepositoryOperations.addFile(gitFolder.getRoot(), testFile.toString());
+
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
+
+        // when
+        final Collection<String> newTests = changedFilesDetector.getTests();
+
+        // then
+        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName(),
+            "org.arquillian.smart.testing.FilesTest");
+    }
+
+    @Test
+    public void should_not_find_newly_added_files_in_commit_range_as_changed() throws IOException {
+        //given
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+
+        // when
+        final Collection<String> modifiedTests = changedFilesDetector.getTests();
+
+        // then
+        assertThat(modifiedTests).doesNotContain(NewFilesDetectorTest.class.getCanonicalName());
+    }
+
+    @Test
+    public void should_not_find_untracked_files_as_changed() throws IOException {
+        //given
+        final File testFile = gitFolder.newFile("core/src/test/java/org/arquillian/smart/testing/CalculatorTest.java");
+        Files.write(testFile.toPath(), ("package org.arquillian.smart.testing;\n"
+            + "\n"
+            + "import org.junit.Assert;\n"
+            + "import org.junit.Test;\n"
+            + "\n"
+            + "public class CalculatorTest {\n"
+            + "\n"
+            + "    @Test\n"
+            + "    public void should_add_numbers() {\n"
+            + "        Assert.assertEquals(6, 4 + 2);\n"
+            + "    }\n"
+            + "}").getBytes(), StandardOpenOption.APPEND);
+
+        final ChangedFilesDetector
+            changedFilesDetector = new ChangedFilesDetector(gitFolder.getRoot(), "7699c2c", "04d04fe");
+
+        // when
+        final Collection<String> changedTest = changedFilesDetector.getTests();
+
+        // then
+        assertThat(changedTest).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(changedTest).doesNotContain("org.arquillian.smart.testing.CalculatorTest");
+    }
 }
