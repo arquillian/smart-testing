@@ -1,13 +1,11 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import org.arquillian.smart.testing.surefire.provider.ProviderParametersParser;
+import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 
 public class TestNgProviderInfo implements ProviderInfo {
 
-    private ProviderParametersParser paramParser;
 
-    public TestNgProviderInfo(ProviderParametersParser paramParser) {
-        this.paramParser = paramParser;
+    public TestNgProviderInfo() {
     }
 
     public String getProviderClassName() {
@@ -15,11 +13,11 @@ public class TestNgProviderInfo implements ProviderInfo {
     }
 
     public boolean isApplicable() {
-        return paramParser.getTestNgVersion() != null
-            && paramParser.getSurefireApiVersion() != null;
+        return LoaderVersionExtractor.getTestNgVersion() != null
+            && LoaderVersionExtractor.getSurefireBooterVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-testng:" + paramParser.getSurefireApiVersion();
+        return "org.apache.maven.surefire:surefire-testng:" + LoaderVersionExtractor.getSurefireBooterVersion();
     }
 }

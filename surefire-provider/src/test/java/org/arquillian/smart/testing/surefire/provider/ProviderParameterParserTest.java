@@ -42,15 +42,10 @@ public class ProviderParameterParserTest {
     }
 
     @Test
-    public void parser_should_return_parsed_versions() {
+    public void parser_should_return_parsed_includes_and_excludes() {
         ProviderParametersParser parametersParser = new ProviderParametersParser(providerParameters);
-        softly.assertThat(parametersParser.getSurefireApiVersion()).isEqualTo("2.19.1");
-        softly.assertThat(parametersParser.getJunitVersion()).isEqualTo("4.12");
-        softly.assertThat(parametersParser.getTestNgVersion()).isEqualTo("6.11");
-    }
-
-    @Test
-    public void parser_should_return_parsed_includes(){
-        // my laptop is dying - I'll finish it later
+        softly.assertThat(parametersParser.getIncludes())
+            .containsExactly("**/Test*.java", "**/*Test.java", "**/*TestCase.java");
+        softly.assertThat(parametersParser.getExcludes()).containsExactly("**/*$*", "**/*Failing.java");
     }
 }
