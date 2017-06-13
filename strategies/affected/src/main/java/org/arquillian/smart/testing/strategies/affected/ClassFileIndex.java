@@ -34,8 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -163,7 +163,6 @@ public class ClassFileIndex {
             if (changedParents.add(parent.getName())) {
 
                 logger.log(Level.FINEST, String.format("%s test has been added because it depends on %s", parent.getName(), jclass.getName()));
-
                 findParents(parent, changedParents);
             }
         }

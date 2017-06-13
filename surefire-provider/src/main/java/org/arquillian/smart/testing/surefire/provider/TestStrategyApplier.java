@@ -6,12 +6,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
 
     static final String USAGE = "usage";
-    private static final SmartTestingProviderLogger logger = SmartTestingProviderLogger.getLogger();
+    private static final Logger logger = Logger.getLogger(TestStrategyApplier.class.getName());
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
     private TestsToRun testsToRun;
