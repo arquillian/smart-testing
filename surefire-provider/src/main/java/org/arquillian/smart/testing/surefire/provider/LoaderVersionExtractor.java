@@ -24,7 +24,7 @@ public class LoaderVersionExtractor {
         new MavenLibrary("org.apache.maven.surefire", "surefire-booter");
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
-    private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class.getName());
+    private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class);
     private static Map<ClassLoader, Map<MavenLibrary, String>> loaderWithLibraryVersions = new HashMap<>();
     private static List<MavenLibrary> initLibraries = new ArrayList<>();
 

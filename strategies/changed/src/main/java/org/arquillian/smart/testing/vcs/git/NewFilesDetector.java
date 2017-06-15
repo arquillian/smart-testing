@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.eclipse.jgit.diff.DiffEntry;
 
 public class NewFilesDetector extends GitChangesDetector {
 
-    private static final Logger logger = Logger.getLogger(NewFilesDetector.class.getName());
+    private static final Logger logger = Logger.getLogger(NewFilesDetector.class);
 
     public NewFilesDetector(File currentDir, String previous, String head, String ... globPatterns) {
         super(currentDir, previous, head, globPatterns);
@@ -33,7 +32,7 @@ public class NewFilesDetector extends GitChangesDetector {
                     throw new IllegalArgumentException(e);
                 }
             })
-            .peek(test -> logger.log(Level.FINEST, String.format("%s test added because not committed", test)))
+            .peek(test -> logger.finest("%s test added because not committed", test))
             .collect(Collectors.toList());
 
         tests.addAll(notCommittedTests);

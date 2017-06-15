@@ -14,27 +14,50 @@ public class Logger {
         this.jul = logger;
     }
 
+    /**
+     * Find or create a logger for a named subsystem.
+     *
+     * @param clazz
+     *     A class name of the subsystem for the logger such as java.net.URI or javax.swing.Box
+     *
+     * @return a suitable Logger
+     */
     public static Logger getLogger(Class clazz) {
         return getLogger(clazz.getName());
     }
 
+    /**
+     * Find or create a logger for a named subsystem using java.util.logging.Logger.
+     * If a logger has already been created with the given name it is returned.
+     * Otherwise a new logger is created.
+     *
+     * @param name
+     *     A name for the logger.  This should be a dot-separated name and should normally
+     *     be based on the package name or class name of the subsystem, such as java.net
+     *     or javax.swing
+     *
+     * @return a suitable Logger
+     *
+     * @throws NullPointerException
+     *     if the name is null.
+     */
     public static Logger getLogger(String name) {
         return new Logger(java.util.logging.Logger.getLogger(name));
     }
 
     /**
-     * Log a message using java.util.logging.Logger
+     * Log a formatted message with given arguments using java.util.logging.Logger
      *
-     * @param   level
+     * @param level
      *     One of the message level identifiers, e.g., SEVERE
-     * @param   msg
+     * @param msg
      *     The string message (or a key in the message catalog)
-     * @param   args
+     * @param args
      *     arguments to the message
      */
     public void log(Level level, String msg, Object... args) {
         if (jul.isLoggable(level)) {
-            jul.log(level, msg, args);
+            jul.log(level, getFormattedMsg(msg, args));
         }
     }
 
@@ -64,24 +87,71 @@ public class Logger {
         System.err.println(getFormattedMsg("WARN", msg, args));
     }
 
-    public void severe(String msg) {
-        jul.severe(msg);
+    /**
+     * Log a formatted SEVERE message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void severe(String msg, Object... args) {
+        jul.severe(getFormattedMsg(msg, args));
     }
 
-    public void config(String msg) {
-        jul.config(msg);
+    /**
+     * Log a formatted CONFIG message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void config(String msg, Object... args) {
+        jul.config(getFormattedMsg(msg, args));
     }
 
-    public void fine(String msg) {
-        jul.fine(msg);
+    /**
+     * Log a formatted FINE message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void fine(String msg, Object... args) {
+        jul.fine(getFormattedMsg(msg, args));
     }
 
-    public void finer(String msg) {
-        jul.finer(msg);
+    /**
+     * Log a formatted FINER message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void finer(String msg, Object... args) {
+        jul.finer(getFormattedMsg(msg, args));
     }
 
-    public void finest(String msg) {
-        jul.finest(msg);
+    /**
+     * Log a formatted FINEST message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void finest(String msg, Object... args) {
+        jul.finest(getFormattedMsg(msg, args));
+    }
+
+    private String getFormattedMsg(String msg, Object... args) {
+        if (args != null && args.length > 0) {
+            msg = format(msg, args);
+        }
+        return msg;
     }
 
     private String getFormattedMsg(String level, String msg, Object... args) {

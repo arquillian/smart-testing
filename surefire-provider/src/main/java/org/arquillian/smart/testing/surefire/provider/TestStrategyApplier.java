@@ -12,7 +12,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 class TestStrategyApplier {
 
     static final String USAGE = "usage";
-    private static final Logger logger = Logger.getLogger(TestStrategyApplier.class.getName());
+    private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
     private TestsToRun testsToRun;
