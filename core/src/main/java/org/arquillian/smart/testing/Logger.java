@@ -27,9 +27,7 @@ public class Logger {
     }
 
     /**
-     * Find or create a logger for a named subsystem using java.util.logging.Logger.
-     * If a logger has already been created with the given name it is returned.
-     * Otherwise a new logger is created.
+     * Delegates creation of a logger for a named subsystem to java.util.logging.Logger.
      *
      * @param name
      *     A name for the logger.  This should be a dot-separated name and should normally
