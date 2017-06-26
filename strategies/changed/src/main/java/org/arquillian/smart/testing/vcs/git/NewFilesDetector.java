@@ -27,7 +27,7 @@ public class NewFilesDetector extends GitChangesDetector {
             .map(file -> {
                 try {
                     final File sourceFile = new File(repoRoot, file);
-                    return extractFullyQualifiedName(sourceFile);
+                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException(e);
                 }

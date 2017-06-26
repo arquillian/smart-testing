@@ -1,8 +1,5 @@
 package org.arquillian.smart.testing.vcs.git;
 
-import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
@@ -79,7 +75,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
             .map(diffEntry -> {
                 try {
                     final File sourceFile = new File(repoRoot, diffEntry.getNewPath());
-                    return extractFullyQualifiedName(sourceFile);
+                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
                 } catch (FileNotFoundException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -102,10 +98,5 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return pathMatcher.matches(Paths.get(path));
     }
 
-    protected String extractFullyQualifiedName(File sourceFile) throws FileNotFoundException {
-        final CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
-        final Optional<ClassOrInterfaceDeclaration> newClass =
-            compilationUnit.getClassByName(sourceFile.getName().replaceAll(".java", ""));
-        return compilationUnit.getPackageDeclaration().get().getNameAsString() + "." + newClass.get().getNameAsString();
-    }
+
 }
