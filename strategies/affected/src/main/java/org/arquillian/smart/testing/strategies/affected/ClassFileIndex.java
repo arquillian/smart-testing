@@ -72,8 +72,8 @@ public class ClassFileIndex {
 
         // Then find dependencies
         Set<JavaClass> changedTestClasses = new HashSet<>();
-        for (String changedTtestClassesName : testClassesNames) {
-            JavaClass javaClass = builder.getClass(changedTtestClassesName);
+        for (String changedTestClassNames : testClassesNames) {
+            JavaClass javaClass = builder.getClass(changedTestClassNames);
             if (javaClass != null) {
                 addToIndex(javaClass);
                 changedTestClasses.add(javaClass);
@@ -170,7 +170,7 @@ public class ClassFileIndex {
     }
 
     public void clear() {
-        graph = new DefaultDirectedGraph<JavaClass, DefaultEdge>(DefaultEdge.class);
+        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
     }
 
     public boolean isIndexed(Class<Object> clazz) {
