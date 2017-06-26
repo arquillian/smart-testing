@@ -33,9 +33,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -46,7 +45,7 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassFileIndex {
 
-    private Logger logger = Logger.getLogger(ClassFileIndex.class.getName());
+    private Logger logger = Logger.getLogger(ClassFileIndex.class);
 
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaClass, DefaultEdge> graph;
@@ -168,8 +167,7 @@ public class ClassFileIndex {
         for (JavaClass parent : getParents(jclass)) {
             if (changedParents.add(parent.getName())) {
 
-                logger.log(Level.FINEST, String.format("%s test has been added because it depends on %s", parent.getName(), jclass.getName()));
-
+                logger.finest("%s test has been added because it depends on %s", parent.getName(), jclass.getName());
                 findParents(parent, changedParents);
             }
         }
