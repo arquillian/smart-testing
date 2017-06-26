@@ -76,11 +76,8 @@ public class StandaloneClasspath implements ClasspathProvider {
     public static String systemClasspath() {
         // This is a workaround for the maven surefire plugin classpath issue
         // listed here:
-        // http://jira.codehaus.org/browse/SUREFIRE-435
-        if (System.getProperty("surefire.test.class.path") != null) {
-            return System.getProperty("surefire.test.class.path");
-        }
-
-        return System.getProperty("java.class.path");
+        // https://issues.apache.org/jira/browse/SUREFIRE-435
+        // https://issues.apache.org/jira/browse/SUREFIRE-510
+        return System.getProperty("surefire.test.class.path", System.getProperty("java.class.path"));
     }
 }
