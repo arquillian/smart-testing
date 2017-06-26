@@ -13,9 +13,9 @@
   <artifactId>smart-testing-strategy-changed</artifactId>
 
   <properties>
-    <version.jgit>4.7.0.201704051617-r</version.jgit>
-    <version.javaparser>3.2.3</version.javaparser>
-    <version.arquillian.spacelift>1.0.0</version.arquillian.spacelift>
+    <version.jgit>4.8.0.201706111038-r</version.jgit>
+    <version.javaparser>3.2.8</version.javaparser>
+    <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
   </properties>
 
   <dependencies>
@@ -53,6 +53,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 
 </project>

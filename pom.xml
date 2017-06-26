@@ -46,11 +46,11 @@
     <version.surefire>2.19.1</version.surefire>
     <version.maven>3.3.9</version.maven>
     <version.assertj-core>3.8.0</version.assertj-core>
-    <version.system-rules>1.16.0</version.system-rules>
+    <version.system-rules>1.16.1</version.system-rules>
     <version.javassist>3.21.0-GA</version.javassist>
     <version.jgrapht>1.0.1</version.jgrapht>
     <version.shrinkwrap.resolver>3.0.0-alpha-4</version.shrinkwrap.resolver>
-    <version.mockito>2.7.22</version.mockito>
+    <version.mockito>2.8.47</version.mockito>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
