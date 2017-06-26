@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
@@ -63,9 +64,7 @@ public class FileCustomJvmArgumentReader implements CustomJvmArgumentsReader {
     private List<String> buildArgumentList(List<String> lines) {
         List<String> arguments = new ArrayList<>();
         for (String line : lines) {
-            for (String arg : line.split(" ")) {
-                arguments.add(arg);
-            }
+            Collections.addAll(arguments, line.split(" "));
         }
 
         return arguments;
