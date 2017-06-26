@@ -36,7 +36,7 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
         final AllChangedFilesDetector allChangedFilesDetector = new AllChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
         final Set<File> mainClasses = allChangedFilesDetector.getFiles();
 
-        return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
+        return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir, globPatterns), mainClasses);
     }
 
 }
