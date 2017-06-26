@@ -2,7 +2,6 @@ package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
 import java.util.Set;
-import org.arquillian.smart.testing.GitRunnerProperties;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
@@ -28,12 +27,13 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
     @Override
     public TestExecutionPlanner create(File projectDir, String[] globPatterns) {
         // TODO logic of inspecting git changes should be some where common so it is not recalculated several times
-        // TODO in fact there are at least two things to be put in a Context to be reused (git changes (main and test) and graph of dependencies between tests and main classes
+        // TODO in fact there are at least two things to be put in a Context to be reused (git changes (main and test)
+        // TODO and graph of dependencies between tests and main classes
         final String previousCommit = System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue());
         final String commit = System.getProperty(COMMIT, HEAD);
 
         // For now we recalculate everything
-        AllChangedFilesDetector allChangedFilesDetector = new AllChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
+        final AllChangedFilesDetector allChangedFilesDetector = new AllChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
         final Set<File> mainClasses = allChangedFilesDetector.getFiles();
 
         return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir), mainClasses);
