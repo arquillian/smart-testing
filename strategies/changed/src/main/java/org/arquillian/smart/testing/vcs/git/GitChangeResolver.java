@@ -2,12 +2,9 @@ package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -47,27 +44,44 @@ class GitChangeResolver {
         }
     }
 
-    Set<String> uncommitted() {
+    Set<String> newChanges() {
 
         try (Repository repository = getRepository();
              Git git = new Git(repository)) {
 
-            return getUncommittedFiles(git.status().call());
-
+            return getNewChangesFromUntrackedAndStagedArea(git.status().call());
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private Set<String> getUncommittedFiles(final Status status) {
-        Set<String> notCommittedFiles = new HashSet<>();
+    Set<String> modifiedChanges() {
 
-        notCommittedFiles.addAll(status.getAdded());
-        notCommittedFiles.addAll(status.getUntracked());
-        notCommittedFiles.addAll(status.getModified());
+        try (Repository repository = getRepository();
+             Git git = new Git(repository)) {
 
-        return notCommittedFiles;
+             return getModifiedChangesFromNonStagedAndStagedArea(git.status().call());
+        } catch (IOException | GitAPIException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 
+    private Set<String> getNewChangesFromUntrackedAndStagedArea(final Status status) {
+        Set<String> newFiles = new HashSet<>();
+
+        newFiles.addAll(status.getAdded());
+        newFiles.addAll(status.getUntracked());
+
+        return newFiles;
+    }
+
+    private Set<String> getModifiedChangesFromNonStagedAndStagedArea(final Status status) {
+        Set<String> modifiedFiles = new HashSet<>();
+
+        modifiedFiles.addAll(status.getChanged());
+        modifiedFiles.addAll(status.getModified());
+
+        return modifiedFiles;
     }
 
     private Repository getRepository() throws IOException {
