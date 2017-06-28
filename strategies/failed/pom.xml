@@ -33,6 +33,12 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-surefire-provider</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
 </project>

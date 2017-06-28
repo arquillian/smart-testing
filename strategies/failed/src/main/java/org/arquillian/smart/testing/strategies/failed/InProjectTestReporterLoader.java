@@ -6,13 +6,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.xml.stream.XMLStreamException;
-import org.arquillian.smart.testing.strategies.failed.surefire.SurefireReader;
+import org.arquillian.smart.testing.spi.TestResult;
+import org.arquillian.smart.testing.spi.TestResultParser;
 
-public class SurefireInProjectTestReporterLoader implements TestReportLoader {
+public class InProjectTestReporterLoader implements TestReportLoader {
 
     private static final String IN_PROJECT_DIR = ".reports";
 
@@ -38,11 +40,16 @@ public class SurefireInProjectTestReporterLoader implements TestReportLoader {
                         }
                     })
                     .map(is -> {
-                        try {
-                            return SurefireReader.loadTestResults(is);
-                        } catch (XMLStreamException e) {
-                            return null;
+                        final Optional<TestResultParser> testResultParser =
+                            StreamSupport.stream(ServiceLoader.load(TestResultParser.class).spliterator(), false)
+                                .filter(trp -> "surefire".equals(trp.type()))
+                                .findFirst();
+
+                        if (!testResultParser.isPresent()) {
+                            throw new IllegalArgumentException("No Surefire Test Result Parser found in classpath");
                         }
+
+                        return testResultParser.get().parse(is);
                     })
                     .flatMap(Set::stream)
                     .filter(TestResult::isFailing)

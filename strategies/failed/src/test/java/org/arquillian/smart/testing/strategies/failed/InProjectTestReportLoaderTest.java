@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SurefireInProjectTestReportLoaderTest {
+public class InProjectTestReportLoaderTest {
 
 
     @Test
@@ -13,7 +13,7 @@ public class SurefireInProjectTestReportLoaderTest {
 
         // given
 
-        final SurefireInProjectTestReporterLoader surefireInProjectTestReporterLoader = new SurefireInProjectTestReporterLoader();
+        final InProjectTestReporterLoader surefireInProjectTestReporterLoader = new InProjectTestReporterLoader();
         surefireInProjectTestReporterLoader.setInProjectDir("src/test/resources");
 
         // when
