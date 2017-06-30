@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.parser.junit;
 
 import java.io.InputStream;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import javax.xml.stream.events.XMLEvent;
 import org.arquillian.smart.testing.spi.TestResultParser;
 import org.arquillian.smart.testing.spi.TestResult;
 
-public class SurefireTestResultParser implements TestResultParser {
+public class JUnitTestResultParser implements TestResultParser {
 
     @Override
     public Set<TestResult> parse(InputStream surefireInputStream) {
@@ -90,6 +90,6 @@ public class SurefireTestResultParser implements TestResultParser {
 
     @Override
     public String type() {
-        return "surefire";
+        return "junit";
     }
 }

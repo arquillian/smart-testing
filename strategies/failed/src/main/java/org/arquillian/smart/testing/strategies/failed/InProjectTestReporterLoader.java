@@ -11,6 +11,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestResult;
 import org.arquillian.smart.testing.spi.TestResultParser;
 
@@ -19,6 +20,12 @@ public class InProjectTestReporterLoader implements TestReportLoader {
     private static final String IN_PROJECT_DIR = ".reports";
 
     private String inProjectDir = IN_PROJECT_DIR;
+    private JavaSPILoader javaSPILoader;
+
+
+    public InProjectTestReporterLoader(JavaSPILoader javaSPILoader) {
+        this.javaSPILoader = javaSPILoader;
+    }
 
     @Override
     public Set<String> loadTestResults() {
@@ -40,13 +47,9 @@ public class InProjectTestReporterLoader implements TestReportLoader {
                         }
                     })
                     .map(is -> {
-                        final Optional<TestResultParser> testResultParser =
-                            StreamSupport.stream(ServiceLoader.load(TestResultParser.class).spliterator(), false)
-                                .filter(trp -> "surefire".equals(trp.type()))
-                                .findFirst();
-
+                        final Optional<TestResultParser> testResultParser = javaSPILoader.onlyOne(TestResultParser.class, trp -> "junit".equals(trp.type()));
                         if (!testResultParser.isPresent()) {
-                            throw new IllegalArgumentException("No Surefire Test Result Parser found in classpath");
+                            throw new IllegalArgumentException("No JUnit Test Result Parser found in classpath");
                         }
 
                         return testResultParser.get().parse(is);

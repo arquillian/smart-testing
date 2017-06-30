@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.strategies.failed;
 
 import java.util.Set;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +14,7 @@ public class InProjectTestReportLoaderTest {
 
         // given
 
-        final InProjectTestReporterLoader surefireInProjectTestReporterLoader = new InProjectTestReporterLoader();
+        final InProjectTestReporterLoader surefireInProjectTestReporterLoader = new InProjectTestReporterLoader(new JavaSPILoader());
         surefireInProjectTestReporterLoader.setInProjectDir("src/test/resources");
 
         // when
