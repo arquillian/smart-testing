@@ -56,21 +56,7 @@ public class JUnitTestResultParser implements TestResultParser {
                         currentTestResult = new TestResult(classname, name, durationInSeconds);
                     }
 
-                    if ("failure".equalsIgnoreCase(startElement.getName().getLocalPart())) {
-                        currentTestResult.setResult(TestResult.Result.FAILURE);
-                    }
-
-                    if ("error".equalsIgnoreCase(startElement.getName().getLocalPart())) {
-                        currentTestResult.setResult(TestResult.Result.ERROR);
-                    }
-
-                    if ("skipped".equalsIgnoreCase(startElement.getName().getLocalPart())) {
-                        currentTestResult.setResult(TestResult.Result.SKIPPED);
-                    }
-
-                    if ("rerunFailure".equalsIgnoreCase(startElement.getName().getLocalPart())) {
-                        currentTestResult.setResult(TestResult.Result.RE_RUN_FAILURE);
-                    }
+                    setCurrentTestResult(currentTestResult, startElement);
                 }
 
                 if (event.isEndElement()) {
@@ -81,11 +67,29 @@ public class JUnitTestResultParser implements TestResultParser {
                 }
             }
         } catch (XMLStreamException e) {
-
+            throw new IllegalStateException("Error parsing JUnit Test Result", e);
         }
 
         return testResults;
 
+    }
+
+    private void setCurrentTestResult(TestResult currentTestResult, StartElement startElement) {
+        if ("failure".equalsIgnoreCase(startElement.getName().getLocalPart())) {
+            currentTestResult.setResult(TestResult.Result.FAILURE);
+        }
+
+        if ("error".equalsIgnoreCase(startElement.getName().getLocalPart())) {
+            currentTestResult.setResult(TestResult.Result.ERROR);
+        }
+
+        if ("skipped".equalsIgnoreCase(startElement.getName().getLocalPart())) {
+            currentTestResult.setResult(TestResult.Result.SKIPPED);
+        }
+
+        if ("rerunFailure".equalsIgnoreCase(startElement.getName().getLocalPart())) {
+            currentTestResult.setResult(TestResult.Result.RE_RUN_FAILURE);
+        }
     }
 
     @Override

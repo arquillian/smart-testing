@@ -47,9 +47,9 @@ public class InProjectTestReporterLoader implements TestReportLoader {
                         }
                     })
                     .map(is -> {
-                        final Optional<TestResultParser> testResultParser = javaSPILoader.onlyOne(TestResultParser.class, trp -> "junit".equals(trp.type()));
+                        final Optional<TestResultParser> testResultParser = javaSPILoader.onlyOne(TestResultParser.class);
                         if (!testResultParser.isPresent()) {
-                            throw new IllegalArgumentException("No JUnit Test Result Parser found in classpath");
+                            throw new IllegalArgumentException("No Test Result Parser found in classpath");
                         }
 
                         return testResultParser.get().parse(is);

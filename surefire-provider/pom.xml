@@ -44,6 +44,11 @@
       <artifactId>surefire-api</artifactId>
       <version>${version.surefire}</version>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>junit-test-result-parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>junit</groupId>

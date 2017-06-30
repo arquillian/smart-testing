@@ -37,6 +37,7 @@
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>junit-test-result-parser</artifactId>
       <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
