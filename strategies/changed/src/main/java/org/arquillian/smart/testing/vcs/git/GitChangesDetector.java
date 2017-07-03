@@ -57,6 +57,24 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return extractEntries(diffs, this.repoRoot);
     }
 
+    public List<String> getLocalTests(Set<String> files) {
+        final List<String> localTests = files.stream()
+            .filter(this::matchPatterns)
+            .map(file -> {
+                try {
+                    final File sourceFile = new File(repoRoot, file);
+                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
+                } catch (FileNotFoundException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            })
+            .peek(
+                test -> logger.finest("%s test added either because untracked or staged as new file", test))
+            .collect(Collectors.toList());
+
+        return localTests;
+    }
+
     public Set<File> getFiles() {
         final List<DiffEntry> diffs = gitChangeResolver.diff(previous, head);
         return extractFiles(diffs, this.repoRoot);
@@ -84,6 +102,15 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
                 test, previous, head)).collect(Collectors.toList());
     }
 
+    public void appendLocalFiles(Set<File> files, Set<String> localFiles) {
+        files.addAll(
+            localFiles.stream()
+                .filter(this::matchPatterns)
+                .map(file -> new File(repoRoot, file))
+                .collect(Collectors.toSet())
+        );
+    }
+
     boolean matchPatterns(String path) {
         for (final String globPattern : this.globPatterns) {
             if (matchPattern(path, globPattern)) {
@@ -97,6 +124,4 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         final PathMatcher pathMatcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
         return pathMatcher.matches(Paths.get(path));
     }
-
-
 }
