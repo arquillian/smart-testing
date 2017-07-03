@@ -14,12 +14,12 @@ public class InProjectTestReportLoaderTest {
 
         // given
 
-        final InProjectTestReporterLoader surefireInProjectTestReporterLoader = new InProjectTestReporterLoader(new JavaSPILoader());
-        surefireInProjectTestReporterLoader.setInProjectDir("src/test/resources");
+        final InProjectTestReportLoader surefireInProjectTestReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
+        surefireInProjectTestReportLoader.setInProjectDir("src/test/resources");
 
         // when
 
-        final Set<String> testClassesWithFailingCases = surefireInProjectTestReporterLoader.loadTestResults();
+        final Set<String> testClassesWithFailingCases = surefireInProjectTestReportLoader.loadTestResults();
 
         // then
         assertThat(testClassesWithFailingCases)

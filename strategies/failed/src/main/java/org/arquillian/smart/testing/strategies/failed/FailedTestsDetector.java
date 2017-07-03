@@ -6,7 +6,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 public class FailedTestsDetector implements TestExecutionPlanner {
 
-    private TestReportLoader testReportLoader = new InProjectTestReporterLoader(new JavaSPILoader());
+    private TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
 
     @Override
     public Collection<String> getTests() {

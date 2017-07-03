@@ -8,25 +8,46 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+
 public class JavaSPILoader {
 
     public JavaSPILoader() {
     }
 
-    public <S> Iterable<S> all(Class<S> service) {
+    /**
+     * Get all Java services that implements given interface.
+     * @param service interface
+     * @param <SERVICE>
+     * @return Iterable of all services implementing service interface and present in classpath.
+     */
+    public <SERVICE> Iterable<SERVICE> all(Class<SERVICE> service) {
         return ServiceLoader.load(service);
     }
 
-    public <S> Collection<S> all(Class<S> service, Predicate<S> predicate) {
+    /**
+     * Get all Java services that implements given interface and meets the given predicate.
+     * @param service interface
+     * @param predicate to set filtering options
+     * @param <SERVICE>
+     * @return Iterable of all services implementing service interface, meeting predicate condition and present in classpath.
+     */
+    public <SERVICE> Collection<SERVICE> all(Class<SERVICE> service, Predicate<SERVICE> predicate) {
         return StreamSupport.stream(all(service).spliterator(), false).filter(predicate).collect(Collectors.toList());
     }
 
-    public <S> Optional<S> onlyOne(Class<S> service) {
-        Iterable<S> all = all(service);
+    /**
+     * Get only one service of given type. This method is used when you are sure that only one implementation of given service is in classpath.
+     * If there are more than one, then {@link IllegalStateException} is thrown.
+     * @param service interface
+     * @param <SERVICE>
+     * @return The service of given type (if there are any) or an exception in case of more than one
+     */
+    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> service) {
+        Iterable<SERVICE> all = all(service);
 
-        final Iterator<S> allIterator = all.iterator();
+        final Iterator<SERVICE> allIterator = all.iterator();
         if (allIterator.hasNext()) {
-            S serviceInstance = allIterator.next();
+            SERVICE serviceInstance = allIterator.next();
 
             if (allIterator.hasNext()) {
                 throw new IllegalStateException(
@@ -39,8 +60,16 @@ public class JavaSPILoader {
         }
     }
 
-    public <S> Optional<S> onlyOne(Class<S> service, Predicate<S> predicate) {
-        final Collection<S> all = all(service, predicate);
+    /**
+     * Get only one service of given type. This method is used when you want to filter from all possible implementations of given service.
+     * If there are more than one, then {@link IllegalStateException} is thrown.
+     * @param service interface
+     * @param predicate to set filtering options
+     * @param <SERVICE>
+     * @return The service of given type and meeting predicate condition 8if any) or an exception in case of more than one.
+     */
+    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> service, Predicate<SERVICE> predicate) {
+        final Collection<SERVICE> all = all(service, predicate);
 
         if (all.size() == 1) {
             return Optional.of(all.iterator().next());
@@ -54,7 +83,7 @@ public class JavaSPILoader {
         return Optional.empty();
     }
 
-    private <S> String toClassString(Iterable<S> providers) {
+    private <SERVICE> String toClassString(Iterable<SERVICE> providers) {
         StringBuilder sb = new StringBuilder();
         for (Object provider : providers) {
             sb.append(provider.getClass().getName()).append(", ");

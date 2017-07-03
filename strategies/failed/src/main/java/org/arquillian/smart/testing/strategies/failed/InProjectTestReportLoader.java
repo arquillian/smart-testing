@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -15,7 +14,7 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestResult;
 import org.arquillian.smart.testing.spi.TestResultParser;
 
-public class InProjectTestReporterLoader implements TestReportLoader {
+public class InProjectTestReportLoader implements TestReportLoader {
 
     private static final String IN_PROJECT_DIR = ".reports";
 
@@ -23,7 +22,7 @@ public class InProjectTestReporterLoader implements TestReportLoader {
     private JavaSPILoader javaSPILoader;
 
 
-    public InProjectTestReporterLoader(JavaSPILoader javaSPILoader) {
+    public InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
         this.javaSPILoader = javaSPILoader;
     }
 

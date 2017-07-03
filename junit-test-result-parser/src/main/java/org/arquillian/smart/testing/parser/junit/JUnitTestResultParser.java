@@ -17,12 +17,12 @@ import org.arquillian.smart.testing.spi.TestResult;
 public class JUnitTestResultParser implements TestResultParser {
 
     @Override
-    public Set<TestResult> parse(InputStream surefireInputStream) {
+    public Set<TestResult> parse(InputStream junitInputStream) {
         final Set<TestResult> testResults = new HashSet<>();
 
         try {
             final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(surefireInputStream);
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(junitInputStream);
 
             TestResult currentTestResult = null;
 
