@@ -1,0 +1,60 @@
+package org.arquillian.smart.testing.ftest.testbed.project;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
+
+import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
+import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
+import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
+
+class ProjectBuilder {
+
+    private static final String TEST_REPORT_PREFIX = "TEST-";
+
+    private final Path root;
+
+    ProjectBuilder(Path root) {
+        this.root = root;
+    }
+
+    List<TestResult> build(String... goals) {
+        EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
+            .setGoals(goals)
+            .setQuiet()
+            .skipTests(false)
+            .build();
+
+        return accumulatedTestResults();
+    }
+
+    private List<TestResult> accumulatedTestResults() {
+        try {
+            return Files.walk(root)
+                .filter(path -> path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
+                .map(path -> {
+                        try {
+                            final Set<TestResult> testResults = loadTestResults(new FileInputStream(path.toFile()));
+                            return testResults.stream()
+                                .reduce(new TestResult("", "*", PASSED),
+                                    (previous, current) -> new TestResult(current.getClassName(), "*",
+                                        (previous.isFailing() || current.isFailing()) ? FAILURE : PASSED));
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                )
+                .distinct()
+                .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed extracting test results", e);
+        }
+    }
+}
