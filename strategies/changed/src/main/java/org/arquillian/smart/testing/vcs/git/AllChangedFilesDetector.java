@@ -19,8 +19,8 @@ public class AllChangedFilesDetector extends GitChangesDetector {
     public Collection<String> getTests() {
         final Collection<String> tests = super.getTests();
 
-        final Set<String> newFiles = this.gitChangeResolver.newChanges();
-        final Set<String> modifiedFiles = this.gitChangeResolver.modifiedChanges();
+        final Set<String> newFiles = gitChangeResolver.newChanges();
+        final Set<String> modifiedFiles = gitChangeResolver.modifiedChanges();
 
         List<String> newLocalTests = getLocalTests(newFiles);
         List<String> modifiedLocalTests = getLocalTests(modifiedFiles);
@@ -35,8 +35,13 @@ public class AllChangedFilesDetector extends GitChangesDetector {
         final Set<File> files = super.getFiles();
         final Set<String> newLocalFiles = gitChangeResolver.newChanges();
         final Set<String> modifiedLocalFiles = gitChangeResolver.modifiedChanges();
-        appendLocalFiles(files, newLocalFiles);
-        appendLocalFiles(files, modifiedLocalFiles);
+
+        Set<File> filteredNewLocalFiles = filterLocalFiles(newLocalFiles);
+        Set<File> filteredModifiedLocalFiles = filterLocalFiles(modifiedLocalFiles);
+
+        files.addAll(filteredNewLocalFiles);
+        files.addAll(filteredModifiedLocalFiles);
+
         return files;
     }
 

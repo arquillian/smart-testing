@@ -102,13 +102,11 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
                 test, previous, head)).collect(Collectors.toList());
     }
 
-    public void appendLocalFiles(Set<File> files, Set<String> localFiles) {
-        files.addAll(
-            localFiles.stream()
-                .filter(this::matchPatterns)
-                .map(file -> new File(repoRoot, file))
-                .collect(Collectors.toSet())
-        );
+    public Set<File> filterLocalFiles(Set<String> localFiles) {
+        return localFiles.stream()
+            .filter(this::matchPatterns)
+            .map(file -> new File(repoRoot, file))
+            .collect(Collectors.toSet());
     }
 
     boolean matchPatterns(String path) {

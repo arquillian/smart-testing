@@ -25,11 +25,11 @@ public class NewFilesDetector extends GitChangesDetector {
 
     @Override
     public Set<File> getFiles() {
-
         final Set<File> files = super.getFiles();
         final Set<String> newLocalFiles = gitChangeResolver.newChanges();
 
-        appendLocalFiles(files, newLocalFiles);
+        Set<File> filteredNewLocalFiles = filterLocalFiles(newLocalFiles);
+        files.addAll(filteredNewLocalFiles);
 
         return files;
     }
