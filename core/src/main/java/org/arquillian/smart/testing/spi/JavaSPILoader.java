@@ -15,55 +15,54 @@ public class JavaSPILoader {
 
     /**
      * Get all Java services that implements given interface.
-     * @param service interface
-     * @param <SERVICE>
-     * @return Iterable of all services implementing service interface and present in classpath.
+     * @param serviceType interface
+     * @return Iterable of all services implementing serviceType interface and present in classpath.
      */
-    public <SERVICE> Iterable<SERVICE> all(Class<SERVICE> service) {
-        return ServiceLoader.load(service);
+    public <SERVICE> Iterable<SERVICE> all(Class<SERVICE> serviceType) {
+        return ServiceLoader.load(serviceType);
     }
 
     /**
      * Get all Java services that implements given interface and meets the given predicate.
-     * @param service interface
+     * @param serviceType interface
      * @param predicate to set filtering options
-     * @return Iterable of all services implementing service interface, meeting predicate condition and present in classpath.
+     * @return Iterable of all services implementing serviceType interface, meeting predicate condition and present in classpath.
      */
-    public <SERVICE> Iterable<SERVICE> all(Class<SERVICE> service, Predicate<SERVICE> predicate) {
-        return StreamSupport.stream(all(service).spliterator(), false).filter(predicate).collect(Collectors.toList());
+    public <SERVICE> Iterable<SERVICE> all(Class<SERVICE> serviceType, Predicate<SERVICE> predicate) {
+        return StreamSupport.stream(all(serviceType).spliterator(), false).filter(predicate).collect(Collectors.toList());
     }
 
     /**
-     * Get only one service of given type. This method is used when you are sure that only one implementation of given service is in classpath.
+     * Get only one serviceType of given type. This method is used when you are sure that only one implementation of given serviceType is in classpath.
      * If there are more than one, then {@link IllegalStateException} is thrown.
-     * @param service interface
-     * @return The service of given type (if there are any) or an exception in case of more than one
+     * @param serviceType interface
+     * @return The serviceType of given type (if there are any) or an exception in case of more than one
      */
-    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> service) {
-        Iterable<SERVICE> all = all(service);
-        return getOnlyOneServiceFromIterable(service, all);
+    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> serviceType) {
+        Iterable<SERVICE> all = all(serviceType);
+        return ensureOnlyOneServiceLoaded(serviceType, all);
     }
 
     /**
-     * Get only one service of given type. This method is used when you want to filter from all possible implementations of given service.
+     * Get only one serviceType of given type. This method is used when you want to filter from all possible implementations of given serviceType.
      * If there are more than one, then {@link IllegalStateException} is thrown.
-     * @param service interface
+     * @param serviceType interface
      * @param predicate to set filtering options
-     * @return The service of given type and meeting predicate condition (if any) or an exception in case of more than one.
+     * @return The serviceType of given type and meeting predicate condition (if any) or an exception in case of more than one.
      */
-    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> service, Predicate<SERVICE> predicate) {
-        final Iterable<SERVICE> all = all(service, predicate);
-        return getOnlyOneServiceFromIterable(service, all);
+    public <SERVICE> Optional<SERVICE> onlyOne(Class<SERVICE> serviceType, Predicate<SERVICE> predicate) {
+        final Iterable<SERVICE> all = all(serviceType, predicate);
+        return ensureOnlyOneServiceLoaded(serviceType, all);
     }
 
-    private <SERVICE> Optional<SERVICE> getOnlyOneServiceFromIterable(Class<SERVICE> service, Iterable<SERVICE> all) {
+    private <SERVICE> Optional<SERVICE> ensureOnlyOneServiceLoaded(Class<SERVICE> serviceType, Iterable<SERVICE> all) {
         final Iterator<SERVICE> allIterator = all.iterator();
         if (allIterator.hasNext()) {
             SERVICE serviceInstance =  allIterator.next();
 
             if (allIterator.hasNext()) {
                 throw new IllegalStateException(
-                    "Multiple service implementations found for " + service + ". " + toClassString(all));
+                    "Multiple serviceType implementations found for " + serviceType + ". " + toClassString(all));
             }
 
             return Optional.of(serviceInstance);
