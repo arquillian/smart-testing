@@ -9,10 +9,10 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends TestBedTemplate {
+public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest extends TestBedTemplate {
 
     @Test
-    public void should_only_execute_tests_related_to_single_local_change_in_business_logic_when_affected_is_enabled() throws Exception {
+    public void should_only_execute_tests_related_to_single_commit_in_business_logic_when_affected_is_enabled() throws Exception {
         // given
         project.configureSmartTesting()
                     .executionOrder(AFFECTED)
@@ -20,17 +20,17 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends T
                .enable();
 
         final List<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Single method body modification - sysout");
+            .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.withEnvVariables("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
     @Test
-    public void should_only_execute_tests_related_to_multiple_local_changes_in_business_logic_when_affected_is_enabled() throws Exception {
+    public void should_only_execute_tests_related_to_multiple_commits_in_business_logic_when_affected_is_enabled() throws Exception {
         // given
         project.configureSmartTesting()
                     .executionOrder(AFFECTED)
@@ -38,11 +38,13 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends T
             .enable();
 
         final List<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Single method body modification - sysout",
+            .applyAsCommits("Single method body modification - sysout",
             "Inlined variable in a method");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project
+            .withEnvVariables("git.last.commits", "2")
+            .build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

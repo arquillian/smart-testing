@@ -30,14 +30,22 @@ public class Project implements AutoCloseable {
         return new ProjectConfigurator(this, root);
     }
 
-    public List<TestResult> applyLocalChanges(String ... changeDescriptions) {
+    public List<TestResult> applyAsLocalChanges(String ... changeDescriptions) {
         return new ChangeApplier(repository).applyLocally(changeDescriptions);
+    }
 
+    public List<TestResult> applyAsCommits(String ... changeDescriptions) {
+        return new ChangeApplier(repository).applyAsCommits(changeDescriptions);
     }
 
     @Override
     public void close() throws Exception {
         this.repository.close();
+    }
+
+    public Project withEnvVariables(String ... envVariablesPairs) {
+        projectBuilder.withEnvVariables(envVariablesPairs);
+        return this;
     }
 
     public List<TestResult> build() {

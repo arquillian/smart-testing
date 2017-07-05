@@ -36,31 +36,64 @@ class ChangeApplier {
     }
 
     /**
+     *
+     * Applies changes as commits on top of the current branch
+     *
+     * @param changeDescriptions list of messages associated with the tags
+     * @return list of expected test results which are specified in the commit messages tagged by changeDescriptions.
+     *
+     * @see TestResultsExtractor#expectedTestResults(ObjectId)
+     */
+    List<TestResult> applyAsCommits(String... changeDescriptions) {
+       return apply(this::cherryPickTags, changeDescriptions);
+    }
+
+    /**
      * Applies changes locally without committing to the local repository.
      *
      * Each description should correlate with the message of a tag
      *
-     * @param changeDescriptions
-     * @return
+     * @param changeDescriptions list of messages associated with the tags
+     * @return list of expected test results which are specified in the commit messages tagged by changeDescriptions
+     *
+     * @see TestResultsExtractor#expectedTestResults(ObjectId)
      */
     List<TestResult> applyLocally(String... changeDescriptions) {
+        return apply(this::applyLocallyFromTags, changeDescriptions);
+    }
+
+    List<TestResult> apply(ChangeApplicator applicator, String ... changeDescriptions) {
         try {
             final Collection<RevTag> matchingTags = findMatchingTags(changeDescriptions);
             if (changeDescriptions.length != matchingTags.size()) {
                 throw new IllegalStateException("Unable to find all required changes " + Arrays.toString(changeDescriptions)
                     + ", found only " + matchingTags.stream().map(tag -> tag.getTagName() + ": " + tag.getFullMessage()).collect(Collectors.toList()));
             }
-            return applyLocallyFromTags(matchingTags);
+            return applicator.apply(matchingTags);
         } catch (GitAPIException e) {
             throw new RuntimeException("Failed applying changes '" + Arrays.toString(changeDescriptions) + "'", e);
         }
     }
 
-    private List<TestResult> applyLocallyFromTags(Collection<RevTag> matchingTags) throws GitAPIException {
+    interface ChangeApplicator {
+        List<TestResult> apply(Collection<RevTag> tags) throws GitAPIException;
+    }
+
+    private List<TestResult> cherryPickTags(Collection<RevTag> tags) throws GitAPIException {
+        final List<TestResult> combinedTestResults = new ArrayList<>();
+        for (final RevTag tag : tags) {
+            final ObjectId tagId = tag.getObject().getId();
+            git.cherryPick().include(tagId).call();
+            combinedTestResults.addAll(testResultsExtractor.expectedTestResults(tagId));
+        }
+        return combinedTestResults;
+    }
+
+    private List<TestResult> applyLocallyFromTags(Collection<RevTag> tags) throws GitAPIException {
         final List<TestResult> combinedTestResults = new ArrayList<>();
         final List<RevCommit> stashesToApply = new ArrayList<>();
-        for (final RevTag matchingTag : matchingTags) {
-            final ObjectId tagId = matchingTag.getObject().getId();
+        for (final RevTag tag : tags) {
+            final ObjectId tagId = tag.getObject().getId();
             git.cherryPick().setNoCommit(true).include(tagId).call();
             stashesToApply.add(git.stashCreate().setIncludeUntracked(true).call());
             combinedTestResults.addAll(testResultsExtractor.expectedTestResults(tagId));

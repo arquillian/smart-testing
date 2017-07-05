@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -20,6 +21,7 @@ class ProjectBuilder {
     private static final String TEST_REPORT_PREFIX = "TEST-";
 
     private final Path root;
+    private final Properties envVariables = new Properties();
 
     ProjectBuilder(Path root) {
         this.root = root;
@@ -28,11 +30,27 @@ class ProjectBuilder {
     List<TestResult> build(String... goals) {
         EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
             .setGoals(goals)
-            .setQuiet()
+            .setQuiet(false)
             .skipTests(false)
+            .setProperties(envVariables)
             .build();
 
         return accumulatedTestResults();
+    }
+
+    ProjectBuilder withEnvVariables(String ... envVariablesPairs) {
+        if (envVariablesPairs.length % 2 != 0) {
+            throw new IllegalArgumentException("Expecting even amount of variable name - value pairs to be passed. Got "
+                + envVariablesPairs.length
+                + " entries. "
+                + envVariablesPairs);
+        }
+
+        for (int i = 0; i < envVariablesPairs.length; i += 2) {
+            this.envVariables.put(envVariablesPairs[i], envVariablesPairs[i + 1]);
+        }
+
+        return this;
     }
 
     private List<TestResult> accumulatedTestResults() {
