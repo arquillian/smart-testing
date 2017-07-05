@@ -30,7 +30,7 @@ class ProjectBuilder {
     List<TestResult> build(String... goals) {
         EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
             .setGoals(goals)
-            .setQuiet(false)
+            .setQuiet()
             .skipTests(false)
             .setProperties(envVariables)
             .build();
