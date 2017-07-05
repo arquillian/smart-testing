@@ -19,10 +19,10 @@ public class JUnitTestResultParser implements TestResultParser {
     @Override
     public Set<TestResult> parse(InputStream junitInputStream) {
         final Set<TestResult> testResults = new HashSet<>();
-
+        XMLEventReader eventReader = null;
         try {
             final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(junitInputStream);
+            eventReader = inputFactory.createXMLEventReader(junitInputStream);
 
             TestResult currentTestResult = null;
 
@@ -68,6 +68,15 @@ public class JUnitTestResultParser implements TestResultParser {
             }
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Error parsing JUnit Test Result", e);
+        } finally {
+            // XmlEventReader does not implement autoclosable
+            if (eventReader != null) {
+                try {
+                    eventReader.close();
+                } catch (XMLStreamException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         return testResults;

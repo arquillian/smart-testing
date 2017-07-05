@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.Set;
 
 /**
- * Java SPI for parsing test results stored in a stream (probably a file).
+ * Java SPI for parsing test results stored in a stream.
  */
 public interface TestResultParser {
 
