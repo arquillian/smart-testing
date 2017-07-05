@@ -1,19 +1,22 @@
-package org.arquillian.smart.testing.strategies.failed.surefire;
+package org.arquillian.smart.testing.parser.junit;
 
 import java.util.Set;
-import javax.xml.stream.XMLStreamException;
-import org.arquillian.smart.testing.strategies.failed.TestResult;
+import org.arquillian.smart.testing.spi.TestResult;
+import org.arquillian.smart.testing.spi.TestResultParser;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-public class SurefireReaderTest {
+public class JUnitTestResultParserTest {
 
     @Test
-    public void should_read_test_class_with_failures() throws XMLStreamException {
+    public void should_read_test_class_with_failures() {
+
+        TestResultParser junitTestResultParser = new JUnitTestResultParser();
+
         final Set<TestResult> testResults =
-            SurefireReader.loadTestResults(SurefireReader.class.getResourceAsStream("/surefire-with-failure.xml"));
+            junitTestResultParser.parse(JUnitTestResultParser.class.getResourceAsStream("/surefire-with-failure.xml"));
 
         assertThat(testResults)
             .extracting(TestResult::getClassName, TestResult::getResult)

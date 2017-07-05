@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
@@ -34,7 +35,7 @@ class TestExecutionPlannerLoader {
     }
 
     private void loadStrategies() {
-        final Iterable<TestExecutionPlannerFactory> loadedStrategies = spiLoader.load(TestExecutionPlannerFactory.class);
+        final Iterable<TestExecutionPlannerFactory> loadedStrategies = spiLoader.all(TestExecutionPlannerFactory.class);
         for (final TestExecutionPlannerFactory testExecutionPlannerFactory : loadedStrategies) {
             availableStrategies.put(testExecutionPlannerFactory.alias(), testExecutionPlannerFactory);
         }

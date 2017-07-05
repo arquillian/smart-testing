@@ -6,17 +6,25 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.xml.stream.XMLStreamException;
-import org.arquillian.smart.testing.strategies.failed.surefire.SurefireReader;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.spi.TestResult;
+import org.arquillian.smart.testing.spi.TestResultParser;
 
-public class SurefireInProjectTestReporterLoader implements TestReportLoader {
+public class InProjectTestReportLoader implements TestReportLoader {
 
     private static final String IN_PROJECT_DIR = ".reports";
 
     private String inProjectDir = IN_PROJECT_DIR;
+    private JavaSPILoader javaSPILoader;
+
+
+    public InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
+        this.javaSPILoader = javaSPILoader;
+    }
 
     @Override
     public Set<String> loadTestResults() {
@@ -38,11 +46,12 @@ public class SurefireInProjectTestReporterLoader implements TestReportLoader {
                         }
                     })
                     .map(is -> {
-                        try {
-                            return SurefireReader.loadTestResults(is);
-                        } catch (XMLStreamException e) {
-                            return null;
+                        final Optional<TestResultParser> testResultParser = javaSPILoader.onlyOne(TestResultParser.class);
+                        if (!testResultParser.isPresent()) {
+                            throw new IllegalArgumentException("No Test Result Parser found in classpath");
                         }
+
+                        return testResultParser.get().parse(is);
                     })
                     .flatMap(Set::stream)
                     .filter(TestResult::isFailing)

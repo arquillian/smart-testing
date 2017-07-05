@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
 import java.util.Collections;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.junit.Rule;
@@ -22,7 +23,7 @@ public class TestExecutionPlannerLoaderTest {
     public void should_find_matching_strategy() throws Exception {
         // given
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
-        when(mockedSpiLoader.load(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
+        when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
@@ -37,7 +38,7 @@ public class TestExecutionPlannerLoaderTest {
     public void should_throw_exception_when_no_matching_strategy_found() throws Exception {
         // given
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
-        when(mockedSpiLoader.load(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
+        when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
@@ -53,7 +54,7 @@ public class TestExecutionPlannerLoaderTest {
     public void should_throw_exception_when_no_strategies_found() throws Exception {
         // given
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
-        when(mockedSpiLoader.load(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
+        when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
 

@@ -10,6 +10,7 @@ import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
@@ -31,16 +32,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         final String strategiesParam = paramParser.getProperty("strategies");
 
         final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
-        final JavaSPILoader spiLoader = new JavaSPILoader() {
-            @Override
-            public <S> Iterable<S> load(Class<S> service) {
-                return ServiceLoader.load(service);
-            }
-        };
-
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(spiLoader, getGlobPatterns());
+            new TestExecutionPlannerLoader(new JavaSPILoader(), getGlobPatterns());
 
         return new TestStrategyApplier(testsToRun, paramParser,
             testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));

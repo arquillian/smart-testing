@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.failed;
+package org.arquillian.smart.testing.spi;
 
 public class TestResult {
 

@@ -1,11 +1,12 @@
 package org.arquillian.smart.testing.strategies.failed;
 
 import java.util.Set;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SurefireInProjectTestReportLoaderTest {
+public class InProjectTestReportLoaderTest {
 
 
     @Test
@@ -13,12 +14,12 @@ public class SurefireInProjectTestReportLoaderTest {
 
         // given
 
-        final SurefireInProjectTestReporterLoader surefireInProjectTestReporterLoader = new SurefireInProjectTestReporterLoader();
-        surefireInProjectTestReporterLoader.setInProjectDir("src/test/resources");
+        final InProjectTestReportLoader surefireInProjectTestReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
+        surefireInProjectTestReportLoader.setInProjectDir("src/test/resources");
 
         // when
 
-        final Set<String> testClassesWithFailingCases = surefireInProjectTestReporterLoader.loadTestResults();
+        final Set<String> testClassesWithFailingCases = surefireInProjectTestReportLoader.loadTestResults();
 
         // then
         assertThat(testClassesWithFailingCases)
