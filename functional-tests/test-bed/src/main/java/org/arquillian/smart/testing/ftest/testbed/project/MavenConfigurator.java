@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.arquillian.smart.testing.ftest.testbed.configuration.Criteria;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -33,7 +35,10 @@ class MavenConfigurator {
 
     void addRequiredDependencies() {
         model.addDependency(smartTestingProviderDependency());
-        model.addDependency(projectConfigurator.getCriterion().getMavenDependency());
+        final Criteria[] criteria = projectConfigurator.getCriteria();
+        for (final Criteria criterion : criteria) {
+            model.addDependency(criterion.getMavenDependency());
+        }
     }
 
     void configureTestRunner() {
@@ -78,7 +83,12 @@ class MavenConfigurator {
 
     private Xpp3Dom defineTestSelectionCriteria() {
         final Xpp3Dom strategies = new Xpp3Dom("strategies");
-        strategies.setValue(projectConfigurator.getCriterion().name().toLowerCase());
+        final Criteria[] criteria = projectConfigurator.getCriteria();
+        final StringJoiner stringJoiner = new StringJoiner(",");
+        for (final Criteria criterion : criteria) {
+            stringJoiner.add(criterion.name().toLowerCase());
+        }
+        strategies.setValue(stringJoiner.toString());
         return strategies;
     }
 

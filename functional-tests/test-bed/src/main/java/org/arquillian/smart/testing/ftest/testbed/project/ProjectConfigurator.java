@@ -8,7 +8,7 @@ import org.arquillian.smart.testing.ftest.testbed.configuration.Mode;
 
 public class ProjectConfigurator {
 
-    private Criteria criterion;
+    private Criteria[] criteria;
     private Mode mode;
 
     private final Project project;
@@ -19,16 +19,16 @@ public class ProjectConfigurator {
         this.root = root;
     }
 
-    Criteria getCriterion() {
-        return criterion;
+    Criteria[] getCriteria() {
+        return criteria;
     }
 
     Mode getMode() {
         return mode;
     }
 
-    public ProjectConfigurator executionOrder(Criteria criteria) {
-        this.criterion = criteria;
+    public ProjectConfigurator executionOrder(Criteria ... criteria) {
+        this.criteria = criteria;
         return this;
     }
 
