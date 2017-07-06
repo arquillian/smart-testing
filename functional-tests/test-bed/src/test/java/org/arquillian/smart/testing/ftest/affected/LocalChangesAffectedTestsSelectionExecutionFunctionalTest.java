@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends TestBedTemplate {
 
     @Test
-    public void should_only_execute_tests_related_to_single_local_change_in_business_logic_when_affected_is_enabled() throws Exception {
+    public void should_only_execute_tests_related_to_single_local_change_in_production_code_when_affected_is_enabled() throws Exception {
         // given
         project.configureSmartTesting()
                     .executionOrder(AFFECTED)
@@ -30,7 +30,7 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends T
     }
 
     @Test
-    public void should_only_execute_tests_related_to_multiple_local_changes_in_business_logic_when_affected_is_enabled() throws Exception {
+    public void should_only_execute_tests_related_to_multiple_local_changes_in_production_code_when_affected_is_enabled() throws Exception {
         // given
         project.configureSmartTesting()
                     .executionOrder(AFFECTED)
