@@ -4,4 +4,4 @@ jdk:
   - oraclejdk8
 
 script:
-  - mvn clean verify -XX:-UseLoopPredicate
+  - mvn clean verify -DJAVA_OPTS="-XX:-UseLoopPredicate"
