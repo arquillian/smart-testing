@@ -2,7 +2,6 @@ package org.arquillian.smart.testing.ftest;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,9 +46,8 @@ public abstract class TestBedTemplate {
     @BeforeClass
     public static void cloneTestProject() throws IOException {
         tmp.create();
-        final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("arq-core-test.bundle");
         gitRepo = tmp.getRoot().getAbsolutePath() + File.separator + "arq-core-test";
-        unpackRepository(gitRepo, repoBundle.getFile());
+        cloneRepository(gitRepo, "git@github.com:arquillian/smart-testing-dogfood-repo.git");
     }
 
     @Before
@@ -79,10 +77,10 @@ public abstract class TestBedTemplate {
         return gitRepo + "_" + getClass().getSimpleName() + "_" + name.getMethodName();
     }
 
-    static void unpackRepository(String repoTarget, String repoBundleFile) {
+    static void cloneRepository(String repoTarget, String repo) {
         Spacelift.task(CommandTool.class)
             .command(new CommandBuilder("git")
-                .parameters("clone", repoBundleFile, "-b", "master",
+                .parameters("clone", repo, "-b", "master",
                     repoTarget).build())
             .execute().await();
     }
