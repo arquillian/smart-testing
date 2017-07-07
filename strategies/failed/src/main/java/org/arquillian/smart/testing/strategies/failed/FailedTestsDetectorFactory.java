@@ -17,7 +17,7 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, String[] globPatterns) {
+    public TestExecutionPlanner create(File projectDir) {
         return new FailedTestsDetector();
     }
 

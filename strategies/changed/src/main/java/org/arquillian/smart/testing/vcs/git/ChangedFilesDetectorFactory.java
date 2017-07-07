@@ -24,10 +24,10 @@ public class ChangedFilesDetectorFactory implements TestExecutionPlannerFactory 
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, String[] globPatterns) {
+    public TestExecutionPlanner create(File projectDir) {
         final String previousCommit = System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue());
         final String commit = System.getProperty(COMMIT, HEAD);
 
-        return new ChangedFilesDetector(projectDir, previousCommit, commit, globPatterns);
+        return new ChangedFilesDetector(projectDir, previousCommit, commit, "**/src/test/java/**/*.java");
     }
 }

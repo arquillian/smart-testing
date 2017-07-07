@@ -11,12 +11,9 @@ class TestExecutionPlannerLoader {
 
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
-    private final String[] globPatterns;
 
-    // TODO refactor as inclusion/exclusion fix https://github.com/arquillian/smart-testing/issues/8
-    TestExecutionPlannerLoader(JavaSPILoader spiLoader, String[] globPatterns) {
+    TestExecutionPlannerLoader(JavaSPILoader spiLoader) {
         this.spiLoader = spiLoader;
-        this.globPatterns = globPatterns;
     }
 
     TestExecutionPlanner getPlannerForStrategy(String strategy) {
@@ -27,7 +24,7 @@ class TestExecutionPlannerLoader {
 
         if (availableStrategies.containsKey(strategy)) {
             final File projectDir = new File(System.getProperty("user.dir"));
-            return availableStrategies.get(strategy).create(projectDir, globPatterns);
+            return availableStrategies.get(strategy).create(projectDir);
         }
 
         throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()

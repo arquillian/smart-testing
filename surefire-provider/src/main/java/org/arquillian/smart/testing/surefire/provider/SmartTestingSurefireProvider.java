@@ -34,17 +34,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(new JavaSPILoader(), getGlobPatterns());
+            new TestExecutionPlannerLoader(new JavaSPILoader());
 
         return new TestStrategyApplier(testsToRun, paramParser,
             testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));
-    }
-
-    private String[] getGlobPatterns() {
-        final List<String> globPatterns = paramParser.getIncludes();
-        // TODO question why exclusions are added too?
-        globPatterns.addAll(paramParser.getExcludes());
-        return globPatterns.toArray(new String[globPatterns.size()]);
     }
 
     public Iterable<Class<?>> getSuites() {
