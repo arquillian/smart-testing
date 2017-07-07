@@ -14,6 +14,9 @@
   { "name": "Type: Chore", "color": "#fbca04" },
   { "name": "Type: Feature", "color": "#84b6eb" },
   { "name": "Type: Question", "color": "#cc317c" },
-  { "name": "Type: Community Help", "color": "#1275cc" }
-
+  { "name": "Type: Community Help", "color": "#1275cc" },
+  { "name": "Component: Test Bed", "color": "#78cc12" },
+  { "name": "Component: Selection", "color": "#12cc87" },
+  { "name": "Component: Maven", "color" : "#9d12cc" }, 
+  { "name": "Component: Core", "color" : "#ffd700" }
 ]
