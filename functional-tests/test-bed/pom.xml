@@ -14,6 +14,9 @@
 
   <properties>
     <version.shrinkwrap-maven-embedded>3.0.0-alpha-4</version.shrinkwrap-maven-embedded>
+    <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
+    <surefire.fork.count>4</surefire.fork.count>
+    <surefire.thread.count>8</surefire.thread.count>
   </properties>
 
   <dependencies>
@@ -70,47 +73,14 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.surefire}</version>
         <configuration>
-          <forkCount>2</forkCount>
-          <threadCount>4</threadCount>
+          <forkCount>${surefire.fork.count}</forkCount>
+          <threadCount>${surefire.thread.count}</threadCount>
           <reuseForks>true</reuseForks>
           <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
           <parallel>classesAndMethods</parallel>
         </configuration>
 
       </plugin>
-
-      <!--<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${version.surefire}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <includes>
-            <include>**/*Test.java</include>
-            <include>**/Test*.java</include>
-            <include>**/*Tests.java</include>
-            <include>**/*TestCase.java</include>
-          </includes>
-          <properties>
-            <strategies>affected</strategies>
-            <usage>ordering</usage>
-          </properties>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.arquillian.smart.testing</groupId>
-            <artifactId>smart-testing-surefire-provider</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>-->
       
       <!-- This artifact shouldn't be deployed to maven repository -->
       <plugin>
@@ -122,6 +92,16 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>travis</id>
+      <properties>
+        <surefire.fork.count>2</surefire.fork.count>
+        <surefire.thread.count>4</surefire.thread.count>
+      </properties>
+    </profile>
+  </profiles>
 
 
 </project>
