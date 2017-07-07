@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
@@ -28,12 +29,18 @@ class ProjectBuilder {
     }
 
     List<TestResult> build(String... goals) {
-        EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
-            .setGoals(goals)
-            .setQuiet(false)
-            .skipTests(false)
-            .setProperties(envVariables)
-            .build();
+        final BuiltProject build = EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
+                    .setGoals(goals)
+                    .setQuiet()
+                    .skipTests(false)
+                    .setProperties(envVariables)
+                    .ignoreFailure()
+                .build();
+
+        if (build.getMavenBuildExitCode() != 0) {
+            System.out.println(build.getMavenLog());
+            throw new IllegalStateException("Maven build has failed, see logs for details");
+        }
 
         return accumulatedTestResults();
     }

@@ -16,8 +16,8 @@ public class LocalChangesMixedCriteriaSelectionExecutionFunctionalTest extends T
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {
         // given
         project.configureSmartTesting()
-            .executionOrder(NEW, AFFECTED)
-            .inMode(SELECTING)
+                .executionOrder(NEW, AFFECTED)
+                .inMode(SELECTING)
             .enable();
 
         final List<TestResult> expectedTestResults = project
