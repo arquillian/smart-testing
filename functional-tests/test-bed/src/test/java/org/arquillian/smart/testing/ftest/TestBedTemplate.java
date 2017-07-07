@@ -47,7 +47,7 @@ public abstract class TestBedTemplate {
     public static void cloneTestProject() throws IOException {
         tmp.create();
         gitRepo = tmp.getRoot().getAbsolutePath() + File.separator + "arq-core-test";
-        cloneRepository(gitRepo, "git@github.com:arquillian/smart-testing-dogfood-repo.git");
+        cloneRepository(gitRepo, "https://github.com/arquillian/smart-testing-dogfood-repo.git");
     }
 
     @Before
