@@ -17,7 +17,7 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir) {
+    public TestExecutionPlanner create(File projectDir, File testSourceDir) {
         return new FailedTestsDetector();
     }
 

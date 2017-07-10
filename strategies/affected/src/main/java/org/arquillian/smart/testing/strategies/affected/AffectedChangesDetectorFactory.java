@@ -25,7 +25,7 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir) {
+    public TestExecutionPlanner create(File projectDir, File testSourceDir) {
         // TODO logic of inspecting git changes should be some where common so it is not recalculated several times
         // TODO in fact there are at least two things to be put in a Context to be reused (git changes (main and test)
         // TODO and graph of dependencies between tests and main classes
@@ -36,7 +36,7 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
         final AllChangedFilesDetector allChangedFilesDetector = new AllChangedFilesDetector(projectDir, previousCommit, commit, "**/src/main/java/**/*.java");
         final Set<File> mainClasses = allChangedFilesDetector.getFiles();
 
-        return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir, "**/src/test/java/**/*.java"), mainClasses);
+        return new AffectedChangesDetector(new FileSystemTestClassDetector(projectDir, testSourceDir.getAbsolutePath() + "/**/*.java"), mainClasses);
     }
 
 }

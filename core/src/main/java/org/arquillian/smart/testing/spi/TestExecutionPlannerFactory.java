@@ -8,6 +8,6 @@ public interface TestExecutionPlannerFactory {
 
     boolean isFor(String name);
 
-    TestExecutionPlanner create(File projectDir);
+    TestExecutionPlanner create(File projectDir, File testSourceDir);
 
 }

@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.maven.surefire.testset.TestRequest;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -11,9 +12,11 @@ class TestExecutionPlannerLoader {
 
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
+    private final File testSourceDirectory;
 
-    TestExecutionPlannerLoader(JavaSPILoader spiLoader) {
+    TestExecutionPlannerLoader(JavaSPILoader spiLoader, File testSourceDir) {
         this.spiLoader = spiLoader;
+        this.testSourceDirectory = testSourceDir;
     }
 
     TestExecutionPlanner getPlannerForStrategy(String strategy) {
@@ -24,7 +27,7 @@ class TestExecutionPlannerLoader {
 
         if (availableStrategies.containsKey(strategy)) {
             final File projectDir = new File(System.getProperty("user.dir"));
-            return availableStrategies.get(strategy).create(projectDir);
+            return availableStrategies.get(strategy).create(projectDir, testSourceDirectory);
         }
 
         throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()

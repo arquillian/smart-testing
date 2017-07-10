@@ -23,10 +23,10 @@ public class NewFilesDetectorFactory implements TestExecutionPlannerFactory {
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir) {
+    public TestExecutionPlanner create(File projectDir, File testSourceDir) {
         final String previousCommit = System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue());
         final String commit = System.getProperty(COMMIT, HEAD);
 
-        return new NewFilesDetector(projectDir, previousCommit, commit, "**/src/test/java/**/*.java");
+        return new NewFilesDetector(projectDir, previousCommit, commit, testSourceDir.getAbsolutePath() + "/**/*.java");
     }
 }
