@@ -3,3 +3,9 @@
 image:https://travis-ci.org/arquillian/smart-testing.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/smart-testing"]
 
 We know which tests you want to run.
+
+== Test Bed
+
+Test Bed provides simple, yet powerful and expressive way of writing functional tests to verify Smart Testing tool.
+
+For the details see https://github.com/arquillian/smart-testing/wiki/Test-Bed.
