@@ -3,12 +3,14 @@ package org.arquillian.smart.testing.ftest.testbed.project;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.arquillian.smart.testing.ftest.testbed.configuration.Criteria;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Mode;
+import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
 
 public class ProjectConfigurator {
 
-    private Criteria[] criteria;
+    private Strategy[] strategies;
     private Mode mode;
 
     private final Project project;
@@ -19,16 +21,16 @@ public class ProjectConfigurator {
         this.root = root;
     }
 
-    Criteria[] getCriteria() {
-        return criteria;
+    Strategy[] getStrategies() {
+        return strategies;
     }
 
     Mode getMode() {
         return mode;
     }
 
-    public ProjectConfigurator executionOrder(Criteria ... criteria) {
-        this.criteria = criteria;
+    public ProjectConfigurator executionOrder(Strategy... strategies) {
+        this.strategies = strategies;
         return this;
     }
 
@@ -39,10 +41,10 @@ public class ProjectConfigurator {
 
     public Project enable() {
         final Path rootPom = Paths.get(root.toString(), File.separator, "pom.xml");
-        final MavenConfigurator mavenConfigurator = new MavenConfigurator(rootPom, this);
-        mavenConfigurator.addRequiredDependencies();
-        mavenConfigurator.configureTestRunner();
-        mavenConfigurator.update();
+        final MavenExtensionRegisterer mavenExtensionRegisterer = new MavenExtensionRegisterer(rootPom, this);
+        mavenExtensionRegisterer.addSmartTestingExtension();
+        final String strategies = Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
+        this.project.buildOptions().withSystemProperties("smart.testing", strategies, "smart.testing.mode", getMode().getName()).configure();
         return this.project;
     }
 

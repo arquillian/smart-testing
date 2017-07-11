@@ -67,7 +67,7 @@ public class ClassFileIndex {
 
     public Set<JavaClass> addTestJavaFiles(Collection<File> testJavaFiles) {
         // First update class index
-        List<String> testClassesNames = new ArrayList<String>();
+        List<String> testClassesNames = new ArrayList<>();
         for (File testJavaFile : testJavaFiles) {
             String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile, globPatterns));
             if (changedTestClassClassname != null) {
@@ -166,7 +166,6 @@ public class ClassFileIndex {
     private void findParents(JavaClass jclass, Set<String> changedParents) {
         for (JavaClass parent : getParents(jclass)) {
             if (changedParents.add(parent.getName())) {
-
                 logger.finest("%s test has been added because it depends on %s", parent.getName(), jclass.getName());
                 findParents(parent, changedParents);
             }

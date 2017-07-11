@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -12,10 +13,11 @@ class TestExecutionPlannerLoader {
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
     private final String[] globPatterns;
+    private final TestVerifier verifier;
 
-    // TODO refactor as inclusion/exclusion fix https://github.com/arquillian/smart-testing/issues/8
-    TestExecutionPlannerLoader(JavaSPILoader spiLoader, String[] globPatterns) {
+    TestExecutionPlannerLoader(JavaSPILoader spiLoader, TestVerifier verifier, String[] globPatterns) {
         this.spiLoader = spiLoader;
+        this.verifier = verifier;
         this.globPatterns = globPatterns;
     }
 
@@ -27,7 +29,7 @@ class TestExecutionPlannerLoader {
 
         if (availableStrategies.containsKey(strategy)) {
             final File projectDir = new File(System.getProperty("user.dir"));
-            return availableStrategies.get(strategy).create(projectDir, globPatterns);
+            return availableStrategies.get(strategy).create(projectDir, verifier, globPatterns);
         }
 
         throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()

@@ -14,9 +14,6 @@
 
   <properties>
     <version.shrinkwrap-maven-embedded>3.0.0-alpha-4</version.shrinkwrap-maven-embedded>
-    <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
-    <surefire.fork.count>4</surefire.fork.count>
-    <surefire.thread.count>8</surefire.thread.count>
   </properties>
 
   <dependencies>
@@ -62,20 +59,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>${version.surefire}</version>
-        <configuration>
-          <forkCount>${surefire.fork.count}</forkCount>
-          <threadCount>${surefire.thread.count}</threadCount>
-          <reuseForks>true</reuseForks>
-          <argLine>-Xmx2048m</argLine>
-          <parallel>classesAndMethods</parallel>
-        </configuration>
-
-      </plugin>
-      
       <!-- This artifact shouldn't be deployed to maven repository -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -86,16 +69,5 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>travis</id>
-      <properties>
-        <surefire.fork.count>2</surefire.fork.count>
-        <surefire.thread.count>2</surefire.thread.count>
-      </properties>
-    </profile>
-  </profiles>
-
 
 </project>

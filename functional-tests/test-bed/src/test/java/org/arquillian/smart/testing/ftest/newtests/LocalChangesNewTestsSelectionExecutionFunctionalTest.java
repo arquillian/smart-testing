@@ -5,8 +5,8 @@ import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.NEW;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBedTemplate {
@@ -23,7 +23,10 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.buildOptions()
+            //.withRemoteSurefireDebugging()
+            .quiet(false)
+        .configure().build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -46,7 +49,9 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.buildOptions()
+                .quiet(false)
+        .configure().build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

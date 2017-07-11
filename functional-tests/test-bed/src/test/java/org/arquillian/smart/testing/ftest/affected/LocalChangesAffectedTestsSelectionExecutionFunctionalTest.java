@@ -5,7 +5,7 @@ import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.AFFECTED;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
