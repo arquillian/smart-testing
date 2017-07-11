@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.util.Arrays;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
@@ -13,5 +14,12 @@ public class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         System.out.println(">>>> Hello smart testers!");
+        final Configuration configuration = Configuration.read();
+
+        System.out.println(configuration.getMode());
+        System.out.println(Arrays.toString(configuration.getStrategies()));
+        // read --smart-testing new,changed
+        // --location
+
     }
 }

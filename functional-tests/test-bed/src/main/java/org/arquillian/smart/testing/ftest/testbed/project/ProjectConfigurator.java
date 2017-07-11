@@ -40,6 +40,8 @@ public class ProjectConfigurator {
     public Project enable() {
         final Path rootPom = Paths.get(root.toString(), File.separator, "pom.xml");
         final MavenConfigurator mavenConfigurator = new MavenConfigurator(rootPom, this);
+        mavenConfigurator.addSmartTestingExtension();
+        // this will be alternated by extension
         mavenConfigurator.addRequiredDependencies();
         mavenConfigurator.configureTestRunner();
         mavenConfigurator.update();

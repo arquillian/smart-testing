@@ -6,10 +6,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -24,13 +28,34 @@ import static java.util.Arrays.asList;
 class MavenConfigurator {
 
     private static final List<String> APPLICABLE_PLUGINS =  asList("maven-surefire-plugin", "maven-failsafe-plugin");
+    private static final String EXTENSIONS_XML = "extensions.xml";
+    private static final String VERSION_PLACEHOLDER = "${version}";
 
     private final Model model;
     private final ProjectConfigurator projectConfigurator;
+    private final Path rootPom;
 
     MavenConfigurator(Path rootPom, ProjectConfigurator projectConfigurator) {
+        this.rootPom = rootPom;
         this.model = readPom(rootPom);
         this.projectConfigurator = projectConfigurator;
+    }
+
+    void addSmartTestingExtension() {
+        final Path projectRoot = rootPom.getParent();
+        try {
+            final Path extensionFolder = Files.createDirectories(projectRoot.resolve(".mvn"));
+            final InputStream extensionFile =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(EXTENSIONS_XML);
+
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(extensionFile))) {
+                final String extensionTemplate = br.lines().collect(Collectors.joining(System.lineSeparator()));
+                final String extensionContent = extensionTemplate.replace(VERSION_PLACEHOLDER, Project.SMART_TESTING_VERSION);
+                Files.write(extensionFolder.resolve(EXTENSIONS_XML), extensionContent.getBytes());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed registering smart-testing extension locally in .mvn folder", e);
+        }
     }
 
     void addRequiredDependencies() {

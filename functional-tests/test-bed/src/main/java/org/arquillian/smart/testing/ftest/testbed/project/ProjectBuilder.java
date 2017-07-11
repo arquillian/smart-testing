@@ -31,7 +31,7 @@ class ProjectBuilder {
     List<TestResult> build(String... goals) {
         final BuiltProject build = EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
                     .setGoals(goals)
-                    .setQuiet()
+                    .setQuiet(false)
                     .skipTests(false)
                     .setProperties(envVariables)
                     .ignoreFailure()
