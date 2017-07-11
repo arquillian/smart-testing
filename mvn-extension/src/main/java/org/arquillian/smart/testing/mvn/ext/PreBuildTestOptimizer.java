@@ -4,6 +4,7 @@ import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
+import org.arquillian.smart.testing.Configuration;
 import org.codehaus.plexus.component.annotations.Component;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,

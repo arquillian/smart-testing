@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing;
 
 public class Configuration {
 
@@ -13,9 +13,13 @@ public class Configuration {
         Configuration configuration = new Configuration();
         configuration.strategies = System.getProperty(SMART_TESTING, "").toLowerCase()
             .split("\\s*,\\s*");
-        configuration.mode = System.getProperty(SMART_TESTING_MODE, "selecting");
+        configuration.mode = System.getProperty(SMART_TESTING_MODE);
 
         return configuration;
+    }
+
+    public boolean isModeSet() {
+        return this.mode != null;
     }
 
     public String getMode() {

@@ -13,6 +13,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.arquillian.smart.testing.Configuration;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 class MavenProjectConfigurator {

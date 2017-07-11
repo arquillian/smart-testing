@@ -9,6 +9,7 @@ import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 // TODO figure out how to inject our services here
@@ -28,15 +29,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private TestsToRun getTestsToRun() {
         final TestsToRun testsToRun = (TestsToRun) getSuites();
-
-        final String strategiesParam = System.getProperty("smart-testing");
-        final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
+        final Configuration configuration = Configuration.read();
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(new JavaSPILoader(), getGlobPatterns());
 
         return new TestStrategyApplier(testsToRun,
-            testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(Arrays.asList(strategies));
+            testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(configuration);
     }
 
     private String[] getGlobPatterns() {

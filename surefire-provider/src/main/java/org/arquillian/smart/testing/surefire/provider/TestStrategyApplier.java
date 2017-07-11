@@ -1,10 +1,12 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
@@ -22,10 +24,10 @@ class TestStrategyApplier {
         this.testClassLoader = testClassLoader;
     }
 
-    TestsToRun apply(List<String> strategies) {
-        final Set<Class<?>> selectedTests = selectTests(strategies);
+    TestsToRun apply(Configuration configuration) {
+        final Set<Class<?>> selectedTests = selectTests(configuration);
 
-        if (isUsageSet() && isSelectingMode()) {
+        if (isUsageSet(configuration) && isSelectingMode(configuration)) {
             return new TestsToRun(selectedTests);
         } else {
             final Set<Class<?>> orderedTests = new LinkedHashSet<>(selectedTests);
@@ -34,15 +36,16 @@ class TestStrategyApplier {
         }
     }
 
-    private boolean isSelectingMode() {
-        return RunMode.SELECTING.name().equalsIgnoreCase(System.getProperty("smart-testing-mode"));
+    private boolean isSelectingMode(Configuration configuration) {
+        return RunMode.SELECTING.name().equalsIgnoreCase(configuration.getMode());
     }
 
-    private boolean isUsageSet() {
-        return System.getProperty("smart-testing-mode") != null;
+    private boolean isUsageSet(Configuration configuration) {
+        return configuration.isModeSet();
     }
 
-    private Set<Class<?>> selectTests(List<String> strategies) {
+    private Set<Class<?>> selectTests(Configuration configuration) {
+        final List<String> strategies = Arrays.asList(configuration.getStrategies());
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : strategies) {
 
@@ -61,7 +64,7 @@ class TestStrategyApplier {
             orderedTests.addAll(tests);
         }
         logger.info("Applied strategies: %s", strategies);
-        logger.info("Applied usage: [%s]", isSelectingMode() ? "selecting" : "ordering");
+        logger.info("Applied usage: [%s]", isSelectingMode(configuration) ? "selecting" : "ordering");
         return orderedTests;
     }
 

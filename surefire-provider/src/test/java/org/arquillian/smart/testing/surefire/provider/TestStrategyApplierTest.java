@@ -1,11 +1,11 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +35,8 @@ public class TestStrategyApplierTest {
     @Test
     public void should_return_tests_only_from_strategies_when_filtering_mode_configured() {
         // given
-        System.setProperty("smart-testing-mode", "selecting");
+        System.setProperty(Configuration.SMART_TESTING_MODE, "selecting");
+        System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
@@ -51,8 +52,9 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
+        final Configuration configuration = Configuration.read();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, providerParameters.getTestClassLoader());
-        final TestsToRun realTestPlanning = testStrategyApplier.apply(Arrays.asList("static"));
+        final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
         assertThat(realTestPlanning.getLocatedClasses())
@@ -65,7 +67,8 @@ public class TestStrategyApplierTest {
     public void should_return_tests_ordered_by_default() {
 
         // given
-        System.setProperty("smart-testing-mode", "ordering");
+        System.setProperty(Configuration.SMART_TESTING, "static");
+
         final Set<Class<?>> defaultTestsToRun = new LinkedHashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
         defaultTestsToRun.add(TestStrategyApplierTest.class);
@@ -81,8 +84,9 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
+        final Configuration configuration = Configuration.read();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
-        final TestsToRun realTestPlanning = testStrategyApplier.apply(Arrays.asList("static"));
+        final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
         assertThat(realTestPlanning.getLocatedClasses())
@@ -94,13 +98,14 @@ public class TestStrategyApplierTest {
     @Test
     public void should_not_return_test_from_strategies_if_it_is_not_in_class_path() {
         // given
+        System.setProperty(Configuration.SMART_TESTING_MODE, "selecting");
+        System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
         defaultTestsToRun.add(ProviderParameterParserTest.class);
         defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
-        System.setProperty("smart-testing-mode", "selecting");
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
         final Set<String> strategyTests = new LinkedHashSet<>();
@@ -110,9 +115,9 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
-
+        final Configuration configuration = Configuration.read();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
-        final TestsToRun realTestPlanning = testStrategyApplier.apply(Arrays.asList("static"));
+        final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
 
