@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -23,7 +24,7 @@ import static java.util.Arrays.asList;
 
 class MavenConfigurator {
 
-    private static final List<String> APPLICABLE_PLUGINS =  asList("maven-surefire-plugin", "maven-failsafe-plugin");
+    private static final List<String> APPLICABLE_PLUGINS = asList("maven-surefire-plugin", "maven-failsafe-plugin");
 
     private final Model model;
     private final ProjectConfigurator projectConfigurator;
@@ -56,8 +57,71 @@ class MavenConfigurator {
                 final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
                 properties.addChild(defineUsageMode());
                 properties.addChild(defineTestSelectionCriteria());
+                final Xpp3Dom includes = getOrCreateIncludesChild(configurationDom);
+                addIncludePattern(includes);
+                final Xpp3Dom excludes = getOrCreateExcludesChild(configurationDom);
+                addExcludePattern(excludes);
             }
         }
+    }
+
+    private void addIncludePattern(Xpp3Dom includes) {
+        final String[] projectConfiguratorIncludes = projectConfigurator.getIncludes();
+        if (projectConfiguratorIncludes != null) {
+            Arrays.stream(projectConfiguratorIncludes).forEach(pattern -> {
+                final boolean matched =
+                    Arrays.stream(includes.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
+                if (!matched) {
+                    includes.addChild(defineInclude(pattern));
+                }
+            });
+        }
+    }
+
+    private void addExcludePattern(Xpp3Dom excludes) {
+        final String[] projectConfiguratorExcludes = projectConfigurator.getExcludes();
+        if (projectConfiguratorExcludes != null) {
+
+            Arrays.stream(projectConfiguratorExcludes).forEach(pattern -> {
+                final boolean matched =
+                    Arrays.stream(excludes.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
+                if (!matched) {
+                    excludes.addChild(defineExclude(pattern));
+                }
+            });
+        }
+    }
+
+    private Xpp3Dom defineInclude(String pattern) {
+        final Xpp3Dom include = new Xpp3Dom("include");
+        include.setValue(pattern);
+
+        return include;
+    }
+
+    private Xpp3Dom defineExclude(String pattern) {
+        final Xpp3Dom exclude = new Xpp3Dom("exclude");
+        exclude.setValue(pattern);
+
+        return exclude;
+    }
+
+    private Xpp3Dom getOrCreateIncludesChild(Xpp3Dom configurationDom) {
+        Xpp3Dom includes = configurationDom.getChild("includes");
+        if (includes == null) {
+            includes = new Xpp3Dom("includes");
+            configurationDom.addChild(includes);
+        }
+        return includes;
+    }
+
+    private Xpp3Dom getOrCreateExcludesChild(Xpp3Dom configurationDom) {
+        Xpp3Dom excludes = configurationDom.getChild("excludes");
+        if (excludes == null) {
+            excludes = new Xpp3Dom("excludes");
+            configurationDom.addChild(excludes);
+        }
+        return excludes;
     }
 
     void update() {
