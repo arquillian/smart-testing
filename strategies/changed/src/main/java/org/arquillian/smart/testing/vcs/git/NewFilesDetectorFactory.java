@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
-import org.arquillian.smart.testing.GitRunnerProperties;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 

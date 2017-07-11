@@ -49,7 +49,7 @@ public class AllChangedFilesDetector extends GitChangesDetector {
     protected boolean isMatching(DiffEntry diffEntry) {
         return (DiffEntry.ChangeType.MODIFY == diffEntry.getChangeType()
             || DiffEntry.ChangeType.ADD == diffEntry.getChangeType())
-            && matchPatterns(diffEntry.getNewPath());
+            && matchPatterns(new File(super.repoRoot, diffEntry.getNewPath()).getAbsolutePath());
     }
 }
 
