@@ -43,8 +43,8 @@ public class Project implements AutoCloseable {
         this.repository.close();
     }
 
-    public Project withEnvVariables(String ... envVariablesPairs) {
-        projectBuilder.withEnvVariables(envVariablesPairs);
+    public Project withProperties(String ... propertiesPairs) {
+        projectBuilder.withProperties(propertiesPairs);
         return this;
     }
 

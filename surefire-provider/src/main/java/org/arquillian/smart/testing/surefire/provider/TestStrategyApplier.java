@@ -4,7 +4,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
@@ -16,14 +15,11 @@ class TestStrategyApplier {
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
     private TestsToRun testsToRun;
-    private ProviderParametersParser paramsProvider;
 
-    TestStrategyApplier(TestsToRun testsToRun, ProviderParametersParser paramsProvider,
-        TestExecutionPlannerLoader testExecutionPlannerLoader, ProviderParameters bootParams) {
+    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader) {
         this.testsToRun = testsToRun;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
-        this.paramsProvider = paramsProvider;
-        this.testClassLoader = bootParams.getTestClassLoader();
+        this.testClassLoader = testClassLoader;
     }
 
     TestsToRun apply(List<String> strategies) {
@@ -39,11 +35,11 @@ class TestStrategyApplier {
     }
 
     private boolean isSelectingMode() {
-        return RunMode.SELECTING.name().equalsIgnoreCase(paramsProvider.getProperty(USAGE));
+        return RunMode.SELECTING.name().equalsIgnoreCase(System.getProperty("smart-testing-mode"));
     }
 
     private boolean isUsageSet() {
-        return paramsProvider.containsProperty(USAGE);
+        return System.getProperty("smart-testing-mode") != null;
     }
 
     private Set<Class<?>> selectTests(List<String> strategies) {

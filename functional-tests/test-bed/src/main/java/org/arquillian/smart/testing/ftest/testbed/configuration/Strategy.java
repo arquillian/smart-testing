@@ -1,11 +1,11 @@
 package org.arquillian.smart.testing.ftest.testbed.configuration;
 
-public enum Mode {
-    SELECTING,
-    ORDERING;
-
+public enum Strategy {
+    AFFECTED,
+    NEW;
 
     public String getName() {
-        return name().toLowerCase();
+        return this.name().toLowerCase();
     }
+
 }

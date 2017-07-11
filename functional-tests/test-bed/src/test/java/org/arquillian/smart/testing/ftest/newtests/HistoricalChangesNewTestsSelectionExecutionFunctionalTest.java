@@ -5,7 +5,7 @@ import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.NEW;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +23,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
             .applyAsCommits("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.withEnvVariables("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
+        final List<TestResult> actualTestResults = project.withProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -47,7 +47,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
 
         // when
         final List<TestResult> actualTestResults = project
-            .withEnvVariables("git.last.commits", "3")
+            .withProperties("git.last.commits", "3")
             .build();
 
         // then

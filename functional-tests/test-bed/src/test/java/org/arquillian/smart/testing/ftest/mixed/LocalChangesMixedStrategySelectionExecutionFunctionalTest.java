@@ -5,12 +5,12 @@ import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.AFFECTED;
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.NEW;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalChangesMixedCriteriaSelectionExecutionFunctionalTest extends TestBedTemplate {
+public class LocalChangesMixedStrategySelectionExecutionFunctionalTest extends TestBedTemplate {
 
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {

@@ -29,15 +29,14 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private TestsToRun getTestsToRun() {
         final TestsToRun testsToRun = (TestsToRun) getSuites();
 
-        final String strategiesParam = paramParser.getProperty("strategies");
-
+        final String strategiesParam = System.getProperty("smart-testing");
         final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(new JavaSPILoader(), getGlobPatterns());
 
-        return new TestStrategyApplier(testsToRun, paramParser,
-            testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));
+        return new TestStrategyApplier(testsToRun,
+            testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(Arrays.asList(strategies));
     }
 
     private String[] getGlobPatterns() {

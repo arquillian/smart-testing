@@ -22,7 +22,7 @@ class ProjectBuilder {
     private static final String TEST_REPORT_PREFIX = "TEST-";
 
     private final Path root;
-    private final Properties envVariables = new Properties();
+    private final Properties properties = new Properties();
 
     ProjectBuilder(Path root) {
         this.root = root;
@@ -30,12 +30,15 @@ class ProjectBuilder {
 
     List<TestResult> build(String... goals) {
         final BuiltProject build = EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
+                    //.setMavenOpts("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
                     .setGoals(goals)
-                    .setQuiet(false)
+                    .setQuiet()
                     .skipTests(false)
-                    .setProperties(envVariables)
+                    .setProperties(properties)
                     .ignoreFailure()
                 .build();
+
+        // TODO debug option
 
         if (build.getMavenBuildExitCode() != 0) {
             System.out.println(build.getMavenLog());
@@ -45,7 +48,7 @@ class ProjectBuilder {
         return accumulatedTestResults();
     }
 
-    ProjectBuilder withEnvVariables(String ... envVariablesPairs) {
+    ProjectBuilder withProperties(String ... envVariablesPairs) {
         if (envVariablesPairs.length % 2 != 0) {
             throw new IllegalArgumentException("Expecting even amount of variable name - value pairs to be passed. Got "
                 + envVariablesPairs.length
@@ -54,7 +57,7 @@ class ProjectBuilder {
         }
 
         for (int i = 0; i < envVariablesPairs.length; i += 2) {
-            this.envVariables.put(envVariablesPairs[i], envVariablesPairs[i + 1]);
+            this.properties.put(envVariablesPairs[i], envVariablesPairs[i + 1]);
         }
 
         return this;

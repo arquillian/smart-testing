@@ -11,6 +11,11 @@
 
   <artifactId>smart-testing-maven-lifecycle-extension</artifactId>
 
+  <properties>
+    <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
+  </properties>
+
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -18,6 +23,25 @@
       <version>${version.maven}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-rules</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -30,6 +54,29 @@
           <execution>
             <goals>
               <goal>generate-metadata</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${version.maven.plugin.shade}</version>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <minimizeJar>true</minimizeJar>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <shadedClassifierName>shaded</shadedClassifierName>
+          <artifactSet>
+            <excludes>
+              <exclude>org.slf4j:*</exclude>
+            </excludes>
+          </artifactSet>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
             </goals>
           </execution>
         </executions>

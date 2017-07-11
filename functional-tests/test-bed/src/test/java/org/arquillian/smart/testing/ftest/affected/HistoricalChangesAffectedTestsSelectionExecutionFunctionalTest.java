@@ -5,7 +5,7 @@ import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.AFFECTED;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +23,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project.withEnvVariables("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
+        final List<TestResult> actualTestResults = project.withProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -43,7 +43,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
 
         // when
         final List<TestResult> actualTestResults = project
-            .withEnvVariables("git.last.commits", "2")
+            .withProperties("git.last.commits", "2")
             .build();
 
         // then
