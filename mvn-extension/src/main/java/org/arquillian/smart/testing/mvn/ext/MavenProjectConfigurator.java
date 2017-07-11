@@ -93,7 +93,7 @@ class MavenProjectConfigurator {
 
     private Xpp3Dom defineUsageMode() {
         final Xpp3Dom usage = new Xpp3Dom("usage");
-        usage.setValue(configuration.getMode());
+        usage.setValue(configuration.getMode().getName());
         return usage;
     }
 

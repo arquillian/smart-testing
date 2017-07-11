@@ -12,7 +12,6 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
 
-    static final String USAGE = "usage";
     private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
@@ -27,21 +26,13 @@ class TestStrategyApplier {
     TestsToRun apply(Configuration configuration) {
         final Set<Class<?>> selectedTests = selectTests(configuration);
 
-        if (isUsageSet(configuration) && isSelectingMode(configuration)) {
+        if (configuration.isSelectingMode()) {
             return new TestsToRun(selectedTests);
         } else {
             final Set<Class<?>> orderedTests = new LinkedHashSet<>(selectedTests);
             testsToRun.iterator().forEachRemaining(orderedTests::add);
             return new TestsToRun(orderedTests);
         }
-    }
-
-    private boolean isSelectingMode(Configuration configuration) {
-        return RunMode.SELECTING.name().equalsIgnoreCase(configuration.getMode());
-    }
-
-    private boolean isUsageSet(Configuration configuration) {
-        return configuration.isModeSet();
     }
 
     private Set<Class<?>> selectTests(Configuration configuration) {
@@ -64,7 +55,7 @@ class TestStrategyApplier {
             orderedTests.addAll(tests);
         }
         logger.info("Applied strategies: %s", strategies);
-        logger.info("Applied usage: [%s]", isSelectingMode(configuration) ? "selecting" : "ordering");
+        logger.info("Applied usage: [%s]", configuration.getMode().getName());
         return orderedTests;
     }
 
