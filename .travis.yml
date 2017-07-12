@@ -4,4 +4,4 @@ jdk:
   - oraclejdk8
 
 script:
-  - mvn clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"
+  - ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"
