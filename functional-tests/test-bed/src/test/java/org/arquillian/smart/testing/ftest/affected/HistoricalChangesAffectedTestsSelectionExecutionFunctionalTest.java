@@ -23,7 +23,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project.withEnvVariables("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
+        final List<TestResult> actualTestResults = project
+            .buildOptions()
+                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                .configure()
+            .build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -43,7 +47,9 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
 
         // when
         final List<TestResult> actualTestResults = project
-            .withEnvVariables("git.last.commits", "2")
+            .buildOptions()
+                .withSystemProperties("git.last.commits", "2")
+                .configure()
             .build();
 
         // then

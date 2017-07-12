@@ -49,12 +49,6 @@
       <version>${version.jgit}</version>
     </dependency>
     <dependency>
-      <groupId>org.arquillian.spacelift</groupId>
-      <artifactId>arquillian-spacelift</artifactId>
-      <version>${version.arquillian.spacelift}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
@@ -62,7 +56,7 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
-      <version>3.3.9</version>
+      <version>${version.maven}</version>
     </dependency>
   </dependencies>
 
