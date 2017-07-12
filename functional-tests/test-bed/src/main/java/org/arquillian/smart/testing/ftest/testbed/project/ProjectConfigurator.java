@@ -44,7 +44,7 @@ public class ProjectConfigurator {
         final MavenExtensionRegisterer mavenExtensionRegisterer = new MavenExtensionRegisterer(rootPom, this);
         mavenExtensionRegisterer.addSmartTestingExtension();
         final String strategies = Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
-        this.project.withProperties("smart-testing", strategies, "smart-testing-mode", getMode().getName());
+        this.project.buildOptions().withSystemProperties("smart-testing", strategies, "smart-testing-mode", getMode().getName()).configure();
         return this.project;
     }
 

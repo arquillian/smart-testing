@@ -23,7 +23,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
             .applyAsCommits("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.withProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~").build();
+        final List<TestResult> actualTestResults = project
+            .buildOptions()
+                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                .configure()
+            .build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -47,7 +51,9 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
 
         // when
         final List<TestResult> actualTestResults = project
-            .withProperties("git.last.commits", "3")
+            .buildOptions()
+                .withSystemProperties("git.last.commits", "3")
+                .configure()
             .build();
 
         // then

@@ -7,9 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.spacelift.Spacelift;
-import org.arquillian.spacelift.process.CommandBuilder;
-import org.arquillian.spacelift.task.os.CommandTool;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -47,9 +46,8 @@ public abstract class TestBedTemplate {
     protected Project project;
 
     @BeforeClass
-    public static void cloneTestProject() throws IOException {
+    public static void cloneTestProject() throws Exception {
         TMP_FOLDER.create();
-        System.out.println(REPO_NAME);
         GIT_REPO_FOLDER = TMP_FOLDER.getRoot().getAbsolutePath() + File.separator + REPO_NAME;
         cloneRepository(GIT_REPO_FOLDER, ORIGIN);
     }
@@ -74,6 +72,7 @@ public abstract class TestBedTemplate {
         for (int i = 0; i < sources.size(); i++) {
             Files.copy(sources.get(i), targets.get(i));
         }
+        System.out.println("Cloned test repository to: " + target);
         return target;
     }
 
@@ -81,11 +80,14 @@ public abstract class TestBedTemplate {
         return GIT_REPO_FOLDER + "_" + getClass().getSimpleName() + "_" + name.getMethodName();
     }
 
-    static void cloneRepository(String repoTarget, String repo) {
-        Spacelift.task(CommandTool.class)
-            .command(new CommandBuilder("git")
-                .parameters("clone", repo, "-b", "master",
-                    repoTarget).build())
-            .execute().await();
+    static void cloneRepository(String repoTarget, String repo) throws GitAPIException {
+        Git.cloneRepository()
+                .setURI(repo)
+                .setDirectory(new File(repoTarget))
+                .setCloneAllBranches(true)
+            .call()
+                .checkout()
+                    .setName("master")
+            .call();
     }
 }

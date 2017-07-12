@@ -23,7 +23,6 @@ public class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
         final Configuration configuration = Configuration.read();
         configureExtension(session, configuration);
-
         final List<TestPlanPersister> testPlanPersisters = Arrays.asList(new LocalTestPlanPersister()); // TODO later SPI ?
         final File projectDir = session.getCurrentProject().getBasedir();
         final String[] strategies = configuration.getStrategies();
