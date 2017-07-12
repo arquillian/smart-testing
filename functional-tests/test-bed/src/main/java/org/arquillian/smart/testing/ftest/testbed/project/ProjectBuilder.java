@@ -15,6 +15,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
 
+import static java.lang.System.getProperty;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
@@ -23,17 +24,21 @@ public class ProjectBuilder {
 
     private static final String TEST_REPORT_PREFIX = "TEST-";
     private static final String MVN_DEBUG_MODE = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=%s,address=%s";
-    private static final int DEFAULT_DEBUG_PORT = 5005;
+    private static final int DEFAULT_DEBUG_PORT = 8000;
+    private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
     private final Path root;
     private final Project project;
     private final Properties systemProperties = new Properties();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
+    private int surefireRemotePort = DEFAULT_SUREFIRE_DEBUG_PORT;
     private boolean quietMode = true;
     private boolean enableRemoteDebugging = false;
     private boolean suspend = true;
     private boolean mvnDebugOutput;
+    private boolean enableSurefireRemoteDebugging = false;
+    private boolean surefireRemoteDebuggingEnabled;
 
     ProjectBuilder(Path root, Project project) {
         this.root = root;
@@ -59,6 +64,20 @@ public class ProjectBuilder {
     public ProjectBuilder withRemoteDebugging(int port, boolean suspend) {
         this.enableRemoteDebugging = true;
         this.remotePort = port;
+        this.suspend = suspend;
+        return this;
+    }
+
+    public ProjectBuilder withRemoteSurefireDebugging() {
+        return withRemoteSurefireDebugging(DEFAULT_SUREFIRE_DEBUG_PORT, true);
+    }
+
+    public ProjectBuilder withRemoteSurefireDebugging(int surefireRemotePort) {
+        return withRemoteSurefireDebugging(surefireRemotePort, true);
+    }
+
+    public ProjectBuilder withRemoteSurefireDebugging(int surefireRemotePort, boolean suspend) {
+        this.surefireRemotePort = surefireRemotePort;
         this.suspend = suspend;
         return this;
     }
@@ -96,11 +115,7 @@ public class ProjectBuilder {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
 
-        if (isRemoteDebugEnabled()) {
-            final String debugOptions = String.format(MVN_DEBUG_MODE, shouldSuspend(), getRemotePort());
-            System.out.println(">>> Executing build with debug options: " + debugOptions);
-            embeddedMaven.setMavenOpts(debugOptions);
-        }
+        enableDebugOptions(embeddedMaven);
 
         final BuiltProject build = embeddedMaven
                     .setGoals(goals)
@@ -117,6 +132,20 @@ public class ProjectBuilder {
         }
 
         return accumulatedTestResults();
+    }
+
+    private void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
+        if (isRemoteDebugEnabled()) {
+            final String debugOptions = String.format(MVN_DEBUG_MODE, shouldSuspend(), getRemotePort());
+            System.out.println(">>> Executing build with debug options: " + debugOptions);
+            embeddedMaven.setMavenOpts(debugOptions);
+        }
+
+        if (isSurefireRemoteDebuggingEnabled()) {
+            this.systemProperties.put("maven.surefire.debug",
+                String.format("Xdebug -Xrunjdwp:transport=dt_socket,server=y,"
+                    + "suspend=%s,address=%s -Xnoagent -Djava.compiler=NONE", shouldSuspend(), getSurefireDebugPort()));
+        }
     }
 
     private List<TestResult> accumulatedTestResults() {
@@ -143,20 +172,29 @@ public class ProjectBuilder {
     }
 
     private boolean isRemoteDebugEnabled() {
-        return Boolean.valueOf(System.getProperty("test.bed.mvn.remote.debug", Boolean.toString(this.enableRemoteDebugging)));
+        return Boolean.valueOf(getProperty("test.bed.mvn.remote.debug", Boolean.toString(this.enableRemoteDebugging)));
+    }
+
+    boolean isSurefireRemoteDebuggingEnabled() {
+        return Boolean.valueOf(getProperty("test.bed.mvn.surefire.remote.debug", Boolean.toString(this.enableSurefireRemoteDebugging)));
     }
 
     private String shouldSuspend() {
         final Boolean suspend =
-            Boolean.valueOf(System.getProperty("test.bed.mvn.remote.debug.suspend", Boolean.toString(this.suspend)));
+            Boolean.valueOf(getProperty("test.bed.mvn.remote.debug.suspend", Boolean.toString(this.suspend)));
         return suspend ? "y" : "n";
     }
 
     int getRemotePort() {
-        return Integer.valueOf(System.getProperty("test.bed.mvn.remote.debug.port", Integer.toString(this.remotePort)));
+        return Integer.valueOf(getProperty("test.bed.mvn.remote.debug.port", Integer.toString(this.remotePort)));
     }
 
     boolean isMavenDebugOutputEnabled() {
-        return Boolean.valueOf(System.getProperty("test.bed.mvn.debug.output", Boolean.toString(this.mvnDebugOutput)));
+        return Boolean.valueOf(getProperty("test.bed.mvn.debug.output", Boolean.toString(this.mvnDebugOutput)));
+    }
+
+    int getSurefireDebugPort() {
+        return Integer.valueOf(
+            getProperty("test.bed.mvn.surefire.remote.debug.port", Integer.toString(this.surefireRemotePort)));
     }
 }
