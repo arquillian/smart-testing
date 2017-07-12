@@ -28,6 +28,30 @@
       <version>${project.version}</version>
     </dependency>
 
+    <!--
+      This explicit include prevents us from adding new implementations dynamically,
+      for this purpose we should probably try something like Chameleon does - automatically pulling in all
+      the jars based on meta-file (e.g.json).
+       - Adding jar as below as an <extension> in <extensions.xml> does not work
+       - TODO: which classloader is in use for Maven Extensions?ow JDK 9 would affect that?
+    -->
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-strategy-affected</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-strategy-changed</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>smart-testing-strategy-failed</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- -->
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

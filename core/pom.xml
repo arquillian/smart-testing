@@ -9,6 +9,10 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <properties>
+    <version.javaparser>3.2.7</version.javaparser>
+  </properties>
+  
   <artifactId>smart-testing-core</artifactId>
 
   <dependencies>
@@ -23,6 +27,23 @@
     <dependency>
       <groupId>com.github.stefanbirkner</groupId>
       <artifactId>system-rules</artifactId>
+    </dependency>
+    <!-- To be removed in the future when SCM is a Java SPI -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${version.jgit}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.javaparser</groupId>
+      <artifactId>javaparser-core</artifactId>
+      <version>${version.javaparser}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.spacelift</groupId>
+      <artifactId>arquillian-spacelift</artifactId>
+      <version>${version.arquillian.spacelift}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

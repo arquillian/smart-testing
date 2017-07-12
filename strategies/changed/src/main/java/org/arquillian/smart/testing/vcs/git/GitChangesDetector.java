@@ -57,6 +57,11 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return extractEntries(diffs, this.repoRoot);
     }
 
+    public Set<File> getFiles() {
+        final List<DiffEntry> diffs = gitChangeResolver.diff(previous, head);
+        return extractFiles(diffs, this.repoRoot);
+    }
+
     public List<String> getLocalTests(Set<String> files) {
         final List<String> localTests = files.stream()
             .filter(this::matchPatterns)
@@ -75,15 +80,17 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
         return localTests;
     }
 
-    public Set<File> getFiles() {
-        final List<DiffEntry> diffs = gitChangeResolver.diff(previous, head);
-        return extractFiles(diffs, this.repoRoot);
-    }
-
     private Set<File> extractFiles(List<DiffEntry> diffs, File repoRoot) {
         return diffs.stream()
             .filter(this::isMatching)
             .map(diffEntry -> new File(repoRoot, diffEntry.getNewPath()))
+            .collect(Collectors.toSet());
+    }
+
+    public Set<File> filterLocalFiles(Set<String> localFiles) {
+        return localFiles.stream()
+            .filter(this::matchPatterns)
+            .map(file -> new File(repoRoot, file))
             .collect(Collectors.toSet());
     }
 
@@ -100,13 +107,6 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
             })
             .peek(test -> logger.finest("%s test added because it has been added or changed between %s and %s Git commit",
                 test, previous, head)).collect(Collectors.toList());
-    }
-
-    public Set<File> filterLocalFiles(Set<String> localFiles) {
-        return localFiles.stream()
-            .filter(this::matchPatterns)
-            .map(file -> new File(repoRoot, file))
-            .collect(Collectors.toSet());
     }
 
     boolean matchPatterns(String path) {

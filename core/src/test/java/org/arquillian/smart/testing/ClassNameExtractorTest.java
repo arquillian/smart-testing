@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.vcs.git;
+package org.arquillian.smart.testing;
 
 import java.io.File;
 import org.junit.Test;

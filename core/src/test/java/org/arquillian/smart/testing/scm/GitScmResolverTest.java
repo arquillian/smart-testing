@@ -1,0 +1,114 @@
+package org.arquillian.smart.testing.scm;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Set;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import static org.arquillian.smart.testing.scm.GitRepositoryUnpacker.unpackRepository;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+
+public class GitScmResolverTest {
+
+    @Rule
+    public TemporaryFolder gitFolder = new TemporaryFolder();
+
+    private GitScmResolver gitChangeResolver;
+
+    @Before
+    public void unpack_repo() {
+        final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
+        unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
+    }
+
+    @After
+    public void closeRepo() throws Exception {
+        this.gitChangeResolver.close();
+    }
+
+    @Test
+    public void should_fetch_only_gitignore_in_diff_between_two_immediate_commits() throws Exception {
+        // given
+        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot(), "32bd752", "07b181b");
+
+        // when
+        final Set<Change> diff = gitChangeResolver.diff();
+
+        // then
+        assertThat(diff).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
+            relative(".gitignore"), ChangeType.ADD));
+    }
+
+    @Test
+    public void should_fetch_all_files_from_first_commit_to_given_hash() throws Exception {
+        // given
+        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot(), "d923b3a", "1ee4abf");
+
+        // when
+        final Set<Change> diff = gitChangeResolver.diff();
+
+        // then
+        assertThat(diff).hasSize(18);
+    }
+
+    @Test
+    public void should_fetch_all_untracked_files() throws IOException {
+        // given
+        gitFolder.newFile("untracked.txt");
+        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+
+        // when
+        final Set<Change> untrackedChanges = gitChangeResolver.diff();
+
+        // then
+        assertThat(untrackedChanges).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
+            relative("untracked.txt"), ChangeType.ADD));
+    }
+
+    @Test
+    public void should_fetch_all_added_files() throws IOException, GitAPIException {
+        // given
+        gitFolder.newFile("newadd.txt");
+        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+        GitRepositoryOperations.addFile(gitFolder.getRoot(), "newadd.txt");
+
+        // when
+        final Set<Change> newStagedChanges = gitChangeResolver.diff();
+
+        // then
+        assertThat(newStagedChanges).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
+            relative("newadd.txt"), ChangeType.ADD));
+    }
+
+    @Test
+    public void should_fetch_all_modified_files() throws IOException {
+        // given
+        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+        final Path readme = Paths.get(gitFolder.getRoot().getAbsolutePath(), "README.adoc");
+        Files.write(readme, "More".getBytes(), StandardOpenOption.APPEND);
+
+        // when
+        final Set<Change> modifiedChanges = gitChangeResolver.diff();
+
+        // then
+        assertThat(modifiedChanges).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
+            relative("README.adoc"), ChangeType.MODIFY));
+    }
+
+
+    private File relative(String path) {
+        return new File(gitFolder.getRoot(),
+            path);
+    }
+}
