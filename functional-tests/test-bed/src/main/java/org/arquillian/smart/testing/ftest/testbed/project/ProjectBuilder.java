@@ -121,7 +121,7 @@ public class ProjectBuilder {
         final BuiltProject build = embeddedMaven
                     .setGoals(goals)
                     .setDebug(isMavenDebugOutputEnabled())
-                    .setQuiet(!isMavenDebugOutputEnabled() && quietMode)
+                    .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)
                     .setProperties(systemProperties)
                     .ignoreFailure()
@@ -135,10 +135,13 @@ public class ProjectBuilder {
         return accumulatedTestResults();
     }
 
+    private boolean disableQuietWhenAnyDebugModeEnabled() {
+        return !isMavenDebugOutputEnabled() && !isSurefireRemoteDebuggingEnabled() && !isRemoteDebugEnabled();
+    }
+
     private void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
-            System.out.println(">>> Executing build with debug options: " + debugOptions);
             embeddedMaven.setMavenOpts(debugOptions);
         }
 
