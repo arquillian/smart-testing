@@ -18,7 +18,7 @@ public class Project implements AutoCloseable {
     public Project(Path root) throws IOException {
         this.root = root;
         this.repository = getRepository(root);
-        this.projectBuilder = new ProjectBuilder(root);
+        this.projectBuilder = new ProjectBuilder(root, this);
     }
 
     private Repository getRepository(Path root) throws IOException {
@@ -43,9 +43,8 @@ public class Project implements AutoCloseable {
         this.repository.close();
     }
 
-    public Project withEnvVariables(String ... envVariablesPairs) {
-        projectBuilder.withEnvVariables(envVariablesPairs);
-        return this;
+    public ProjectBuilder buildOptions() {
+        return this.projectBuilder;
     }
 
     public List<TestResult> build() {
