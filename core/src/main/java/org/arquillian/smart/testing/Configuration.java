@@ -6,7 +6,6 @@ public class Configuration {
     public static final String SMART_TESTING_MODE = "smart-testing-mode";
 
     private String[] strategies = new String[0];
-    // TODO Change to smart testing mode
     private RunMode mode;
 
     public static Configuration read() {

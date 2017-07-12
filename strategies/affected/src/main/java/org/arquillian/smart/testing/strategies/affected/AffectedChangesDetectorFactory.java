@@ -7,10 +7,10 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.vcs.git.AllChangedFilesDetector;
 
-import static org.arquillian.smart.testing.GitRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.GitRunnerProperties.HEAD;
-import static org.arquillian.smart.testing.GitRunnerProperties.PREVIOUS_COMMIT;
-import static org.arquillian.smart.testing.GitRunnerProperties.getPrevCommitDefaultValue;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.HEAD;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.getPrevCommitDefaultValue;
 
 public class AffectedChangesDetectorFactory implements TestExecutionPlannerFactory {
 

@@ -1,17 +1,19 @@
-package org.arquillian.smart.testing;
+package org.arquillian.smart.testing.scm;
 
 import java.io.IOException;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
-import static org.arquillian.smart.testing.GitRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.GitRunnerProperties.HEAD;
-import static org.arquillian.smart.testing.GitRunnerProperties.LAST_COMMITS;
-import static org.arquillian.smart.testing.GitRunnerProperties.PREVIOUS_COMMIT;
-import static org.arquillian.smart.testing.GitRunnerProperties.getPrevCommitDefaultValue;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.HEAD;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.LAST_COMMITS;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.GitRunnerProperties.getPrevCommitDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class GitRunnerPropertiesTest {
 
     @Rule

@@ -14,6 +14,7 @@ public class NewFilesDetector extends GitChangesDetector {
 
     @Override
     public Collection<String> getTests() {
+
         final Collection<String> tests = super.getTests();
 
         final Set<String> files = this.gitChangeResolver.newChanges();

@@ -27,7 +27,6 @@ public class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
             final Model model = mavenProject.getModel();
             mavenProjectConfigurator.addRequiredDependencies(model);
             mavenProjectConfigurator.configureTestRunner(model);
-            mavenProjectConfigurator.showPom(model);
         });
     }
 }

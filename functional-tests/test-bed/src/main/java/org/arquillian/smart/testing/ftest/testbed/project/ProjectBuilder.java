@@ -30,7 +30,6 @@ class ProjectBuilder {
 
     List<TestResult> build(String... goals) {
         final BuiltProject build = EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml")
-                    //.setMavenOpts("-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5005")
                     .setGoals(goals)
                     .setQuiet()
                     .skipTests(false)

@@ -67,7 +67,7 @@ public class ClassFileIndex {
 
     public Set<JavaClass> addTestJavaFiles(Collection<File> testJavaFiles) {
         // First update class index
-        List<String> testClassesNames = new ArrayList<String>();
+        List<String> testClassesNames = new ArrayList<>();
         for (File testJavaFile : testJavaFiles) {
             String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile, globPatterns));
             if (changedTestClassClassname != null) {
