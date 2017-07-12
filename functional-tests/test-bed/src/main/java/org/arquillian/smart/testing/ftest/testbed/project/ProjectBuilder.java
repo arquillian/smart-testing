@@ -23,7 +23,8 @@ import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireRep
 public class ProjectBuilder {
 
     private static final String TEST_REPORT_PREFIX = "TEST-";
-    private static final String MVN_DEBUG_MODE = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=%s,address=%s";
+    private static final String MVN_DEBUG_AGENT = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s";
+    private static final String SUREFIRE_DEBUG_SETTINGS = " -Xnoagent -Djava.compiler=NONE";
     private static final int DEFAULT_DEBUG_PORT = 8000;
     private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
@@ -38,7 +39,6 @@ public class ProjectBuilder {
     private boolean suspend = true;
     private boolean mvnDebugOutput;
     private boolean enableSurefireRemoteDebugging = false;
-    private boolean surefireRemoteDebuggingEnabled;
 
     ProjectBuilder(Path root, Project project) {
         this.root = root;
@@ -79,6 +79,7 @@ public class ProjectBuilder {
     public ProjectBuilder withRemoteSurefireDebugging(int surefireRemotePort, boolean suspend) {
         this.surefireRemotePort = surefireRemotePort;
         this.suspend = suspend;
+        this.enableSurefireRemoteDebugging = true;
         return this;
     }
 
@@ -136,15 +137,14 @@ public class ProjectBuilder {
 
     private void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
         if (isRemoteDebugEnabled()) {
-            final String debugOptions = String.format(MVN_DEBUG_MODE, shouldSuspend(), getRemotePort());
+            final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
             System.out.println(">>> Executing build with debug options: " + debugOptions);
             embeddedMaven.setMavenOpts(debugOptions);
         }
 
         if (isSurefireRemoteDebuggingEnabled()) {
             this.systemProperties.put("maven.surefire.debug",
-                String.format("Xdebug -Xrunjdwp:transport=dt_socket,server=y,"
-                    + "suspend=%s,address=%s -Xnoagent -Djava.compiler=NONE", shouldSuspend(), getSurefireDebugPort()));
+                String.format(MVN_DEBUG_AGENT, shouldSuspend(), getSurefireDebugPort()) + SUREFIRE_DEBUG_SETTINGS);
         }
     }
 
