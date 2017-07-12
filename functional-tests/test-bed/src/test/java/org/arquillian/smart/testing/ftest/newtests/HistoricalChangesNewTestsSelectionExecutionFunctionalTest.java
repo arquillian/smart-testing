@@ -25,7 +25,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
         // when
         final List<TestResult> actualTestResults = project
             .buildOptions()
-                .withEnvVariables("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
             .build();
 
@@ -52,7 +52,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest extends T
         // when
         final List<TestResult> actualTestResults = project
             .buildOptions()
-                .withEnvVariables("git.last.commits", "3")
+                .withSystemProperties("git.last.commits", "3")
                 .configure()
             .build();
 

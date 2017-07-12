@@ -27,7 +27,7 @@ public class ProjectBuilder {
 
     private final Path root;
     private final Project project;
-    private final Properties envVariables = new Properties();
+    private final Properties systemProperties = new Properties();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
     private boolean quietMode = true;
@@ -77,16 +77,16 @@ public class ProjectBuilder {
         return this;
     }
 
-    public ProjectBuilder withEnvVariables(String ... envVariablesPairs) {
-        if (envVariablesPairs.length % 2 != 0) {
+    public ProjectBuilder withSystemProperties(String ... systemPropertiesPairs) {
+        if (systemPropertiesPairs.length % 2 != 0) {
             throw new IllegalArgumentException("Expecting even amount of variable name - value pairs to be passed. Got "
-                + envVariablesPairs.length
+                + systemPropertiesPairs.length
                 + " entries. "
-                + Arrays.toString(envVariablesPairs));
+                + Arrays.toString(systemPropertiesPairs));
         }
 
-        for (int i = 0; i < envVariablesPairs.length; i += 2) {
-            this.envVariables.put(envVariablesPairs[i], envVariablesPairs[i + 1]);
+        for (int i = 0; i < systemPropertiesPairs.length; i += 2) {
+            this.systemProperties.put(systemPropertiesPairs[i], systemPropertiesPairs[i + 1]);
         }
 
         return this;
@@ -107,7 +107,7 @@ public class ProjectBuilder {
                     .setDebug(isMavenDebugOutputEnabled())
                     .setQuiet(!isMavenDebugOutputEnabled() && quietMode)
                     .skipTests(false)
-                    .setProperties(envVariables)
+                    .setProperties(systemProperties)
                     .ignoreFailure()
                 .build();
 
