@@ -49,7 +49,6 @@ public abstract class TestBedTemplate {
     @BeforeClass
     public static void cloneTestProject() throws IOException {
         TMP_FOLDER.create();
-        System.out.println(REPO_NAME);
         GIT_REPO_FOLDER = TMP_FOLDER.getRoot().getAbsolutePath() + File.separator + REPO_NAME;
         cloneRepository(GIT_REPO_FOLDER, ORIGIN);
     }
@@ -74,6 +73,7 @@ public abstract class TestBedTemplate {
         for (int i = 0; i < sources.size(); i++) {
             Files.copy(sources.get(i), targets.get(i));
         }
+        System.out.println("Cloned test repository to: " + target);
         return target;
     }
 
