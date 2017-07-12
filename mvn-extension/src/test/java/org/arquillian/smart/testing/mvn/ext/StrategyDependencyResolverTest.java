@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.Map;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.model.Dependency;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class StrategyDependencyResolverTest {
 
     @Rule

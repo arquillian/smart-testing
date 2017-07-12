@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
@@ -18,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
+@NotThreadSafe
 public class TestStrategyApplierTest {
 
     @Rule

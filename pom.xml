@@ -53,8 +53,13 @@
     <version.mockito>2.8.47</version.mockito>
     <version.jgit>4.8.0.201706111038-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
+    <version.findbugs.annotations>3.0.1</version.findbugs.annotations>
 
     <version.maven.plugin.deploy>2.8.2</version.maven.plugin.deploy>
+
+    <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
+    <surefire.fork.count>4</surefire.fork.count>
+    <surefire.thread.count>8</surefire.thread.count>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -102,6 +107,12 @@
         <scope>test</scope>
       </dependency>
       <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>annotations</artifactId>
+        <version>${version.findbugs.annotations}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
         <groupId>org.javassist</groupId>
         <artifactId>javassist</artifactId>
         <version>${version.javassist}</version>
@@ -114,6 +125,13 @@
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>annotations</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <pluginManagement>
       <plugins>
@@ -124,5 +142,40 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${version.surefire}</version>
+        <configuration>
+          <forkCount>${surefire.fork.count}</forkCount>
+          <threadCount>${surefire.thread.count}</threadCount>
+          <reuseForks>true</reuseForks>
+          <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+          <parallel>classesAndMethods</parallel>
+        </configuration>
+
+      </plugin>
+
+      <!-- This artifact shouldn't be deployed to maven repository -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>travis</id>
+      <properties>
+        <surefire.fork.count>2</surefire.fork.count>
+        <surefire.thread.count>4</surefire.thread.count>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
