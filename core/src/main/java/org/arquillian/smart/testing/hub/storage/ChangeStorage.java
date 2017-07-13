@@ -8,6 +8,8 @@ public interface ChangeStorage {
 
     void store(Collection<Change> changes);
 
+    void purgeAll();
+
     Optional<Collection<Change>> read();
 
 

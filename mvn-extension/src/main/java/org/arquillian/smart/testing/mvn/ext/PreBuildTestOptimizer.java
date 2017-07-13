@@ -7,6 +7,7 @@ import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -20,11 +21,19 @@ import static java.util.stream.StreamSupport.stream;
     hint = "smart-testing-optimizer")
 class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
+    private final ChangeStorage changeStorage = new LocalChangeStorage();
+
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         final Configuration configuration = Configuration.read();
         configureExtension(session, configuration);
         calculateChanges();
+    }
+
+    @Override
+    public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
+        System.out.println("Session ends!");
+        changeStorage.purgeAll();
     }
 
     private void calculateChanges() {
@@ -34,7 +43,7 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
 
-        new LocalChangeStorage().store(changes); // FIXME DI? dunno
+        changeStorage.store(changes); // FIXME DI? dunno
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {

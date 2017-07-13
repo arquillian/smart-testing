@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.hub.storage;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,9 +10,12 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.scm.Change;
 
 public class LocalChangeStorage implements ChangeStorage {
+
+    private static final Logger logger = Logger.getLogger(LocalChangeStorage.class);
 
     private static final String SMART_TESTING_PLAN = ".smart-testing-plan";
 
@@ -38,6 +42,15 @@ public class LocalChangeStorage implements ChangeStorage {
         } catch (IOException e) {
             e.printStackTrace();
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public void purgeAll() {
+        final File changesStore = new File(getStoragePath().toUri());
+        final boolean deleted = changesStore.delete();
+        if (!deleted) {
+            logger.warn("Unable to remove %s.", changesStore.getAbsolutePath());
         }
     }
 
