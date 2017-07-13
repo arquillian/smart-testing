@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -17,6 +18,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
 
 import static java.lang.System.getProperty;
+import static java.util.Arrays.stream;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
@@ -32,6 +34,7 @@ public class ProjectBuilder {
     private final Path root;
     private final Project project;
     private final Properties systemProperties = new Properties();
+    private final Set<String> excludedProjects = new HashSet<>();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
     private int surefireRemotePort = DEFAULT_SUREFIRE_DEBUG_PORT;
@@ -128,6 +131,15 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder excludeProjects(String... projects) {
+        this.excludedProjects.addAll(
+            stream(projects)
+                .map(excludeProject -> "!" + excludeProject)
+                .collect(Collectors.toList())
+        );
+        return this;
+    }
+
     List<TestResult> build(String... goals) {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
@@ -142,6 +154,7 @@ public class ProjectBuilder {
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
                     .setGoals(goals)
+                    .setProjects(excludedProjects.toArray(new String[excludedProjects.size()]))
                     .setDebug(isMavenDebugOutputEnabled())
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)

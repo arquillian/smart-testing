@@ -17,42 +17,52 @@ import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
 
-@Component(role = AbstractMavenLifecycleParticipant.class,
-    description = "TODO fill it in later", // TODO
+@Component(role = AbstractMavenLifecycleParticipant.class, description = "TODO fill it in later", // TODO
     hint = "smart-testing-optimizer")
 class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
     private static final Logger logger = Logger.getLogger(PreBuildTestOptimizer.class);
 
     private final ChangeStorage changeStorage = new LocalChangeStorage(".");
-    private Configuration configuration;
 
+    private Configuration configuration;
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
+
+        if (isDisableSmartTesting()) {
+            return;
+        }
+
         configuration = Configuration.read();
 
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
             calculateChanges();
         } else {
-            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.", Configuration.SMART_TESTING);
+            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.",
+                Configuration.SMART_TESTING);
         }
     }
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
+        if (isDisableSmartTesting()) {
+            return;
+        }
+
         if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
         } else {
-            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.", Configuration.SMART_TESTING);
+            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.",
+                Configuration.SMART_TESTING);
         }
     }
 
     private void calculateChanges() {
-        final Iterable<ChangeResolver> changeResolvers = new JavaSPILoader().all(ChangeResolver.class, ChangeResolver::isApplicable);
-        final Collection<Change> changes = stream(changeResolvers.spliterator(), false)
-            .map(ChangeResolver::diff)
+        final Iterable<ChangeResolver> changeResolvers =
+            new JavaSPILoader().all(ChangeResolver.class, ChangeResolver::isApplicable);
+        final Collection<Change> changes = stream(changeResolvers.spliterator(), false).map(ChangeResolver::diff)
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
 
@@ -62,12 +72,15 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
     private void configureExtension(MavenSession session, Configuration configuration) {
         // TODO do we want to inject MavenProjectConfigurator instead?
         // FIXME NPE when we don't specify properties from CLI
-        final MavenProjectConfigurator mavenProjectConfigurator =
-            new MavenProjectConfigurator(configuration);
+        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
             final Model model = mavenProject.getModel();
             mavenProjectConfigurator.addRequiredDependencies(model);
             mavenProjectConfigurator.configureTestRunner(model);
         });
+    }
+
+    private boolean isDisableSmartTesting() {
+        return Boolean.valueOf(System.getProperty("smart.testing.disable", "false"));
     }
 }
