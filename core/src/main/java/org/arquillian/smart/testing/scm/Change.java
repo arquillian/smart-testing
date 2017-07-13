@@ -1,6 +1,10 @@
 package org.arquillian.smart.testing.scm;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static org.arquillian.smart.testing.scm.ChangeType.ADD;
+import static org.arquillian.smart.testing.scm.ChangeType.MODIFY;
 
 public class Change {
 
@@ -18,6 +22,14 @@ public class Change {
 
     public ChangeType getChangeType() {
         return changeType;
+    }
+
+    public static Change add(String root, String location) {
+        return new Change(Paths.get(root, location), ADD);
+    }
+
+    public static Change modify(String root, String location) {
+        return new Change(Paths.get(root, location), MODIFY);
     }
 
     @Override

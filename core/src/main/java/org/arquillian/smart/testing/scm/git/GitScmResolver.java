@@ -22,6 +22,9 @@ import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
+import static org.arquillian.smart.testing.scm.Change.add;
+import static org.arquillian.smart.testing.scm.Change.modify;
+
 public class GitScmResolver implements AutoCloseable {
 
     private static final String ENSURE_TREE = "^{tree}";
@@ -75,20 +78,24 @@ public class GitScmResolver implements AutoCloseable {
 
         allChanges.addAll(status.getModified()
             .stream()
-            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.MODIFY))
+            .map(location -> modify(repoRoot.getAbsolutePath(), location))
             .collect(Collectors.toSet()));
+
         allChanges.addAll(status.getChanged()
             .stream()
-            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.MODIFY))
+            .map(location -> modify(repoRoot.getAbsolutePath(), location))
             .collect(Collectors.toSet()));
+
         allChanges.addAll(status.getUntracked()
             .stream()
-            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.ADD))
+            .map(location -> add(repoRoot.getAbsolutePath(), location))
             .collect(Collectors.toSet()));
+
         allChanges.addAll(status.getAdded()
             .stream()
-            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.ADD))
+            .map(location -> add(repoRoot.getAbsolutePath(), location))
             .collect(Collectors.toSet()));
+
         return allChanges;
     }
 
