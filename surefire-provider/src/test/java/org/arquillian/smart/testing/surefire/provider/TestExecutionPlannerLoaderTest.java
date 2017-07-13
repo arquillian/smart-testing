@@ -16,6 +16,8 @@ import static org.mockito.Mockito.when;
 
 public class TestExecutionPlannerLoaderTest {
 
+    private static final String TEST_SOURCE_DIR = "src/test/java";
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
@@ -26,7 +28,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new File("src/test/java"));
+            new TestExecutionPlannerLoader(mockedSpiLoader, new File(TEST_SOURCE_DIR));
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
@@ -41,7 +43,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new File("src/test/java"));
+            new TestExecutionPlannerLoader(mockedSpiLoader, new File(TEST_SOURCE_DIR));
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
@@ -56,7 +58,7 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new File("src/test/java") );
+            new TestExecutionPlannerLoader(mockedSpiLoader, new File(TEST_SOURCE_DIR) );
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");

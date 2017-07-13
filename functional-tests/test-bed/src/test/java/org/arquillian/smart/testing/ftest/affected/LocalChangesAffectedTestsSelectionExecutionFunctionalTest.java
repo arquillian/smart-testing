@@ -4,8 +4,6 @@ import java.util.List;
 import org.arquillian.smart.testing.ftest.TestBedTemplate;
 import org.arquillian.smart.testing.ftest.testbed.testresults.Status;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
-import org.assertj.core.api.Condition;
-import org.assertj.core.groups.Tuple;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Criteria.AFFECTED;
@@ -92,6 +90,5 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends T
         assertThat(actualTestResults).hasSize(1)
             .extracting("className", "result")
             .contains(tuple("org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase", Status.PASSED));
-
     }
 }

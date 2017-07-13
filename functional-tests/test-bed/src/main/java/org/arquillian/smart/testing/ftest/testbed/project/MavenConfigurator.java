@@ -54,12 +54,12 @@ class MavenConfigurator {
             final Object configuration = testRunnerPlugin.getConfiguration();
             if (configuration != null) {
                 final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
+                final Xpp3Dom properties = getOrCreateChild(configurationDom, "properties");
                 properties.addChild(defineUsageMode());
                 properties.addChild(defineTestSelectionCriteria());
-                final Xpp3Dom includes = getOrCreateIncludesChild(configurationDom);
+                final Xpp3Dom includes = getOrCreateChild(configurationDom, "includes");
                 addIncludePattern(includes);
-                final Xpp3Dom excludes = getOrCreateExcludesChild(configurationDom);
+                final Xpp3Dom excludes = getOrCreateChild(configurationDom, "excludes");
                 addExcludePattern(excludes);
             }
         }
@@ -68,60 +68,32 @@ class MavenConfigurator {
     private void addIncludePattern(Xpp3Dom includes) {
         final String[] projectConfiguratorIncludes = projectConfigurator.getIncludes();
         if (projectConfiguratorIncludes != null) {
-            Arrays.stream(projectConfiguratorIncludes).forEach(pattern -> {
-                final boolean matched =
-                    Arrays.stream(includes.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
-                if (!matched) {
-                    includes.addChild(defineInclude(pattern));
-                }
-            });
+            addChildNodeWithPattern(includes, "include", projectConfiguratorIncludes);
         }
     }
 
     private void addExcludePattern(Xpp3Dom excludes) {
         final String[] projectConfiguratorExcludes = projectConfigurator.getExcludes();
         if (projectConfiguratorExcludes != null) {
-
-            Arrays.stream(projectConfiguratorExcludes).forEach(pattern -> {
-                final boolean matched =
-                    Arrays.stream(excludes.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
-                if (!matched) {
-                    excludes.addChild(defineExclude(pattern));
-                }
-            });
+            addChildNodeWithPattern(excludes, "exclude", projectConfiguratorExcludes);
         }
     }
 
-    private Xpp3Dom defineInclude(String pattern) {
-        final Xpp3Dom include = new Xpp3Dom("include");
-        include.setValue(pattern);
-
-        return include;
+    private void addChildNodeWithPattern(Xpp3Dom node, String patternType, String[] patterns) {
+        Arrays.stream(patterns).forEach(pattern -> {
+            final boolean matched =
+                Arrays.stream(node.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
+            if (!matched) {
+                node.addChild(definePattern(patternType, pattern));
+            }
+        });
     }
 
-    private Xpp3Dom defineExclude(String pattern) {
-        final Xpp3Dom exclude = new Xpp3Dom("exclude");
-        exclude.setValue(pattern);
+    private Xpp3Dom definePattern(String patternType, String pattern) {
+        final Xpp3Dom node = new Xpp3Dom(patternType);
+        node.setValue(pattern);
 
-        return exclude;
-    }
-
-    private Xpp3Dom getOrCreateIncludesChild(Xpp3Dom configurationDom) {
-        Xpp3Dom includes = configurationDom.getChild("includes");
-        if (includes == null) {
-            includes = new Xpp3Dom("includes");
-            configurationDom.addChild(includes);
-        }
-        return includes;
-    }
-
-    private Xpp3Dom getOrCreateExcludesChild(Xpp3Dom configurationDom) {
-        Xpp3Dom excludes = configurationDom.getChild("excludes");
-        if (excludes == null) {
-            excludes = new Xpp3Dom("excludes");
-            configurationDom.addChild(excludes);
-        }
-        return excludes;
+        return node;
     }
 
     void update() {
@@ -162,13 +134,13 @@ class MavenConfigurator {
         return usage;
     }
 
-    private Xpp3Dom getOrCreatePropertiesChild(Xpp3Dom configurationDom) {
-        Xpp3Dom properties = configurationDom.getChild("properties");
-        if (properties == null) {
-            properties = new Xpp3Dom("properties");
-            configurationDom.addChild(properties);
+    private Xpp3Dom getOrCreateChild(Xpp3Dom configurationDom, String name) {
+        Xpp3Dom node = configurationDom.getChild(name);
+        if (node == null) {
+            node = new Xpp3Dom(name);
+            configurationDom.addChild(node);
         }
-        return properties;
+        return node;
     }
 
     private Dependency smartTestingProviderDependency() {
