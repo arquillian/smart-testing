@@ -3,7 +3,6 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -18,16 +17,18 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private ProviderParametersParser paramParser;
     private Class<SurefireProvider> providerClass;
     private ProviderParameters bootParams;
+    private final TestsToRun testsToRun;
+
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.providerClass = new ProviderList(this.paramParser).resolve();
         this.surefireProvider = createSurefireProviderInstance();
+        this.testsToRun = (TestsToRun) getSuites();
     }
 
     private TestsToRun getTestsToRun() {
-        final TestsToRun testsToRun = (TestsToRun) getSuites();
 
         final String strategiesParam = paramParser.getProperty("strategies");
 
@@ -53,9 +54,14 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-        TestsToRun orderedTests = getTestsToRun();
+
+        boolean disableSmartTesting = Validate.isDisableSmartTesting();
         surefireProvider = createSurefireProviderInstance();
-        return surefireProvider.invoke(orderedTests);
+        if (!disableSmartTesting) {
+            TestsToRun orderedTests = getTestsToRun();
+            return surefireProvider.invoke(orderedTests);
+        }
+        return surefireProvider.invoke(testsToRun);
     }
 
     private SurefireProvider createSurefireProviderInstance(){

@@ -9,4 +9,12 @@ public class Validate {
     public static boolean isNotEmpty(String string){
         return !isEmpty(string);
     }
+
+    public static boolean isDisableSmartTesting() {
+        String disableSmartTesting = System.getProperty("disableSmartTesting");
+        if (disableSmartTesting != null && disableSmartTesting.equals("true")){
+            return true;
+        }
+        return false;
+    }
 }
