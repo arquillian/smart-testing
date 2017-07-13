@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.scm;
+package org.arquillian.smart.testing.scm.git;
 
 // TODO we need to extract to an interface and maybe to Java SPI but for checking now this is enough
 
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.scm.Change;
+import org.arquillian.smart.testing.scm.ChangeType;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;

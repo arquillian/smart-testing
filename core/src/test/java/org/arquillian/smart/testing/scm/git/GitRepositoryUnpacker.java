@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.scm;
+package org.arquillian.smart.testing.scm.git;
 
 import org.arquillian.spacelift.Spacelift;
 import org.arquillian.spacelift.process.CommandBuilder;

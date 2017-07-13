@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.scm;
+package org.arquillian.smart.testing.scm.git;
 
 import java.io.IOException;
 import net.jcip.annotations.NotThreadSafe;
@@ -6,11 +6,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
-import static org.arquillian.smart.testing.scm.GitRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.scm.GitRunnerProperties.HEAD;
-import static org.arquillian.smart.testing.scm.GitRunnerProperties.LAST_COMMITS;
-import static org.arquillian.smart.testing.scm.GitRunnerProperties.PREVIOUS_COMMIT;
-import static org.arquillian.smart.testing.scm.GitRunnerProperties.getPrevCommitDefaultValue;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.HEAD;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.LAST_COMMITS;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.getPrevCommitDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe

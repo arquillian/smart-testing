@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.scm;
+package org.arquillian.smart.testing.scm.git;
 
 public class GitRunnerProperties {
 

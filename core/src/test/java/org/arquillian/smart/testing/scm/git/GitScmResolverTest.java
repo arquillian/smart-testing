@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.scm;
+package org.arquillian.smart.testing.scm.git;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Set;
+import org.arquillian.smart.testing.scm.Change;
+import org.arquillian.smart.testing.scm.ChangeType;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +17,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static org.arquillian.smart.testing.scm.GitRepositoryUnpacker.unpackRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
@@ -29,7 +30,7 @@ public class GitScmResolverTest {
     @Before
     public void unpack_repo() {
         final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
-        unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
+        GitRepositoryUnpacker.unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
     }
 
     @After
