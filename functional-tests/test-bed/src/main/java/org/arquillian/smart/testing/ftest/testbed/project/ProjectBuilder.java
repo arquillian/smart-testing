@@ -88,13 +88,26 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder logBuildOutput() {
+        return logBuildOutput(false);
+    }
+
+    private ProjectBuilder logBuildOutput(boolean debug) {
+        withDebugOutput(debug);
+        return quiet(false);
+    }
+
+    private ProjectBuilder withDebugOutput(boolean debug) {
+        this.mvnDebugOutput = debug;
+        quiet(!debug);
+        return this;
+    }
+
     /**
-     * Enables mvn debug output (-X) flag.
+     * Enables mvn debug output (-X) flag. Implies build logging output.
      */
     public ProjectBuilder withDebugOutput() {
-        this.mvnDebugOutput = true;
-        quiet(false);
-        return this;
+        return withDebugOutput(true);
     }
 
     public ProjectBuilder withSystemProperties(String ... systemPropertiesPairs) {
