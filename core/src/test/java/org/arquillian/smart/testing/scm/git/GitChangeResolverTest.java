@@ -19,12 +19,12 @@ import org.junit.rules.TemporaryFolder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 
-public class GitScmResolverTest {
+public class GitChangeResolverTest {
 
     @Rule
     public TemporaryFolder gitFolder = new TemporaryFolder();
 
-    private GitScmResolver gitChangeResolver;
+    private GitChangeResolver gitChangeResolver;
 
     @Before
     public void unpack_repo() {
@@ -40,7 +40,7 @@ public class GitScmResolverTest {
     @Test
     public void should_fetch_only_gitignore_in_diff_between_two_immediate_commits() throws Exception {
         // given
-        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot(), "32bd752", "07b181b");
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "32bd752", "07b181b");
 
         // when
         final Set<Change> diff = gitChangeResolver.diff();
@@ -53,7 +53,7 @@ public class GitScmResolverTest {
     @Test
     public void should_fetch_all_files_from_first_commit_to_given_hash() throws Exception {
         // given
-        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot(), "d923b3a", "1ee4abf");
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "d923b3a", "1ee4abf");
 
         // when
         final Set<Change> diff = gitChangeResolver.diff();
@@ -66,7 +66,7 @@ public class GitScmResolverTest {
     public void should_fetch_all_untracked_files() throws IOException {
         // given
         gitFolder.newFile("untracked.txt");
-        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
 
         // when
         final Set<Change> untrackedChanges = gitChangeResolver.diff();
@@ -80,7 +80,7 @@ public class GitScmResolverTest {
     public void should_fetch_all_added_files() throws IOException, GitAPIException {
         // given
         gitFolder.newFile("newadd.txt");
-        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
         GitRepositoryOperations.addFile(gitFolder.getRoot(), "newadd.txt");
 
         // when
@@ -94,7 +94,7 @@ public class GitScmResolverTest {
     @Test
     public void should_fetch_all_modified_files() throws IOException {
         // given
-        this.gitChangeResolver = new GitScmResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
         final Path readme = Paths.get(gitFolder.getRoot().getAbsolutePath(), "README.adoc");
         Files.write(readme, "More".getBytes(), StandardOpenOption.APPEND);
 

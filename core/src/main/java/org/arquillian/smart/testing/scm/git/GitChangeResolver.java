@@ -1,7 +1,5 @@
 package org.arquillian.smart.testing.scm.git;
 
-// TODO we need to extract to an interface and maybe to Java SPI but for checking now this is enough
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -13,6 +11,7 @@ import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
+import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -25,22 +24,22 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import static org.arquillian.smart.testing.scm.Change.add;
 import static org.arquillian.smart.testing.scm.Change.modify;
 
-public class GitScmResolver implements AutoCloseable {
+public class GitChangeResolver implements ChangeResolver {
 
     private static final String ENSURE_TREE = "^{tree}";
 
-    private static final Logger logger = Logger.getLogger(GitScmResolver.class);
+    private static final Logger logger = Logger.getLogger(GitChangeResolver.class);
 
     private final String previous;
     private final String head;
     private final File repoRoot;
     private final Git git;
 
-    public GitScmResolver(File dir) {
+    public GitChangeResolver(File dir) {
         this(dir, "HEAD", "HEAD");
     }
 
-    public GitScmResolver(File dir, String previous, String head) {
+    public GitChangeResolver(File dir, String previous, String head) {
         this.previous = previous;
         this.head = head;
         final FileRepositoryBuilder builder = new FileRepositoryBuilder();
@@ -57,6 +56,7 @@ public class GitScmResolver implements AutoCloseable {
         git.close();
     }
 
+    @Override
     public Set<Change> diff() {
         final Set<Change> allChanges= new HashSet<>();
 
@@ -64,6 +64,18 @@ public class GitScmResolver implements AutoCloseable {
         allChanges.addAll(retrieveUncommittedChanges());
 
         return allChanges;
+    }
+
+    @Override
+    public boolean isApplicable() {
+        try {
+            final FileRepositoryBuilder builder = new FileRepositoryBuilder();
+            builder.readEnvironment().findGitDir().build();
+        } catch (IOException e) {
+            logger.warn("Working directory is not git directory. Cause: %s", e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     private Set<Change> retrieveUncommittedChanges() {
