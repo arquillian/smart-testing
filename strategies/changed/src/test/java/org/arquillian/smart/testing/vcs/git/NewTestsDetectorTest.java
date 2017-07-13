@@ -17,7 +17,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.arquillian.smart.testing.vcs.git.GitRepositoryUnpacker.unpackRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NewFilesDetectorTest {
+public class NewTestsDetectorTest {
 
     @Rule
     public TemporaryFolder gitFolder = new TemporaryFolder();
@@ -31,25 +31,25 @@ public class NewFilesDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
-        final NewFilesDetector
-            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector
+            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*Test*.*");
 
         // when
-        final Iterable<String> newTests = newFilesDetector.getTests();
+        final Iterable<String> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(newTests).containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
     public void should_find_none_new_classes_in_the_range_of_commits_when_not_matching_pattern() throws Exception {
         // given
-        final NewFilesDetector
-            newFilesDetector =
-            new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
+        final NewTestsDetector
+            newTestsDetector =
+            new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
 
         // when
-        final Iterable<String> newTests = newFilesDetector.getTests();
+        final Iterable<String> newTests = newTestsDetector.getTests();
 
         // then
         assertThat(newTests).isEmpty();
@@ -61,15 +61,15 @@ public class NewFilesDetectorTest {
         final File testFile = gitFolder.newFile("core/src/test/java/org/arquillian/smart/testing/CalculatorTest.java");
         Files.write(testFile.toPath(), getContentsOfClass().getBytes(), StandardOpenOption.APPEND);
 
-        final NewFilesDetector
-            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector
+            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
 
         // when
-        final Collection<String> newTests = newFilesDetector.getTests();
+        final Collection<String> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName(),
-            "org.arquillian.smart.testing.CalculatorTest");
+        assertThat(newTests).containsOnly("org.arquillian.smart.testing.CalculatorTest",
+            "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -80,15 +80,14 @@ public class NewFilesDetectorTest {
 
         GitRepositoryOperations.addFile(gitFolder.getRoot(), testFile.getAbsolutePath());
 
-        final NewFilesDetector
-            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector
+            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
 
         // when
-        final Collection<String> newTests = newFilesDetector.getTests();
+        final Collection<String> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName(),
-            "org.arquillian.smart.testing.CalculatorTest");
+        assertThat(newTests).containsOnly("org.arquillian.smart.testing.CalculatorTest",  "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -100,11 +99,11 @@ public class NewFilesDetectorTest {
 
         Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
 
-        final NewFilesDetector
-            newFilesDetector = new NewFilesDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector
+            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
 
         // when
-        final Collection<String> newTests = newFilesDetector.getTests();
+        final Collection<String> newTests = newTestsDetector.getTests();
 
         // then
         assertThat(newTests).doesNotContain("org.arquillian.smart.testing.FilesTest");

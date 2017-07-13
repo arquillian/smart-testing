@@ -11,6 +11,7 @@ import java.util.Optional;
 class ClassNameExtractor {
 
     String extractFullyQualifiedName(File sourceFile) throws FileNotFoundException {
+        // FIXME takes ages
         final CompilationUnit compilationUnit = JavaParser.parse(sourceFile);
         final Optional<ClassOrInterfaceDeclaration> newClass =
             compilationUnit.getClassByName(sourceFile.getName().replaceAll(".java", ""));

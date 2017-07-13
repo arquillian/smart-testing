@@ -9,7 +9,7 @@ import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.PREVIOUS_COMMIT;
 import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.getPrevCommitDefaultValue;
 
-public class NewFilesDetectorFactory implements TestExecutionPlannerFactory {
+public class NewTestsDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public String alias() {
@@ -26,6 +26,6 @@ public class NewFilesDetectorFactory implements TestExecutionPlannerFactory {
         final String previousCommit = System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue());
         final String commit = System.getProperty(COMMIT, HEAD);
 
-        return new NewFilesDetector(projectDir, previousCommit, commit, globPatterns);
+        return new NewTestsDetector(projectDir, previousCommit, commit, globPatterns);
     }
 }

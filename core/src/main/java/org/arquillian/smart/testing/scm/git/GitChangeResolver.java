@@ -35,6 +35,10 @@ public class GitChangeResolver implements ChangeResolver {
     private final File repoRoot;
     private final Git git;
 
+    public GitChangeResolver() {
+        this(Paths.get("").toAbsolutePath().toFile());
+    }
+
     public GitChangeResolver(File dir) {
         this(dir, "HEAD", "HEAD");
     }

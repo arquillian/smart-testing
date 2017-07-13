@@ -38,7 +38,7 @@ public class ChangedFilesDetectorTest {
         final Iterable<String> changedTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(changedTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(changedTests).containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ChangedFilesDetectorTest {
         final Collection<String> modifiedTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(modifiedTests).containsExactly("org.arquillian.smart.testing.FilesTest");
+        assertThat(modifiedTests).containsOnly("org.arquillian.smart.testing.FilesTest");
     }
 
     @Test
@@ -89,7 +89,7 @@ public class ChangedFilesDetectorTest {
         final Collection<String> newTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(newTests).containsExactly(NewFilesDetectorTest.class.getCanonicalName(),
+        assertThat(newTests).containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest",
             "org.arquillian.smart.testing.FilesTest");
     }
 
@@ -103,7 +103,7 @@ public class ChangedFilesDetectorTest {
         final Collection<String> modifiedTests = changedFilesDetector.getTests();
 
         // then
-        assertThat(modifiedTests).doesNotContain(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(modifiedTests).doesNotContain("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -130,7 +130,7 @@ public class ChangedFilesDetectorTest {
         final Collection<String> changedTest = changedFilesDetector.getTests();
 
         // then
-        assertThat(changedTest).containsExactly(NewFilesDetectorTest.class.getCanonicalName());
+        assertThat(changedTest).containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
         assertThat(changedTest).doesNotContain("org.arquillian.smart.testing.CalculatorTest");
     }
 }

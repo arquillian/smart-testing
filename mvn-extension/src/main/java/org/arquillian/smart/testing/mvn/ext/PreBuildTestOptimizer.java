@@ -1,37 +1,45 @@
 package org.arquillian.smart.testing.mvn.ext;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
+import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Configuration;
-import org.arquillian.smart.testing.hub.TestHub;
-import org.arquillian.smart.testing.hub.storage.LocalTestPlanPersister;
-import org.arquillian.smart.testing.hub.storage.TestPlanPersister;
+import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
+import org.arquillian.smart.testing.scm.Change;
+import org.arquillian.smart.testing.scm.spi.ChangeResolver;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
+
+import static java.util.stream.StreamSupport.stream;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "TODO fill it in later", // TODO
     hint = "smart-testing-optimizer")
-public class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
+class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-
         final Configuration configuration = Configuration.read();
         configureExtension(session, configuration);
-        final List<TestPlanPersister> testPlanPersisters = Arrays.asList(new LocalTestPlanPersister()); // TODO later SPI ?
-        final File projectDir = session.getCurrentProject().getBasedir();
-        final String[] strategies = configuration.getStrategies();
-        new TestHub(testPlanPersisters).optimize(projectDir, strategies);
+        calculateChanges();
+    }
+
+    private void calculateChanges() {
+        final Iterable<ChangeResolver> changeResolvers = new JavaSPILoader().all(ChangeResolver.class, ChangeResolver::isApplicable);
+        final Collection<Change> changes = stream(changeResolvers.spliterator(), false)
+            .map(ChangeResolver::diff)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
+
+        new LocalChangeStorage().store(changes); // FIXME DI? dunno
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         // TODO do we want to inject MavenProjectConfigurator instead?
-
+        // FIXME NPE when we don't specify properties from CLI
         final MavenProjectConfigurator mavenProjectConfigurator =
             new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {

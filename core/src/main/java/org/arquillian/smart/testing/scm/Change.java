@@ -8,8 +8,8 @@ import static org.arquillian.smart.testing.scm.ChangeType.MODIFY;
 
 public class Change {
 
-    private Path location;
-    private ChangeType changeType;
+    private final Path location;
+    private final ChangeType changeType;
 
     public Change(Path location, ChangeType changeType) {
         this.location = location;
@@ -58,5 +58,17 @@ public class Change {
         sb.append(", changeType=").append(changeType);
         sb.append('}');
         return sb.toString();
+    }
+
+    // FIXME or maybe just Serializable - so we produce binary
+    public String write() {
+        final StringBuilder sb = new StringBuilder("");
+        sb.append(location).append(',').append(changeType);
+        return sb.toString();
+    }
+
+    public static Change read(String serialized) {
+        final String[] parts = serialized.split(",");
+        return new Change(Paths.get(parts[0]), ChangeType.valueOf(parts[1]));
     }
 }
