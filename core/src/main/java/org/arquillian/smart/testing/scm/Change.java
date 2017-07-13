@@ -1,18 +1,18 @@
 package org.arquillian.smart.testing.scm;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class Change {
 
-    private File location;
+    private Path location;
     private ChangeType changeType;
 
-    public Change(File location, ChangeType changeType) {
+    public Change(Path location, ChangeType changeType) {
         this.location = location;
         this.changeType = changeType;
     }
 
-    public File getLocation() {
+    public Path getLocation() {
         return location;
     }
 
@@ -42,7 +42,7 @@ public class Change {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Change{");
-        sb.append("location='").append(location.getAbsolutePath()).append('\'');
+        sb.append("location='").append(location).append('\'');
         sb.append(", changeType=").append(changeType);
         sb.append('}');
         return sb.toString();

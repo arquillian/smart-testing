@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.scm.git;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -108,8 +107,7 @@ public class GitScmResolverTest {
     }
 
 
-    private File relative(String path) {
-        return new File(gitFolder.getRoot(),
-            path);
+    private Path relative(String path) {
+        return Paths.get(gitFolder.getRoot().getAbsolutePath(), path);
     }
 }

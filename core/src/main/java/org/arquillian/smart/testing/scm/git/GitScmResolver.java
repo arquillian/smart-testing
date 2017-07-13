@@ -4,6 +4,8 @@ package org.arquillian.smart.testing.scm.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,19 +75,19 @@ public class GitScmResolver implements AutoCloseable {
 
         allChanges.addAll(status.getModified()
             .stream()
-            .map(s -> new Change(new File(repoRoot, s), ChangeType.MODIFY))
+            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.MODIFY))
             .collect(Collectors.toSet()));
         allChanges.addAll(status.getChanged()
             .stream()
-            .map(s -> new Change(new File(repoRoot, s), ChangeType.MODIFY))
+            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.MODIFY))
             .collect(Collectors.toSet()));
         allChanges.addAll(status.getUntracked()
             .stream()
-            .map(s -> new Change(new File(repoRoot, s), ChangeType.ADD))
+            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.ADD))
             .collect(Collectors.toSet()));
         allChanges.addAll(status.getAdded()
             .stream()
-            .map(s -> new Change(new File(repoRoot, s), ChangeType.ADD))
+            .map(s -> new Change(Paths.get(repoRoot.getAbsolutePath(), s), ChangeType.ADD))
             .collect(Collectors.toSet()));
         return allChanges;
     }
@@ -110,7 +112,7 @@ public class GitScmResolver implements AutoCloseable {
     private Set<Change> extract(List<DiffEntry> diffs, File repoRoot) {
         return diffs.stream()
             .map(diffEntry -> {
-                final File classLocation = new File(repoRoot, diffEntry.getNewPath());
+                final Path classLocation = Paths.get(repoRoot.getAbsolutePath(), diffEntry.getNewPath());
                 final ChangeType changeType = ChangeType.valueOf(diffEntry.getChangeType().name());
 
                 return new Change(classLocation, changeType);
