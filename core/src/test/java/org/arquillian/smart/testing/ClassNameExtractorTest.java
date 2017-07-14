@@ -32,7 +32,7 @@ public class ClassNameExtractorTest {
         final String fullyQualifiedName = classNameExtractor.extractFullyQualifiedName(dummyClass);
         System.out.println(fullyQualifiedName);
         // then
-        assertThat(fullyQualifiedName).isEqualTo("dummy.cls.HostileDummyClassWithPackageName");
+        assertThat(fullyQualifiedName).isEqualTo("dummy.correct.cls.HostileDummyClassWithPackageName");
     }
 
     @Test
