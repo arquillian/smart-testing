@@ -1,15 +1,15 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
-import org.arquillian.smart.testing.Files;
+import org.arquillian.smart.testing.FilesCodec;
 
 public class DuplicateClassNameDifferentPackagesAsField {
 
-    private Files files;
+    private FilesCodec filesCodec;
     private org.assertj.core.util.Files files2;
     private java.nio.file.Files files3;
 
     public void callFiles() {
-        files.hashCode();
+        filesCodec.hashCode();
     }
 
     public void callFiles2() {

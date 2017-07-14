@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Files {
+public class FilesCodec {
 
     private static MessageDigest messageDigest = null;
 
@@ -20,7 +20,7 @@ public class Files {
         }
     }
 
-    private Files() {
+    private FilesCodec() {
     }
 
     /**

@@ -42,7 +42,7 @@ import java.util.Map;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
-import org.arquillian.smart.testing.Files;
+import org.arquillian.smart.testing.FilesCodec;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
@@ -143,7 +143,7 @@ public class JavaAssistClassParser {
      * @throws IOException
      */
     public String classFileChanged(File file) throws IOException {
-        String sha1 = Files.sha1(file);
+        String sha1 = FilesCodec.sha1(file);
         CacheEntry entry = BY_PATH.get(file.getAbsolutePath());
         if ((entry != null) && (entry.sha1.equals(sha1))) {
             return entry.classname;

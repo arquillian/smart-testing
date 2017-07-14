@@ -35,7 +35,7 @@ public class JavaAssistClassParserTest {
         assertThat(duplicatedClass.getImports())
             .containsExactlyInAnyOrder("java.nio.file.Files",
                 "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsField",
-                "java.lang.Object", "org.assertj.core.util.Files", "org.arquillian.smart.testing.Files");
+                "java.lang.Object", "org.assertj.core.util.Files", "org.arquillian.smart.testing.FilesCodec");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class JavaAssistClassParserTest {
             .containsExactlyInAnyOrder("java.nio.file.Paths", "java.nio.file.Files",
                 "java.lang.Object", "java.io.IOException", "java.lang.String",
                 "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsLocal",
-                "org.arquillian.smart.testing.Files");
+                "org.arquillian.smart.testing.FilesCodec");
     }
 
     @Test
