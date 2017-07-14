@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public class ClassNameExtractor {
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile("\\s*(package)\\s+([\\w+.]+)\\s*;");
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("\\s*(package)\\s+([\\w+.]+)\\s*;", Pattern.COMMENTS | Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
 
     // FIXME this assumes we only support Java at this point
     public String extractFullyQualifiedName(final File sourceFile)  {

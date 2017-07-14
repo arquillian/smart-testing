@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing;
 
 import java.io.File;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,20 @@ public class ClassNameExtractorTest {
 
         // then
         assertThat(fullyQualifiedName).isEqualTo("dummy.cls.DummyClassWithPackageName");
+    }
+
+    @Test
+    @Ignore("FIXME: improve the pattern to handle this case") // FIXME
+    public void should_extract_fully_qualified_name_from_source_file_with_defined_package_ignoring_comments() throws Exception {
+        // given
+        final ClassNameExtractor classNameExtractor = new ClassNameExtractor();
+
+        // when
+        final File dummyClass = load("HostileDummyClassWithPackageName.java");
+        final String fullyQualifiedName = classNameExtractor.extractFullyQualifiedName(dummyClass);
+        System.out.println(fullyQualifiedName);
+        // then
+        assertThat(fullyQualifiedName).isEqualTo("dummy.cls.HostileDummyClassWithPackageName");
     }
 
     @Test
