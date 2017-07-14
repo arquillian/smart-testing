@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.PathMatcher;
@@ -12,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.ClassNameExtractor;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -65,14 +65,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
     public List<String> getLocalTests(Set<String> files) {
         final List<String> localTests = files.stream()
             .filter(this::matchPatterns)
-            .map(file -> {
-                try {
-                    final File sourceFile = new File(repoRoot, file);
-                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
-                } catch (FileNotFoundException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            })
+            .map(file -> new ClassNameExtractor().extractFullyQualifiedName(new File(repoRoot, file)))
             .peek(
                 test -> logger.finest("%s test added either because untracked or staged as new file", test))
             .collect(Collectors.toList());
@@ -97,14 +90,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
     private List<String> extractEntries(List<DiffEntry> diffs, File repoRoot) {
         return diffs.stream()
             .filter(this::isMatching)
-            .map(diffEntry -> {
-                try {
-                    final File sourceFile = new File(repoRoot, diffEntry.getNewPath());
-                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
-                } catch (FileNotFoundException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            })
+            .map(diffEntry -> new ClassNameExtractor().extractFullyQualifiedName(new File(repoRoot, diffEntry.getNewPath())))
             .peek(test -> logger.finest("%s test added because it has been added or changed between %s and %s Git commit",
                 test, previous, head)).collect(Collectors.toList());
     }

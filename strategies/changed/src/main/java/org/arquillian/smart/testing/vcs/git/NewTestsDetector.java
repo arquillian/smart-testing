@@ -1,9 +1,9 @@
 package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.ClassNameExtractor;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -41,14 +41,7 @@ public class NewTestsDetector implements TestExecutionPlanner {
             // to have an interface called TestDecider.isTest(path) -> PatternTestDecider. include/globs etc
             .filter(change -> matchPatterns(change.getLocation().toAbsolutePath().toString(),
                 this.globPatterns))
-            .map(change -> {
-                try {
-                    final File sourceFile = change.getLocation().toFile();
-                    return new ClassNameExtractor().extractFullyQualifiedName(sourceFile);
-                } catch (FileNotFoundException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            })
+            .map(change -> new ClassNameExtractor().extractFullyQualifiedName(change.getLocation().toFile()))
             .collect(Collectors.toList());
     }
 
