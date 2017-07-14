@@ -28,7 +28,7 @@ public class FileSystemTestClassDetector implements TestClassDetector {
         if (globPatterns.length > 0) {
             this.globPatterns = Arrays.asList(globPatterns);
         } else {
-            this.globPatterns = Collections.singletonList("**/src/test/java/**/*Test.*");
+            this.globPatterns = Collections.singletonList("**/src/test/java/**/*Test*.*");
         }
     }
 

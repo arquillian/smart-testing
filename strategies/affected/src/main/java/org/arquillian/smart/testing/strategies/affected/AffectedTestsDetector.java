@@ -64,8 +64,8 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
                 return changeResolver.diff();
             });
 
+
         final Set<File> mainClasses = files.stream()
-            .filter(change -> ChangeType.ADD.equals(change.getChangeType()))
             // to have an interface called TestDecider.isCoreClass(path) -> PatternTestDecider. include/globs etc
             .filter(change -> matchPatterns(change.getLocation().toAbsolutePath().toString(),
                 mainClassesLocationPattern))
