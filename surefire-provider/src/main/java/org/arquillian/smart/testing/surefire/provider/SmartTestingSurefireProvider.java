@@ -51,7 +51,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
 
-        TestsToRun orderedTests = getTestsToRun();
+        final TestsToRun orderedTests = getTestsToRun();
         if (orderedTests.containsExactly(0)) {
             orderedTests.markTestSetFinished();
             return RunResult.noTestsRun();
