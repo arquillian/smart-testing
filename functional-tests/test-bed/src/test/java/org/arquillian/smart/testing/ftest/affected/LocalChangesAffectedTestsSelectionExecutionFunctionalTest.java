@@ -14,7 +14,7 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest extends T
     @Test
     public void should_only_execute_tests_related_to_single_local_change_in_production_code_when_affected_is_enabled() throws Exception {
         // given
-        project.configureSmartTesting()
+        project.buildOptions().quiet(false).configure().configureSmartTesting()
                     .executionOrder(AFFECTED)
                     .inMode(SELECTING)
                .enable();

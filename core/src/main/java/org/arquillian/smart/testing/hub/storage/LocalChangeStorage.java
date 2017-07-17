@@ -17,11 +17,12 @@ public class LocalChangeStorage implements ChangeStorage {
 
     private static final Logger logger = Logger.getLogger(LocalChangeStorage.class);
 
-    private static final String SMART_TESTING_PLAN = ".smart-testing-plan";
+    private static final String SMART_TESTING_SCM_CHANGES = ".smart-testing-scm-changes";
+    static String CURRENT_DIR = ".";
 
     @Override
     public void store(Collection<Change> changes) {
-        try (BufferedWriter changesFile = Files.newBufferedWriter(getStoragePath())) {
+        try (BufferedWriter changesFile = Files.newBufferedWriter(Paths.get(CURRENT_DIR, SMART_TESTING_SCM_CHANGES))) {
             changes.forEach(change -> {
                 try {
                     changesFile.write(change.write());
@@ -31,34 +32,58 @@ public class LocalChangeStorage implements ChangeStorage {
                 }
             });
         } catch (IOException e) {
-            throw new RuntimeException("Cannot create " + SMART_TESTING_PLAN + " file", e);
+            throw new RuntimeException("Cannot create " + SMART_TESTING_SCM_CHANGES + " file", e);
         }
     }
 
     @Override
     public Optional<Collection<Change>> read() {
-        try (Stream<String> changes = Files.lines(getStoragePath())) {
-            return Optional.of(changes.map(Change::read).collect(Collectors.toList()));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Optional.empty();
+        final Optional<Path> smartTestingScmChangesOptional =
+            findFileInCurrentDirectoryOrParents(SMART_TESTING_SCM_CHANGES);
+
+        if (smartTestingScmChangesOptional.isPresent()) {
+
+            try (Stream<String> changes = Files.lines(smartTestingScmChangesOptional.get())) {
+                return Optional.of(changes.map(Change::read).collect(Collectors.toList()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+        return Optional.empty();
     }
 
     @Override
     public void purgeAll() {
-        final File changesStore = new File(getStoragePath().toUri());
-        final boolean deleted = changesStore.delete();
-        if (!deleted) {
-            logger.warn("Unable to remove %s.", changesStore.getAbsolutePath());
-        }
+        final Optional<Path> smartTestingScmChangesOptional =
+            findFileInCurrentDirectoryOrParents(SMART_TESTING_SCM_CHANGES);
+
+        smartTestingScmChangesOptional.ifPresent(scmChanges -> {
+            final File changesStore = new File(scmChanges.toUri());
+            final boolean deleted = changesStore.delete();
+            if (!deleted) {
+                logger.warn("Unable to remove %s.", changesStore.getAbsolutePath());
+            }
+        });
     }
 
-    private Path getStoragePath() {
-        // TODO we have to make it configurable
-        // Paths.get(".") - not working
-        // "java.io.tmpdir" is overwritten to target mvn folder while in surefire so we cannot rely on system property
-        final Path path = Paths.get("/tmp", SMART_TESTING_PLAN);
-        return path;
+    private Optional<Path> findFileInCurrentDirectoryOrParents(String filename) {
+        File currentFile = new File(CURRENT_DIR, filename).getAbsoluteFile();
+        if (currentFile.exists()) {
+            return Optional.of(currentFile.toPath());
+        }
+
+        currentFile = currentFile.getParentFile().getParentFile();
+        while (currentFile != null) {
+            currentFile = new File(currentFile, filename);
+
+            if (currentFile.exists()) {
+                return Optional.of(currentFile.toPath());
+            }
+
+            currentFile = currentFile.getParentFile().getParentFile();
+        }
+
+        return Optional.empty();
     }
 }

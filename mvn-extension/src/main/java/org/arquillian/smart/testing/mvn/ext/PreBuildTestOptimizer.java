@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
