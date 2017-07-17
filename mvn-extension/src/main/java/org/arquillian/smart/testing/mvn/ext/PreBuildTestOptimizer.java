@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
@@ -22,7 +21,7 @@ import static java.util.stream.StreamSupport.stream;
     hint = "smart-testing-optimizer")
 class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
-    private final ChangeStorage changeStorage = new LocalChangeStorage();
+    private final ChangeStorage changeStorage = new LocalChangeStorage(".");
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {

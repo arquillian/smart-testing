@@ -18,11 +18,22 @@ public class LocalChangeStorage implements ChangeStorage {
     private static final Logger logger = Logger.getLogger(LocalChangeStorage.class);
 
     private static final String SMART_TESTING_SCM_CHANGES = ".smart-testing-scm-changes";
-    static String CURRENT_DIR = ".";
+
+    private final String currentDirectory;
+
+    // Used by SPI
+    @SuppressWarnings("unused")
+    public LocalChangeStorage() {
+        this.currentDirectory = ".";
+    }
+
+    public LocalChangeStorage(String currentDirectory) {
+        this.currentDirectory = currentDirectory;
+    }
 
     @Override
     public void store(Collection<Change> changes) {
-        try (BufferedWriter changesFile = Files.newBufferedWriter(Paths.get(CURRENT_DIR, SMART_TESTING_SCM_CHANGES))) {
+        try (BufferedWriter changesFile = Files.newBufferedWriter(Paths.get(currentDirectory, SMART_TESTING_SCM_CHANGES))) {
             changes.forEach(change -> {
                 try {
                     changesFile.write(change.write());
@@ -68,7 +79,7 @@ public class LocalChangeStorage implements ChangeStorage {
     }
 
     private Optional<Path> findFileInCurrentDirectoryOrParents(String filename) {
-        File currentFile = new File(CURRENT_DIR, filename).getAbsoluteFile();
+        File currentFile = new File(currentDirectory, filename).getAbsoluteFile();
         if (currentFile.exists()) {
             return Optional.of(currentFile.toPath());
         }
