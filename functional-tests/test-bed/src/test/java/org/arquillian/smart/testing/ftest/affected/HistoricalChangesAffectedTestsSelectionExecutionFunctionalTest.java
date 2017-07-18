@@ -54,64 +54,6 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-
     }
 
-    @Test
-    public void should_execute_selected_tests_when_smart_testing_is_enabled() throws Exception {
-        // given
-        project.configureSmartTesting()
-            .executionOrder(AFFECTED)
-            .inMode(SELECTING)
-            .enable();
-
-        project.applyAsCommits("Single method body modification - sysout",
-                "Inlined variable in a method");
-
-        // when
-        final List<TestResult> actualTestResults = project
-            .buildOptions()
-            .withSystemProperties("git.last.commits", "2", "disableSmartTesting", "false")
-            .configure()
-            .build();
-
-        // then
-        assertThat(actualTestResults).hasSize(3);
-    }
-
-    @Test
-    public void should_execute_all_tests_when_smart_testing_is_disabled() throws Exception {
-        // when
-        final List<TestResult> actualTestResults = project
-            .buildOptions()
-            .withSystemProperties("disableSmartTesting", "true")
-            .configure()
-            .build();
-
-        // then
-        assertThat(actualTestResults).hasSize(77);
-    }
-
-    @Test
-    public void should_execute_all_tests_when_smart_testing_is_disabled_irrespective_of_strategy() throws Exception {
-        // given
-        project.configureSmartTesting()
-            .executionOrder(AFFECTED)
-            .inMode(SELECTING);
-            //.enable();
-
-        project
-            .applyAsCommits("Single method body modification - sysout",
-                "Inlined variable in a method");
-
-        // when
-        final List<TestResult> actualTestResults = project
-            .buildOptions()
-            .withSystemProperties("git.last.commits", "2", "disableSmartTesting", "true")
-            .configure()
-            .build();
-
-        // then
-        assertThat(actualTestResults).hasSize(77);
-    }
 }

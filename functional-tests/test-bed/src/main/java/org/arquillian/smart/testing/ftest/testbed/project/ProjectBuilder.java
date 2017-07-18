@@ -31,6 +31,7 @@ public class ProjectBuilder {
     private final Path root;
     private final Project project;
     private final Properties systemProperties = new Properties();
+    private List<String> excludeProjects;
 
     private int remotePort = DEFAULT_DEBUG_PORT;
     private int surefireRemotePort = DEFAULT_SUREFIRE_DEBUG_PORT;
@@ -125,6 +126,12 @@ public class ProjectBuilder {
         return this;
     }
 
+    public ProjectBuilder withExcludeProjects(String... excludeProjects) {
+        this.excludeProjects =
+            Arrays.stream(excludeProjects).map(excludeProject -> "!" + excludeProject).collect(Collectors.toList());
+        return this;
+    }
+
     List<TestResult> build(String... goals) {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
@@ -133,6 +140,7 @@ public class ProjectBuilder {
 
         final BuiltProject build = embeddedMaven
                     .setGoals(goals)
+                    .setProjects(excludeProjects)
                     .setDebug(isMavenDebugOutputEnabled())
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)

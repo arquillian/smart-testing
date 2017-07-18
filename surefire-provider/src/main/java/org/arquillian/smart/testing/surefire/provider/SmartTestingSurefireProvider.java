@@ -11,24 +11,28 @@ import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
+import static java.lang.System.getProperty;
+
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
     private ProviderParametersParser paramParser;
     private Class<SurefireProvider> providerClass;
     private ProviderParameters bootParams;
-    private final TestsToRun testsToRun;
-
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.providerClass = new ProviderList(this.paramParser).resolve();
         this.surefireProvider = createSurefireProviderInstance();
-        this.testsToRun = (TestsToRun) getSuites();
     }
 
     private TestsToRun getTestsToRun() {
+        final TestsToRun testsToRun = (TestsToRun) getSuites();
+
+        if (isDisableSmartTesting()) {
+            return testsToRun;
+        }
 
         final String strategiesParam = paramParser.getProperty("strategies");
 
@@ -39,6 +43,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
         return new TestStrategyApplier(testsToRun, paramParser,
             testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));
+    }
+
+    private boolean isDisableSmartTesting() {
+        return Boolean.valueOf(getProperty("disableSmartTesting", "false"));
     }
 
     private String[] getGlobPatterns() {
@@ -54,17 +62,12 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
-
-        boolean disableSmartTesting = Validate.isDisableSmartTesting();
+        TestsToRun orderedTests = getTestsToRun();
         surefireProvider = createSurefireProviderInstance();
-        if (!disableSmartTesting) {
-            TestsToRun orderedTests = getTestsToRun();
-            return surefireProvider.invoke(orderedTests);
-        }
-        return surefireProvider.invoke(testsToRun);
+        return surefireProvider.invoke(orderedTests);
     }
 
-    private SurefireProvider createSurefireProviderInstance(){
+    private SurefireProvider createSurefireProviderInstance() {
         return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
     }
 
