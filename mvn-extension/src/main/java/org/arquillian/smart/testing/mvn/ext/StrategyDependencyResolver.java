@@ -53,7 +53,11 @@ public class StrategyDependencyResolver {
                     final Dependency dependency = new Dependency();
                     dependency.setGroupId(gav[0]);
                     dependency.setArtifactId(gav[1]);
-                    dependency.setVersion(gav[2]);
+                    String version = ExtensionVersion.version();
+                    if (gav.length == 3) {
+                        version = gav[2];
+                    }
+                    dependency.setVersion(version);
                     dependency.setScope("runtime");
                     return dependency;
                 }));
