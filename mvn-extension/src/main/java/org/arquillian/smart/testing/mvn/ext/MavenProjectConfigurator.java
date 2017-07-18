@@ -110,7 +110,7 @@ class MavenProjectConfigurator {
         final Dependency smartTestingSurefireProvider = new Dependency();
         smartTestingSurefireProvider.setGroupId("org.arquillian.smart.testing");
         smartTestingSurefireProvider.setArtifactId("smart-testing-surefire-provider");
-        smartTestingSurefireProvider.setVersion("0.0.1-SNAPSHOT"); // TODO make it auto-discoverable
+        smartTestingSurefireProvider.setVersion(ExtensionVersion.version());
         smartTestingSurefireProvider.setScope("runtime");
         return smartTestingSurefireProvider;
     }
