@@ -12,12 +12,14 @@ import java.util.stream.Stream;
 
 public class ClassNameExtractor {
 
-    private static final Pattern PACKAGE_PATTERN = Pattern.compile("\\s*(package)\\s+([\\w+.]+)\\s*;", Pattern.COMMENTS | Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile("^(?!\\s*//)\\s*(package)\\s+([\\w+.]+)\\s*;", Pattern.COMMENTS | Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
+
 
     // FIXME this assumes we only support Java at this point
     public String extractFullyQualifiedName(final File sourceFile)  {
         final String absolutePath = sourceFile.getAbsolutePath();
         final String className = absolutePath.substring(absolutePath.lastIndexOf('/') + 1).replaceAll(".java", "");
+
         try (Stream<String> lines = Files.lines(Paths.get(sourceFile.getAbsolutePath()))) {
             Optional<MatchResult> pkgName = lines.flatMap(line -> {
                 final Matcher matcher = PACKAGE_PATTERN.matcher(line);

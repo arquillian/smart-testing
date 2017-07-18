@@ -22,6 +22,19 @@ public class ClassNameExtractorTest {
     }
 
     @Test
+    public void should_extract_fully_qualified_name_from_source_file_with_single_line_comment() throws Exception {
+        // given
+        final ClassNameExtractor classNameExtractor = new ClassNameExtractor();
+
+        // when
+        final File dummyClass = load("DummyClassWithSingleLineComment.java");
+        final String fullyQualifiedName = classNameExtractor.extractFullyQualifiedName(dummyClass);
+
+        // then
+        assertThat(fullyQualifiedName).isEqualTo("dummy.cls.DummyClassWithSingleLineComment");
+    }
+
+    @Test
     @Ignore("FIXME: improve the pattern to handle this case") // FIXME
     public void should_extract_fully_qualified_name_from_source_file_with_defined_package_ignoring_comments() throws Exception {
         // given
