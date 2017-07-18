@@ -82,29 +82,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.google.code.maven-replacer-plugin</groupId>
-        <artifactId>replacer</artifactId>
-        <version>1.5.3</version>
-        <executions>
-          <execution>
-            <id>replace-for-version</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>replace</goal>
-            </goals>
-            <configuration>
-              <file>${build.directory}/classes/extension_version</file>
-              <replacements>
-                <replacement>
-                  <token>@extension_version@</token>
-                  <value>${project.version}</value>
-                </replacement>
-              </replacements>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-shade-plugin</artifactId>
         <version>${version.maven.plugin.shade}</version>
         <configuration>
@@ -128,6 +105,12 @@
         </executions>
       </plugin>
     </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
   </build>
 
 </project>
