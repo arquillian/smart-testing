@@ -23,6 +23,10 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
 import static org.arquillian.smart.testing.scm.Change.add;
 import static org.arquillian.smart.testing.scm.Change.modify;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.HEAD;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.getPrevCommitDefaultValue;
 
 public class GitChangeResolver implements ChangeResolver {
 
@@ -36,7 +40,9 @@ public class GitChangeResolver implements ChangeResolver {
     private final Git git;
 
     public GitChangeResolver() {
-        this(Paths.get("").toAbsolutePath().toFile());
+        this(Paths.get("").toAbsolutePath().toFile(),
+            System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue()),
+            System.getProperty(COMMIT, HEAD));
     }
 
     public GitChangeResolver(File dir) {
