@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.filter;
 
 import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 
@@ -24,4 +25,7 @@ public class GlobPatternMatcher {
         return pathMatcher.matches(Paths.get(path));
     }
 
+    public static boolean matchPatterns(Path path, String ... globPatterns) {
+        return matchPatterns(path.toAbsolutePath().toString(), globPatterns);
+    }
 }
