@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
-import org.arquillian.smart.testing.GitRunnerProperties;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
@@ -23,10 +22,10 @@ public class NewFilesDetectorFactory implements TestExecutionPlannerFactory {
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, String[] globPatterns) {
+    public TestExecutionPlanner create(File projectDir, File testSourceDir) {
         final String previousCommit = System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue());
         final String commit = System.getProperty(COMMIT, HEAD);
 
-        return new NewFilesDetector(projectDir, previousCommit, commit, globPatterns);
+        return new NewFilesDetector(projectDir, previousCommit, commit, testSourceDir.getAbsolutePath() + "/**/*.java");
     }
 }

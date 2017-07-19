@@ -10,6 +10,8 @@ public class ProjectConfigurator {
 
     private Criteria[] criteria;
     private Mode mode;
+    private String[] includes;
+    private String[] excludes;
 
     private final Project project;
     private final Path root;
@@ -37,6 +39,17 @@ public class ProjectConfigurator {
         return this;
     }
 
+    public ProjectConfigurator withIncludes(String... includes) {
+        this.includes = includes;
+        return this;
+    }
+
+    public ProjectConfigurator withExcludes(String... excludes) {
+        this.excludes = excludes;
+        return this;
+    }
+
+
     public Project enable() {
         final Path rootPom = Paths.get(root.toString(), File.separator, "pom.xml");
         final MavenConfigurator mavenConfigurator = new MavenConfigurator(rootPom, this);
@@ -46,4 +59,11 @@ public class ProjectConfigurator {
         return this.project;
     }
 
+    public String[] getIncludes() {
+        return includes;
+    }
+
+    public String[] getExcludes() {
+        return excludes;
+    }
 }

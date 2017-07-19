@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -23,7 +24,7 @@ import static java.util.Arrays.asList;
 
 class MavenConfigurator {
 
-    private static final List<String> APPLICABLE_PLUGINS =  asList("maven-surefire-plugin", "maven-failsafe-plugin");
+    private static final List<String> APPLICABLE_PLUGINS = asList("maven-surefire-plugin", "maven-failsafe-plugin");
 
     private final Model model;
     private final ProjectConfigurator projectConfigurator;
@@ -53,11 +54,46 @@ class MavenConfigurator {
             final Object configuration = testRunnerPlugin.getConfiguration();
             if (configuration != null) {
                 final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
+                final Xpp3Dom properties = getOrCreateChild(configurationDom, "properties");
                 properties.addChild(defineUsageMode());
                 properties.addChild(defineTestSelectionCriteria());
+                final Xpp3Dom includes = getOrCreateChild(configurationDom, "includes");
+                addIncludePattern(includes);
+                final Xpp3Dom excludes = getOrCreateChild(configurationDom, "excludes");
+                addExcludePattern(excludes);
             }
         }
+    }
+
+    private void addIncludePattern(Xpp3Dom includes) {
+        final String[] projectConfiguratorIncludes = projectConfigurator.getIncludes();
+        if (projectConfiguratorIncludes != null) {
+            addChildNodeWithPattern(includes, "include", projectConfiguratorIncludes);
+        }
+    }
+
+    private void addExcludePattern(Xpp3Dom excludes) {
+        final String[] projectConfiguratorExcludes = projectConfigurator.getExcludes();
+        if (projectConfiguratorExcludes != null) {
+            addChildNodeWithPattern(excludes, "exclude", projectConfiguratorExcludes);
+        }
+    }
+
+    private void addChildNodeWithPattern(Xpp3Dom node, String patternType, String[] patterns) {
+        Arrays.stream(patterns).forEach(pattern -> {
+            final boolean matched =
+                Arrays.stream(node.getChildren()).anyMatch(child -> child.getValue().equals(pattern));
+            if (!matched) {
+                node.addChild(definePattern(patternType, pattern));
+            }
+        });
+    }
+
+    private Xpp3Dom definePattern(String patternType, String pattern) {
+        final Xpp3Dom node = new Xpp3Dom(patternType);
+        node.setValue(pattern);
+
+        return node;
     }
 
     void update() {
@@ -98,13 +134,13 @@ class MavenConfigurator {
         return usage;
     }
 
-    private Xpp3Dom getOrCreatePropertiesChild(Xpp3Dom configurationDom) {
-        Xpp3Dom properties = configurationDom.getChild("properties");
-        if (properties == null) {
-            properties = new Xpp3Dom("properties");
-            configurationDom.addChild(properties);
+    private Xpp3Dom getOrCreateChild(Xpp3Dom configurationDom, String name) {
+        Xpp3Dom node = configurationDom.getChild(name);
+        if (node == null) {
+            node = new Xpp3Dom(name);
+            configurationDom.addChild(node);
         }
-        return properties;
+        return node;
     }
 
     private Dependency smartTestingProviderDependency() {

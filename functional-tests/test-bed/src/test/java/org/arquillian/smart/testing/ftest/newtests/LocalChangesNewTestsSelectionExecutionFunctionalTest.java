@@ -52,4 +52,23 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
+    @Test
+    public void should_not_execute_single_tests_as_pattern_excluded_from_configuration() throws Exception {
+        // given
+        project.configureSmartTesting()
+            .executionOrder(NEW)
+            .inMode(SELECTING)
+            .withExcludes("**/*TestCase.java")
+            .enable();
+
+        final List<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("Adds new unit test");
+
+        // when
+        final List<TestResult> actualTestResults = project.build();
+
+        // then
+        assertThat(actualTestResults).hasSize(0);
+    }
+
 }

@@ -59,7 +59,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
 
     public List<String> getLocalTests(Set<String> files) {
         final List<String> localTests = files.stream()
-            .filter(this::matchPatterns)
+            .filter(file -> matchPatterns(new File(repoRoot, file).getAbsolutePath()))
             .map(file -> {
                 try {
                     final File sourceFile = new File(repoRoot, file);
@@ -104,7 +104,7 @@ abstract class GitChangesDetector implements TestExecutionPlanner {
 
     public Set<File> filterLocalFiles(Set<String> localFiles) {
         return localFiles.stream()
-            .filter(this::matchPatterns)
+            .filter(file -> matchPatterns(new File(repoRoot, file).getAbsolutePath()))
             .map(file -> new File(repoRoot, file))
             .collect(Collectors.toSet());
     }

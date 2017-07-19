@@ -36,6 +36,6 @@ public class NewFilesDetector extends GitChangesDetector {
 
     protected boolean isMatching(DiffEntry diffEntry) {
         return DiffEntry.ChangeType.ADD == diffEntry.getChangeType()
-            && matchPatterns(diffEntry.getNewPath());
+            && matchPatterns(new File(super.repoRoot, diffEntry.getNewPath()).getAbsolutePath());
     }
 }
