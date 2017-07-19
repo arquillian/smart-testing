@@ -3,7 +3,6 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -11,6 +10,8 @@ import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
+
+import static java.lang.System.getProperty;
 
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
@@ -29,6 +30,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private TestsToRun getTestsToRun() {
         final TestsToRun testsToRun = (TestsToRun) getSuites();
 
+        if (isDisableSmartTesting()) {
+            return testsToRun;
+        }
+
         final String strategiesParam = paramParser.getProperty("strategies");
 
         final String[] strategies = strategiesParam.trim().split("\\s*,\\s*");
@@ -38,6 +43,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
         return new TestStrategyApplier(testsToRun, paramParser,
             testExecutionPlannerLoader, bootParams).apply(Arrays.asList(strategies));
+    }
+
+    private boolean isDisableSmartTesting() {
+        return Boolean.valueOf(getProperty("disableSmartTesting", "false"));
     }
 
     private String[] getGlobPatterns() {
@@ -58,7 +67,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         return surefireProvider.invoke(orderedTests);
     }
 
-    private SurefireProvider createSurefireProviderInstance(){
+    private SurefireProvider createSurefireProviderInstance() {
         return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
     }
 
