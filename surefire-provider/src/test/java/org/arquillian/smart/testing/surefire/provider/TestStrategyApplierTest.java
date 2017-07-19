@@ -87,13 +87,13 @@ public class TestStrategyApplierTest {
 
         // when
         final Configuration configuration = Configuration.read();
-        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader,
+            Thread.currentThread().getContextClassLoader());
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
         assertThat(realTestPlanning.getLocatedClasses())
-            .hasSize(3)
-            .containsExactly(TestExecutionPlannerLoaderTest.class, ProviderParameterParserTest.class, TestStrategyApplierTest.class);
+            .containsOnly(TestExecutionPlannerLoaderTest.class);
 
     }
 
