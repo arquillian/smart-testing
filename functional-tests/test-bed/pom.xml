@@ -70,7 +70,7 @@
           <forkCount>${surefire.fork.count}</forkCount>
           <threadCount>${surefire.thread.count}</threadCount>
           <reuseForks>true</reuseForks>
-          <argLine>-Xmx1024m</argLine>
+          <argLine>-Xmx2048m</argLine>
           <parallel>classesAndMethods</parallel>
         </configuration>
 

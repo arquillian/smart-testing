@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,6 +42,8 @@ public class ProjectBuilder {
     private boolean enableSurefireRemoteDebugging = false;
 
     ProjectBuilder(Path root, Project project) {
+        systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
+        systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
         this.root = root;
         this.project = project;
     }
@@ -131,12 +134,19 @@ public class ProjectBuilder {
 
         enableDebugOptions(embeddedMaven);
 
+        final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
+        if (mvnInstallation != null) {
+            embeddedMaven.useInstallation(new File(mvnInstallation));
+        }
+
         final BuiltProject build = embeddedMaven
+                    .setShowVersion(true)
                     .setGoals(goals)
                     .setDebug(isMavenDebugOutputEnabled())
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)
                     .setProperties(systemProperties)
+                    .setMavenOpts("-Xms512m -Xmx1024m")
                     .ignoreFailure()
                 .build();
 
