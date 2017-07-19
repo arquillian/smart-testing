@@ -3,5 +3,8 @@ language: java
 jdk:
   - oraclejdk8
 
+before_script:
+  - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz -P ~/.arquillian/resolver/maven/apache-maven-3.3.9-bin.tar.gz
+
 script:
   - ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"
