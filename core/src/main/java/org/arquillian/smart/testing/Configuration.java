@@ -33,7 +33,7 @@ public class Configuration {
         return this.mode != null;
     }
 
-    public boolean areStrategies() {
+    public boolean areStrategiesDefined() {
         return strategies.length > 0;
     }
 

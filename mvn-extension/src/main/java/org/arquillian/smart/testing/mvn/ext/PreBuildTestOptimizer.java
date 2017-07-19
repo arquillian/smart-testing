@@ -31,7 +31,7 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         configuration = Configuration.read();
 
-        if (configuration.areStrategies()) {
+        if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
             calculateChanges();
         } else {
@@ -41,7 +41,7 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (configuration.areStrategies()) {
+        if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
         } else {
             logger.warn("Smart Testing is installed but no strategies are provided using %s system property.", Configuration.SMART_TESTING);
