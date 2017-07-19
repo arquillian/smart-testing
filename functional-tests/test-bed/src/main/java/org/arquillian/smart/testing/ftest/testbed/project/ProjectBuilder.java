@@ -134,6 +134,8 @@ public class ProjectBuilder {
         enableDebugOptions(embeddedMaven);
 
         final BuiltProject build = embeddedMaven
+                    .useMaven3Version("3.3.9")
+                    .setShowVersion(true)
                     .setGoals(goals)
                     .setDebug(isMavenDebugOutputEnabled())
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
