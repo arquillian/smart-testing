@@ -151,7 +151,7 @@
           <forkCount>${surefire.fork.count}</forkCount>
           <threadCount>${surefire.thread.count}</threadCount>
           <reuseForks>true</reuseForks>
-          <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
+          <argLine>-Xmx2048m</argLine>
           <parallel>classesAndMethods</parallel>
         </configuration>
 
@@ -164,7 +164,7 @@
       <id>travis</id>
       <properties>
         <surefire.fork.count>2</surefire.fork.count>
-        <surefire.thread.count>4</surefire.thread.count>
+        <surefire.thread.count>2</surefire.thread.count>
       </properties>
     </profile>
   </profiles>
