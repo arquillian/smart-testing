@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -134,7 +135,7 @@ public class ProjectBuilder {
         enableDebugOptions(embeddedMaven);
 
         final BuiltProject build = embeddedMaven
-                    .useMaven3Version("3.3.9")
+                    .useInstallation(new File("~/.arquillian/resolver/maven/"))
                     .setShowVersion(true)
                     .setGoals(goals)
                     .setDebug(isMavenDebugOutputEnabled())
