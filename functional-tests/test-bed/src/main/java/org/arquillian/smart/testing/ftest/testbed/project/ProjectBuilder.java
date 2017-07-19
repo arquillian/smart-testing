@@ -41,6 +41,8 @@ public class ProjectBuilder {
     private boolean enableSurefireRemoteDebugging = false;
 
     ProjectBuilder(Path root, Project project) {
+        systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
+        systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
         this.root = root;
         this.project = project;
     }
@@ -137,6 +139,7 @@ public class ProjectBuilder {
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)
                     .setProperties(systemProperties)
+                    .setMavenOpts("-Xms512m -Xmx1024m")
                     .ignoreFailure()
                 .build();
 
