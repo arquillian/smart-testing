@@ -4,8 +4,12 @@ jdk:
   - oraclejdk8
 
 before_script:
-  - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz -P ~/.arquillian/resolver/maven/download
-  - tar -xf ~/.arquillian/resolver/maven/download/apache-maven-3.3.9-bin.tar.gz -C ~/.arquillian/resolver/maven/
+  - mkdir -p /home/travis/.arquillian/mvn
+  - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz -P /home/travis/.arquillian/resolver/maven/download
+  - tar -xf /home/travis/.arquillian/resolver/maven/download/apache-maven-3.3.9-bin.tar.gz -C ~/.arquillian/mvn
+
+env:
+  - TEST_BED_M2_HOME=/home/travis/.arquillian/mvn/apache-maven-3.3.9
 
 script:
   - ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"

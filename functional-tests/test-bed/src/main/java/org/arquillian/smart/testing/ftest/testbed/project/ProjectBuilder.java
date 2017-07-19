@@ -134,8 +134,12 @@ public class ProjectBuilder {
 
         enableDebugOptions(embeddedMaven);
 
+        final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
+        if (mvnInstallation != null) {
+            embeddedMaven.useInstallation(new File(mvnInstallation));
+        }
+
         final BuiltProject build = embeddedMaven
-                    .useInstallation(new File("~/.arquillian/resolver/maven/"))
                     .setShowVersion(true)
                     .setGoals(goals)
                     .setDebug(isMavenDebugOutputEnabled())
