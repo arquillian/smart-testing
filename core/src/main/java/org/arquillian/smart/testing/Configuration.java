@@ -18,7 +18,7 @@ public class Configuration {
         if (containsAnyStrategy(strategies)) {
             configuration.strategies = strategies.split("\\s*,\\s*");
         }
-        configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, "ordering").toUpperCase());
+        configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, "selecting").toUpperCase());
 
         configuration.smartTestingPlugin = System.getProperty(SMART_TESTING_PLUGIN);
 
