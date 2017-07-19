@@ -39,7 +39,6 @@ class TestStrategyApplier {
         final List<String> strategies = Arrays.asList(configuration.getStrategies());
         final Set<Class<?>> orderedTests = new LinkedHashSet<>();
         for (final String strategy : strategies) {
-            System.out.println(strategy);
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             final List<? extends Class<?>> tests = plannerForStrategy.getTests()
                 .stream()

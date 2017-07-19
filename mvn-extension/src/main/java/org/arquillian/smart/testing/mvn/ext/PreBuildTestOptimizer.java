@@ -32,7 +32,6 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        System.out.println("Session ends!");
         changeStorage.purgeAll();
     }
 
