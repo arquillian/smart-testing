@@ -7,6 +7,7 @@ import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
@@ -22,17 +23,29 @@ import static java.util.stream.StreamSupport.stream;
 class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
 
     private final ChangeStorage changeStorage = new LocalChangeStorage(".");
+    private Configuration configuration;
+
+    private static final Logger logger = Logger.getLogger(PreBuildTestOptimizer.class);
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-        final Configuration configuration = Configuration.read();
-        configureExtension(session, configuration);
-        calculateChanges();
+        configuration = Configuration.read();
+
+        if (configuration.areStrategies()) {
+            configureExtension(session, configuration);
+            calculateChanges();
+        } else {
+            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.", Configuration.SMART_TESTING);
+        }
     }
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        changeStorage.purgeAll();
+        if (configuration.areStrategies()) {
+            changeStorage.purgeAll();
+        } else {
+            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.", Configuration.SMART_TESTING);
+        }
     }
 
     private void calculateChanges() {

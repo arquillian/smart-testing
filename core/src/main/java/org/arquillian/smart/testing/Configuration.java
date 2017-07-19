@@ -9,12 +9,20 @@ public class Configuration {
     private RunMode mode;
 
     public static Configuration read() {
-        Configuration configuration = new Configuration();
-        configuration.strategies = System.getProperty(SMART_TESTING, "").toLowerCase()
-            .split("\\s*,\\s*");
-        configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, "ordering").toUpperCase());
+        final Configuration configuration = new Configuration();
+
+        final String strategies = System.getProperty(SMART_TESTING, "").toLowerCase();
+
+        if (containsAnyStrategy(strategies)) {
+            configuration.strategies = strategies.split("\\s*,\\s*");
+        }
+        configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, "selecting").toUpperCase());
 
         return configuration;
+    }
+
+    private static boolean containsAnyStrategy(String strategies) {
+        return !strategies.trim().isEmpty();
     }
 
     public boolean isSelectingMode() {
@@ -23,6 +31,10 @@ public class Configuration {
 
     public boolean isModeSet() {
         return this.mode != null;
+    }
+
+    public boolean areStrategies() {
+        return strategies.length > 0;
     }
 
     public RunMode getMode() {
