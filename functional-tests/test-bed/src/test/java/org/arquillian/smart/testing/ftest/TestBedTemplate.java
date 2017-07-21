@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class TestBedTemplate {
 
-    private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
+    private static final String ORIGIN = "https://github.com/lordofthejars/smart-testing-dogfood-repo.git";
     private static final String REPO_NAME = ORIGIN.substring(ORIGIN.lastIndexOf('/') + 1).replace(".git", "");
 
     @ClassRule

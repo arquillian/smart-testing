@@ -28,6 +28,8 @@
 package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -139,6 +141,9 @@ public class ClassFileIndex {
             if ((childClass != null) && !childClass.equals(parentClass)) {
                 if (graph.containsVertex(childClass)) {
                     graph.addEdge(parentClass, childClass);
+                } else {
+                    graph.addVertex(childClass);
+                    graph.addEdge(parentClass, childClass);
                 }
             }
         }
@@ -189,4 +194,31 @@ public class ClassFileIndex {
         }
         return classes;
     }
+
+    @Override
+    public String toString() {
+        final Set<DefaultEdge> defaultEdges = graph.edgeSet();
+        StringBuilder s = new StringBuilder(System.lineSeparator());
+
+        defaultEdges.stream().forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
+
+        return s.toString();
+    }
+
+    public String toString(String classname) {
+        return graph.edgeSet().stream()
+            .filter(de -> getObject(de, "getSource").equals(classname))
+            .collect(Collectors.toList()).toString();
+    }
+
+    private String getObject(DefaultEdge defaultEdge, String methodName) {
+        try {
+            final Method method = defaultEdge.getClass().getMethod(methodName);
+            method.setAccessible(true);
+            return method.invoke(defaultEdge).toString();
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            return "ERROR on reflection call " + e.getMessage();
+        }
+    }
+
 }
