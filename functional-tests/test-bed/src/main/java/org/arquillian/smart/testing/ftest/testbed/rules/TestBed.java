@@ -15,6 +15,11 @@ import static java.util.stream.Collectors.toList;
 public class TestBed implements TestRule {
 
     private Project project;
+
+    public String getTargetRepoPerTestFolder() {
+        return targetRepoPerTestFolder;
+    }
+
     private String targetRepoPerTestFolder;
 
     public TestBed() {

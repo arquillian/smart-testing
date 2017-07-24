@@ -1,14 +1,12 @@
 package org.arquillian.smart.testing.ftest.testbed.rules;
 
-import java.io.File;
 import org.junit.rules.TemporaryFolder;
 
 import static java.lang.System.getProperty;
 
 public class PersistTempFolder extends TemporaryFolder {
 
-    public PersistTempFolder(File target) {
-        super(target);
+    public PersistTempFolder() {
     }
 
     @Override
