@@ -14,6 +14,8 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
     @Test
     public void should_detect_changes_on_maven_modules_and_execute_test() {
 
+        configureOriginRepo("https://github.com/lordofthejars/smart-testing-dogfood-repo.git");
+
         // given
         project.configureSmartTesting()
             .executionOrder(AFFECTED)

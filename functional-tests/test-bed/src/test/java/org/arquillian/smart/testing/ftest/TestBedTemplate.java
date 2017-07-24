@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class TestBedTemplate {
 
-    private static final String ORIGIN = "https://github.com/lordofthejars/smart-testing-dogfood-repo.git";
+    private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
     private static final String REPO_NAME = ORIGIN.substring(ORIGIN.lastIndexOf('/') + 1).replace(".git", "");
 
     @ClassRule
@@ -47,14 +47,26 @@ public abstract class TestBedTemplate {
 
     @BeforeClass
     public static void cloneTestProject() throws Exception {
+        GIT_REPO_FOLDER = cloneTestProject(ORIGIN, REPO_NAME);
+    }
+
+    private static String cloneTestProject(String origin, String repoName) throws Exception {
+
         TMP_FOLDER.create();
-        GIT_REPO_FOLDER = TMP_FOLDER.getRoot().getAbsolutePath() + File.separator + REPO_NAME;
-        cloneRepository(GIT_REPO_FOLDER, ORIGIN);
+        final String tmpPath = TMP_FOLDER.getRoot().getAbsolutePath();
+        String gitRepoName = tmpPath + File.separator + repoName;
+        cloneRepository(gitRepoName, origin);
+
+        return gitRepoName;
     }
 
     @Before
     public void initializeTestProject() throws IOException {
-        final Path target = createPerTestRepository();
+        initializeTestProject(GIT_REPO_FOLDER);
+    }
+
+    private void initializeTestProject(String gitRepoFolder) throws IOException {
+        final Path target = createPerTestRepository(gitRepoFolder);
         this.project = new Project(target);
     }
 
@@ -63,9 +75,19 @@ public abstract class TestBedTemplate {
         project.close();
     }
 
-    private Path createPerTestRepository() throws IOException {
-        final Path source = Paths.get(GIT_REPO_FOLDER);
-        final Path target = Paths.get(targetRepoPerTestFolder());
+    protected void configureOriginRepo(String origin) {
+        final String repoName = origin.substring(origin.lastIndexOf('/') + 1).replace(".git", "");
+        try {
+            String gitRepoFolder = cloneTestProject(origin, repoName);
+            initializeTestProject(gitRepoFolder);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Path createPerTestRepository(String gitRepoFolder) throws IOException {
+        final Path source = Paths.get(gitRepoFolder);
+        final Path target = Paths.get(targetRepoPerTestFolder(gitRepoFolder));
         final List<Path> sources = Files.walk(source).collect(toList());
         final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)
             .collect(toList());
@@ -76,8 +98,8 @@ public abstract class TestBedTemplate {
         return target;
     }
 
-    private String targetRepoPerTestFolder() {
-        return GIT_REPO_FOLDER + "_" + getClass().getSimpleName() + "_" + name.getMethodName();
+    private String targetRepoPerTestFolder(String gitRepoFolder) {
+        return gitRepoFolder + "_" + getClass().getSimpleName() + "_" + name.getMethodName();
     }
 
     static void cloneRepository(String repoTarget, String repo) throws GitAPIException {
