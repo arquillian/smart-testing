@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 public class ExtensionVersion {
 
     private final static String VERSION_FILE = "/extension_version";
+    private static final String NO_VERSION = "";
 
     private static Version version;
 
@@ -14,14 +15,23 @@ public class ExtensionVersion {
 
         synchronized (ExtensionVersion.class) {
             if (version == null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(ExtensionVersion.class.getResourceAsStream(VERSION_FILE)))){
-                    version = Version.from(reader.readLine().trim());
-                } catch (IOException e) {
-                    throw new RuntimeException("Couldn't read extension version", e);
+                final String smartTestingVersion = System.getProperty("smart.testing.version", NO_VERSION);
+                if (NO_VERSION.equals(smartTestingVersion)) {
+                    readFromFile();
+                } else {
+                    version = Version.from(smartTestingVersion);
                 }
             }
         }
 
         return version;
+    }
+
+    private static void readFromFile() {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ExtensionVersion.class.getResourceAsStream(VERSION_FILE)))){
+            version = Version.from(reader.readLine().trim());
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't read extension version", e);
+        }
     }
 }
