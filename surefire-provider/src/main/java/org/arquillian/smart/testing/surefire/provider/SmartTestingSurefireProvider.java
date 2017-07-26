@@ -17,14 +17,14 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
     private ProviderParametersParser paramParser;
-    private Class<SurefireProvider> providerClass;
+    private SurefireProviderFactory surefireProviderFactory;
     private ProviderParameters bootParams;
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
-        this.providerClass = new ProviderList(this.paramParser).resolve();
-        this.surefireProvider = createSurefireProviderInstance();
+        this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
+        this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
     private TestsToRun getTestsToRun() {
@@ -60,13 +60,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             orderedTests.markTestSetFinished();
             return RunResult.noTestsRun();
         }
-        surefireProvider = createSurefireProviderInstance();
+        surefireProvider = surefireProviderFactory.createInstance();
         return surefireProvider.invoke(orderedTests);
-    }
-
-    private SurefireProvider createSurefireProviderInstance() {
-        return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class},
-            new Object[] {bootParams});
     }
 
     public void cancel() {

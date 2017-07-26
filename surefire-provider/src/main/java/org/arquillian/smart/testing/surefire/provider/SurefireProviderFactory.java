@@ -1,26 +1,35 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.arquillian.smart.testing.surefire.provider.info.JUnit4ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.JUnitCoreProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.TestNgProviderInfo;
 
-public class ProviderList {
+public class SurefireProviderFactory {
 
-    private final ProviderInfo[] wellKnownProviders;
+    private final ProviderInfo providerInfo;
+    private final ProviderParameters providerParameters;
+    private final Class<SurefireProvider> surefireProviderClass;
 
-    ProviderList(ProviderParametersParser paramParser) {
-        wellKnownProviders = new ProviderInfo[] {
+    SurefireProviderFactory(ProviderParametersParser paramParser) {
+        ProviderInfo[] wellKnownProviders = new ProviderInfo[] {
             new TestNgProviderInfo(),
             new JUnitCoreProviderInfo(paramParser),
             new JUnit4ProviderInfo()};
+        providerInfo = autoDetectOneProvider(wellKnownProviders);
+        providerParameters = paramParser.getProviderParameters();
+        surefireProviderClass = loadProviderClass();
+    }
+
+    public SurefireProvider createInstance() {
+        return SecurityUtils.newInstance(surefireProviderClass, new Class[] {ProviderParameters.class},
+            new Object[] {providerInfo.convertProviderParameters(providerParameters)});
     }
 
     @SuppressWarnings("unchecked")
-    Class<SurefireProvider> resolve() {
-
-        ProviderInfo providerInfo = autoDetectOneProvider();
+    private Class<SurefireProvider> loadProviderClass() {
         try {
             ClassLoader classLoader = SurefireDependencyResolver.addProviderToClasspath(providerInfo);
             if (classLoader != null) {
@@ -32,7 +41,7 @@ public class ProviderList {
         }
     }
 
-    private ProviderInfo autoDetectOneProvider() {
+    private ProviderInfo autoDetectOneProvider(ProviderInfo[] wellKnownProviders) {
         for (ProviderInfo wellKnownProvider : wellKnownProviders) {
             if (wellKnownProvider.isApplicable()) {
                 return wellKnownProvider;
