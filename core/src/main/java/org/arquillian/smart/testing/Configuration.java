@@ -4,9 +4,11 @@ public class Configuration {
 
     public static final String SMART_TESTING = "smart-testing";
     public static final String SMART_TESTING_MODE = "smart-testing-mode";
+    public static final String SMART_TESTING_PLUGIN = "smart-testing-plugin";
 
     private String[] strategies = new String[0];
     private RunMode mode;
+    private String smartTestingPlugin;
 
     public static Configuration read() {
         final Configuration configuration = new Configuration();
@@ -17,6 +19,8 @@ public class Configuration {
             configuration.strategies = strategies.split("\\s*,\\s*");
         }
         configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, "selecting").toUpperCase());
+
+        configuration.smartTestingPlugin = System.getProperty(SMART_TESTING_PLUGIN);
 
         return configuration;
     }
@@ -44,4 +48,13 @@ public class Configuration {
     public String[] getStrategies() {
         return strategies;
     }
+
+    public String getSmartTestingPlugin() {
+        return smartTestingPlugin;
+    }
+
+    public boolean isSmartTestingPluginDefined() {
+        return this.smartTestingPlugin != null;
+    }
+
 }
