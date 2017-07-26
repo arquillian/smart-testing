@@ -19,6 +19,8 @@ package org.arquillian.smart.testing.surefire.provider.info;
  * under the License.
  */
 
+import org.apache.maven.surefire.providerapi.ProviderParameters;
+
 public interface ProviderInfo {
 
     String getProviderClassName();
@@ -26,4 +28,6 @@ public interface ProviderInfo {
     boolean isApplicable();
 
     String getDepCoordinates();
+
+    ProviderParameters convertProviderParameters(ProviderParameters providerParameters);
 }

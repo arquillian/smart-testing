@@ -65,4 +65,8 @@ public class ProviderParametersParser {
         }
         return builder.toString().trim();
     }
+
+    public ProviderParameters getProviderParameters() {
+        return providerParameters;
+    }
 }
