@@ -1,47 +1,55 @@
 package org.arquillian.smart.testing.vcs.git;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.ClassNameExtractor;
+import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
-import org.arquillian.smart.testing.scm.ChangeType;
+import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-import static org.arquillian.smart.testing.filter.GlobPatternMatcher.matchPatterns;
+import static org.arquillian.smart.testing.scm.ChangeType.ADD;
 
 public class NewTestsDetector implements TestExecutionPlanner {
 
+    private static final Logger logger = Logger.getLogger(NewTestsDetector.class);
+
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;
-    private final String[] globPatterns;
+    private final TestVerifier testVerifier;
 
-    public NewTestsDetector(File currentDir, String previous, String head, String... globPatterns) {
-        // TODO SPI it
-        this.changeResolver =
-            new org.arquillian.smart.testing.scm.git.GitChangeResolver(currentDir, previous, head);
-        this.changeStorage = new JavaSPILoader().onlyOne(ChangeStorage.class).get();
-        this.globPatterns = globPatterns;
+    // Temporary before introducing proper DI
+    public NewTestsDetector(TestVerifier testVerifier) {
+        this(new GitChangeResolver(), new JavaSPILoader().onlyOne(ChangeStorage.class).get(), testVerifier);
+    }
+
+    public NewTestsDetector(ChangeResolver changeResolver, ChangeStorage changeStorage, TestVerifier testVerifier) {
+        this.changeResolver = changeResolver;
+        this.changeStorage = changeStorage;
+        this.testVerifier = testVerifier;
     }
 
     @Override
-    public Collection<String> getTests() {
-        final Collection<Change> files = changeStorage.read()
+    public String getName() {
+        return "new";
+    }
+
+    @Override
+    public final Collection<TestSelection> getTests() {
+        final Collection<Change> changes = changeStorage.read()
             .orElseGet(() -> {
-                // TODO better logging
-                System.out.println("We didn't find cached changes... rolling back to direct resolution");
+                logger.warn("No cached changes detected... using direct resolution");
                 return changeResolver.diff();
         });
 
-        return files.stream()
-            .filter(change -> ChangeType.ADD.equals(change.getChangeType()))
-            // to have an interface called TestDecider.isTest(path) -> PatternTestDecider. include/globs etc
-            .filter(change -> matchPatterns(change.getLocation().toAbsolutePath().toString(),
-                this.globPatterns))
-            .map(change -> new ClassNameExtractor().extractFullyQualifiedName(change.getLocation().toFile()))
+        return changes.stream()
+            .filter(change -> ADD.equals(change.getChangeType()))
+            .filter(change -> testVerifier.isTest(change.getLocation()))
+            .map(change -> new TestSelection(change.getLocation(), getName()))
             .collect(Collectors.toList());
     }
 

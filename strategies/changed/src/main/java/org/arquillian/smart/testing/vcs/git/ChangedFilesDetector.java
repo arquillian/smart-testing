@@ -1,42 +1,55 @@
 package org.arquillian.smart.testing.vcs.git;
 
-import java.io.File;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import org.eclipse.jgit.diff.DiffEntry;
+import java.util.stream.Collectors;
+import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.hub.storage.ChangeStorage;
+import org.arquillian.smart.testing.scm.Change;
+import org.arquillian.smart.testing.scm.ChangeType;
+import org.arquillian.smart.testing.scm.git.GitChangeResolver;
+import org.arquillian.smart.testing.scm.spi.ChangeResolver;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-public class ChangedFilesDetector extends GitChangesDetector {
+public class ChangedFilesDetector implements TestExecutionPlanner {
 
-    public ChangedFilesDetector(File currentDir, String previous, String head, String... globPatterns) {
-        super(currentDir, previous, head, globPatterns);
+    private static final Logger logger = Logger.getLogger(ChangedFilesDetector.class);
+
+    private final ChangeResolver changeResolver;
+    private final ChangeStorage changeStorage;
+    private final TestVerifier testVerifier;
+
+    public ChangedFilesDetector(TestVerifier testVerifier) {
+        this(new GitChangeResolver(), new JavaSPILoader().onlyOne(ChangeStorage.class).get(), testVerifier);
+    }
+
+    public ChangedFilesDetector(ChangeResolver changeResolver, ChangeStorage changeStorage, TestVerifier testVerifier) {
+        this.changeResolver = changeResolver;
+        this.changeStorage = changeStorage;
+        this.testVerifier = testVerifier;
     }
 
     @Override
-    public Collection<String> getTests() {
-        final Collection<String> tests = super.getTests();
-
-        final Set<String> files = this.gitChangeResolver.modifiedChanges();
-        List<String> modifiedLocalTests = getLocalTests(files);
-        tests.addAll(modifiedLocalTests);
-
-        return tests;
+    public String getName() {
+        return "changed";
     }
 
     @Override
-    public Set<File> getFiles() {
-        final Set<File> files = super.getFiles();
-        final Set<String> modifiedLocalFiles = gitChangeResolver.modifiedChanges();
+    public Collection<TestSelection> getTests() {
+        final Collection<Change> files = changeStorage.read()
+            .orElseGet(() -> {
+                logger.warn("No cached changes detected... using direct resolution");
+                return changeResolver.diff();
+            });
 
-        Set<File> filteredModifiedLocalFiles = filterLocalFiles(modifiedLocalFiles);
-        files.addAll(filteredModifiedLocalFiles);
-
-        return files;
+        return files.stream()
+            .filter(change -> ChangeType.MODIFY.equals(change.getChangeType()))
+            .filter(change -> testVerifier.isTest(change.getLocation()))
+            .map(change -> new TestSelection(change.getLocation(), getName()))
+            .collect(Collectors.toList());
     }
 
-    @Override
-    protected boolean isMatching(DiffEntry diffEntry) {
-        return DiffEntry.ChangeType.MODIFY == diffEntry.getChangeType()
-            && matchPatterns(diffEntry.getNewPath());
-    }
+
 }

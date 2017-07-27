@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
@@ -37,26 +38,26 @@ class TestStrategyApplier {
 
     private Set<Class<?>> selectTests(Configuration configuration) {
         final List<String> strategies = Arrays.asList(configuration.getStrategies());
-        final Set<Class<?>> orderedTests = new LinkedHashSet<>();
+        final Set<TestSelection> selectedTests = new LinkedHashSet<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
-            final List<? extends Class<?>> tests = plannerForStrategy.getTests()
-                .stream()
-                // TODO this will extract class name from the file
-                .filter(this::presentOnClasspath)
-                .filter(this::isInTestToRun)
-                .map(testClass -> {
-                    try {
-                        return Class.forName(testClass);
-                    } catch (ClassNotFoundException e) {
-                        throw new IllegalStateException("Failed while obtaining strategy for " + strategy, e);
-                    }
-                }).collect(Collectors.toList());
-            orderedTests.addAll(tests);
+            selectedTests.addAll(plannerForStrategy.getTests());
         }
         logger.info("Applied strategies: %s", strategies);
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
-        return orderedTests;
+
+        return selectedTests
+            .stream()
+            .map(TestSelection::getClassName)
+            .filter(this::presentOnClasspath)
+            .filter(this::isInTestToRun)
+            .map(testClass -> {
+                try {
+                    return Class.forName(testClass);
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalStateException(e);
+                }
+            }).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private boolean presentOnClasspath(String testClass) {

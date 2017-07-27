@@ -25,6 +25,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
         // when
         final List<TestResult> actualTestResults = project
             .buildOptions()
+                .quiet(false)
                 .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
             .build();
@@ -48,6 +49,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest exte
         // when
         final List<TestResult> actualTestResults = project
             .buildOptions()
+                .quiet(false)
                 .withSystemProperties("git.last.commits", "2")
                 .configure()
             .build();

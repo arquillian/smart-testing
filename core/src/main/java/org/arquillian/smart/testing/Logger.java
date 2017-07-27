@@ -17,13 +17,13 @@ public class Logger {
     /**
      * Find or create a logger for a named subsystem.
      *
-     * @param clazz
+     * @param cls
      *     A class name of the subsystem for the logger such as java.net.URI or javax.swing.Box
      *
      * @return a suitable Logger
      */
-    public static Logger getLogger(Class clazz) {
-        return getLogger(clazz.getName());
+    public static Logger getLogger(Class cls) {
+        return getLogger(cls.getName());
     }
 
     /**

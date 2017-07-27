@@ -23,7 +23,10 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.buildOptions()
+            //.withRemoteSurefireDebugging()
+            .quiet(false)
+        .configure().build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -46,7 +49,9 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.buildOptions()
+                .quiet(false)
+        .configure().build();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

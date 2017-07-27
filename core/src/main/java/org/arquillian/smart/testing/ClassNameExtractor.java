@@ -3,6 +3,7 @@ package org.arquillian.smart.testing;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.regex.MatchResult;
@@ -13,7 +14,6 @@ import java.util.stream.Stream;
 public class ClassNameExtractor {
 
     private static final Pattern PACKAGE_PATTERN = Pattern.compile("^(?!\\s*//)\\s*(package)\\s+([\\w+.]+)\\s*;", Pattern.COMMENTS | Pattern.CASE_INSENSITIVE | Pattern.DOTALL | Pattern.MULTILINE);
-
 
     // FIXME this assumes we only support Java at this point
     public String extractFullyQualifiedName(final File sourceFile)  {
@@ -33,5 +33,10 @@ public class ClassNameExtractor {
 
     public String extractFullyQualifiedName(String path) {
         return extractFullyQualifiedName(new File(path));
+    }
+
+
+    public String extractFullyQualifiedName(Path location) {
+        return extractFullyQualifiedName(location.toFile());
     }
 }
