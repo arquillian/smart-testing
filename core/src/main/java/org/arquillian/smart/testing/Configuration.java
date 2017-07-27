@@ -56,5 +56,4 @@ public class Configuration {
     public boolean isSmartTestingPluginDefined() {
         return this.smartTestingPlugin != null;
     }
-
 }

@@ -53,7 +53,7 @@ public class StrategyDependencyResolver {
                     final Dependency dependency = new Dependency();
                     dependency.setGroupId(gav[0]);
                     dependency.setArtifactId(gav[1]);
-                    String version = ExtensionVersion.version();
+                    String version = ExtensionVersion.version().toString();
                     if (gav.length == 3) {
                         version = gav[2];
                     }

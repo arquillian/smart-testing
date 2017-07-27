@@ -8,14 +8,14 @@ public class ExtensionVersion {
 
     private final static String VERSION_FILE = "/extension_version";
 
-    private static String version;
+    private static Version version;
 
-    public static String version() {
+    public static Version version() {
 
         synchronized (ExtensionVersion.class) {
             if (version == null) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(ExtensionVersion.class.getResourceAsStream(VERSION_FILE)))){
-                    version = reader.readLine();
+                    version = Version.from(reader.readLine().trim());
                 } catch (IOException e) {
                     throw new RuntimeException("Couldn't read extension version", e);
                 }

@@ -6,19 +6,24 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.Logger;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 class MavenProjectConfigurator {
 
-    private static final List<String> APPLICABLE_PLUGINS =  Arrays.asList("maven-surefire-plugin", "maven-failsafe-plugin");
+    private static final Version MINIMUM_VERSION = Version.from("2.19.1");
+    private static final List<String> APPLICABLE_PLUGINS =
+        Arrays.asList("maven-surefire-plugin", "maven-failsafe-plugin");
+
+    private static Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
 
     private final Configuration configuration;
 
@@ -56,13 +61,31 @@ class MavenProjectConfigurator {
     }
 
     void configureTestRunner(Model model) {
-        final Optional<Plugin> testRunnerPluginConfiguration = model.getBuild().getPlugins()
+        final List<Plugin> testRunnerPluginConfigurations = model.getBuild().getPlugins()
             .stream()
             .filter(plugin -> APPLICABLE_PLUGINS.contains(plugin.getArtifactId()))
-            .findFirst();
+            .filter(plugin -> Version.from(plugin.getVersion().trim()).isGreaterOrEqualThan(MINIMUM_VERSION))
+            .filter(plugin -> {
+                if (configuration.isSmartTestingPluginDefined()) {
+                    return configuration.getSmartTestingPlugin().equals(plugin.getArtifactId());
+                }
+                // If not set the plugin is usable
+                return true;
+            })
+            .collect(Collectors.toList());
 
-        if (testRunnerPluginConfiguration.isPresent()) {
-            final Plugin testRunnerPlugin = testRunnerPluginConfiguration.get();
+        if (areNotApplicableTestingPlugins(testRunnerPluginConfigurations) && isNotPomProject(model)) {
+
+            logger.severe(
+                "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
+                APPLICABLE_PLUGINS, MINIMUM_VERSION);
+            logCurrentPlugins(model);
+            throw new IllegalStateException(
+                String.format("Smart testing must be used with any of %s plugins with minimum version %s",
+                    APPLICABLE_PLUGINS, MINIMUM_VERSION));
+        }
+
+        for (Plugin testRunnerPlugin : testRunnerPluginConfigurations) {
             testRunnerPlugin.addDependency(smartTestingProviderDependency());
             final Object configuration = testRunnerPlugin.getConfiguration();
             if (configuration != null) {
@@ -72,7 +95,23 @@ class MavenProjectConfigurator {
                 properties.addChild(defineTestSelectionCriteria());
             }
         }
-        // TODO what if there is no plugin defined?
+    }
+
+    private boolean areNotApplicableTestingPlugins(List<Plugin> testRunnerPluginConfigurations) {
+        return testRunnerPluginConfigurations.size() == 0;
+    }
+
+    private boolean isNotPomProject(Model model) {
+        return !"pom".equals(model.getPackaging().trim());
+    }
+
+    private void logCurrentPlugins(Model model) {
+
+        model.getBuild().getPlugins()
+            .stream()
+            .filter(plugin -> APPLICABLE_PLUGINS.contains(plugin.getArtifactId()))
+            .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
+                plugin.getArtifactId(), plugin.getVersion()));
     }
 
     private Xpp3Dom defineTestSelectionCriteria() {
@@ -104,7 +143,7 @@ class MavenProjectConfigurator {
         final Dependency smartTestingSurefireProvider = new Dependency();
         smartTestingSurefireProvider.setGroupId("org.arquillian.smart.testing");
         smartTestingSurefireProvider.setArtifactId("smart-testing-surefire-provider");
-        smartTestingSurefireProvider.setVersion(ExtensionVersion.version());
+        smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
         smartTestingSurefireProvider.setScope("runtime");
         return smartTestingSurefireProvider;
     }
