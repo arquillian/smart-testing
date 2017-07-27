@@ -7,6 +7,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -48,8 +49,8 @@ public class TestStrategyApplierTest {
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
         when(providerParameters.getTestClassLoader()).thenReturn(Thread.currentThread().getContextClassLoader());
 
-        final Set<String> strategyTests = new LinkedHashSet<>();
-        strategyTests.add(TestExecutionPlannerLoaderTest.class.getName());
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "static"));
 
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
@@ -80,8 +81,8 @@ public class TestStrategyApplierTest {
 
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
-        final Set<String> strategyTests = new LinkedHashSet<>();
-        strategyTests.add(TestExecutionPlannerLoaderTest.class.getName());
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "static"));
 
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
@@ -110,9 +111,9 @@ public class TestStrategyApplierTest {
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
 
-        final Set<String> strategyTests = new LinkedHashSet<>();
-        strategyTests.add(TestExecutionPlannerLoaderTest.class.getName());
-        strategyTests.add("org.arquillian.smart.testing.vcs.git.ChangedFilesDetectorTest");
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "static"));
+        strategyTests.add(new TestSelection("org.arquillian.smart.testing.vcs.git.ChangedFilesDetectorTest", "static"));
 
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 

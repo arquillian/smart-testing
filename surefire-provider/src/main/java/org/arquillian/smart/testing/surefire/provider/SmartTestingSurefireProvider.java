@@ -8,6 +8,7 @@ import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.ClassNameExtractor;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
@@ -31,10 +32,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         final Configuration configuration = Configuration.read();
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(new JavaSPILoader(), getGlobPatterns());
+            new TestExecutionPlannerLoader(new JavaSPILoader(), resource -> {
+                final String className = new ClassNameExtractor().extractFullyQualifiedName(resource);
+                return testsToRun.getClassByName(className) != null;
+            }, getGlobPatterns());
 
-        return new TestStrategyApplier(testsToRun,
-            testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(configuration);
+        return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(
+            configuration);
     }
 
     private String[] getGlobPatterns() {
@@ -60,8 +64,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         return surefireProvider.invoke(orderedTests);
     }
 
-    private SurefireProvider createSurefireProviderInstance(){
-        return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
+    private SurefireProvider createSurefireProviderInstance() {
+        return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class},
+            new Object[] {bootParams});
     }
 
     public void cancel() {

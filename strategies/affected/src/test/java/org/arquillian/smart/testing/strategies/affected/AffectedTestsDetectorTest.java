@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -60,10 +61,11 @@ public class AffectedTestsDetectorTest {
             new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "**/src/test/java/**/*.java");
 
         // when
-        final Collection<String> tests = affectedTestsDetector.getTests();
+        final Collection<TestSelection> tests = affectedTestsDetector.getTests();
 
         // then
         assertThat(tests)
+            .extracting(TestSelection::getClassName)
             .hasSize(2)
             .contains("org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest", "org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTestCase");
     }

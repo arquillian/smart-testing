@@ -1,7 +1,10 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Collections;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -26,7 +29,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true,  new String[] {});
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
@@ -41,7 +44,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true, new String[] {});
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
@@ -56,7 +59,7 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true, new String[] {});
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");
@@ -77,8 +80,18 @@ public class TestExecutionPlannerLoaderTest {
         }
 
         @Override
-        public TestExecutionPlanner create(File projectDir, String[] globPatterns) {
-            return Collections::emptyList;
+        public TestExecutionPlanner create(File projectDir, TestVerifier verifier, String[] globPatterns) {
+            return new TestExecutionPlanner() {
+                @Override
+                public Collection<TestSelection> getTests() {
+                    return Collections.emptyList();
+                }
+
+                @Override
+                public String getName() {
+                    return "static";
+                }
+            };
         }
     }
 }

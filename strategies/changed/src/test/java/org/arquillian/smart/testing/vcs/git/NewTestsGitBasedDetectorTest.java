@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,7 +19,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.arquillian.smart.testing.vcs.git.GitRepositoryUnpacker.unpackRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class NewTestsDetectorTest {
+public class NewTestsGitBasedDetectorTest {
 
     @Rule
     public TemporaryFolder gitFolder = new TemporaryFolder();
@@ -31,28 +33,16 @@ public class NewTestsDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
-        final NewTestsDetector
-            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*Test*.*");
+        final NewTestsDetector newTestsDetector =
+            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+                path -> true);
 
         // when
-        final Iterable<String> newTests = newTestsDetector.getTests();
+        final Collection<TestSelection> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
-    }
-
-    @Test
-    public void should_find_none_new_classes_in_the_range_of_commits_when_not_matching_pattern() throws Exception {
-        // given
-        final NewTestsDetector
-            newTestsDetector =
-            new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf", "**/*IntegrationTest.java");
-
-        // when
-        final Iterable<String> newTests = newTestsDetector.getTests();
-
-        // then
-        assertThat(newTests).isEmpty();
+        assertThat(newTests).extracting(TestSelection::getClassName)
+            .containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -61,15 +51,17 @@ public class NewTestsDetectorTest {
         final File testFile = gitFolder.newFile("core/src/test/java/org/arquillian/smart/testing/CalculatorTest.java");
         Files.write(testFile.toPath(), getContentsOfClass().getBytes(), StandardOpenOption.APPEND);
 
-        final NewTestsDetector
-            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector newTestsDetector =
+            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+                path -> true);
 
         // when
-        final Collection<String> newTests = newTestsDetector.getTests();
+        final Collection<TestSelection> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsOnly("org.arquillian.smart.testing.CalculatorTest",
-            "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
+        assertThat(newTests).extracting(TestSelection::getClassName)
+            .containsOnly("org.arquillian.smart.testing.CalculatorTest",
+                "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
@@ -80,33 +72,37 @@ public class NewTestsDetectorTest {
 
         GitRepositoryOperations.addFile(gitFolder.getRoot(), testFile.getAbsolutePath());
 
-        final NewTestsDetector
-            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector newTestsDetector =
+            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+                path -> true);
 
         // when
-        final Collection<String> newTests = newTestsDetector.getTests();
+        final Collection<TestSelection> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).containsOnly("org.arquillian.smart.testing.CalculatorTest",  "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
+        assertThat(newTests).extracting(TestSelection::getClassName)
+            .containsOnly("org.arquillian.smart.testing.CalculatorTest",
+                "org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
     }
 
     @Test
-    public void should_not_find_local_modified_file_as_new() throws IOException {
+    public void should_not_find_local_modified_file_as_new_when_using_commit_range() throws IOException {
         //given
-        final Path testFile =
-            Paths.get(gitFolder.getRoot().getAbsolutePath(),
-                "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
+        final Path testFile = Paths.get(gitFolder.getRoot().getAbsolutePath(),
+            "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
 
         Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
 
-        final NewTestsDetector
-            newTestsDetector = new NewTestsDetector(gitFolder.getRoot(), "a4261d5", "1ee4abf");
+        final NewTestsDetector newTestsDetector =
+            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+                path -> true);
 
         // when
-        final Collection<String> newTests = newTestsDetector.getTests();
+        final Collection<TestSelection> newTests = newTestsDetector.getTests();
 
         // then
-        assertThat(newTests).doesNotContain("org.arquillian.smart.testing.FilesTest");
+        assertThat(newTests).extracting(TestSelection::getClassName)
+            .doesNotContain("org.arquillian.smart.testing.FilesTest");
     }
 
     private String getContentsOfClass() {
