@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.surefire.provider.info;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
 
 abstract class JUnitProviderInfo implements ProviderInfo {
@@ -22,4 +23,8 @@ abstract class JUnitProviderInfo implements ProviderInfo {
         return junitDepVersion;
     }
 
+    @Override
+    public ProviderParameters convertProviderParameters(ProviderParameters providerParameters) {
+        return providerParameters;
+    }
 }

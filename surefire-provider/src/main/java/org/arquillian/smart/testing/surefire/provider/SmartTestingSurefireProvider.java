@@ -3,7 +3,6 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ServiceLoader;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -16,14 +15,14 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
     private ProviderParametersParser paramParser;
-    private Class<SurefireProvider> providerClass;
+    private SurefireProviderFactory surefireProviderFactory;
     private ProviderParameters bootParams;
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
-        this.providerClass = new ProviderList(this.paramParser).resolve();
-        this.surefireProvider = createSurefireProviderInstance();
+        this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
+        this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
     private TestsToRun getTestsToRun() {
@@ -54,12 +53,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
         TestsToRun orderedTests = getTestsToRun();
-        surefireProvider = createSurefireProviderInstance();
+        surefireProvider = surefireProviderFactory.createInstance();
         return surefireProvider.invoke(orderedTests);
-    }
-
-    private SurefireProvider createSurefireProviderInstance(){
-        return SecurityUtils.newInstance(providerClass, new Class[] {ProviderParameters.class}, new Object[] {bootParams});
     }
 
     public void cancel() {
