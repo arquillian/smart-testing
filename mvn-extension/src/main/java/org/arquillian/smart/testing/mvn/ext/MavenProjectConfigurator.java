@@ -26,12 +26,6 @@ class MavenProjectConfigurator {
         this.configuration = configuration;
     }
 
-    /*
-    - based on selected strategy e.g. "new" we have to know what is the actual dependency we have to add
-    - ? naming convention? -> propert
-
-     */
-
     void addRequiredDependencies(Model model) {
         model.addDependency(smartTestingProviderDependency());
         final String[] strategies = configuration.getStrategies();

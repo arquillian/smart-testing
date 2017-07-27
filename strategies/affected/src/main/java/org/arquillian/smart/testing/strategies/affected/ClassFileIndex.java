@@ -166,7 +166,6 @@ public class ClassFileIndex {
     private void findParents(JavaClass jclass, Set<String> changedParents) {
         for (JavaClass parent : getParents(jclass)) {
             if (changedParents.add(parent.getName())) {
-
                 logger.finest("%s test has been added because it depends on %s", parent.getName(), jclass.getName());
                 findParents(parent, changedParents);
             }
