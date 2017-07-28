@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import org.arquillian.smart.testing.Configuration;
 
 public class ExtensionVersion {
 
@@ -15,7 +16,7 @@ public class ExtensionVersion {
 
         synchronized (ExtensionVersion.class) {
             if (version == null) {
-                final String smartTestingVersion = System.getProperty("smart.testing.version", NO_VERSION);
+                final String smartTestingVersion = System.getProperty(Configuration.SMART_TESTING_VERSION, NO_VERSION);
                 if (NO_VERSION.equals(smartTestingVersion)) {
                     readFromFile();
                 } else {

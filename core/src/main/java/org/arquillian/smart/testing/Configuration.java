@@ -5,6 +5,7 @@ public class Configuration {
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
     public static final String SMART_TESTING_PLUGIN = "smart.testing.plugin";
+    public static final String SMART_TESTING_VERSION = "smart.testing.version";
 
     private String[] strategies = new String[0];
     private RunMode mode;

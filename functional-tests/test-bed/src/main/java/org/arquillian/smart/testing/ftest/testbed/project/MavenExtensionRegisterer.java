@@ -13,15 +13,13 @@ class MavenExtensionRegisterer {
     private static final String EXTENSIONS_XML = "extensions.xml";
     private static final String VERSION_PLACEHOLDER = "${version}";
 
-    private final ProjectConfigurator projectConfigurator;
     private final Path rootPom;
 
-    MavenExtensionRegisterer(Path rootPom, ProjectConfigurator projectConfigurator) {
+    MavenExtensionRegisterer(Path rootPom) {
         this.rootPom = rootPom;
-        this.projectConfigurator = projectConfigurator;
     }
 
-    void addSmartTestingExtension() {
+    void addSmartTestingExtension(String version) {
         final Path projectRoot = rootPom.getParent();
         try {
             final Path extensionFolder = Files.createDirectories(projectRoot.resolve(".mvn"));
@@ -30,7 +28,7 @@ class MavenExtensionRegisterer {
 
             try (BufferedReader br = new BufferedReader(new InputStreamReader(extensionFile))) {
                 final String extensionTemplate = br.lines().collect(Collectors.joining(System.lineSeparator()));
-                final String extensionContent = extensionTemplate.replace(VERSION_PLACEHOLDER, Project.SMART_TESTING_VERSION);
+                final String extensionContent = extensionTemplate.replace(VERSION_PLACEHOLDER, version);
                 Files.write(extensionFolder.resolve(EXTENSIONS_XML), extensionContent.getBytes());
             }
         } catch (IOException e) {

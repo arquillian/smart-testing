@@ -9,8 +9,6 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 public class Project implements AutoCloseable {
 
-    public static final String SMART_TESTING_VERSION = "0.0.1-SNAPSHOT"; // TODO make configurable
-
     private final Path root;
     private final Repository repository;
     private final ProjectBuilder projectBuilder;
