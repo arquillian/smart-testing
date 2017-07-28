@@ -26,6 +26,9 @@ import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireRep
 public class ProjectBuilder {
 
     private static final String TEST_REPORT_PREFIX = "TEST-";
+    /*
+    MAVEN_DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
+     */
     private static final String MVN_DEBUG_AGENT = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s";
     private static final String SUREFIRE_DEBUG_SETTINGS = " -Xnoagent -Djava.compiler=NONE";
     private static final int DEFAULT_DEBUG_PORT = 8000;
@@ -43,6 +46,7 @@ public class ProjectBuilder {
     private boolean suspend = true;
     private boolean mvnDebugOutput;
     private boolean enableSurefireRemoteDebugging = false;
+    private String mavenOpts = "-Xms512m -Xmx1024m";
 
     ProjectBuilder(Path root, Project project) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
@@ -159,7 +163,7 @@ public class ProjectBuilder {
                     .setQuiet(disableQuietWhenAnyDebugModeEnabled() && quietMode)
                     .skipTests(false)
                     .setProperties(systemProperties)
-                    .setMavenOpts("-Xms512m -Xmx1024m")
+                    .setMavenOpts(mavenOpts)
                     .ignoreFailure()
                 .build();
 
@@ -178,13 +182,17 @@ public class ProjectBuilder {
     private void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
-            embeddedMaven.setMavenOpts(debugOptions);
+            addMavenOpts(debugOptions);
         }
 
         if (isSurefireRemoteDebuggingEnabled()) {
             this.systemProperties.put("maven.surefire.debug",
                 String.format(MVN_DEBUG_AGENT, shouldSuspend(), getSurefireDebugPort()) + SUREFIRE_DEBUG_SETTINGS);
         }
+    }
+
+    private void addMavenOpts(String options) {
+        this.mavenOpts += " " + options;
     }
 
     private List<TestResult> accumulatedTestResults() {
