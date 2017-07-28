@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.ftest.simple;
+package org.arquillian.smart.testing.ftest.configuration;
 
 import java.util.List;
 import org.arquillian.smart.testing.ftest.TestBedTemplate;
