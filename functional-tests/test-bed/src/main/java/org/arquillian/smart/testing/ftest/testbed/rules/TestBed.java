@@ -1,29 +1,29 @@
 package org.arquillian.smart.testing.ftest.testbed.rules;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
+import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
+import static java.lang.System.getProperty;
 import static java.util.stream.Collectors.toList;
 
 public class TestBed implements TestRule {
 
     private Project project;
 
-    public String getTargetRepoPerTestFolder() {
-        return targetRepoPerTestFolder;
-    }
-
     private String targetRepoPerTestFolder;
 
-    public TestBed() {
-    }
+    public static final Logger LOGGER = Logger.getLogger(TestBed.class.getName());
 
     public Project getProject() {
         return project;
@@ -34,19 +34,70 @@ public class TestBed implements TestRule {
         return this.statement(statement, description);
     }
 
+    private void succeeded(Description description) {
+        if (isPersistFolderEnabled()) {
+            copyTmpProjectInTarget();
+        }
+    }
+
+    private void failed(Throwable e, Description description) {
+        copyTmpProjectInTarget();
+    }
+
+    private void copyTmpProjectInTarget() {
+        String path = "target" + File.separator + "projects";
+        final File projectDir = new File(path);
+        if (!projectDir.exists()) {
+            projectDir.mkdir();
+        }
+        if (targetRepoPerTestFolder != null) {
+            final Path source = Paths.get(targetRepoPerTestFolder);
+            final Path target =
+                Paths.get(path + targetRepoPerTestFolder.substring(targetRepoPerTestFolder.lastIndexOf("/")));
+            try {
+                final List<Path> sources = Files.walk(source).collect(toList());
+                final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)
+                    .collect(toList());
+                for (int i = 0; i < sources.size(); i++) {
+                    Files.copy(sources.get(i), targets.get(i));
+                }
+            } catch (IOException e1) {
+                throw new RuntimeException(e1);
+            }
+            LOGGER.info("copied test repository for failed test in: " + target);
+        }
+    }
+
     private Statement statement(final Statement base, final Description description) {
 
         return new Statement() {
             public void evaluate() throws Throwable {
-                targetRepoPerTestFolder = targetRepoPerTestFolder(description);
-                initializeTestProject();
+                before(description);
                 try {
-                    base.evaluate();
+                    List<Throwable> errors = new ArrayList<>();
+
+                    try {
+                        base.evaluate();
+                        succeededQuietly(description, errors);
+                    } catch (Throwable e) {
+                        errors.add(e);
+                        failedQuietly(e, description, errors);
+                    }
+                    MultipleFailureException.assertEmpty(errors);
                 } finally {
-                    cleanup();
+                    after();
                 }
             }
         };
+    }
+
+    private void before(Description description) throws IOException {
+        targetRepoPerTestFolder = targetRepoPerTestFolder(description);
+        initializeTestProject();
+    }
+
+    private void after() throws Exception {
+        this.project.close();
     }
 
     private String targetRepoPerTestFolder(Description description) {
@@ -66,7 +117,7 @@ public class TestBed implements TestRule {
         for (int i = 0; i < sources.size(); i++) {
             Files.copy(sources.get(i), targets.get(i));
         }
-        System.out.println("Cloned test repository to: " + target);
+        LOGGER.info("Copied test repository to: " + target);
         return target;
     }
 
@@ -75,7 +126,23 @@ public class TestBed implements TestRule {
         this.project = new Project(target);
     }
 
-    private void cleanup() throws Exception {
-        this.project.close();
+    private void succeededQuietly(Description description, List<Throwable> errors) {
+        try {
+            succeeded(description);
+        } catch (Throwable e) {
+            errors.add(e);
+        }
+    }
+
+    private void failedQuietly(Throwable e, Description description, List<Throwable> errors) {
+        try {
+            failed(e, description);
+        } catch (Throwable e1) {
+            errors.add(e1);
+        }
+    }
+
+    private boolean isPersistFolderEnabled() {
+        return Boolean.valueOf(getProperty("test.bed.project.persist", Boolean.toString(false)));
     }
 }

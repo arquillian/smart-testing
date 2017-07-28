@@ -1,39 +1,54 @@
 package org.arquillian.smart.testing.ftest.testbed.rules;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
+import org.junit.rules.ExternalResource;
 
-public class GitClone implements TestRule {
+public class GitClone extends ExternalResource {
 
     private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
     private static final String REPO_NAME = ORIGIN.substring(ORIGIN.lastIndexOf('/') + 1).replace(".git", "");
 
     public static String GIT_REPO_FOLDER;
-    private final TemporaryFolder tempFolder;
 
-    public GitClone(TemporaryFolder tempFolder) {
-        this.tempFolder = tempFolder;
+    public static final Logger LOGGER = Logger.getLogger(GitClone.class.getName());
+
+    private File tempFolder;
+
+    protected void before() throws Throwable {
+        tempFolder = createTempFolder();
+        cloneTestProject();
     }
 
-    @Override
-    public Statement apply(Statement statement, Description description) {
-        return new Statement() {
+    protected void after() {
+        if (tempFolder != null) {
+            recursiveDelete(tempFolder);
+        }
+    }
 
-            @Override
-            public void evaluate() throws Throwable {
-                cloneTestProject();
-                statement.evaluate();
+    private void recursiveDelete(File file) {
+        File[] files = file.listFiles();
+        if (files != null) {
+            for (File each : files) {
+                recursiveDelete(each);
             }
-        };
+        }
+        file.delete();
+    }
+
+    private File createTempFolder() throws IOException {
+        File createdFolder = File.createTempFile("junit", "", null);
+        createdFolder.delete();
+        createdFolder.mkdir();
+
+        return createdFolder;
     }
 
     private void cloneTestProject() throws Exception {
-        GIT_REPO_FOLDER = tempFolder.getRoot().getAbsolutePath() + File.separator + REPO_NAME;
+        GIT_REPO_FOLDER = tempFolder.getAbsolutePath() + File.separator + REPO_NAME;
         cloneRepository(GIT_REPO_FOLDER, ORIGIN);
     }
 
@@ -47,6 +62,6 @@ public class GitClone implements TestRule {
                     .setName("master")
             .call();
 
-        System.out.println("cloned test repository to: " + repoTarget);
+        LOGGER.info("cloned test repository to: " + repoTarget);
     }
 }

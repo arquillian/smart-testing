@@ -1,19 +1,31 @@
 package org.arquillian.smart.testing.ftest.newtests;
 
 import java.util.List;
-import org.arquillian.smart.testing.ftest.TestBedTemplate;
+import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
+import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBedTemplate {
+public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
+
+    @ClassRule
+    public static final GitClone GIT_CLONE = new GitClone();
+
+    @Rule
+    public TestBed testBed = new TestBed();
 
     @Test
     public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
         // given
+        final Project project = testBed.getProject();
+
         project.configureSmartTesting()
                     .executionOrder(NEW)
                     .inMode(SELECTING)
@@ -32,6 +44,8 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest extends TestBe
     @Test
     public void should_only_execute_new_tests_when_multiple_local_changes_applied() throws Exception {
         // given
+        final Project project = testBed.getProject();
+
         project.configureSmartTesting()
                     .executionOrder(NEW)
                     .inMode(SELECTING)
