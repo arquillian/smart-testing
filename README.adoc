@@ -1,11 +1,31 @@
 = Smart Testing
+:asciidoctor-source: https://raw.githubusercontent.com/arquillian/smart-testing/master/docs
+:numbered:
+:sectlink:
+:sectanchors:
+:sectid:
+:source-language: java
+:source-highlighter: coderay
+:sectnums:
+:icons: font
+:toc: left
 
 image:https://travis-ci.org/arquillian/smart-testing.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/smart-testing"]
 
-We know which tests you want to run.
+*We know which tests you want to run.*
 
-== Test Bed
+*Smart Testing* is a tool that speeds up the test running phase by reordering test execution plan to fail fast execution as soon as possible.
 
-Test Bed provides simple, yet powerful and expressive way of writing functional tests to verify Smart Testing tool.
+ifndef::generated-doc[]
+To read complete documentation visit http://arquillian.org/smart-testing/
+endif::generated-doc[]
 
-For the details see https://github.com/arquillian/smart-testing/wiki/Test-Bed.
+ifdef::generated-doc[]
+
+include::{asciidoctor-source}/what-is-this.adoc[]
+include::{asciidoctor-source}/installation.adoc[]
+include::{asciidoctor-source}/configuration.adoc[]
+include::{asciidoctor-source}/usage.adoc[]
+include::{asciidoctor-source}/developing.adoc[]
+
+endif::generated-doc[]

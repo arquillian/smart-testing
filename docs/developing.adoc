@@ -1,0 +1,151 @@
+== Developing
+
+=== Test Bed
+
+*Test Bed* brings a convenient way of writing functional tests for our smart testing tool. Here’s how the sample test looks like:
+
+[source, java, indent=0]
+----
+include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/mixed/LocalChangesMixedStrategySelectionExecutionFunctionalTest.java[tag=documentation]
+----
+
+
+We are using `arquillian-core` project (squashed repo) for running those tests. You can find it here: https://github.com/arquillian/smart-testing-dogfood-repo
+
+==== Design Idea
+
+The main goal of *Test Bed* module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.
+
+===== Key Principles
+
+====== Project configuration
+
+Easy way of configuring any Maven-based project in the test itself through simple and self-explanatory fluent API.
+
+[source, java, indent=0]
+----
+include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/HistoricalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation]
+----
+
+This snippet will modify root `pom.xml of given project with all required elements to enable `smart-testing`.
+It will also apply test selection criteria as well as execution mode (`selecting` meaning only tests which belong to categories defined in `executionOrder`).
+
+====== Applying changes
+
+I decided to have an ability to apply changes to the selected code base by modifying sample repository directly.
+This is done by creating atomic commits directly rather than applying code changes in the tests themselves (e.g. by using https://github.com/forge/roaster[Forge Roaster]).
+This comes with several advantages:
+
+* Ability to test those changes directly on the project
+* Easier refactoring
+* Ability to analyze execution when tests are failing by simply opening modified project rather than debugging test itself
+
+Creating change sets and test result expectations.
+
+Creating atomic change, which will be later used for tests, consists of following steps:
+
+* Making commit with the change
+* Tagging it with additional message
+
+This message is then used as a `changeDescription` in the project API, for example:
+
+[source, java, indent=0]
+----
+include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/LocalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation_apply]
+----
+
+This will look in the repository for a tag with message `Single method body modification - sysout` and apply as local change (no commits created).
+And the same for `Inlined variable in a method`.
+
+Creating such a tag on the commit is as easy as:
+
+`$ git tag affected_01 -m "Single method body modification - sysout"`
+
+====== Defining test result expectations
+
+In order to verify if our tool works, we have to specify which tests are expected to be executed as well as their statuses.
+This is done as part of the commit, as at this point we know exactly what we want our tool to execute and what should be the status of our tests based on modifications we made.
+For example in `arquillian-core` we would like to test affected strategy, where we modify `ConfigurationRegistrar#loadConfiguration` by adding `System.out.println` to the method.
+This should result in finding two related tests `ConfigurationRegistrarTestCase` and `SyspropReplacementInArqXmlTestCase`.
+Both of them should be executed successfully.
+
+In order to define these expectations we create commit with the following message:
+
+----
+affected: adds system.out to ConfigurationRegistrar#loadConfiguration # <1>
+
++ org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase # <2>
++ org.jboss.arquillian.config.impl.extension.SyspropReplacementInArqXmlTestCase
+----
+<1> The first line describes the change, so it’s up to you to provide meaningful information.
+<2> Next two lines define actual expectations.
+
+For expectations, it’s the list of the executed tests (fully qualified names) prefixed with an expected status.
+In this case `+`, which indicates all test methods in the particular class should be executed successfully.
+See `org.arquillian.smart.testing.ftest.testbed.testresults.Status` for all prefixes.
+
+====== Executing test optimization
+
+Once we configured the project and applied changes we can build it.
+This is what we want to really test. Under the hood it’s using https://github.com/shrinkwrap/resolver#embedded-maven[Embedded Maven].
+In addition, after the build is finished, it returns actual test results so we can verify expected and actual test execution. It’s done this way:
+
+include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/LocalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation_build]
+
+====== Usage of Git
+
+Before the test class starts "project under test" is cloned and for each test method separated copy is created to execute all the changes and builds in isolation. Folders are named using the following convention:
+
+`GIT_REPO_FOLDER + "_" + getClass().getSimpleName() + "_" + name.getMethodName()`
+
+for example:
+
+`smart-testing-dogfood-repo_HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest_should_only_execute_tests_related_to_multiple_commits_in_business_logic_when_affected_is_enabled/`
+
+====== Project Persistent
+
+You can check "project under test" for failed tests in `target/projects` with name followed by naming convention:
+
+`getClass().getSimpleName() + "_" + name.getMethodName()`
+
+You can persist project for each test by setting system property `est.bed.project.persist` to true irrespective of test result.
+
+==== Troubleshooting tests
+
+You can execute embedded build in Test Bed in the debug mode.
+This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.
+
+===== Features
+
+You can use project configuration DSL for enabling debug mode directly in the test code:
+
+[source, java]
+----
+final List<TestResult> actualTestResults = project
+    .buildOptions()
+        .withRemoteDebugging()
+        .withRemoteSurefireDebugging()
+        .withDebugOutput()
+        .configure()
+    .build();
+----
+
+Setting up any of the debugging modes would set an agent in suspend mode for both Maven and Surefire execution, thus giving you time to attach debuggers to both.
+
+Alternatively, this can be also achieved through system properties which you can set as part of your "Run Configuration" in the IDE or build command.
+Following system properties are available:
+
+`test.bed.mvn.remote.debug`:: enables remote debugging of the embedded maven build with `suspend` set to `y` (so the build will wait until we attach remote debugger to the port) and port `8000` to listen).
+`test.bed.mvn.remote.debug.suspend`:: `true` or `false` (both for maven and surefire)
+`test.bed.mvn.remote.debug.port`:: valid port used for remote debugging of maven execution
+`test.bed.mvn.surefire.remote.debug`:: enables http://maven.apache.org/surefire/maven-surefire-plugin/examples/debugging.html[remote debugging for surefire]
+`test.bed.mvn.surefire.remote.debug.port`:: valid port used for remoting debugging of surefire execution
+`test.bed.mvn.debug.output`:: `true` or `false` - sets `-X` flag for embedded maven build for more details build log.
+
+[NOTE]
+.Configuration precedence
+====
+If both system property and the programmatic option is used system property takes precedence.
+====
+
+

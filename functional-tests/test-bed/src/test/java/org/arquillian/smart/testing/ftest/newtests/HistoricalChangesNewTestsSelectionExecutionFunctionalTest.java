@@ -26,10 +26,12 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
         // given
         final Project project = testBed.getProject();
 
+        // tag::documentation[]
         project.configureSmartTesting()
                     .executionOrder(NEW)
                     .inMode(SELECTING)
                .enable();
+        // end::documentation[]
 
         final List<TestResult> expectedTestResults = project
             .applyAsCommits("Adds new unit test");

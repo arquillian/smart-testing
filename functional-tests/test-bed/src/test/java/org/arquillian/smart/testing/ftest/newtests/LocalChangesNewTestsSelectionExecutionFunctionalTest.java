@@ -53,14 +53,19 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // we ignore expected tests results for this commits, as they are changes to existing ones,
         // but still want to apply the changes
+
+        // tag::documentation_apply[]
         project.applyAsLocalChanges("Single method body modification - sysout",
             "Inlined variable in a method");
+        // end::documentation_apply[]
 
         final List<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
         // when
+        // tag::documentation_build[]
         final List<TestResult> actualTestResults = project.build();
+        // end::documentation_build[]
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

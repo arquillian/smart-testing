@@ -1,0 +1,29 @@
+== Usage
+
+After <<Installation, installing>> *Smart Testing Maven Extension* you can use any goal you use with `maven-surefire-plugin` or `maven-failsafe-plugin`.
+
+To configure it you only need to pass from CLI the Java system poroeprties.
+Let's see some examples:
+
+*You want to run only tests that you've just added or modified locally*
+
+`$> mvn -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed" clean test`
+
+*You want to run all tests but given priority to the latest tests added or modified*
+
+`$> mvn -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed" clean test`
+
+TIP: Notice that `smart.testing.mode` is not mandatory in case of `ordering` because it is the default mode if not specified.
+
+*You want to run only tests that validates new or modified business classes locally*
+
+`$> mvn -Dsmart.testing.mode=selecting -Dsmart.testing="affected" clean test`
+
+When you are running Smart Testing, you'll see next log line in the console, showing you current configuration:
+
+----
+INFO: Smart-Testing - Applied strategies: [new, affected]
+INFO: Smart-Testing - Applied usage: [selecting]
+----
+
+This can be used as feedback to check that the extension has been installed correctly.

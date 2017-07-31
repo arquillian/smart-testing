@@ -1,0 +1,19 @@
+== Installation
+
+=== Maven Extension
+
+*Smart Testing* is a Maven extension, so needs to be installed as is.
+
+==== Maven >= 3.1.X
+
+Get Smart Testing _shaded_ copy from https://bintray.com/arquillian/Arquillian/smart-testing[Bintray] and copy it to `M2_HOME/lib/ext`
+
+==== Maven >= 3.3.X
+
+You can still use the process described at <<Maven >= 3.1.X>> or use the new _core extension configuration mechanism_ by creating folder called `.mvn` on root of your project and create inside it an `extensions.xml` file which registers the smart testing extension:
+
+[source, xml,indent=0]
+.${maven.projectBasedir}/.mvn/extensions.xml
+----
+include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
+----
