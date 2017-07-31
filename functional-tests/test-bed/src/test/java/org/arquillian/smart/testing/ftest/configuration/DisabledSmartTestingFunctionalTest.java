@@ -19,7 +19,7 @@ public class DisabledSmartTestingFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     private static String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
 

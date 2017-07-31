@@ -52,6 +52,7 @@ public class ProjectConfigurator {
     }
 
     public Project enable() {
+
         final Path rootPom = Paths.get(root.toString(), "pom.xml");
         final MavenExtensionRegisterer mavenExtensionRegisterer = new MavenExtensionRegisterer(rootPom);
         String currentVersion = resolveVersion();

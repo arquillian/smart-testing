@@ -19,7 +19,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_detect_changes_on_maven_modules_and_execute_test() {
