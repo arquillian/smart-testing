@@ -8,6 +8,10 @@
 
 Get Smart Testing _shaded_ copy from https://bintray.com/arquillian/Arquillian/smart-testing[Bintray] and copy it to `M2_HOME/lib/ext`
 
+++++
+<script type="text/javascript" src="https://asciinema.org/a/131840.js" id="asciicast-131840" async></script>
+++++
+
 ==== Maven >= 3.3.X
 
 You can still use the process described at <<Maven >= 3.1.X>> or use the new _core extension configuration mechanism_ by creating folder called `.mvn` on root of your project and create inside it an `extensions.xml` file which registers the smart testing extension:
