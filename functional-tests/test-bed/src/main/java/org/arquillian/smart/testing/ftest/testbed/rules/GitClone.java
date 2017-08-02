@@ -9,7 +9,8 @@ import org.junit.rules.ExternalResource;
 
 public class GitClone extends ExternalResource {
 
-    private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
+    //private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
+    private static final String ORIGIN = "https://github.com/hemanik/smart-testing-dogfood-repo.git";
     private static final String REPO_NAME = ORIGIN.substring(ORIGIN.lastIndexOf('/') + 1).replace(".git", "");
 
     private String gitRepoFolder;

@@ -20,7 +20,8 @@ import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireRep
 
 public class ProjectBuilder {
 
-    private static final String TEST_REPORT_PREFIX = "TEST-";
+    public static final String TEST_REPORT_PREFIX = "TEST-";
+    public static final String IN_PROJECT_DIR = ".reports";
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
@@ -68,7 +69,8 @@ public class ProjectBuilder {
     private List<TestResult> accumulatedTestResults() {
         try {
             return Files.walk(root)
-                .filter(path -> path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
+                .filter((path) -> !path.toFile().getAbsolutePath().contains(IN_PROJECT_DIR) &&
+                    path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
                 .map(path -> {
                         try {
                             final Set<TestResult> testResults = loadTestResults(new FileInputStream(path.toFile()));
