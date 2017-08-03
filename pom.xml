@@ -152,7 +152,7 @@
           <forkCount>${surefire.fork.count}</forkCount>
           <threadCount>${surefire.thread.count}</threadCount>
           <reuseForks>${surefire.reuse.forks}</reuseForks>
-          <argLine>-Xmx2048m</argLine>
+          <argLine>-Xmx1024m</argLine>
           <parallel>classesAndMethods</parallel>
         </configuration>
 
@@ -166,7 +166,6 @@
       <properties>
         <surefire.fork.count>2</surefire.fork.count>
         <surefire.thread.count>2</surefire.thread.count>
-        <surefire.reuse.forks>false</surefire.reuse.forks>
       </properties>
     </profile>
   </profiles>
