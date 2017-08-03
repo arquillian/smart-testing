@@ -43,6 +43,6 @@ By default it searches their definitions in `pom.xml` and integrates it.
 
 It might be possible that you only want to use smart testing on `surefire` or `failsafe` plugin definition.
 
-To do it you just need to set `smart.testing.plugin` with either `surefire` or `failsafe` to just enable in one of them.
+To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
 
 
