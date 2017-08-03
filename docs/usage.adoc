@@ -1,5 +1,7 @@
 == Usage
 
+=== Examples
+
 After <<Installation, installing>> *Smart Testing Maven Extension* you can use any goal you use with `maven-surefire-plugin` or `maven-failsafe-plugin`.
 
 To configure it you only need to pass from CLI the Java system poroeprties.
@@ -27,3 +29,20 @@ INFO: Smart-Testing - Applied usage: [selecting]
 ----
 
 This can be used as feedback to check that the extension has been installed correctly.
+
+=== Disabling Smart Testing
+
+Sometimes you might want to disable smart testing extension without removing it.
+
+To do it you just need to set `smart.testing.disable` Java system property to `true` and then tests will run with standard `surefire` / `failsafe` plugins.
+
+=== Plugin Selection
+
+*Smart testing* extension hooks into `surefire` and `failsafe` lifecycle to provide the order/selection of tests to execute.
+By default it searches their definitions in `pom.xml` and integrates it.
+
+It might be possible that you only want to use smart testing on `surefire` or `failsafe` plugin definition.
+
+To do it you just need to set `smart.testing.plugin` with either `surefire` or `failsafe` to just enable in one of them.
+
+
