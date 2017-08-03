@@ -66,8 +66,8 @@ class MavenProjectConfigurator {
             .filter(plugin -> APPLICABLE_PLUGINS.contains(plugin.getArtifactId()))
             .filter(plugin -> Version.from(plugin.getVersion().trim()).isGreaterOrEqualThan(MINIMUM_VERSION))
             .filter(plugin -> {
-                if (configuration.isSmartTestingPluginDefined()) {
-                    return configuration.getSmartTestingPlugin().equals(plugin.getArtifactId());
+                if (configuration.isApplyToDefined()) {
+                    return configuration.getApplyTo().equals(plugin.getArtifactId());
                 }
                 // If not set the plugin is usable
                 return true;

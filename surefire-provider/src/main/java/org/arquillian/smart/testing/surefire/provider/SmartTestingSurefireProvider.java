@@ -29,7 +29,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private TestsToRun getTestsToRun() {
         final TestsToRun testsToRun = (TestsToRun) getSuites();
-        final Configuration configuration = Configuration.read();
+        final Configuration configuration = Configuration.load();
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
             new TestExecutionPlannerLoader(new JavaSPILoader(), resource -> {
