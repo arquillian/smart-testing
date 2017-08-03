@@ -10,7 +10,7 @@ public class Version implements Comparable<Version> {
 
     private Integer major;
     private Integer minor;
-    private Integer patch;
+    private Integer patch = 0;
 
     private PreRelease preRelease;
 
@@ -27,8 +27,10 @@ public class Version implements Comparable<Version> {
         final String[] versions = fields[0].split("\\.");
         versionObject.major = Integer.parseInt(versions[0]);
         versionObject.minor = Integer.parseInt(versions[1]);
-        versionObject.patch = Integer.parseInt(versions[2]);
 
+        if (versions.length == 3) {
+            versionObject.patch = Integer.parseInt(versions[2]);
+        }
 
         if (containsPreReleaseInfo(fields)) {
             versionObject.preRelease = PreRelease.from(fields[1]);
