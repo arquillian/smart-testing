@@ -55,7 +55,7 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
-        final Configuration configuration = Configuration.read();
+        final Configuration configuration = Configuration.load();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, providerParameters.getTestClassLoader());
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
@@ -87,7 +87,7 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
-        final Configuration configuration = Configuration.read();
+        final Configuration configuration = Configuration.load();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader,
             Thread.currentThread().getContextClassLoader());
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
@@ -117,7 +117,7 @@ public class TestStrategyApplierTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         // when
-        final Configuration configuration = Configuration.read();
+        final Configuration configuration = Configuration.load();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 

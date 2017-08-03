@@ -16,7 +16,7 @@ public class Configuration {
     private String smartTestingPlugin;
     private boolean smartTestingDisabled = false;
 
-    public static Configuration read() {
+    public static Configuration load() {
         final Configuration configuration = new Configuration();
 
         final String strategies = System.getProperty(SMART_TESTING, DEFAULT_STRATEGIES).toLowerCase();

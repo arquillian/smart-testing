@@ -30,7 +30,7 @@ class PreBuildTestOptimizer extends AbstractMavenLifecycleParticipant {
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
-        configuration = Configuration.read();
+        configuration = Configuration.load();
 
         if (configuration.isSmartTestingDisabled()) {
             return;
