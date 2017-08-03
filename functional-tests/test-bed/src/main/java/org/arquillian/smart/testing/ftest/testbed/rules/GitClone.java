@@ -12,7 +12,7 @@ public class GitClone extends ExternalResource {
     private static final String ORIGIN = "https://github.com/arquillian/smart-testing-dogfood-repo.git";
     private static final String REPO_NAME = ORIGIN.substring(ORIGIN.lastIndexOf('/') + 1).replace(".git", "");
 
-    public static String GIT_REPO_FOLDER;
+    private String gitRepoFolder;
 
     public static final Logger LOGGER = Logger.getLogger(GitClone.class.getName());
 
@@ -27,6 +27,10 @@ public class GitClone extends ExternalResource {
         if (tempFolder != null) {
             recursiveDelete(tempFolder);
         }
+    }
+
+    public String getGitRepoFolder() {
+        return gitRepoFolder;
     }
 
     private void recursiveDelete(File file) {
@@ -48,8 +52,8 @@ public class GitClone extends ExternalResource {
     }
 
     private void cloneTestProject() throws Exception {
-        GIT_REPO_FOLDER = tempFolder.getAbsolutePath() + File.separator + REPO_NAME;
-        cloneRepository(GIT_REPO_FOLDER, ORIGIN);
+        gitRepoFolder = tempFolder.getAbsolutePath() + File.separator + REPO_NAME;
+        cloneRepository(gitRepoFolder, ORIGIN);
     }
 
     private static void cloneRepository(String repoTarget, String repo) throws GitAPIException {

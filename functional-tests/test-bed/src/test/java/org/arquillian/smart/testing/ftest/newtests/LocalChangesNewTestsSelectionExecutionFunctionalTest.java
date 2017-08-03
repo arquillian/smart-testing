@@ -6,6 +6,7 @@ import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
@@ -40,6 +41,32 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
+
+    @Test
+    public void should_only_execute_new_tests_related_to_single_local_change_using_failsafe() {
+
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+            .executionOrder(NEW)
+            .inMode(SELECTING)
+            .enable();
+
+        project
+            .applyAsCommits("Disable surefire and enable just failsafe plugin");
+
+        final List<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("Adds new unit test");
+
+        // when
+        final List<TestResult> actualTestResults = project.build("clean", "verify");
+
+        // then
+        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+
+    }
+
 
     @Test
     public void should_only_execute_new_tests_when_multiple_local_changes_applied() throws Exception {

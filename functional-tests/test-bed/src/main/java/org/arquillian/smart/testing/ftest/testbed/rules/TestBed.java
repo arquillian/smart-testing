@@ -19,12 +19,17 @@ import static java.util.stream.Collectors.toList;
 
 public class TestBed implements TestRule {
 
+    private final GitClone gitClone;
     private Project project;
 
     private String targetRepoPerTestFolder;
 
     public static final Logger LOGGER = Logger.getLogger(TestBed.class.getName());
 
+    public TestBed(GitClone gitClone) {
+        this.gitClone = gitClone;
+    }
+    
     public Project getProject() {
         return project;
     }
@@ -101,7 +106,7 @@ public class TestBed implements TestRule {
     }
 
     private String targetRepoPerTestFolder(Description description) {
-        return GitClone.GIT_REPO_FOLDER
+        return gitClone.getGitRepoFolder()
             + "_"
             + description.getTestClass().getSimpleName()
             + "_"
@@ -109,7 +114,7 @@ public class TestBed implements TestRule {
     }
 
     private Path createPerTestRepository() throws IOException {
-        final Path source = Paths.get(GitClone.GIT_REPO_FOLDER);
+        final Path source = Paths.get(this.gitClone.getGitRepoFolder());
         final Path target = Paths.get(targetRepoPerTestFolder);
         final List<Path> sources = Files.walk(source).collect(toList());
         final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)

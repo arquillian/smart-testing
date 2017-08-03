@@ -19,7 +19,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_newly_added_tests_if_new_strategy_is_enabled() throws Exception {
