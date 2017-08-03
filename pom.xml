@@ -164,8 +164,8 @@
     <profile>
       <id>travis</id>
       <properties>
-        <surefire.fork.count>2</surefire.fork.count>
-        <surefire.thread.count>2</surefire.thread.count>
+        <surefire.fork.count>1</surefire.fork.count>
+        <surefire.thread.count>1</surefire.thread.count>
         <surefire.reuse.forks>false</surefire.reuse.forks>
       </properties>
     </profile>
