@@ -12,6 +12,8 @@ import org.arquillian.smart.testing.ClassNameExtractor;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
+import static org.apache.maven.surefire.util.TestsToRun.fromClass;
+
 // TODO figure out how to inject our services here
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
@@ -27,8 +29,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
-    private TestsToRun getTestsToRun() {
-        final TestsToRun testsToRun = (TestsToRun) getSuites();
+    private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         final Configuration configuration = Configuration.load();
 
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
@@ -49,19 +50,31 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     public Iterable<Class<?>> getSuites() {
-        return surefireProvider.getSuites();
+        Iterable<Class<?>> originalSuites = surefireProvider.getSuites();
+        return getOptimizedTestsToRun((TestsToRun) originalSuites);
     }
 
     public RunResult invoke(Object forkTestSet)
         throws TestSetFailedException, ReporterException, InvocationTargetException {
 
-        final TestsToRun orderedTests = getTestsToRun();
+        final TestsToRun orderedTests = getTestsToRun(forkTestSet);
         if (orderedTests.containsExactly(0)) {
             orderedTests.markTestSetFinished();
             return RunResult.noTestsRun();
         }
         surefireProvider = surefireProviderFactory.createInstance();
         return surefireProvider.invoke(orderedTests);
+    }
+
+    private TestsToRun getTestsToRun(Object forkTestSet) throws TestSetFailedException {
+
+        if (forkTestSet instanceof TestsToRun) {
+            return (TestsToRun) forkTestSet;
+        } else if (forkTestSet instanceof Class) {
+            return fromClass((Class<?>) forkTestSet);
+        } else {
+            return (TestsToRun) getSuites();
+        }
     }
 
     public void cancel() {
