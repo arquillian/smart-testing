@@ -1,32 +1,38 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.impl;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
-class TestExecutionPlannerLoader {
+class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
 
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
     private final TestVerifier verifier;
+    private File projectDir;
 
-    TestExecutionPlannerLoader(JavaSPILoader spiLoader, TestVerifier verifier) {
+    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier) {
         this.spiLoader = spiLoader;
         this.verifier = verifier;
+        this.projectDir = new File(System.getProperty("user.dir"));
     }
 
-    TestExecutionPlanner getPlannerForStrategy(String strategy) {
+    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir) {
+        this(spiLoader, verifier);
+        this.projectDir = projectDir;
+    }
+
+    public TestExecutionPlanner getPlannerForStrategy(String strategy) {
 
         if (availableStrategies.isEmpty()) {
             loadStrategies();
         }
 
         if (availableStrategies.containsKey(strategy)) {
-            final File projectDir = new File(System.getProperty("user.dir"));
             return availableStrategies.get(strategy).create(projectDir, verifier);
         }
 
@@ -46,4 +52,7 @@ class TestExecutionPlannerLoader {
         }
     }
 
+    public TestVerifier getVerifier() {
+        return verifier;
+    }
 }

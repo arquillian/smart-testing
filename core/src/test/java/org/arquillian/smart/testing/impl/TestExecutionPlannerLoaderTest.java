@@ -1,10 +1,10 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.impl;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -28,8 +28,8 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
-        final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
+        final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true);
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
@@ -43,8 +43,8 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
-        final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
+        final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true);
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
@@ -58,8 +58,8 @@ public class TestExecutionPlannerLoaderTest {
         // given
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
-        final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
+        final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true);
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");

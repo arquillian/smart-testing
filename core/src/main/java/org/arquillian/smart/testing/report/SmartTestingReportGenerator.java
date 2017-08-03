@@ -1,9 +1,6 @@
 package org.arquillian.smart.testing.report;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +20,10 @@ public class SmartTestingReportGenerator {
     private final Collection<TestSelection> testSelections;
     private final Configuration configuration;
     private final String baseDir;
+
+    public SmartTestingReportGenerator(Collection<TestSelection> testSelections, Configuration configuration, File baseDir) {
+        this(testSelections, configuration, baseDir.getAbsolutePath());
+    }
 
     public SmartTestingReportGenerator(Collection<TestSelection> testSelections, Configuration configuration, String baseDir) {
         this.testSelections = testSelections;
