@@ -7,14 +7,14 @@ public class Configuration {
 
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
-    public static final String SMART_TESTING_PLUGIN = "smart.testing.plugin";
+    public static final String SMART_TESTING_APPLY_TO = "smart.testing.apply.to";
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
 
     private String[] strategies = new String[0];
     private RunMode mode;
-    private String smartTestingPlugin;
-    private boolean smartTestingDisabled = false;
+    private String applyTo;
+    private boolean disabled = false;
 
     public static Configuration load() {
         final Configuration configuration = new Configuration();
@@ -26,9 +26,9 @@ public class Configuration {
         }
         configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE, DEFAULT_MODE).toUpperCase());
 
-        configuration.smartTestingPlugin = System.getProperty(SMART_TESTING_PLUGIN);
+        configuration.applyTo = System.getProperty(SMART_TESTING_APPLY_TO);
 
-        configuration.smartTestingDisabled = Boolean.valueOf(System.getProperty(SMART_TESTING_DISABLE, "false"));
+        configuration.disabled = Boolean.valueOf(System.getProperty(SMART_TESTING_DISABLE, "false"));
 
         return configuration;
     }
@@ -57,15 +57,15 @@ public class Configuration {
         return strategies;
     }
 
-    public String getSmartTestingPlugin() {
-        return smartTestingPlugin;
+    public String getApplyTo() {
+        return applyTo;
     }
 
-    public boolean isSmartTestingPluginDefined() {
-        return this.smartTestingPlugin != null;
+    public boolean isApplyToDefined() {
+        return this.applyTo != null;
     }
 
-    public boolean isSmartTestingDisabled() {
-        return smartTestingDisabled;
+    public boolean isDisabled() {
+        return disabled;
     }
 }
