@@ -1,32 +1,37 @@
 == What is this?
 
-*Smart Testing* is a tool that speeds up the test running phase by reordering test execution plan to fail fast execution as soon as possible.
+*Smart Testing* is a tool that speeds up the test running phase by reordering test execution plan to increase a probability of
+fail-fast execution and thus give you faster feedback about your project's health.
 
 Suppose that you need to implement a new feature in your current project.
 If you are following _TDD_ / _BDD_ approach, you'll write some test(s) to validate that the new feature behaves as expected.
-Then you'll implement the new feature and when you get that all tests passes, last step is to push this code to your _SCM_ server, which probably will trigger a bew build in your CI server running all the tests.
+Then you'll implement the new feature and when you get that all tests passes. Last step is to push this code to your source
+control, which probably will trigger a new build in your CI server running all the tests.
 
-And at this point it can occurs two things:
+And at this point two things can happen:
 
 . The build takes several minutes and it does not fail.
 . The build takes several minutes but it fails because your new tests are failing (yes I know it worked in your machine).
 
-Notice that you have no clue when your new tests are going to be executed.
-They could be the first ones, in that case your build will fail fast, or they might be the last ones, so you'll need to wait some time until you get the failure.
+Usually you don't have that much influence on when your new tests are going to be executed.
+They could be the first ones, in that case your build will fail fast, or they might be the last ones, so you'll need to
+wait some time until you get the failure.
 
-*Smart testing* project avoids this uncertainty by ordering tests so that the first tests that could fail (because they are new or because failed previously) are going to executed first.
-Thanks of that your build is going to fail fast, which means that for example after a few seconds, you can have some certainty that the build is going to succeed and you can start working on another task.
+*Smart testing* project aims to solve this uncertainty by ordering tests so that the first tests that could fail (because for example they
+are new or because failed previously) are going to be executed first.
+
 
 === Technical Details
 
-Currently Smart Testing project is implemented as a Maven extension and works together with `maven-surefire-plugin` and `maven-failsafe-plugin`.
-
-In our plan is to extend smart testing to other build tools such as *Gradle*, as well as other languages.
+Currently Smart Testing supports Maven through Maven Extension mechanism and works together with `maven-surefire-plugin`
+and `maven-failsafe-plugin`.
 
 === Minimum requirements
 
-Smart Testing tool has next requirements:
-
 Java:: Requires Java 8.
-Maven:: Tested with _Maven 3.3.9_ and _3.5.0_ but any version above (_Maven 3.1.X_) should work. Our recommendation is that you use at least _3.3.X_ version to avoid any extension API problems.
-Surefire/Failsafe:: Minimum version required is _2.19.1_ or above. It is important to make sure that you have defined in your `pom.xml`.
+
+Maven:: Tested with Maven `3.3.9` and `3.5.0` but any version above `3.1.X` should work. Our recommendation is that you
+use at least `3.3.X` version to avoid any extension API problems.
+
+Surefire/Failsafe:: Minimum version required is `2.19.1` or above. It is important to make sure that you have it defined
+in your `pom.xml`, as Maven comes with the default version which might not be compatible with our extension.

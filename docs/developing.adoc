@@ -2,13 +2,12 @@
 
 === Test Bed
 
-*Test Bed* brings a convenient way of writing functional tests for our smart testing tool. Here’s how the sample test looks like:
+*Test Bed* brings a convenient way of writing functional tests. Here’s how the sample test looks like:
 
 [source, java, indent=0]
 ----
 include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/mixed/LocalChangesMixedStrategySelectionExecutionFunctionalTest.java[tag=documentation]
 ----
-
 
 We are using `arquillian-core` project (squashed repo) for running those tests. You can find it here: https://github.com/arquillian/smart-testing-dogfood-repo
 
@@ -27,12 +26,12 @@ Easy way of configuring any Maven-based project in the test itself through simpl
 include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/HistoricalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation]
 ----
 
-This snippet will modify root `pom.xml of given project with all required elements to enable `smart-testing`.
+This snippet will modify root `pom.xml` of given project with all required elements to enable `smart-testing`.
 It will also apply test selection criteria as well as execution mode (`selecting` meaning only tests which belong to categories defined in `executionOrder`).
 
 ====== Applying changes
 
-I decided to have an ability to apply changes to the selected code base by modifying sample repository directly.
+We decided to apply changes to the selected code base by modifying sample repository directly.
 This is done by creating atomic commits directly rather than applying code changes in the tests themselves (e.g. by using https://github.com/forge/roaster[Forge Roaster]).
 This comes with several advantages:
 

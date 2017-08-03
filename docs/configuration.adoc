@@ -2,23 +2,20 @@
 
 === Modes
 
-So far in <<What is this?>> section we introduced you that *Smart testing* change the order of test execution plan to run first the important tests and then the rest of the tests.
-This is know as `ordering` mode, but there is another one.
+So far in <<What is this?>> section we explained you that *Smart testing* changes the order of test execution plan
+to run first the important tests and then the rest. This is know as `ordering` mode, but we have more.
 
-Let's introduce both modes.
+`ordering`:: `ordering` mode as its name suggests orders the test execution plan so important tests are executed first and then the rest. This is the default mode.
+`selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests.
 
-`ordering`:: `ordering` mode as its name suggests just orders the test execution plan so important tests are executed first and then the rest. This is the default mode.
-`selecting`:: `selecting` mode just selects the important tests and execute them, ignoring the rest of the tests.
-This mode is the desired one for running tests in development machine before pushing changes to `CI server` or for example as dynamic `commit stage` tests.
-
-To set you need to set `smart.testing.mode` Java system property with desired mode either `ordering` or `selecting`.
+In order to define the mode use `smart.testing.mode` Java system property with either one.
 
 === Strategies
 
-Until now, you've been reading that smart testing is changing test execution plan running/filtering important tests.
+Until now, you've read that smart testing is changing test execution plan running/filtering important tests.
 But how smart testing knows which tests are important and which ones not?
 
-There are several strategies that you can choose to detect what are the *important* tests, you can choose one or more of them to work together.
+There are several strategies that you can choose to detect what are the *important* tests.
 Currently next strategies are implemented: `new`, `changed`, `affected` and `failed`.
 
 To set them you need to set Java system property `smart.testing` to one or more strategies in comma-separated value form.
@@ -27,7 +24,8 @@ Let's explain all of them:
 
 ==== New
 
-`New` strategy uses _SCM_ information (currently only _Git_ is supported) to detect *new* tests and set them as *important* tests to run them first (_ordering_) or not filtered (_selecting_).
+`New` strategy uses _SCM_ information (currently only _Git_ is supported) to detect *new* tests and set them as *important*
+tests to run them first (_ordering_) or filtered (_selecting_).
 
 So internally this strategy just inspects your _SCM_ history (and local changes) and all tests that were added (so they are effectively new) are marked as important ones.
 
@@ -36,9 +34,13 @@ This strategy supports several configuration properties which are set as Java sy
 * `git.commit` and `git.previous.commit` are used to set the range of commits you want to inspect for new tests.
 The values can be commit ids or using `HEAD` notation.
 For example: `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~`
-By default if not specified, default value is `HEAD`
+By default if not specified, default value is `HEAD`.
 * `git.last.commits` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~3`.
+For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`.
+
+TIP: Those properties might be in particular handy when used in the CI builds.
+For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
+`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=HEAD~`
 
 Currently not committed changes (those that are _added_ and _untracked_) are considered as important tests as well.
 This effectively means that if you don't specify any commit range, only these information is considered.
@@ -53,8 +55,8 @@ TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=n
 
 ==== Affected
 
-`Affected` strategy uses a different approach to choose what are the *important* tests to run first (_ordering_) or not filtered (_selecting_).
-In this case, it also uses _SCM_ information but in this case it retrieves any *new* or *modified* business class between commits range and local changes as well.
+`Affected` strategy uses a different approach to choose what are the *important* tests to run first (_ordering_) or filtered (_selecting_).
+This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class between commits range and local changes as well.
 Notice that now the important change is that _SCM_ information is only used for retrieving business code.
 
 TIP: `git.commit`, `git.previous.commit` and `git.last.commits` Java system properties are valid as well.
@@ -62,7 +64,7 @@ TIP: `git.commit`, `git.previous.commit` and `git.last.commits` Java system prop
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
 If tests uses a business class that has been modified, it is a test that might fail, hence it is marked as *important* test to give priority on test execution plan.
 
-IMPORTANT: This strategy might be used only in case of _white box_ testing approach since uses _imports_ to build a graph of test dependencies.
+IMPORTANT: This strategy might only be used in case of _white box_ testing approach since we are analyzing direct code dependencies as of now.
 
 ==== Failed
 

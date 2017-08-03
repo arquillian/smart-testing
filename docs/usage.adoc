@@ -2,26 +2,27 @@
 
 === Examples
 
-After <<Installation, installing>> *Smart Testing Maven Extension* you can use any goal you use with `maven-surefire-plugin` or `maven-failsafe-plugin`.
+After <<Installation, installing>> *Smart Testing Maven Extension* you can use any goal you use with `maven-surefire-plugin`
+or `maven-failsafe-plugin`.
 
-To configure it you only need to pass from CLI the Java system poroeprties.
+To configure it you only need to pass from CLI the Java system properties.
 Let's see some examples:
 
 *You want to run only tests that you've just added or modified locally*
 
-`$> mvn -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed" clean test`
+`$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed"`
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
-`$> mvn -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed" clean test`
+`$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed" `
 
-TIP: Notice that `smart.testing.mode` is not mandatory in case of `ordering` because it is the default mode if not specified.
+TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is the default mode if not specified.
 
 *You want to run only tests that validates new or modified business classes locally*
 
-`$> mvn -Dsmart.testing.mode=selecting -Dsmart.testing="affected" clean test`
+`$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="affected"`
 
-When you are running Smart Testing, you'll see next log line in the console, showing you current configuration:
+When you are running Smart Testing, you'll see following logs in the console, showing your current configuration:
 
 ----
 INFO: Smart-Testing - Applied strategies: [new, affected]
@@ -34,12 +35,12 @@ This can be used as feedback to check that the extension has been installed corr
 
 Sometimes you might want to disable smart testing extension without removing it.
 
-To do it you just need to set `smart.testing.disable` Java system property to `true` and then tests will run with standard `surefire` / `failsafe` plugins.
+To do it you just need to set `smart.testing.disable` Java system property to `true` and then tests will
+run with standard `surefire` / `failsafe` plugins.
 
 === Plugin Selection
 
 *Smart testing* extension hooks into `surefire` and `failsafe` lifecycle to provide the order/selection of tests to execute.
-By default it searches their definitions in `pom.xml` and integrates it.
 
 It might be possible that you only want to use smart testing on `surefire` or `failsafe` plugin definition.
 
