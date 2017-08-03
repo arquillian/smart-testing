@@ -6,7 +6,6 @@ import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -60,13 +59,12 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build("clean", "verify");
+        final List<TestResult> actualTestResults = project.build().run("clean", "verify");
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
     }
-
 
     @Test
     public void should_only_execute_new_tests_when_multiple_local_changes_applied() throws Exception {
@@ -87,7 +85,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run(true);
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

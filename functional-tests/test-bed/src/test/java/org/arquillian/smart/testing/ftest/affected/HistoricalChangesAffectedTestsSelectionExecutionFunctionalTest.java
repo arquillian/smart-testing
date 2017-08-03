@@ -36,10 +36,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -61,10 +62,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.last.commits", "2")
+            .build()
+                .options()
+                    .withSystemProperties("git.last.commits", "2")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

@@ -35,10 +35,11 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-            .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
-            .configure()
-            .build();
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                .configure()
+            .run();
 
         // then
         assertThat(actualTestResults).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
