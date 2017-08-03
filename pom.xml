@@ -60,6 +60,7 @@
     <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
     <surefire.fork.count>4</surefire.fork.count>
     <surefire.thread.count>8</surefire.thread.count>
+    <surefire.reuse.forks>true</surefire.reuse.forks>
 
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -150,7 +151,7 @@
         <configuration>
           <forkCount>${surefire.fork.count}</forkCount>
           <threadCount>${surefire.thread.count}</threadCount>
-          <reuseForks>true</reuseForks>
+          <reuseForks>${surefire.reuse.forks}</reuseForks>
           <argLine>-Xmx2048m</argLine>
           <parallel>classesAndMethods</parallel>
         </configuration>
@@ -165,6 +166,7 @@
       <properties>
         <surefire.fork.count>2</surefire.fork.count>
         <surefire.thread.count>2</surefire.thread.count>
+        <surefire.reuse.forks>false</surefire.reuse.forks>
       </properties>
     </profile>
   </profiles>
