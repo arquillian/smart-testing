@@ -18,11 +18,11 @@ public class TestNgProviderInfo implements ProviderInfo {
 
     public boolean isApplicable() {
         return LoaderVersionExtractor.getTestNgVersion() != null
-            && LoaderVersionExtractor.getSurefireBooterVersion() != null;
+            && LoaderVersionExtractor.getSurefireApiVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-testng:" + LoaderVersionExtractor.getSurefireBooterVersion();
+        return "org.apache.maven.surefire:surefire-testng:" + LoaderVersionExtractor.getSurefireApiVersion();
     }
 
     @Override

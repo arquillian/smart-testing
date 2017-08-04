@@ -32,11 +32,11 @@ public class JUnitCoreProviderInfo extends JUnitProviderInfo {
         final boolean isJunitArtifact47 = isAnyJunit4() && isJunit47Compatible(junitDepVersion);
         final boolean isAny47ProvidersForcers = isAnyConcurrencySelected() || isAnyGroupsSelected();
         return isAny47ProvidersForcers && (isJunitArtifact47 || is47CompatibleJunitDep())
-            && LoaderVersionExtractor.getSurefireBooterVersion() != null;
+            && LoaderVersionExtractor.getSurefireApiVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit47:" + LoaderVersionExtractor.getSurefireBooterVersion();
+        return "org.apache.maven.surefire:surefire-junit47:" + LoaderVersionExtractor.getSurefireApiVersion();
     }
 
     private boolean isJunit47Compatible(ArtifactVersion artifactVersion) {

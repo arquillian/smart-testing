@@ -13,10 +13,10 @@ public class JUnit4ProviderInfo extends JUnitProviderInfo {
     }
 
     public boolean isApplicable() {
-        return getJunitDepVersion() != null && isAnyJunit4() && LoaderVersionExtractor.getSurefireBooterVersion() != null;
+        return getJunitDepVersion() != null && isAnyJunit4() && LoaderVersionExtractor.getSurefireApiVersion() != null;
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit4:" + LoaderVersionExtractor.getSurefireBooterVersion();
+        return "org.apache.maven.surefire:surefire-junit4:" + LoaderVersionExtractor.getSurefireApiVersion();
     }
 }
