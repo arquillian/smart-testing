@@ -85,7 +85,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run(true);
+        final List<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

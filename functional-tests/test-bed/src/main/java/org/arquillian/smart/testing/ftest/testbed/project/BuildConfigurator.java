@@ -12,24 +12,13 @@ import static java.util.Arrays.stream;
 
 public class BuildConfigurator {
 
-    private final ProjectBuilder projectBuilder;
-
-    /*
-    MAVEN_DEBUG_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"
-     */
     private static final String MVN_DEBUG_AGENT = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s";
     private static final String SUREFIRE_DEBUG_SETTINGS = " -Xnoagent -Djava.compiler=NONE";
     private static final int DEFAULT_DEBUG_PORT = 8000;
     private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
+    private final ProjectBuilder projectBuilder;
     private final Properties systemProperties = new Properties();
-
-    BuildConfigurator(ProjectBuilder projectBuilder) {
-        systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
-        systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
-        this.projectBuilder = projectBuilder;
-    }
-
     private final Set<String> excludedProjects = new HashSet<>();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
@@ -40,6 +29,16 @@ public class BuildConfigurator {
     private boolean mvnDebugOutput;
     private boolean enableSurefireRemoteDebugging = false;
     private String mavenOpts = "-Xms512m -Xmx1024m";
+
+    BuildConfigurator(ProjectBuilder projectBuilder) {
+        systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
+        systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
+        this.projectBuilder = projectBuilder;
+    }
+
+    public ProjectBuilder configure() {
+        return this.projectBuilder;
+    }
 
     /**
      * Enables remote debugging of embedded maven run so we can troubleshoot our extension and provider
@@ -127,7 +126,7 @@ public class BuildConfigurator {
         return this;
     }
 
-    public void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
+    void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
             addMavenOpts(debugOptions);
@@ -139,31 +138,31 @@ public class BuildConfigurator {
         }
     }
 
-    public void addMavenOpts(String options) {
+    void addMavenOpts(String options) {
         this.mavenOpts += " " + options;
     }
 
-    public boolean disableQuietWhenAnyDebugModeEnabled() {
+    boolean disableQuietWhenAnyDebugModeEnabled() {
         return !isMavenDebugOutputEnabled() && !isSurefireRemoteDebuggingEnabled() && !isRemoteDebugEnabled();
     }
 
-    public boolean isMavenDebugOutputEnabled() {
+    boolean isMavenDebugOutputEnabled() {
         return Boolean.valueOf(getProperty("test.bed.mvn.debug.output", Boolean.toString(this.mvnDebugOutput)));
     }
 
-    public Properties getSystemProperties() {
+    Properties getSystemProperties() {
         return systemProperties;
     }
 
-    public String[] getExcludedProjects() {
+    String[] getExcludedProjects() {
         return excludedProjects.toArray(new String[excludedProjects.size()]);
     }
 
-    public boolean isQuietMode() {
+    boolean isQuietMode() {
         return quietMode;
     }
 
-    public String getMavenOpts() {
+    String getMavenOpts() {
         return mavenOpts;
     }
 
@@ -191,7 +190,4 @@ public class BuildConfigurator {
             getProperty("test.bed.mvn.surefire.remote.debug.port", Integer.toString(this.surefireRemotePort)));
     }
 
-    public ProjectBuilder configure() {
-        return this.projectBuilder;
-    }
 }

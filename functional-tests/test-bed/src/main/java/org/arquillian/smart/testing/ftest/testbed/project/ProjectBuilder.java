@@ -92,13 +92,6 @@ public class ProjectBuilder {
         return run("clean", "package");
     }
 
-    public List<TestResult> run(boolean log) {
-        if (log) {
-            buildConfigurator.logBuildOutput();
-        }
-        return run("clean", "package");
-    }
-
     public List<TestResult> run(String... goals) {
         return build(goals);
     }
