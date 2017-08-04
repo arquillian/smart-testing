@@ -41,7 +41,6 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
-import org.arquillian.smart.testing.strategies.affected.AbstractJavaClass;
 
 import static javassist.bytecode.AnnotationsAttribute.invisibleTag;
 import static javassist.bytecode.AnnotationsAttribute.visibleTag;

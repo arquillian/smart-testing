@@ -28,8 +28,6 @@
 package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -50,7 +48,7 @@ public class ClassFileIndex {
     private Logger logger = Logger.getLogger(ClassFileIndex.class);
 
     private final JavaClassBuilder builder;
-    private DirectedGraph<JavaClass, DefaultEdge> graph;
+    private DirectedGraph<JavaElement, DefaultEdge> graph;
     private List<String> globPatterns;
 
     public ClassFileIndex(ClasspathProvider classpath) {
@@ -82,7 +80,7 @@ public class ClassFileIndex {
         for (String changedTestClassNames : testClassesNames) {
             JavaClass javaClass = builder.getClass(changedTestClassNames);
             if (javaClass != null) {
-                addToIndex(javaClass);
+                addToIndex(new JavaElement(javaClass), javaClass.getImports());
                 changedTestClasses.add(javaClass);
             }
         }
@@ -90,88 +88,91 @@ public class ClassFileIndex {
         return changedTestClasses;
     }
 
-    public JavaClass findJavaClass(String classname) {
-        JavaClass clazz = findClass(classname);
+    public JavaElement findJavaClass(String classname) {
+        JavaElement clazz = findClass(classname);
         if (clazz == null) {
-            clazz = builder.getClass(classname);
-            if (clazz.locatedInClassFile()) {
-                addToIndex(clazz);
+            JavaClass javaClass = builder.getClass(classname);
+            clazz = new JavaElement(javaClass);
+            if (javaClass.locatedInClassFile()) {
+                addToIndex(clazz, javaClass.getImports());
             }
         }
         return clazz;
     }
 
-    private JavaClass findClass(String classname) {
-        for (JavaClass jClass : graph.vertexSet()) {
-            if (jClass.getName().equals(classname)) {
+    private JavaElement findClass(String classname) {
+        for (JavaElement jClass : graph.vertexSet()) {
+            if (jClass.getClassName().equals(classname)) {
                 return jClass;
             }
         }
         return null;
     }
 
-    private void addToIndex(JavaClass newClass) {
-        addToGraph(newClass);
-        updateParentReferences(newClass);
+    private void addToIndex(JavaElement javaElement, String[] imports) {
+        addToGraph(javaElement);
+        updateParentReferences(javaElement, imports);
     }
 
-    private void addToGraph(JavaClass newClass) {
+    private void addToGraph(JavaElement newClass) {
         if (!graph.addVertex(newClass)) {
             replaceVertex(newClass);
         }
     }
 
-    private List<JavaClass> getParents(JavaClass childClass) {
+    private List<JavaElement> getParents(JavaElement childClass) {
         return predecessorListOf(graph, childClass);
     }
 
-    private void replaceVertex(JavaClass newClass) {
-        List<JavaClass> incomingEdges = getParents(newClass);
+    private void replaceVertex(JavaElement newClass) {
+        List<JavaElement> incomingEdges = getParents(newClass);
 
         graph.removeVertex(newClass);
         graph.addVertex(newClass);
-        for (JavaClass each : incomingEdges) {
+        for (JavaElement each : incomingEdges) {
             graph.addEdge(each, newClass);
         }
     }
 
-    private void updateParentReferences(JavaClass parentClass) {
-        for (String child : parentClass.getImports()) {
-            JavaClass childClass = findJavaClass(child);
-            if ((childClass != null) && !childClass.equals(parentClass)) {
+    private void updateParentReferences(JavaElement javaElementParentClass,
+        String[] imports) {
+        for (String child : imports) {
+            JavaElement childClass = findJavaClass(child);
+            if ((childClass != null) && !childClass.equals(javaElementParentClass)) {
                 if (graph.containsVertex(childClass)) {
-                    graph.addEdge(parentClass, childClass);
+                    graph.addEdge(javaElementParentClass, childClass);
                 } else {
                     graph.addVertex(childClass);
-                    graph.addEdge(parentClass, childClass);
+                    graph.addEdge(javaElementParentClass, childClass);
                 }
             }
         }
     }
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
-        final Set<JavaClass> javaClasses = classes.stream()
+        final Set<JavaElement> javaClasses = classes.stream()
             .map(javaClass -> JavaToClassLocation.transform(javaClass, globPatterns))
             .map(this.builder::classFileChanged)
             .map(this.builder::getClass)
+            .map(JavaElement::new)
             .filter(graph::containsVertex)
             .collect(Collectors.toSet());
 
         return findTestsDependingOnAsJavaClass(javaClasses);
     }
 
-    private Set<String> findTestsDependingOnAsJavaClass(Set<JavaClass> classes) {
+    private Set<String> findTestsDependingOnAsJavaClass(Set<JavaElement> classes) {
         Set<String> changedParents = new HashSet<>();
-        for (JavaClass jclass : classes) {
+        for (JavaElement jclass : classes) {
             findParents(jclass, changedParents);
         }
         return changedParents;
     }
 
-    private void findParents(JavaClass jclass, Set<String> changedParents) {
-        for (JavaClass parent : getParents(jclass)) {
-            if (changedParents.add(parent.getName())) {
-                logger.finest("%s test has been added because it depends on %s", parent.getName(), jclass.getName());
+    private void findParents(JavaElement jclass, Set<String> changedParents) {
+        for (JavaElement parent : getParents(jclass)) {
+            if (changedParents.add(parent.getClassName())) {
+                logger.finest("%s test has been added because it depends on %s", parent.getClassName(), jclass.getClassName());
                 findParents(parent, changedParents);
             }
         }
@@ -187,9 +188,9 @@ public class ClassFileIndex {
 
     public Set<String> getIndexedClasses() {
         Set<String> classes = new HashSet<>();
-        Set<JavaClass> vertexSet = graph.vertexSet();
-        for (JavaClass each : vertexSet) {
-            classes.add(each.getName());
+        Set<JavaElement> vertexSet = graph.vertexSet();
+        for (JavaElement each : vertexSet) {
+            classes.add(each.getClassName());
         }
         return classes;
     }
@@ -202,22 +203,6 @@ public class ClassFileIndex {
         defaultEdges.stream().forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
 
         return s.toString();
-    }
-
-    public String toString(String classname) {
-        return graph.edgeSet().stream()
-            .filter(de -> getObject(de, "getSource").equals(classname))
-            .collect(Collectors.toList()).toString();
-    }
-
-    private String getObject(DefaultEdge defaultEdge, String methodName) {
-        try {
-            final Method method = defaultEdge.getClass().getMethod(methodName);
-            method.setAccessible(true);
-            return method.invoke(defaultEdge).toString();
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            return "ERROR on reflection call " + e.getMessage();
-        }
     }
 
 }

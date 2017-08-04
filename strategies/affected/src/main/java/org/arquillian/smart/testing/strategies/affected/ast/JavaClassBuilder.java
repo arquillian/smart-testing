@@ -32,7 +32,6 @@ import java.io.IOException;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
-import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
 /**
  * @author Ben Rady

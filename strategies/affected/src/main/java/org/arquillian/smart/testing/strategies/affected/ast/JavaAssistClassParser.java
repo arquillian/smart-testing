@@ -44,7 +44,6 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.FilesCodec;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
-import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
 import static java.io.File.pathSeparator;
 
