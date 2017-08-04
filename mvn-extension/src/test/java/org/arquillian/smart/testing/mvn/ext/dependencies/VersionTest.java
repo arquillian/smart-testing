@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.dependencies;
 
 import java.util.Arrays;
 import java.util.Collection;

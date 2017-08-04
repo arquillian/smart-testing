@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
@@ -19,7 +18,7 @@ import static java.util.stream.StreamSupport.stream;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
-        + "configures it on the fly.", // TODO
+        + "configures it on the fly.",
     hint = "smart-testing")
 class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
@@ -73,10 +72,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> {
-            final Model model = mavenProject.getModel();
-            mavenProjectConfigurator.configureTestRunner(model);
-            mavenProjectConfigurator.addRequiredDependencies(model);
-        });
+        session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
     }
 }
