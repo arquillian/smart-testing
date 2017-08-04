@@ -35,7 +35,7 @@ public class SurefireDependencyResolver {
     public static ClassLoader addProviderToClasspath(ProviderInfo providerInfo) {
         if (providerInfo != null) {
             File[] files = resolve(providerInfo);
-            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             try {
                 return new URLClassLoader(toURLs(files), classLoader);
             } catch (Exception e) {
