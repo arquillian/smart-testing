@@ -55,9 +55,8 @@ class MavenProjectConfigurator {
     private void addSurefireApiDependency(Model model) {
         if (surefireVersion != null && surefireVersion.toString() != null) {
             boolean alreadyContains = model.getDependencies().stream()
-                .filter(dep ->
-                    dep.getGroupId().equals("org.apache.maven.surefire") && dep.getArtifactId().equals("surefire-api"))
-                .findFirst().isPresent();
+                .anyMatch(dep ->
+                    "org.apache.maven.surefire".equals(dep.getGroupId()) && "surefire-api".equals(dep.getArtifactId()));
             if (!alreadyContains) {
                 model.addDependency(getSurefireApiDependency(surefireVersion.toString()));
             }
