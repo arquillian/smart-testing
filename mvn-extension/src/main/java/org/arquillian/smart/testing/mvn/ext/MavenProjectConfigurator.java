@@ -3,7 +3,6 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -20,12 +19,12 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
-    private static final List<String> APPLICABLE_PLUGINS =
-        Arrays.asList("maven-surefire-plugin", "maven-failsafe-plugin");
 
     private static Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
 
     private final Configuration configuration;
+
+    private Version surefireVersion;
 
     MavenProjectConfigurator(Configuration configuration) {
         this.configuration = configuration;
@@ -47,9 +46,30 @@ class MavenProjectConfigurator {
                 final Dependency dependency = dependencies.get(strategy);
                 model.addDependency(dependency);
             }
+            addSurefireApiDependency(model);
         } catch (IOException e) {
             throw new RuntimeException("Unable to load strategy definitions", e);
         }
+    }
+
+    private void addSurefireApiDependency(Model model) {
+        if (surefireVersion != null && surefireVersion.toString() != null) {
+            boolean alreadyContains = model.getDependencies().stream()
+                .anyMatch(dep ->
+                    "org.apache.maven.surefire".equals(dep.getGroupId()) && "surefire-api".equals(dep.getArtifactId()));
+            if (!alreadyContains) {
+                model.addDependency(getSurefireApiDependency(surefireVersion.toString()));
+            }
+        }
+    }
+
+    private Dependency getSurefireApiDependency(String version){
+        final Dependency dependency = new Dependency();
+        dependency.setGroupId("org.apache.maven.surefire");
+        dependency.setArtifactId("surefire-api");
+        dependency.setVersion(version);
+        dependency.setScope("runtime");
+        return dependency;
     }
 
     void showPom(Model model) {
@@ -60,11 +80,17 @@ class MavenProjectConfigurator {
         }
     }
 
-    void configureTestRunner(Model model) {
+    Version configureTestRunner(Model model) {
         final List<Plugin> testRunnerPluginConfigurations = model.getBuild().getPlugins()
             .stream()
-            .filter(plugin -> APPLICABLE_PLUGINS.contains(plugin.getArtifactId()))
-            .filter(plugin -> Version.from(plugin.getVersion().trim()).isGreaterOrEqualThan(MINIMUM_VERSION))
+            .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
+            .filter(plugin -> {
+                Version version = Version.from(plugin.getVersion().trim());
+                if (ApplicablePlugins.SUREFIRE.hasSameArtifactId(plugin.getArtifactId())) {
+                    surefireVersion = version;
+                }
+                return version.isGreaterOrEqualThan(MINIMUM_VERSION);
+            })
             .filter(plugin -> {
                 if (configuration.isApplyToDefined()) {
                     return configuration.getApplyTo().equals(plugin.getArtifactId());
@@ -78,11 +104,11 @@ class MavenProjectConfigurator {
 
             logger.severe(
                 "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
-                APPLICABLE_PLUGINS, MINIMUM_VERSION);
+                ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
             logCurrentPlugins(model);
             throw new IllegalStateException(
                 String.format("Smart testing must be used with any of %s plugins with minimum version %s",
-                    APPLICABLE_PLUGINS, MINIMUM_VERSION));
+                    ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION));
         }
 
         for (Plugin testRunnerPlugin : testRunnerPluginConfigurations) {
@@ -95,6 +121,7 @@ class MavenProjectConfigurator {
                 properties.addChild(defineTestSelectionCriteria());
             }
         }
+        return surefireVersion;
     }
 
     private boolean areNotApplicableTestingPlugins(List<Plugin> testRunnerPluginConfigurations) {
@@ -109,7 +136,7 @@ class MavenProjectConfigurator {
 
         model.getBuild().getPlugins()
             .stream()
-            .filter(plugin -> APPLICABLE_PLUGINS.contains(plugin.getArtifactId()))
+            .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
             .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
                 plugin.getArtifactId(), plugin.getVersion()));
     }
