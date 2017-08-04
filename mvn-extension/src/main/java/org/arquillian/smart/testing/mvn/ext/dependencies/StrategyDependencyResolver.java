@@ -12,7 +12,17 @@ import org.apache.maven.model.Dependency;
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
  *
+ * For example one can defined mapping between "awesome" strategy to its corresponding dependency as follows:
  *
+ * smart.testing.strategy.awesome=org.awesome:smart-testing-awesome:0.0.1
+ *
+ * Version in the g:a:v can be omitted and will be resolved to the one matching "Smart Testing Extension" which is in use.
+ *
+ * Properties are loaded with the following precedence:
+ *
+ *  - default ones stored internally are loaded first
+ *  - custom file can overwrite defaults
+ *  - System properties overwrite all above
  */
 class StrategyDependencyResolver {
 
