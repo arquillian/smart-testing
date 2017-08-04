@@ -10,10 +10,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.failed.SurefireReportHandlingUtils.copySurefireReportsFromPreviousBuild;
-import static org.arquillian.smart.testing.ftest.failed.SurefireReportHandlingUtils.storeSurefireReportsForFailingBuild;
+import static org.arquillian.smart.testing.ftest.failed.TestReportHandler.copySurefireReportsFromPreviousBuild;
+import static org.arquillian.smart.testing.ftest.failed.TestReportHandler.storeSurefireReportsForFailingBuild;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,29 +22,21 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_previously_failing_tests_when_failed_is_enabled() throws Exception {
         // given
         final Project project = testBed.getProject();
 
-        project.configureSmartTesting()
-                .executionOrder(AFFECTED)
-                .inMode(SELECTING)
-            .enable();
-
         project.applyAsCommits("Single method modification - return value");
 
-        try {
-            project
-                .buildOptions()
-                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
-                    .configure()
-                .build();
-        } catch (IllegalStateException ex) {
-            //swallow this exception; build should fail.
-        }
+        project
+            .build()
+                .options()
+                    .ignoreBuildFailure()
+                .configure()
+            .run();
 
         List<Path> reportPaths = storeSurefireReportsForFailingBuild(project);
 
@@ -61,10 +52,11 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

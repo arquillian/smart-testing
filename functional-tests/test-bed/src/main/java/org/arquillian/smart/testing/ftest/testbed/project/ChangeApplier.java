@@ -62,7 +62,7 @@ class ChangeApplier {
         return apply(this::applyLocallyFromTags, changeDescriptions);
     }
 
-    List<TestResult> apply(ChangeApplicator applicator, String ... changeDescriptions) {
+    List<TestResult> apply(ChangeApplicator applicator, String... changeDescriptions) {
         try {
             final Collection<RevTag> matchingTags = findMatchingTags(changeDescriptions);
             if (changeDescriptions.length != matchingTags.size()) {
@@ -92,7 +92,10 @@ class ChangeApplier {
     private List<TestResult> applyLocallyFromTags(Collection<RevTag> tags) throws GitAPIException {
         final List<TestResult> combinedTestResults = new ArrayList<>();
         final List<RevCommit> stashesToApply = new ArrayList<>();
-        stashesToApply.add(git.stashCreate().setIncludeUntracked(true).call());
+        RevCommit revCommit = git.stashCreate().setIncludeUntracked(true).call();
+        if (revCommit != null) {
+            stashesToApply.add(revCommit);
+        }
         for (final RevTag tag : tags) {
             final ObjectId tagId = tag.getObject().getId();
             git.cherryPick().setNoCommit(true).include(tagId).call();

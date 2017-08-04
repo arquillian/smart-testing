@@ -27,6 +27,7 @@ public class Project implements AutoCloseable {
     public Path getRoot() {
         return root;
     }
+    
     public ProjectConfigurator configureSmartTesting() {
         return new ProjectConfigurator(this, root);
     }
