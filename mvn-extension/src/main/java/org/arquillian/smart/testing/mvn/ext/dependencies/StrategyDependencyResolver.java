@@ -1,44 +1,65 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.dependencies;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
 
-public class StrategyDependencyResolver {
+/**
+ * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
+ *
+ *
+ */
+class StrategyDependencyResolver {
 
     private static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
 
     private Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
 
-    private Properties properties;
-
-    StrategyDependencyResolver(Path propertiesPath, Properties properties) {
-        this.propertiesPath = propertiesPath;
-        this.properties = properties;
-    }
-
-    StrategyDependencyResolver(Properties properties) {
-        this(null, properties);
-    }
-
     StrategyDependencyResolver(Path propertiesPath) {
-        this(propertiesPath, new Properties());
+        this.propertiesPath = propertiesPath;
     }
 
     StrategyDependencyResolver() {
-        this(null, new Properties());
+        this.propertiesPath = null;
     }
 
     Map<String, Dependency> resolveDependencies() {
         final Properties properties = new Properties();
+        properties.putAll(loadDefaultMapping());
         properties.putAll(loadFromFile());
-        properties.putAll(this.properties);
         properties.putAll(System.getProperties());
         return transformToDependencies(properties);
+    }
+
+    private Properties loadDefaultMapping() {
+        final Properties properties = new Properties();
+        try (InputStream strategyMapping = getClass().getClassLoader().getResourceAsStream("strategies.properties")) {
+            if (strategyMapping == null) {
+                throw new IllegalStateException("Unable to load default strategy dependencies mapping.");
+            }
+            properties.load(strategyMapping);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load default strategy dependencies mapping.", e);
+        }
+        return properties;
+    }
+
+    private Properties loadFromFile() {
+        final Properties properties = new Properties();
+        if (propertiesPath != null) {
+            try {
+                properties.load(new FileInputStream(this.propertiesPath.toFile()));
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to load custom startegy mapping", e);
+            }
+        }
+
+        return properties;
     }
 
     private Map<String, Dependency> transformToDependencies(Properties properties) {
@@ -61,18 +82,5 @@ public class StrategyDependencyResolver {
                     dependency.setScope("runtime");
                     return dependency;
                 }));
-    }
-
-    private Properties loadFromFile() {
-        final Properties properties = new Properties();
-        if (propertiesPath != null) {
-            try {
-                properties.load(new FileInputStream(this.propertiesPath.toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return properties;
     }
 }

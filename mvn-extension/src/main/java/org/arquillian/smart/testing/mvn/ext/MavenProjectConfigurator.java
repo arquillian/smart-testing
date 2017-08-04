@@ -1,19 +1,17 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
+import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 class MavenProjectConfigurator {
@@ -24,52 +22,11 @@ class MavenProjectConfigurator {
 
     private final Configuration configuration;
 
-    private Version surefireVersion;
+    private final DependencyResolver dependencyResolver;
 
     MavenProjectConfigurator(Configuration configuration) {
         this.configuration = configuration;
-    }
-
-    void addRequiredDependencies(Model model) {
-        model.addDependency(smartTestingProviderDependency());
-        final String[] strategies = configuration.getStrategies();
-        try (InputStream strategyMapping = getClass().getClassLoader().getResourceAsStream("strategies.properties")) {
-            if (strategyMapping == null) {
-                throw new RuntimeException("Unable to load strategy definitions");
-            }
-            final Properties properties = new Properties();
-            properties.load(strategyMapping);
-            final StrategyDependencyResolver strategyDependencyResolver =
-                new StrategyDependencyResolver(properties);
-            final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-            for (final String strategy : strategies) {
-                final Dependency dependency = dependencies.get(strategy);
-                model.addDependency(dependency);
-            }
-            addSurefireApiDependency(model);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to load strategy definitions", e);
-        }
-    }
-
-    private void addSurefireApiDependency(Model model) {
-        if (surefireVersion != null && surefireVersion.toString() != null) {
-            boolean alreadyContains = model.getDependencies().stream()
-                .anyMatch(dep ->
-                    "org.apache.maven.surefire".equals(dep.getGroupId()) && "surefire-api".equals(dep.getArtifactId()));
-            if (!alreadyContains) {
-                model.addDependency(getSurefireApiDependency(surefireVersion.toString()));
-            }
-        }
-    }
-
-    private Dependency getSurefireApiDependency(String version){
-        final Dependency dependency = new Dependency();
-        dependency.setGroupId("org.apache.maven.surefire");
-        dependency.setArtifactId("surefire-api");
-        dependency.setVersion(version);
-        dependency.setScope("runtime");
-        return dependency;
+        this.dependencyResolver = new DependencyResolver(configuration);
     }
 
     void showPom(Model model) {
@@ -80,15 +37,12 @@ class MavenProjectConfigurator {
         }
     }
 
-    Version configureTestRunner(Model model) {
+    void configureTestRunner(Model model) {
         final List<Plugin> testRunnerPluginConfigurations = model.getBuild().getPlugins()
             .stream()
             .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
             .filter(plugin -> {
                 Version version = Version.from(plugin.getVersion().trim());
-                if (ApplicablePlugins.SUREFIRE.hasSameArtifactId(plugin.getArtifactId())) {
-                    surefireVersion = version;
-                }
                 return version.isGreaterOrEqualThan(MINIMUM_VERSION);
             })
             .filter(plugin -> {
@@ -101,18 +55,13 @@ class MavenProjectConfigurator {
             .collect(Collectors.toList());
 
         if (areNotApplicableTestingPlugins(testRunnerPluginConfigurations) && isNotPomProject(model)) {
-
-            logger.severe(
-                "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
-                ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
-            logCurrentPlugins(model);
-            throw new IllegalStateException(
-                String.format("Smart testing must be used with any of %s plugins with minimum version %s",
-                    ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION));
+            failBecauseOfPluginVersionMismatch(model);
         }
 
+        dependencyResolver.addRequiredDependencies(model);
+
         for (Plugin testRunnerPlugin : testRunnerPluginConfigurations) {
-            testRunnerPlugin.addDependency(smartTestingProviderDependency());
+            dependencyResolver.addAsPluginDependency(testRunnerPlugin);
             final Object configuration = testRunnerPlugin.getConfiguration();
             if (configuration != null) {
                 final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
@@ -121,24 +70,6 @@ class MavenProjectConfigurator {
                 properties.addChild(defineTestSelectionCriteria());
             }
         }
-        return surefireVersion;
-    }
-
-    private boolean areNotApplicableTestingPlugins(List<Plugin> testRunnerPluginConfigurations) {
-        return testRunnerPluginConfigurations.size() == 0;
-    }
-
-    private boolean isNotPomProject(Model model) {
-        return !"pom".equals(model.getPackaging().trim());
-    }
-
-    private void logCurrentPlugins(Model model) {
-
-        model.getBuild().getPlugins()
-            .stream()
-            .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
-            .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
-                plugin.getArtifactId(), plugin.getVersion()));
     }
 
     private Xpp3Dom defineTestSelectionCriteria() {
@@ -166,12 +97,30 @@ class MavenProjectConfigurator {
         return properties;
     }
 
-    private Dependency smartTestingProviderDependency() {
-        final Dependency smartTestingSurefireProvider = new Dependency();
-        smartTestingSurefireProvider.setGroupId("org.arquillian.smart.testing");
-        smartTestingSurefireProvider.setArtifactId("smart-testing-surefire-provider");
-        smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
-        smartTestingSurefireProvider.setScope("runtime");
-        return smartTestingSurefireProvider;
+    private void failBecauseOfPluginVersionMismatch(Model model) {
+        logger.severe(
+            "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
+            ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
+        logCurrentPlugins(model);
+        throw new IllegalStateException(
+            String.format("Smart testing must be used with any of %s plugins with minimum version %s",
+                ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION));
+    }
+
+    private boolean areNotApplicableTestingPlugins(List<Plugin> testRunnerPluginConfigurations) {
+        return testRunnerPluginConfigurations.size() == 0;
+    }
+
+    private boolean isNotPomProject(Model model) {
+        return !"pom".equals(model.getPackaging().trim());
+    }
+
+    private void logCurrentPlugins(Model model) {
+
+        model.getBuild().getPlugins()
+            .stream()
+            .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
+            .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
+                plugin.getArtifactId(), plugin.getVersion()));
     }
 }
