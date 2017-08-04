@@ -46,11 +46,21 @@ class MavenProjectConfigurator {
                 final Dependency dependency = dependencies.get(strategy);
                 model.addDependency(dependency);
             }
-            if (surefireVersion != null && surefireVersion.toString() != null) {
-                model.addDependency(getSurefireApiDependency(surefireVersion.toString()));
-            }
+            addSurefireApiDependency(model);
         } catch (IOException e) {
             throw new RuntimeException("Unable to load strategy definitions", e);
+        }
+    }
+
+    private void addSurefireApiDependency(Model model) {
+        if (surefireVersion != null && surefireVersion.toString() != null) {
+            boolean alreadyContains = model.getDependencies().stream()
+                .filter(dep ->
+                    dep.getGroupId().equals("org.apache.maven.surefire") && dep.getArtifactId().equals("surefire-api"))
+                .findFirst().isPresent();
+            if (!alreadyContains) {
+                model.addDependency(getSurefireApiDependency(surefireVersion.toString()));
+            }
         }
     }
 
