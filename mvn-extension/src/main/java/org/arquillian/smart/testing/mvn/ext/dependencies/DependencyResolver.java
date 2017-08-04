@@ -39,25 +39,15 @@ public class DependencyResolver {
     private void addSurefireApiDependency(Model model) {
         boolean alreadyContains = model.getDependencies()
             .stream()
-            .anyMatch(dep -> "org.apache.maven.surefire".equals(dep.getGroupId()) && "surefire-api".equals(
-                dep.getArtifactId()));
+            .anyMatch(SurefireApiDependency::matches);
         if (!alreadyContains) {
             final Optional<Plugin> surefirePlugin = model.getBuild().getPlugins().stream()
                 .filter(plugin -> ApplicablePlugins.SUREFIRE.hasSameArtifactId(plugin.getArtifactId()))
                 .findFirst();
 
             surefirePlugin.ifPresent(plugin -> model.addDependency(
-                getSurefireApiDependency(Version.from(plugin.getVersion().trim()).toString())));
+                new SurefireApiDependency(Version.from(plugin.getVersion().trim()).toString())));
         }
-    }
-
-    private Dependency getSurefireApiDependency(String version) {
-        final Dependency dependency = new Dependency();
-        dependency.setGroupId("org.apache.maven.surefire");
-        dependency.setArtifactId("surefire-api");
-        dependency.setVersion(version);
-        dependency.setScope("runtime");
-        return dependency;
     }
 
     private Dependency smartTestingProviderDependency() {
@@ -67,5 +57,21 @@ public class DependencyResolver {
         smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
         smartTestingSurefireProvider.setScope("runtime");
         return smartTestingSurefireProvider;
+    }
+
+    static class SurefireApiDependency extends Dependency {
+        private static final String GROUP_ID = "org.apache.maven.surefire";
+        private static final String ARTIFACT_ID = "surefire-api";
+
+        SurefireApiDependency(String version) {
+            setGroupId(GROUP_ID);
+            setArtifactId(ARTIFACT_ID);
+            setVersion(version);
+            setScope("runtime");
+        }
+
+        public static boolean matches(Dependency dependency) {
+            return GROUP_ID.equals(dependency.getGroupId()) && ARTIFACT_ID.equals(dependency.getArtifactId());
+        }
     }
 }
