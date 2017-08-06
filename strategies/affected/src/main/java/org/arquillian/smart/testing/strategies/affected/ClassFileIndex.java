@@ -65,7 +65,7 @@ public class ClassFileIndex {
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
     }
 
-    public Set<JavaClass> addTestJavaFiles(Collection<File> testJavaFiles) {
+    public void buildTestDependencyGraph(Collection<File> testJavaFiles) {
         // First update class index
         List<String> testClassesNames = new ArrayList<>();
         for (File testJavaFile : testJavaFiles) {
@@ -85,33 +85,11 @@ public class ClassFileIndex {
             }
         }
         builder.clear();
-        return changedTestClasses;
-    }
-
-    public JavaElement findJavaClass(String classname) {
-        JavaElement clazz = findClass(classname);
-        if (clazz == null) {
-            JavaClass javaClass = builder.getClass(classname);
-            clazz = new JavaElement(javaClass);
-            if (javaClass.locatedInClassFile()) {
-                addToIndex(clazz, javaClass.getImports());
-            }
-        }
-        return clazz;
-    }
-
-    private JavaElement findClass(String classname) {
-        for (JavaElement jClass : graph.vertexSet()) {
-            if (jClass.getClassName().equals(classname)) {
-                return jClass;
-            }
-        }
-        return null;
     }
 
     private void addToIndex(JavaElement javaElement, String[] imports) {
         addToGraph(javaElement);
-        updateParentReferences(javaElement, imports);
+        updateJavaElementWithImportReferences(javaElement, imports);
     }
 
     private void addToGraph(JavaElement newClass) {
@@ -134,20 +112,42 @@ public class ClassFileIndex {
         }
     }
 
-    private void updateParentReferences(JavaElement javaElementParentClass,
+    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass,
         String[] imports) {
-        for (String child : imports) {
-            JavaElement childClass = findJavaClass(child);
-            if ((childClass != null) && !childClass.equals(javaElementParentClass)) {
-                if (graph.containsVertex(childClass)) {
-                    graph.addEdge(javaElementParentClass, childClass);
+        for (String importz : imports) {
+            JavaElement importClass = new JavaElement(importz);
+            if (!importClass.equals(javaElementParentClass)) {
+                if (graph.containsVertex(importClass)) {
+                    graph.addEdge(javaElementParentClass, importClass);
                 } else {
-                    graph.addVertex(childClass);
-                    graph.addEdge(javaElementParentClass, childClass);
+                    graph.addVertex(importClass);
+                    graph.addEdge(javaElementParentClass, importClass);
                 }
             }
         }
     }
+
+    // I don't remove these methods for now because might be used if we decide to resolve transitive imports
+    /**private JavaElement findOrCreateJavaClass(String classname) {
+        JavaElement clazz = findClass(classname);
+        if (clazz == null) {
+            JavaClass javaClass = builder.getClass(classname);
+            clazz = new JavaElement(javaClass);
+            if (javaClass.locatedInClassFile()) {
+                addToIndex(clazz, javaClass.getImports());
+            }
+        }
+        return clazz;
+    }
+
+    private JavaElement findClass(String classname) {
+        for (JavaElement jClass : graph.vertexSet()) {
+            if (jClass.getClassName().equals(classname)) {
+                return jClass;
+            }
+        }
+        return null;
+    }**/
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
         final Set<JavaElement> javaClasses = classes.stream()

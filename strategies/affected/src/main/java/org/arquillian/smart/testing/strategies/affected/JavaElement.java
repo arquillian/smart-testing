@@ -8,6 +8,12 @@ public class JavaElement {
     private final String className;
     private final File classFile;
 
+
+    public JavaElement(String className) {
+        this.className = className;
+        this.classFile = null;
+    }
+
     /**
      * Constructor for creating a Java element.
      * @param className of the java element.
