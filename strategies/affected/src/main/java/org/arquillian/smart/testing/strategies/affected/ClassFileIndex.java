@@ -134,6 +134,7 @@ public class ClassFileIndex {
         // To avoid scanning for example org.springframework.*, org.apache.*, ...  and provide a flag to avoid it as well
         // Or another option would be do something inclusion which by default could be the first two parts of test package (i.e or.mycompany)
         if (!importz.startsWith("java")) {
+
             JavaElement importClass = new JavaElement(importz);
             if (!importClass.equals(javaElementParentClass)) {
                 if (!graph.containsVertex(importClass)) {
@@ -146,11 +147,13 @@ public class ClassFileIndex {
                     graph.addEdge(javaElementParentClass, importClass);
                     return true;
                 }
+                graph.addEdge(javaElementParentClass, importClass);
             }
         }
 
         return false;
     }
+
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
         return classes.stream()

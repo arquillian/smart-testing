@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.dependencies;
 
 /**
  * Version class to represent a version of an artifact. Notice that we are just supporting the basic fields of

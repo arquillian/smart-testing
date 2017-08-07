@@ -39,11 +39,12 @@ public class DisabledSmartTestingFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .excludeProjects(modules)
-                .withSystemProperties("smart.testing.disable", "true")
+            .build()
+                .options()
+                    .excludeProjects(modules)
+                    .withSystemProperties("smart.testing.disable", "true")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).hasSize(74);

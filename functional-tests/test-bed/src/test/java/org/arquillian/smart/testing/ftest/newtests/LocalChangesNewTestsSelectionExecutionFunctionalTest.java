@@ -6,7 +6,6 @@ import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -36,7 +35,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -60,13 +59,12 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build("clean", "verify");
+        final List<TestResult> actualTestResults = project.build().run("clean", "verify");
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
     }
-
 
     @Test
     public void should_only_execute_new_tests_when_multiple_local_changes_applied() throws Exception {
@@ -80,14 +78,19 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // we ignore expected tests results for this commits, as they are changes to existing ones,
         // but still want to apply the changes
+
+        // tag::documentation_apply[]
         project.applyAsLocalChanges("Single method body modification - sysout",
             "Inlined variable in a method");
+        // end::documentation_apply[]
 
         final List<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        // tag::documentation_build[]
+        final List<TestResult> actualTestResults = project.build().run();
+        // end::documentation_build[]
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

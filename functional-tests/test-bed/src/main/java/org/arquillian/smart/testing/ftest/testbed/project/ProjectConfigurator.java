@@ -58,7 +58,7 @@ public class ProjectConfigurator {
         String currentVersion = resolveVersion();
         mavenExtensionRegisterer.addSmartTestingExtension(currentVersion);
         final String strategies = Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
-        this.project.buildOptions()
+        this.project.build().options()
             .withSystemProperties(SMART_TESTING, strategies, SMART_TESTING_MODE, getMode().getName(),
                 SMART_TESTING_VERSION, currentVersion)
             .configure();

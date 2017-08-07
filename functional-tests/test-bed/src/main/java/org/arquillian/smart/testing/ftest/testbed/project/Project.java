@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
-import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.RefNotFoundException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
@@ -22,7 +19,7 @@ public class Project implements AutoCloseable {
         this.root = root;
         this.repository = getRepository(root);
         this.git = new Git(this.repository);
-        this.projectBuilder = new ProjectBuilder(root, this);
+        this.projectBuilder = new ProjectBuilder(root);
     }
 
     private Repository getRepository(Path root) throws IOException {
@@ -47,15 +44,7 @@ public class Project implements AutoCloseable {
         this.repository.close();
     }
 
-    public ProjectBuilder buildOptions() {
+    public ProjectBuilder build() {
         return this.projectBuilder;
-    }
-
-    public List<TestResult> build() {
-        return build("clean", "package");
-    }
-
-    public List<TestResult> build(String ... goals) {
-        return projectBuilder.build(goals);
     }
 }

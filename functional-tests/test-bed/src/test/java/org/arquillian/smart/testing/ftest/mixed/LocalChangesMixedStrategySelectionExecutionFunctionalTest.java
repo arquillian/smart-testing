@@ -22,6 +22,7 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
 
+    // tag::documentation[]
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {
         // given
@@ -37,9 +38,10 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
                 "Inlined variable in a method", "Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
+    // end::documentation[]
 }

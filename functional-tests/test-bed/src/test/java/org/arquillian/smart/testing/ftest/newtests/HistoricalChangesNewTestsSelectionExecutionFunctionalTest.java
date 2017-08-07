@@ -26,20 +26,23 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
         // given
         final Project project = testBed.getProject();
 
+        // tag::documentation[]
         project.configureSmartTesting()
                     .executionOrder(NEW)
                     .inMode(SELECTING)
                .enable();
+        // end::documentation[]
 
         final List<TestResult> expectedTestResults = project
             .applyAsCommits("Adds new unit test");
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -65,10 +68,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.last.commits", "3")
+            .build()
+                .options()
+                    .withSystemProperties("git.last.commits", "3")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

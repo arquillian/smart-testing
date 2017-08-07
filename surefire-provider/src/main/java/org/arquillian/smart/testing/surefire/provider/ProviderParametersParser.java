@@ -1,15 +1,9 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 
-import static org.arquillian.smart.testing.surefire.provider.Validate.isNotEmpty;
-
 public class ProviderParametersParser {
-
-    private List<String> includes;
-    private List<String> excludes;
 
     private final ProviderParameters providerParameters;
 
@@ -18,36 +12,15 @@ public class ProviderParametersParser {
     }
 
     public List<String> getIncludes() {
-        if (includes == null) {
-            includes = getParameterList("includes");
-        }
-        return includes;
+        return providerParameters.getDirectoryScannerParameters().getIncludes();
     }
 
     public List<String> getExcludes() {
-        if (excludes == null) {
-            excludes = getParameterList("excludes");
-        }
-        return excludes;
-    }
-
-    private List<String> getParameterList(String parameterKeyPrefix) {
-        List<String> paramList = new ArrayList<>();
-
-        int i = 0;
-        String includesPattern = null;
-        while (isNotEmpty(includesPattern = getProperty(parameterKeyPrefix + i++))) {
-            paramList.add(includesPattern);
-        }
-        return paramList;
+        return providerParameters.getDirectoryScannerParameters().getExcludes();
     }
 
     public String getProperty(String key) {
         return trimMultiline(providerParameters.getProviderProperties().get(key));
-    }
-
-    public boolean containsProperty(String key) {
-        return providerParameters.getProviderProperties().containsKey(key);
     }
 
     private String trimMultiline(String toTrim) {
