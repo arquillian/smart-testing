@@ -60,8 +60,8 @@ public class DependencyResolver {
     }
 
     static class SurefireApiDependency extends Dependency {
-        static final String GROUP_ID = "org.apache.maven.surefire";
-        static final String ARTIFACT_ID = "surefire-api";
+        private static final String GROUP_ID = "org.apache.maven.surefire";
+        private static final String ARTIFACT_ID = "surefire-api";
 
         SurefireApiDependency(String version) {
             setGroupId(GROUP_ID);
