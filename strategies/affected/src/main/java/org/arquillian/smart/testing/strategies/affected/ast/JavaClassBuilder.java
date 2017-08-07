@@ -29,6 +29,7 @@ package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import java.io.IOException;
+import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
@@ -57,8 +58,17 @@ public class JavaClassBuilder {
         } catch (RuntimeException e) {
             // Can occur when a cached class disappears from the file system
             rethrowIfSerious(e);
-            return new UnparsableClass(classname);
+            return explicitlyCreateJavaClass(classname);
         } catch (MissingClassException e) {
+            return explicitlyCreateJavaClass(classname);
+        }
+    }
+
+    private JavaClass explicitlyCreateJavaClass(String classname) {
+        try {
+            parser.makeClass(classname);
+            return parser.getClass(classname);
+        } catch(Exception e) {
             return new UnparsableClass(classname);
         }
     }
@@ -70,7 +80,7 @@ public class JavaClassBuilder {
      */
     public String classFileChanged(File file) {
         try {
-            return parser.classFileChanged(file);
+            return parser.getClassName(file);
         } catch (RuntimeException e) {
             // If the class goes missing after we read it in but before we
             // process it,
