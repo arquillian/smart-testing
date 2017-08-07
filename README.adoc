@@ -22,7 +22,7 @@ Let it be your local development or a CI server - what if you could know this as
 We created *Smart Testing* to give you the fastest possible feedback loop when it comes to executing your tests.
 
 ifndef::generated-doc[]
-To read complete documentation visit http://arquillian.org/smart-testing/
+To read complete documentation head over to http://arquillian.org/smart-testing/
 endif::generated-doc[]
 
 ifdef::generated-doc[]
