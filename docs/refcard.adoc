@@ -1,0 +1,37 @@
+== Reference Card
+
+=== Installation
+
+[source, xml,indent=0]
+.${maven.projectBasedir}/.mvn/extensions.xml
+----
+include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
+----
+
+=== Configuration
+
+
+[cols="1,2,2,1", options="header"]
+|===
+|Property | Description | Possible Values | Default
+
+a|`smart.testing.mode`
+|Set running mode
+a|`ordering`, `selecting`
+a|`ordering`
+
+a|`smart.testing`
+|Set strategies in CSV
+a|`new`, `changed`, `affected`, `failed`
+|
+
+a|`smart.testing.disable`
+|Disable Smart Testing
+a|`true`, `false`
+a|`false`
+
+a|`smart.testing.apply.to`
+|Set plugin to apply Smart Testing in CSV
+a|`surefire`, `failsafe`
+a|`surefire, failsafe`
+|===

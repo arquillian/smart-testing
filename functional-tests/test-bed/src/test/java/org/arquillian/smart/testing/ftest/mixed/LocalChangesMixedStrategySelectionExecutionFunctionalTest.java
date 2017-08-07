@@ -22,6 +22,7 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
 
+    // tag::documentation[]
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {
         // given
@@ -42,4 +43,5 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
+    // end::documentation[]
 }

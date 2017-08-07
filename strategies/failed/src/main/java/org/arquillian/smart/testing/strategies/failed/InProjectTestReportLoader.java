@@ -24,6 +24,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
     public InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
         this.javaSPILoader = javaSPILoader;
+
     }
 
     @Override
