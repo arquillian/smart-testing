@@ -25,7 +25,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.arquillian.smart.testing.strategies.affected;
+package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
@@ -57,5 +57,13 @@ public class UnparsableClass implements JavaClass {
     @Override
     public boolean locatedInClassFile() {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("UnparsableClass{");
+        sb.append("classname='").append(classname).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -61,7 +60,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         // TODO In case of Arquillian core is an improvement of 500 ms per module
         // Scan disk finding all tests of current project
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
-        classFileIndex.addTestJavaFiles(allTestsOfCurrentProject);
+        classFileIndex.buildTestDependencyGraph(allTestsOfCurrentProject);
 
         final Collection<Change> files = changeStorage.read()
             .orElseGet(() -> {

@@ -44,7 +44,6 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.FilesCodec;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
-import org.arquillian.smart.testing.strategies.affected.UnparsableClass;
 
 import static java.io.File.pathSeparator;
 
@@ -138,11 +137,10 @@ public class JavaAssistClassParser {
 
     /**
      * Returns the classname of given .class file.
-     * @param file
-     * @return
+     *
      * @throws IOException
      */
-    public String classFileChanged(File file) throws IOException {
+    public String getClassName(File file) throws IOException {
         String sha1 = FilesCodec.sha1(file);
         CacheEntry entry = BY_PATH.get(file.getAbsolutePath());
         if ((entry != null) && (entry.sha1.equals(sha1))) {
@@ -150,8 +148,7 @@ public class JavaAssistClassParser {
         }
 
         try (InputStream inputStream = new FileInputStream(file)) {
-
-            CtClass ctClass = getClassPool().makeClass(inputStream);
+            CtClass ctClass = makeClass(inputStream);
             String classname = ctClass.getName();
 
             CLASSES_BY_NAME.remove(classname);
@@ -159,6 +156,16 @@ public class JavaAssistClassParser {
 
             return classname;
         }
+    }
+
+    CtClass makeClass(String className) throws IOException {
+            CtClass ctClass = getClassPool().makeClass(className);
+            return ctClass;
+    }
+
+    CtClass makeClass(InputStream className) throws IOException {
+        CtClass ctClass = getClassPool().makeClass(className);
+        return ctClass;
     }
 
     private boolean unparsableClass(CtClass cachedClass) {

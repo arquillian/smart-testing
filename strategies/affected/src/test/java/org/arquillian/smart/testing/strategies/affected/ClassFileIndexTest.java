@@ -23,7 +23,7 @@ public class ClassFileIndexTest {
             Collections.singletonList("**/*Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
-        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation)));
+        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
 
         // when
 
@@ -48,7 +48,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
@@ -75,7 +75,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
@@ -101,7 +101,7 @@ public class ClassFileIndexTest {
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.addTestJavaFiles(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
 
