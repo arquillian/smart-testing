@@ -45,6 +45,8 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassFileIndex {
 
+    private static final int MAX_DEPTH = AffectedRunnerProperties.getSmartTestingDepthLevel();
+
     private Logger logger = Logger.getLogger(ClassFileIndex.class);
 
     private final JavaClassBuilder builder;
@@ -89,17 +91,13 @@ public class ClassFileIndex {
 
     private void addToIndex(JavaElement javaElement, String[] imports) {
         addToGraph(javaElement);
-        updateJavaElementWithImportReferences(javaElement, imports);
+        updateJavaElementWithImportReferences(javaElement, imports, 0);
     }
 
     private void addToGraph(JavaElement newClass) {
         if (!graph.addVertex(newClass)) {
             replaceVertex(newClass);
         }
-    }
-
-    private List<JavaElement> getParents(JavaElement childClass) {
-        return predecessorListOf(graph, childClass);
     }
 
     private void replaceVertex(JavaElement newClass) {
@@ -113,67 +111,62 @@ public class ClassFileIndex {
     }
 
     private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass,
-        String[] imports) {
+        String[] imports, int currentDepth) {
+
+        if (currentDepth >= MAX_DEPTH) return;
+
         for (String importz : imports) {
+
+            if (addImport(javaElementParentClass, importz)) {
+
+                JavaClass javaClass = builder.getClass(importz);
+                if (javaClass != null) {
+                    updateJavaElementWithImportReferences(javaElementParentClass, javaClass.getImports(),
+                        currentDepth + 1);
+                }
+            }
+        }
+    }
+
+    private boolean addImport(JavaElement javaElementParentClass, String importz) {
+        // Avoid adding JDK classes (java, javax)
+        // Probably we need to make this configurable or provide some defaults like TomEE does: https://github.com/apache/tomee/blob/master/container/openejb-core/src/main/resources/default.exclusions
+        // To avoid scanning for example org.springframework.*, org.apache.*, ...  and provide a flag to avoid it as well
+        // Or another option would be do something inclusion which by default could be the first two parts of test package (i.e or.mycompany)
+        if (!importz.startsWith("java")) {
             JavaElement importClass = new JavaElement(importz);
             if (!importClass.equals(javaElementParentClass)) {
                 if (!graph.containsVertex(importClass)) {
                     graph.addVertex(importClass);
                 }
-                graph.addEdge(javaElementParentClass, importClass);
-            }
-        }
-    }
 
-    // I don't remove these methods for now because might be used if we decide to resolve transitive imports
-    /**private JavaElement findOrCreateJavaClass(String classname) {
-        JavaElement clazz = findClass(classname);
-        if (clazz == null) {
-            JavaClass javaClass = builder.getClass(classname);
-            clazz = new JavaElement(javaClass);
-            if (javaClass.locatedInClassFile()) {
-                addToIndex(clazz, javaClass.getImports());
+                // This condition is required because we are flattering imports in graph
+                // This operation is fast since it is a containsKey call in a Map instance
+                if (!graph.containsEdge(javaElementParentClass, importClass)) {
+                    graph.addEdge(javaElementParentClass, importClass);
+                    return true;
+                }
             }
         }
-        return clazz;
-    }
 
-    private JavaElement findClass(String classname) {
-        for (JavaElement jClass : graph.vertexSet()) {
-            if (jClass.getClassName().equals(classname)) {
-                return jClass;
-            }
-        }
-        return null;
-    }**/
+        return false;
+    }
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
-        final Set<JavaElement> javaClasses = classes.stream()
+        return classes.stream()
             .map(javaClass -> JavaToClassLocation.transform(javaClass, globPatterns))
             .map(this.builder::classFileChanged)
             .map(this.builder::getClass)
             .map(JavaElement::new)
             .filter(graph::containsVertex)
+            .map(this::getParents)
+            .flatMap(l -> l.stream())
+            .map(JavaElement::getClassName)
             .collect(Collectors.toSet());
-
-        return findTestsDependingOnAsJavaClass(javaClasses);
     }
 
-    private Set<String> findTestsDependingOnAsJavaClass(Set<JavaElement> classes) {
-        Set<String> changedParents = new HashSet<>();
-        for (JavaElement jclass : classes) {
-            findParents(jclass, changedParents);
-        }
-        return changedParents;
-    }
-
-    private void findParents(JavaElement jclass, Set<String> changedParents) {
-        for (JavaElement parent : getParents(jclass)) {
-            if (changedParents.add(parent.getClassName())) {
-                logger.finest("%s test has been added because it depends on %s", parent.getClassName(), jclass.getClassName());
-                findParents(parent, changedParents);
-            }
-        }
+    private List<JavaElement> getParents(JavaElement childClass) {
+        return predecessorListOf(graph, childClass);
     }
 
     public void clear() {
