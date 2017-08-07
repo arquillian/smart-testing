@@ -38,7 +38,7 @@ public class ProjectPersistTest {
         public static final GitClone GIT_CLONE = new GitClone();
 
         @Rule
-        public TestBed testBed = new TestBed();
+        public TestBed testBed = new TestBed(GIT_CLONE);
 
         @Test
         public void should_fail() throws Exception {
@@ -51,7 +51,7 @@ public class ProjectPersistTest {
         public static final GitClone GIT_CLONE = new GitClone();
 
         @Rule
-        public TestBed testBed = new TestBed();
+        public TestBed testBed = new TestBed(GIT_CLONE);
 
         @Test
         public void should_pass() throws Exception {

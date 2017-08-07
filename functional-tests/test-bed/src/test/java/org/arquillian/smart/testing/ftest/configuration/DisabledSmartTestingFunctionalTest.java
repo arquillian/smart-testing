@@ -19,7 +19,7 @@ public class DisabledSmartTestingFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     private static String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
 
@@ -39,11 +39,12 @@ public class DisabledSmartTestingFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .excludeProjects(modules)
-                .withSystemProperties("smart.testing.disable", "true")
+            .build()
+                .options()
+                    .excludeProjects(modules)
+                    .withSystemProperties("smart.testing.disable", "true")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).hasSize(74);

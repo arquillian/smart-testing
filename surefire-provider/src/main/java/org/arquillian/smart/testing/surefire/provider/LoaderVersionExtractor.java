@@ -20,8 +20,8 @@ import static java.lang.Thread.currentThread;
  */
 public class LoaderVersionExtractor {
 
-    public static final MavenLibrary LIBRARY_SUREFIRE_BOOTER =
-        new MavenLibrary("org.apache.maven.surefire", "surefire-booter");
+    public static final MavenLibrary LIBRARY_SUREFIRE_API =
+        new MavenLibrary("org.apache.maven.surefire", "surefire-api");
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
     private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class);
@@ -29,13 +29,13 @@ public class LoaderVersionExtractor {
     private static List<MavenLibrary> initLibraries = new ArrayList<>();
 
     static {
-        initLibraries.add(LIBRARY_SUREFIRE_BOOTER);
+        initLibraries.add(LIBRARY_SUREFIRE_API);
         initLibraries.add(LIBRARY_JUNIT);
         initLibraries.add(LIBRARY_TEST_NG);
     }
 
-    public static String getSurefireBooterVersion() {
-        return getVersionFromClassLoader(LIBRARY_SUREFIRE_BOOTER, currentThread().getContextClassLoader());
+    public static String getSurefireApiVersion() {
+        return getVersionFromClassLoader(LIBRARY_SUREFIRE_API, currentThread().getContextClassLoader());
     }
 
     public static String getJunitVersion() {

@@ -19,7 +19,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_tests_related_to_single_commit_in_business_logic_when_affected_is_enabled() throws Exception {
@@ -36,10 +36,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -61,10 +62,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.last.commits", "2")
+            .build()
+                .options()
+                    .withSystemProperties("git.last.commits", "2")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

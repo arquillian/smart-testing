@@ -19,7 +19,7 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_newly_added_tests_if_new_strategy_is_enabled() throws Exception {
@@ -38,10 +38,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+            .build()
+                .options()
+                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -67,10 +68,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // when
         final List<TestResult> actualTestResults = project
-            .buildOptions()
-                .withSystemProperties("git.last.commits", "3")
+            .build()
+                .options()
+                    .withSystemProperties("git.last.commits", "3")
                 .configure()
-            .build();
+            .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

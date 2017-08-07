@@ -14,11 +14,11 @@ import org.junit.runners.Parameterized;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-public class LoaderVersionExtractorSurefireBooterTest {
+public class LoaderVersionExtractorSurefireApiTest {
 
     private String surefireBooterVersion;
 
-    public LoaderVersionExtractorSurefireBooterTest(String surefireBooterVersion) {
+    public LoaderVersionExtractorSurefireApiTest(String surefireBooterVersion) {
         this.surefireBooterVersion = surefireBooterVersion;
     }
 
@@ -28,11 +28,11 @@ public class LoaderVersionExtractorSurefireBooterTest {
     }
 
     @Test
-    public void test_should_load_surefire_booter_version() throws MalformedURLException {
+    public void test_should_load_surefire_api_version() throws MalformedURLException {
         // given
         File junitFile = Maven
             .resolver()
-            .resolve("org.apache.maven.surefire:surefire-booter:" + surefireBooterVersion)
+            .resolve("org.apache.maven.surefire:surefire-api:" + surefireBooterVersion)
             .withoutTransitivity()
             .asSingleFile();
 
@@ -41,7 +41,7 @@ public class LoaderVersionExtractorSurefireBooterTest {
 
         // when
         String junitVersion =
-            LoaderVersionExtractor.getVersionFromClassLoader(LoaderVersionExtractor.LIBRARY_SUREFIRE_BOOTER,
+            LoaderVersionExtractor.getVersionFromClassLoader(LoaderVersionExtractor.LIBRARY_SUREFIRE_API,
                 urlClassLoader);
 
         // then

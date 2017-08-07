@@ -19,7 +19,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed();
+    public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
@@ -35,10 +35,35 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+    }
+
+    @Test
+    public void should_only_execute_new_tests_related_to_single_local_change_using_failsafe() {
+
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+            .executionOrder(NEW)
+            .inMode(SELECTING)
+            .enable();
+
+        project
+            .applyAsCommits("Disable surefire and enable just failsafe plugin");
+
+        final List<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("Adds new unit test");
+
+        // when
+        final List<TestResult> actualTestResults = project.build().run("clean", "verify");
+
+        // then
+        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+
     }
 
     @Test
@@ -64,7 +89,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // when
         // tag::documentation_build[]
-        final List<TestResult> actualTestResults = project.build();
+        final List<TestResult> actualTestResults = project.build().run();
         // end::documentation_build[]
 
         // then

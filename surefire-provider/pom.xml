@@ -43,6 +43,7 @@
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-api</artifactId>
       <version>${version.surefire}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
