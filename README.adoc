@@ -14,7 +14,12 @@ image:https://travis-ci.org/arquillian/smart-testing.svg?branch=master["Build St
 
 *We know which tests you want to run.*
 
-*Smart Testing* is a tool that speeds up the test running phase by reordering test execution plan to fail fast execution as soon as possible.
+We all know that as the project evolves we keep adding more and more tests to ship our products confidently. This however has
+an impact on the build time and thus we waste time waiting for the most important question to be answered - "Did I break anything with my changes?".
+
+Let it be your local development or a CI server - what if you could know this as soon as possible?
+
+We created *Smart Testing* to give you the fastest possible feedback loop when it comes to executing your tests.
 
 ifndef::generated-doc[]
 To read complete documentation visit http://arquillian.org/smart-testing/
