@@ -26,6 +26,7 @@ include::{asciidoctor-source}/what-is-this.adoc[]
 include::{asciidoctor-source}/installation.adoc[]
 include::{asciidoctor-source}/configuration.adoc[]
 include::{asciidoctor-source}/usage.adoc[]
+include::{asciidoctor-source}/refcard.adoc[]
 include::{asciidoctor-source}/developing.adoc[]
 
 endif::generated-doc[]

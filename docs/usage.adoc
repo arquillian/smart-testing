@@ -46,4 +46,16 @@ It might be possible that you only want to use smart testing on `surefire` or `f
 
 To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
 
+=== Running Examples
 
+==== Execute Smart Testing with Changed strategy and Selecting Mode
+
+++++
+<script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
+++++
+
+==== Execute Smart Testing with Affected strategy and Selecting Mode
+
+++++
+<script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
+++++
