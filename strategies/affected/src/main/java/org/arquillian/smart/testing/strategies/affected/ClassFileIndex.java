@@ -117,12 +117,10 @@ public class ClassFileIndex {
         for (String importz : imports) {
             JavaElement importClass = new JavaElement(importz);
             if (!importClass.equals(javaElementParentClass)) {
-                if (graph.containsVertex(importClass)) {
-                    graph.addEdge(javaElementParentClass, importClass);
-                } else {
+                if (!graph.containsVertex(importClass)) {
                     graph.addVertex(importClass);
-                    graph.addEdge(javaElementParentClass, importClass);
                 }
+                graph.addEdge(javaElementParentClass, importClass);
             }
         }
     }
