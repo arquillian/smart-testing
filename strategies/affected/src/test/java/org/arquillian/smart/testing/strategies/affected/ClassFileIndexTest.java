@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.B;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.D;
@@ -20,6 +21,7 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class ClassFileIndexTest {
 
 
