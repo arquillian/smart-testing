@@ -65,8 +65,8 @@ public class ProjectBuilder {
                     .setProjects(buildConfigurator.getModulesToBeBuilt())
                     .setDebug(buildConfigurator.isMavenDebugOutputEnabled())
                     .setQuiet(buildConfigurator.disableQuietWhenAnyDebugModeEnabled() && buildConfigurator.isQuietMode())
-                    .skipTests(false)
                     .setProperties(asProperties(buildConfigurator.getSystemProperties()))
+                    .skipTests(buildConfigurator.isSkipTestsEnabled())
                     .setMavenOpts(buildConfigurator.getMavenOpts())
                     .ignoreFailure()
                 .build();

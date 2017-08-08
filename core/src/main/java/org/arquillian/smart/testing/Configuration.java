@@ -68,4 +68,5 @@ public class Configuration {
     public boolean isDisabled() {
         return disabled;
     }
+
 }

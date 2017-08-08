@@ -28,17 +28,23 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
+    private boolean skipExtension;
+
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
 
-        if (configuration.isDisabled()) {
+        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
+
+        skipExtension = configuration.isDisabled() || mavenProjectConfigurator.isSkipTestExecutionSet();
+
+        if (skipExtension) {
             return;
         }
 
         if (configuration.areStrategiesDefined()) {
-            configureExtension(session, configuration);
+            configureExtension(session, mavenProjectConfigurator);
             calculateChanges();
         } else {
             logStrategiesNotDefined();
@@ -47,7 +53,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (configuration.isDisabled()) {
+        if (skipExtension) {
             return;
         }
 
@@ -68,8 +74,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         changeStorage.store(changes);
     }
 
-    private void configureExtension(MavenSession session, Configuration configuration) {
-        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
+    private void configureExtension(MavenSession session, MavenProjectConfigurator mavenProjectConfigurator) {
         session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
     }
 

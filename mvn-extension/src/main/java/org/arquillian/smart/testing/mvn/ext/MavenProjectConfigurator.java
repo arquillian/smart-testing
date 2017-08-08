@@ -60,16 +60,35 @@ class MavenProjectConfigurator {
 
         dependencyResolver.addRequiredDependencies(model);
 
-        for (Plugin testRunnerPlugin : testRunnerPluginConfigurations) {
-            dependencyResolver.addAsPluginDependency(testRunnerPlugin);
-            final Object configuration = testRunnerPlugin.getConfiguration();
-            if (configuration != null) {
-                final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
-                properties.addChild(defineUsageMode());
-                properties.addChild(defineTestSelectionCriteria());
-            }
-        }
+        testRunnerPluginConfigurations.stream()
+            .filter(
+                testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
+            .forEach(testRunnerPlugin -> {
+                dependencyResolver.addAsPluginDependency(testRunnerPlugin);
+                final Object configuration = testRunnerPlugin.getConfiguration();
+                if (configuration != null) {
+                    final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
+                    final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
+                    properties.addChild(defineUsageMode());
+                    properties.addChild(defineTestSelectionCriteria());
+                }
+            });
+    }
+
+    boolean isSkipTestExecutionSet() {
+        return isSkipTests() || isSkip();
+    }
+
+    private boolean isSkipTests() {
+        return Boolean.valueOf(System.getProperty("skipTests", "false"));
+    }
+
+    private boolean isSkipITs() {
+        return Boolean.valueOf(System.getProperty("skipITs", "false"));
+    }
+
+    private boolean isSkip() {
+        return Boolean.valueOf(System.getProperty("maven.test.skip", "false"));
     }
 
     private Xpp3Dom defineTestSelectionCriteria() {
