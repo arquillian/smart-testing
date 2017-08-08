@@ -669,14 +669,15 @@ which registers the smart testing extension:</p>
 <div class="sect2">
 <h3 id="_modes"><a class="anchor" href="#_modes"></a>2.1. Modes</h3>
 <div class="paragraph">
-<p>So far in <a href="#_what_is_this">What is this?</a> section we explained you that <strong>Smart testing</strong> changes the order of test execution plan
-to run first the important tests and then the rest. This is know as <code>ordering</code> mode, but we have more.</p>
+<p>So far in <a href="#_what_is_this">What is this?</a> section we explained that <strong>Smart testing</strong> changes the order of test execution plan
+to run first the important tests and then the rest. This is know as <code>ordering</code> mode, but that&#8217;s not the only one.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code>ordering</code></dt>
 <dd>
-<p><code>ordering</code> mode as its name suggests orders the test execution plan so important tests are executed first and then the rest. This is the default mode.</p>
+<p><code>ordering</code> mode as its name suggests orders the test execution plan so important tests are executed first
+and then the rest. This is the default mode.</p>
 </dd>
 <dt class="hdlist1"><code>selecting</code></dt>
 <dd>
@@ -691,30 +692,31 @@ to run first the important tests and then the rest. This is know as <code>orderi
 <div class="sect2">
 <h3 id="_strategies"><a class="anchor" href="#_strategies"></a>2.2. Strategies</h3>
 <div class="paragraph">
-<p>Until now, you&#8217;ve read that smart testing is changing test execution plan running/filtering important tests.
-But how smart testing knows which tests are important and which ones not?</p>
+<p>Until now, you&#8217;ve read that smart testing is changing test execution plan running or only including important tests.
+But how do we know which tests are important and which ones not?</p>
 </div>
 <div class="paragraph">
-<p>There are several strategies that you can choose to detect what are the <strong>important</strong> tests.
-Currently next strategies are implemented: <code>new</code>, <code>changed</code>, <code>affected</code> and <code>failed</code>.</p>
+<p>There are several strategies that you can choose from which determine what are the <strong>important</strong> tests.
+Currently we have following strategies in place: <code>new</code>, <code>changed</code>, <code>affected</code> and <code>failed</code>.</p>
 </div>
 <div class="paragraph">
 <p>To set them you need to set Java system property <code>smart.testing</code> to one or more strategies in comma-separated value form.</p>
 </div>
 <div class="paragraph">
-<p>Let&#8217;s explain all of them:</p>
+<p>Subsequent sections dive deeper into each and every one of them.</p>
 </div>
 <div class="sect3">
 <h4 id="_new"><a class="anchor" href="#_new"></a>2.2.1. New</h4>
 <div class="paragraph">
-<p><code>New</code> strategy uses <em>SCM</em> information (currently only <em>Git</em> is supported) to detect <strong>new</strong> tests and set them as <strong>important</strong>
+<p><code>New</code> strategy uses <em>SCM</em> information (currently only <em>Git</em> is supported) to detect <strong>new</strong> tests and treat them as <strong>important</strong>
 tests to run them first (<em>ordering</em>) or filtered (<em>selecting</em>).</p>
 </div>
 <div class="paragraph">
-<p>So internally this strategy just inspects your <em>SCM</em> history (and local changes) and all tests that were added (so they are effectively new) are marked as important ones.</p>
+<p>So internally this strategy inspects your <em>SCM</em> history (and local changes) and all tests that were added (so they are effectively new)
+are marked as important ones.</p>
 </div>
 <div class="paragraph">
-<p>This strategy supports several configuration properties which are set as Java system properties:</p>
+<p>This strategy can be configured in several ways through Java system properties:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -752,7 +754,8 @@ This effectively means that if you don&#8217;t specify any commit range, only th
 <div class="sect3">
 <h4 id="_changed"><a class="anchor" href="#_changed"></a>2.2.2. Changed</h4>
 <div class="paragraph">
-<p><code>Changed</code> strategy is like <a href="#_new">New</a> strategy, but it uses only tests that are <strong>modified</strong> (they were already committed in the past) instead of <strong>new</strong> ones.</p>
+<p><code>Changed</code> strategy is like <a href="#_new">New</a> strategy, but it uses only tests that are <strong>modified</strong> (they were already committed in the past)
+instead of <strong>new</strong> ones.</p>
 </div>
 <div class="paragraph">
 <p>In this strategy not committed changes (those that are <em>modified</em> or <em>changed</em>) are considered as important tests as well.</p>
@@ -764,7 +767,7 @@ This effectively means that if you don&#8217;t specify any commit range, only th
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Usually <code>new</code> and <code>changed</code> strategies are used together <code>-Dsmart.testing=new, affected</code>.
+Usually <code>new</code> and <code>changed</code> strategies are used together <code>-Dsmart.testing=new, changed</code>.
 </td>
 </tr>
 </table>
@@ -774,8 +777,8 @@ Usually <code>new</code> and <code>changed</code> strategies are used together <
 <h4 id="_affected"><a class="anchor" href="#_affected"></a>2.2.3. Affected</h4>
 <div class="paragraph">
 <p><code>Affected</code> strategy uses a different approach to choose what are the <strong>important</strong> tests to run first (<em>ordering</em>) or filtered (<em>selecting</em>).
-This strategy also relies on <em>SCM</em> information but in this case it retrieves any <strong>new</strong> or <strong>modified</strong> business class between commits range and local changes as well.
-Notice that now the important change is that <em>SCM</em> information is only used for retrieving business code.</p>
+This strategy also relies on <em>SCM</em> information but in this case it retrieves any <strong>new</strong> or <strong>modified</strong> business class
+between commits range and local changes as well.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -791,7 +794,7 @@ Notice that now the important change is that <em>SCM</em> information is only us
 </div>
 <div class="paragraph">
 <p>When this strategy gets all changes then inspect all tests of current project checking which ones <em>imports</em> these classes.
-If tests uses a business class that has been modified, it is a test that might fail, hence it is marked as <strong>important</strong> test to give priority on test execution plan.</p>
+If the test exercises a business class that has been modified, we treat it as <strong>important</strong>  so it will be executed earlier in the test plan.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -800,7 +803,8 @@ If tests uses a business class that has been modified, it is a test that might f
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-This strategy might only be used in case of <em>white box</em> testing approach since we are analyzing direct code dependencies as of now.
+This strategy is currently only applicable for <em>white box</em> testing approach. At this point our approach is to
+ analyze direct code dependencies, but we are working on broader use cases.
 </td>
 </tr>
 </table>
@@ -848,7 +852,7 @@ Let&#8217;s see some examples:</p>
 <p><strong>You want to run all tests but given priority to the latest tests added or modified</strong></p>
 </div>
 <div class="paragraph">
-<p>`$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed" `</p>
+<p><code>$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed"</code></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -857,7 +861,7 @@ Let&#8217;s see some examples:</p>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<code>smart.testing.mode</code> is not mandatory in case of <code>ordering</code> because it is the default mode if not specified.
+<code>smart.testing.mode</code> is not mandatory in case of <code>ordering</code> because it is the <strong>default</strong> mode.
 </td>
 </tr>
 </table>
@@ -897,7 +901,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 <p><strong>Smart testing</strong> extension hooks into <code>surefire</code> and <code>failsafe</code> lifecycle to provide the order/selection of tests to execute.</p>
 </div>
 <div class="paragraph">
-<p>It might be possible that you only want to use smart testing on <code>surefire</code> or <code>failsafe</code> plugin definition.</p>
+<p>If you only want to use smart testing on <code>surefire</code> or <code>failsafe</code> plugin definition.</p>
 </div>
 <div class="paragraph">
 <p>To do it you just need to set <code>smart.testing.apply.to</code> with either <code>surefire</code> or <code>failsafe</code> to just enable in one of them.</p>
@@ -1007,6 +1011,18 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 <div class="sect1">
 <h2 id="_developing"><a class="anchor" href="#_developing"></a>5. Developing</h2>
 <div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This section will be improved as we continue with the SPI design to let you hook your own logic if needed.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect2">
 <h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>5.1. Test Bed</h3>
 <div class="paragraph">
@@ -1037,7 +1053,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>We are using <code>arquillian-core</code> project (squashed repo) for running those tests. You can find it here: <a href="https://github.com/arquillian/smart-testing-dogfood-repo" class="bare">https://github.com/arquillian/smart-testing-dogfood-repo</a></p>
+<p>We are using <code>arquillian-core</code> project (in a form of snapshot and squashed repo) for running those tests. You can find it <a href="https://github.com/arquillian/smart-testing-dogfood-repo">here</a>.</p>
 </div>
 <div class="sect3">
 <h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>5.1.1. Design Idea</h4>
@@ -1049,7 +1065,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 <div class="sect5">
 <h6 id="_project_configuration"><a class="anchor" href="#_project_configuration"></a>Project configuration</h6>
 <div class="paragraph">
-<p>Easy way of configuring any Maven-based project in the test itself through simple and self-explanatory fluent API.</p>
+<p>Easy way of configuring any Maven-based project in the test itself is through simple and self-explanatory fluent API.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1060,16 +1076,16 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>This snippet will modify root <code>pom.xml</code> of given project with all required elements to enable <code>smart-testing</code>.
-It will also apply test selection criteria as well as execution mode (<code>selecting</code> meaning only tests which belong to categories defined in <code>executionOrder</code>).</p>
+<p>This snippet will enable <code>smart-testing</code> extension in the background. It will also apply test selection criteria
+and execution mode (<code>selecting</code> meaning only tests which belong to categories defined in <code>executionOrder</code>).</p>
 </div>
 </div>
 <div class="sect5">
 <h6 id="_applying_changes"><a class="anchor" href="#_applying_changes"></a>Applying changes</h6>
 <div class="paragraph">
 <p>We decided to apply changes to the selected code base by modifying sample repository directly.
-This is done by creating atomic commits directly rather than applying code changes in the tests themselves (e.g. by using <a href="https://github.com/forge/roaster">Forge Roaster</a>).
-This comes with several advantages:</p>
+This is done by creating atomic commits directly rather than applying code changes in the tests themselves
+(e.g. by using <a href="https://github.com/forge/roaster">Forge Roaster</a>). This comes with several advantages:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1083,9 +1099,6 @@ This comes with several advantages:</p>
 <p>Ability to analyze execution when tests are failing by simply opening modified project rather than debugging test itself</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>Creating change sets and test result expectations.</p>
 </div>
 <div class="paragraph">
 <p>Creating atomic change, which will be later used for tests, consists of following steps:</p>
@@ -1161,8 +1174,10 @@ See <code>org.arquillian.smart.testing.ftest.testbed.testresults.Status</code> f
 <div class="sect5">
 <h6 id="_executing_test_optimization"><a class="anchor" href="#_executing_test_optimization"></a>Executing test optimization</h6>
 <div class="paragraph">
-<p>Once we configured the project and applied changes we can build it.
-This is what we want to really test. Under the hood it’s using <a href="https://github.com/shrinkwrap/resolver#embedded-maven">Embedded Maven</a>.
+<p>Once we configured the project and applied changes we can build it. This is what we want to really test after all.</p>
+</div>
+<div class="paragraph">
+<p>Under the hood it’s using <a href="https://github.com/shrinkwrap/resolver#embedded-maven">Embedded Maven</a>.
 In addition, after the build is finished, it returns actual test results so we can verify expected and actual test execution. It’s done this way:</p>
 </div>
 <div class="literalblock">
@@ -1214,12 +1229,14 @@ This gives better analysis of the build execution, as it lets us connect to the 
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">List</span>&lt;TestResult&gt; actualTestResults = project
-    .buildOptions()
+    .build()
+    .options()
+        .withSystemProperties(<span class="string"><span class="delimiter">&quot;</span><span class="content">git.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">git.previous.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD~</span><span class="delimiter">&quot;</span></span>)
+        .withDebugOutput()
         .withRemoteDebugging()
         .withRemoteSurefireDebugging()
-        .withDebugOutput()
-        .configure()
-    .build();</code></pre>
+    .configure()
+    .run();</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1280,7 +1297,7 @@ Following system properties are available:</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-07 17:54:40 UTC
+Last updated 2017-08-08 10:47:51 UTC
 </div>
 </div>
 </body>
