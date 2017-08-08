@@ -1,5 +1,7 @@
 == Developing
 
+IMPORTANT: This section will be improved as we continue with the SPI design to let you hook your own logic if needed.
+
 === Test Bed
 
 *Test Bed* brings a convenient way of writing functional tests. Here’s how the sample test looks like:
