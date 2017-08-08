@@ -62,6 +62,10 @@
       <artifactId>maven-model</artifactId>
       <version>${version.maven}</version>
     </dependency>
+    <dependency>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-rules</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

@@ -14,6 +14,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// tag::documentation[]
 public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
 
     @ClassRule
@@ -22,7 +23,6 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
 
-    // tag::documentation[]
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {
         // given
@@ -43,5 +43,5 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
-    // end::documentation[]
 }
+// end::documentation[]
