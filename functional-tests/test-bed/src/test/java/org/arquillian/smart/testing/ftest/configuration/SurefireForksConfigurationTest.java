@@ -68,9 +68,10 @@ public class SurefireForksConfigurationTest {
         // when
         final List<TestResult> actualTestResults =
             project
-                .buildOptions()
+                .build()
+                .options()
                 .withSystemProperties(systemPropertiesPairs).configure()
-                .build();
+                .run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
