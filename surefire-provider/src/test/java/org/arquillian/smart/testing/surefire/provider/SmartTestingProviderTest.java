@@ -1,8 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,12 +9,12 @@ import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.testset.DirectoryScannerParameters;
-import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -26,9 +24,10 @@ import static org.mockito.Mockito.when;
 
 public class SmartTestingProviderTest {
 
-    private LinkedHashSet expectedClassesToRun = new LinkedHashSet(Arrays.asList(ATest.class, BTest.class));
+    private Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
     private ProviderParameters providerParameters;
     private SurefireProviderFactory providerFactory;
+
     private SurefireProvider surefireProvider;
 
     @Before
@@ -61,7 +60,7 @@ public class SmartTestingProviderTest {
     }
 
     @Test
-    public void test_when_invoke_is_called_with_null() throws TestSetFailedException, InvocationTargetException {
+    public void test_when_invoke_is_called_with_null() throws Exception {
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
@@ -75,7 +74,7 @@ public class SmartTestingProviderTest {
     }
 
     @Test
-    public void test_when_invoke_is_called_with_one_class() throws TestSetFailedException, InvocationTargetException {
+    public void test_when_invoke_is_called_with_one_class() throws Exception {
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
@@ -85,12 +84,11 @@ public class SmartTestingProviderTest {
         // then
         verify(surefireProvider, times(0)).getSuites();
         verify(surefireProvider, times(1)).invoke(argThat((ArgumentMatcher<Iterable<Class>>)
-            iterable -> iterableContains(iterable, new LinkedHashSet(Arrays.asList(ATest.class)))));
+            iterable -> iterableContains(iterable, new LinkedHashSet(asList(ATest.class)))));
     }
 
     @Test
-    public void test_when_invoke_is_called_with_whole_set_of_classes()
-        throws TestSetFailedException, InvocationTargetException {
+    public void test_when_invoke_is_called_with_whole_set_of_classes() throws Exception {
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
@@ -108,11 +106,7 @@ public class SmartTestingProviderTest {
         return actualCall.size() == expectedClasses.size() && actualCall.containsAll(expectedClasses);
     }
 
-    private class ATest {
+    private static class ATest {}
 
-    }
-
-    private class BTest {
-
-    }
+    private static class BTest {}
 }
