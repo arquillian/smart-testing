@@ -21,52 +21,54 @@ public class TestSelectionTest {
 
     @Test
     public void should_merge_test_selection_with_different_strategy_for_same_class() {
-        //given
+        // given
         final TestSelection testSelection = new TestSelection(CLASS_NAME_1, NEW);
         
-        //when
+        // when
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(CLASS_NAME_1, CHANGED));
         
-        //then
+        // then
         assertThat(mergedTestSelection.getTypes()).containsExactly(NEW, CHANGED);
         assertThat(mergedTestSelection.getClassName()).isEqualTo(CLASS_NAME_1);
     }
 
     @Test
     public void should_merge_test_selection_with_different_strategies_for_same_class_name() {
-        //given
+        // given
         final TestSelection testSelection = new TestSelection(CLASS_NAME_1, NEW, AFFECTED);
 
-        //when
+        // when
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(CLASS_NAME_1, CHANGED));
 
-        //then
+        // then
         assertThat(mergedTestSelection.getTypes()).containsExactly(NEW, AFFECTED, CHANGED);
         assertThat(mergedTestSelection.getClassName()).isEqualTo(CLASS_NAME_1);
     }
 
     @Test
     public void should_not_merge_test_selection_with_different_class_name() {
-        //given
+        // given
         final TestSelection testSelection = new TestSelection(getPath("DummyClassWithDefaultPackageName.java"), NEW);
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("Cannot merge two test selections with different locations (DummyClassWithDefaultPackageName != dummy.cls.DummyClassWithPackageName)");
 
-        //when
+        // when
         testSelection.merge(new TestSelection(getPath("DummyClassWithPackageName.java"), CHANGED));
+        
+        // then exception should be thrown
     }
 
     @Test
     public void should_merge_test_selection_with_different_strategies_for_same_class() {
-        //given
+        // given
         final Path path = getPath("DummyClassWithDefaultPackageName.java");
         final TestSelection testSelection = new TestSelection(path, AFFECTED);
 
-        //when
+        // when
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(path, NEW));
 
-        //then
+        // then
         assertThat(mergedTestSelection.getTypes()).containsExactly(AFFECTED, NEW);
     }
 
