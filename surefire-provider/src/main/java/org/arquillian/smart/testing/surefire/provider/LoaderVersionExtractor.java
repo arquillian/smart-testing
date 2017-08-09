@@ -60,7 +60,7 @@ public class LoaderVersionExtractor {
     public static String getVersionFromClassLoader(MavenLibrary mavenLibrary, ClassLoader loader) {
         if (loaderWithLibraryVersions.get(loader) != null) {
             if (!initLibraries.contains(mavenLibrary)) {
-                List<MavenLibrary> wrappedLibrary = Arrays.asList(new MavenLibrary[] {mavenLibrary});
+                List<MavenLibrary> wrappedLibrary = Arrays.asList(mavenLibrary);
                 Map<MavenLibrary, String> implTitleWithVersion = getTitleWithVersion(wrappedLibrary, loader);
                 loaderWithLibraryVersions.put(loader, implTitleWithVersion);
             }

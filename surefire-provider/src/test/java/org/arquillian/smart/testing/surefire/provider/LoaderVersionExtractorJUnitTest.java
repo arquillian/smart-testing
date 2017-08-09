@@ -24,7 +24,7 @@ public class LoaderVersionExtractorJUnitTest {
 
     @Parameterized.Parameters
     public static Collection<String> data() {
-        return Arrays.asList(new String[] {"4.9", "4.10", "4.11", "4.12"});
+        return Arrays.asList("4.9", "4.10", "4.11", "4.12");
     }
 
     @Test

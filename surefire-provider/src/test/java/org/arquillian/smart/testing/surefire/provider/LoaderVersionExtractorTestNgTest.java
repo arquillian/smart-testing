@@ -24,7 +24,7 @@ public class LoaderVersionExtractorTestNgTest {
 
     @Parameterized.Parameters
     public static Collection<String> data() {
-        return Arrays.asList(new String[] {"6.8.8", "6.9.4", "6.9.10", "6.10", "6.11"});
+        return Arrays.asList("6.8.8", "6.9.4", "6.9.10", "6.10", "6.11");
     }
 
     @Test
