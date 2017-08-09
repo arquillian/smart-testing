@@ -17,7 +17,7 @@ public class JavaAssistClassParserTest {
 
         // then
         assertThat(simpleImportsClass.getImports())
-            .containsExactlyInAnyOrder("java.util.Arrays", "java.net.MalformedURLException", "java.net.URL",
+            .containsExactlyInAnyOrder("java.util.Collections", "java.net.MalformedURLException", "java.net.URL",
                 "org.arquillian.smart.testing.strategies.affected.ast.SimpleImportsClass", "java.lang.Object",
                 "java.util.ArrayList");
     }

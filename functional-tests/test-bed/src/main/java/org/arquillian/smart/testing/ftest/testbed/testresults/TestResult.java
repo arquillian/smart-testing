@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.testresults;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class TestResult {
@@ -38,7 +39,7 @@ public class TestResult {
     public static TestResult from(String ... testResultParts) {
         if (testResultParts.length > 2) {
             throw new IllegalArgumentException(
-                "Too many arguments passed to create TestResult. Expected to get status code and name, got [" + testResultParts + "]");
+                "Too many arguments passed to create TestResult. Expected to get status code and name, got [" + Arrays.toString(testResultParts) + "]");
         }
         return new TestResult(testResultParts[1], "*", Status.from(testResultParts[0]));
     }
