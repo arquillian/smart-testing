@@ -21,10 +21,22 @@ public class ProjectPersistTest {
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Test
-    public void temp_projects_should_copied_in_target_if_test_is_failing() {
+    public void should_copy_failing_test_directory_in_target_if_test_is_failing() {
         final Result result = JUnitCore.runClasses(ProjectPersistFail.class);
 
         assertThat(result.wasSuccessful()).isFalse();
+        assertThat(new File("target/projects/smart-testing-dogfood-repo_ProjectPersistFail_should_fail")).isDirectory().exists();
+    }
+
+    @Test
+    public void temp_projects_should_copied_in_target_if_test_is_failing() {
+        final Result firstRun = JUnitCore.runClasses(ProjectPersistFail.class);
+        final Result secondRun = JUnitCore.runClasses(ProjectPersistFail.class);
+
+        assertThat(firstRun.wasSuccessful()).isFalse();
+        assertThat(secondRun.wasSuccessful()).isFalse();
+        // it's rather shallow check, but if it's not equal it means second execution of the test failed for different reason
+        assertThat(secondRun.getFailures()).hasSameSizeAs(firstRun.getFailures());
         assertThat(new File("target/projects/smart-testing-dogfood-repo_ProjectPersistFail_should_fail")).isDirectory().exists();
     }
 

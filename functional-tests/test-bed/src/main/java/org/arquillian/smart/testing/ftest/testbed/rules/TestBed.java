@@ -69,7 +69,7 @@ public class TestBed implements TestRule {
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
-            LOGGER.info("copied test repository for failed test in: " + target);
+            LOGGER.info("Copied test repository to: " + target);
         }
     }
 
