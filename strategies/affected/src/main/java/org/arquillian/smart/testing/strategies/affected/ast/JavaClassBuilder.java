@@ -75,8 +75,6 @@ public class JavaClassBuilder {
 
     /**
      * Returns class name from given .class file.
-     * @param file
-     * @return
      */
     public String classFileChanged(File file) {
         try {

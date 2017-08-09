@@ -137,8 +137,6 @@ public class JavaAssistClassParser {
 
     /**
      * Returns the classname of given .class file.
-     *
-     * @throws IOException
      */
     public String getClassName(File file) throws IOException {
         String sha1 = FilesCodec.sha1(file);

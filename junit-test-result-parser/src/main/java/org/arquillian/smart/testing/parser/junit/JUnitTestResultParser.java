@@ -69,7 +69,7 @@ public class JUnitTestResultParser implements TestResultParser {
         } catch (XMLStreamException e) {
             throw new IllegalStateException("Error parsing JUnit Test Result", e);
         } finally {
-            // XmlEventReader does not implement autoclosable
+            // XmlEventReader does not implement Autoclosable interface
             if (eventReader != null) {
                 try {
                     eventReader.close();

@@ -25,9 +25,6 @@ public class FilesCodec {
 
     /**
      * Computes the hash code using SHA-1 of given file
-     * @param file
-     * @return
-     * @throws IOException
      */
     public static final String sha1(final File file) throws IOException {
 
@@ -47,8 +44,6 @@ public class FilesCodec {
 
     /**
      * Transforms array of bytes to Hex format
-     * @param bytes
-     * @return
      */
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

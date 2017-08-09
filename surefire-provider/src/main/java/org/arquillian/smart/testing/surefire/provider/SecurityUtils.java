@@ -56,8 +56,6 @@ class SecurityUtils {
 
     /**
      * Obtains the Constructor specified from the given Class and argument types
-     *
-     * @throws NoSuchMethodException
      */
     private static <T> Constructor<T> getConstructor(final Class<T> clazz, final Class<?>... argumentTypes)
         throws NoSuchMethodException {
