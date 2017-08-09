@@ -86,13 +86,13 @@ public class LoaderVersionExtractor {
                         .filter(library -> manifestURL.matches(library.getRegex()))
                         .findFirst();
 
-                if (matched.isPresent()) {
-                    MavenLibrary matchedLibrary = matched.get();
+                matched.ifPresent(mavenLibrary -> {
+                    MavenLibrary matchedLibrary = mavenLibrary;
                     String startWithVersion = manifestURL.replaceAll(matchedLibrary.getLeadingRegex(), "");
                     String version = startWithVersion.substring(0, startWithVersion.indexOf(File.separator));
                     implTitleWithVersion.put(matchedLibrary, version);
                     librariesToFind.remove(matchedLibrary);
-                }
+                });
             }
         } catch (Exception e) {
             logger.log(Level.WARNING,
