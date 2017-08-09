@@ -13,12 +13,10 @@ public class Project implements AutoCloseable {
     private final Path root;
     private final Repository repository;
     private final ProjectBuilder projectBuilder;
-    private final Git git;
 
     public Project(Path root) throws IOException {
         this.root = root;
         this.repository = getRepository(root);
-        this.git = new Git(this.repository);
         this.projectBuilder = new ProjectBuilder(root);
     }
 
