@@ -8,7 +8,7 @@ public class Logger {
 
     private java.util.logging.Logger jul;
 
-    private static String prefix = "%s: Smart-Testing - ";
+    private static final String PREFIX = "%s: Smart-Testing - ";
 
     private Logger(java.util.logging.Logger logger) {
         this.jul = logger;
@@ -156,6 +156,6 @@ public class Logger {
         if (args != null && args.length > 0) {
             msg = format(msg, args);
         }
-        return format(prefix, level) + msg;
+        return format(PREFIX, level) + msg;
     }
 }
