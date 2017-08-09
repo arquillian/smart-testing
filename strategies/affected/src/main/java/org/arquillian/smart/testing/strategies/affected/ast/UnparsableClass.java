@@ -28,7 +28,6 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
-import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 
 public class UnparsableClass implements JavaClass {
     private static final String[] NO_IMPORT = new String[0];
@@ -61,7 +60,6 @@ public class UnparsableClass implements JavaClass {
 
     @Override
     public String toString() {
-        final String sb = "UnparsableClass{" + "classname='" + classname + '\'' + '}';
-        return sb;
+        return "UnparsableClass{" + "classname='" + classname + '\'' + '}';
     }
 }

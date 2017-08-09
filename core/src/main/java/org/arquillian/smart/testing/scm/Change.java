@@ -53,8 +53,7 @@ public class Change {
 
     @Override
     public String toString() {
-        final String sb = "Change{" + "location='" + location + '\'' + ", changeType=" + changeType + '}';
-        return sb;
+        return "Change{" + "location='" + location + '\'' + ", changeType=" + changeType + '}';
     }
 
     // FIXME or maybe just Serializable - so we produce binary

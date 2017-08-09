@@ -37,7 +37,7 @@ public class LoaderVersionExtractorJUnitTest {
             .asSingleFile();
 
         URL[] junitUrl = {junitFile.toURI().toURL()};
-        URLClassLoader urlClassLoader = new URLClassLoader(junitUrl, (ClassLoader) null);
+        URLClassLoader urlClassLoader = new URLClassLoader(junitUrl, null);
 
         // when
         String junitVersion =

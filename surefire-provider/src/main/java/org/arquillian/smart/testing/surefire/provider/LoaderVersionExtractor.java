@@ -142,9 +142,7 @@ public class LoaderVersionExtractor {
             final MavenLibrary that = (MavenLibrary) o;
 
             if (groupId != null ? !groupId.equals(that.groupId) : that.groupId != null) return false;
-            if (artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null) return false;
-
-            return true;
+            return artifactId != null ? artifactId.equals(that.artifactId) : that.artifactId == null;
         }
 
         @Override

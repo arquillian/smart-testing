@@ -54,7 +54,6 @@ public class JavaElement {
 
     @Override
     public String toString() {
-        final String sb = "JavaElement{" + "className='" + className + '\'' + ", classFile=" + classFile + '}';
-        return sb;
+        return "JavaElement{" + "className='" + className + '\'' + ", classFile=" + classFile + '}';
     }
 }

@@ -26,7 +26,7 @@ public class FilesCodec {
     /**
      * Computes the hash code using SHA-1 of given file
      */
-    public static final String sha1(final File file) throws IOException {
+    public static String sha1(final File file) throws IOException {
 
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             final byte[] buffer = new byte[1024];

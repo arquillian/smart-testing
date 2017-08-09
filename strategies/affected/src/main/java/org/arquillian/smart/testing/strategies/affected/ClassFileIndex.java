@@ -198,7 +198,7 @@ public class ClassFileIndex {
         final Set<DefaultEdge> defaultEdges = graph.edgeSet();
         StringBuilder s = new StringBuilder(System.lineSeparator());
 
-        defaultEdges.stream().forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
+        defaultEdges.forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
 
         return s.toString();
     }

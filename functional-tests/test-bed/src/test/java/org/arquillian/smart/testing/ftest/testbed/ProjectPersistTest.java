@@ -12,7 +12,6 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
-import static java.lang.System.getProperty;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe

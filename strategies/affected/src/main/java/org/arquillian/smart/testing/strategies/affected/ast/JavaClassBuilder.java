@@ -29,7 +29,6 @@ package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
 import java.io.IOException;
-import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
