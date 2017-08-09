@@ -85,7 +85,7 @@ public class FileSystemTestClassDetectorTest {
 
         Arrays.stream(testNames)
             .map(Paths::get)
-            .map(testPath -> path.resolve(testPath))
+            .map(path::resolve)
             .forEach(testPath -> {
                 try {
                     Files.createFile(testPath);

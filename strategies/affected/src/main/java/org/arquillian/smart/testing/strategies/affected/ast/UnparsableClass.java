@@ -61,9 +61,7 @@ public class UnparsableClass implements JavaClass {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("UnparsableClass{");
-        sb.append("classname='").append(classname).append('\'');
-        sb.append('}');
-        return sb.toString();
+        final String sb = "UnparsableClass{" + "classname='" + classname + '\'' + '}';
+        return sb;
     }
 }

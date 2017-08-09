@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,7 +85,7 @@ public class SmartTestingProviderTest {
         // then
         verify(surefireProvider, times(0)).getSuites();
         verify(surefireProvider, times(1)).invoke(argThat((ArgumentMatcher<Iterable<Class>>)
-            iterable -> iterableContains(iterable, new LinkedHashSet(asList(ATest.class)))));
+            iterable -> iterableContains(iterable, new LinkedHashSet(Collections.singletonList(ATest.class)))));
     }
 
     @Test

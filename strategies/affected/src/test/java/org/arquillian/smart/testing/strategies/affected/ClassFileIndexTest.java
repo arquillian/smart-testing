@@ -23,7 +23,7 @@ public class ClassFileIndexTest {
             Collections.singletonList("**/*Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+        classFileIndex.buildTestDependencyGraph(Collections.singletonList(new File(testLocation)));
 
         // when
 

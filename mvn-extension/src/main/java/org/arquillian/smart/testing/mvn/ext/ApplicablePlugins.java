@@ -10,7 +10,7 @@ public enum ApplicablePlugins {
     FAILSAFE("maven-failsafe-plugin");
 
     public static final List<String> ARTIFACT_IDS_LIST =
-        Arrays.stream(values()).map(plugin -> plugin.getArtifactId()).collect(Collectors.toList());
+        Arrays.stream(values()).map(ApplicablePlugins::getArtifactId).collect(Collectors.toList());
     private final String artifactId;
 
     ApplicablePlugins(String artifactId) {
