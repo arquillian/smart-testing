@@ -107,7 +107,7 @@ for example:
 You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.
 
-===== Features
+===== Built-in DSL features
 
 You can use project configuration DSL for enabling debug mode directly in the test code:
 
@@ -134,15 +134,15 @@ Following system properties are available:
 If both system property and the programmatic option is used system property takes precedence.
 ====
 
-===== Project Persistent
-Project Persistence feature is included in Test Bed to store repository copy used by each and every test method to
-facilitate analysis in case of test failure.
+===== Storing project under test
+Project Persistence feature is included in Test Bed to store repository used test's embedded build. This lets you execute
+the same build outside of test execution for further analysis in case of failure.
 
 By default this feature is enabled to copy repository only in case of test failure.
 
 In order to copy repository for all tests irrespective of test result, explicitly set system property `test.bed.project.persist` to `true`.
 
-Persisted project are located in `target/projects` with name followed by naming convention:
+Persisted project are located in `target/test-bed-executions/[current timestamp]/` with name followed by naming convention:
 
 `getClass().getSimpleName() + "_" + name.getMethodName()`
 
