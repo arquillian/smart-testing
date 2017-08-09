@@ -728,7 +728,7 @@ By default if not specified, default value is <code>HEAD</code>.</p>
 </li>
 <li>
 <p><code>git.last.commits</code> can be used to set the number of commits from <code>HEAD</code> that you want to inspect.
-For example <code>-Dgit.last.commits=3</code> will be equivalent as <code>-Dgit.commit=HEAD -Dgit.previous.commit=GIT_PREVIOUS_COMMIT</code>.</p>
+For example <code>-Dgit.last.commits=3</code> will be equivalent as <code>-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~~</code>.</p>
 </li>
 </ul>
 </div>
@@ -741,7 +741,7 @@ For example <code>-Dgit.last.commits=3</code> will be equivalent as <code>-Dgit.
 <td class="content">
 Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using <a href="https://wiki.jenkins.io/display/JENKINS/Git+Plugin">Git Plugin</a> you can configure your build as follows:
-<code>$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=HEAD~</code>
+<code>$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=GIT_PREVIOUS_COMMIT</code>
 </td>
 </tr>
 </table>
@@ -1313,7 +1313,7 @@ facilitate analysis in case of test failure.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-08 14:15:32 UTC
+Last updated 2017-08-09 21:09:12 UTC
 </div>
 </div>
 </body>
