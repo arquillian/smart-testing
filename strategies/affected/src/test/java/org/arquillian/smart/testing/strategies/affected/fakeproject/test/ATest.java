@@ -4,6 +4,7 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
 import org.junit.Ignore;
 import org.junit.Test;
 
+// Test ignored because it is a test that is used to in tests and not to be run as real test by test runner
 @Ignore
 public class ATest {
 

@@ -25,7 +25,6 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
     public void should_detect_changes_on_maven_modules_and_execute_test() {
         // given
         final Project project = testBed.getProject();
-
         project.configureSmartTesting()
             .executionOrder(AFFECTED)
             .inMode(SELECTING)

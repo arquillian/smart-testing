@@ -52,7 +52,7 @@ public class JavaClassBuilder {
         parser.clear();
     }
 
-    public JavaClass getClass(String classname) {
+    public JavaClass getClassDescription(String classname) {
         try {
             return parser.getClass(classname);
         } catch (RuntimeException e) {
@@ -78,7 +78,7 @@ public class JavaClassBuilder {
      * @param file
      * @return
      */
-    public String classFileChanged(File file) {
+    public String getClassName(File file) {
         try {
             return parser.getClassName(file);
         } catch (RuntimeException e) {

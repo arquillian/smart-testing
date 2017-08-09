@@ -8,4 +8,8 @@ import java.nio.file.Path;
 public interface TestVerifier {
 
     boolean isTest(Path resource);
+
+    default boolean isCore(Path resource) {
+        return !isTest(resource);
+    }
 }

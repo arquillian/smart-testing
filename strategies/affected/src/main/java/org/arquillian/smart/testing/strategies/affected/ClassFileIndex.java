@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -45,45 +46,40 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassFileIndex {
 
-    private static final int MAX_DEPTH = AffectedRunnerProperties.getSmartTestingDepthLevel();
-
     private Logger logger = Logger.getLogger(ClassFileIndex.class);
+    private static final Filter javaJdkFilter = new Filter("", "java*");
 
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaElement, DefaultEdge> graph;
-    private List<String> globPatterns;
+    private Filter filter;
+    private TestVerifier testVerifier;
 
-    public ClassFileIndex(ClasspathProvider classpath) {
+    public ClassFileIndex(ClasspathProvider classpath, TestVerifier testVerifier) {
         this(new JavaClassBuilder(classpath));
-    }
-
-    public ClassFileIndex(ClasspathProvider classpath, List<String> globPatterns) {
-        this(new JavaClassBuilder(classpath));
-        this.globPatterns = globPatterns;
+        this.testVerifier = testVerifier;
     }
 
     ClassFileIndex(JavaClassBuilder classBuilder) {
         builder = classBuilder;
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
     }
 
     public void buildTestDependencyGraph(Collection<File> testJavaFiles) {
         // First update class index
         List<String> testClassesNames = new ArrayList<>();
         for (File testJavaFile : testJavaFiles) {
-            String changedTestClassClassname = builder.classFileChanged(JavaToClassLocation.transform(testJavaFile, globPatterns));
+            String changedTestClassClassname = builder.getClassName(JavaToClassLocation.transform(testJavaFile, testVerifier));
             if (changedTestClassClassname != null) {
                 testClassesNames.add(changedTestClassClassname);
             }
         }
 
         // Then find dependencies
-        Set<JavaClass> changedTestClasses = new HashSet<>();
         for (String changedTestClassNames : testClassesNames) {
-            JavaClass javaClass = builder.getClass(changedTestClassNames);
+            JavaClass javaClass = builder.getClassDescription(changedTestClassNames);
             if (javaClass != null) {
                 addToIndex(new JavaElement(javaClass), javaClass.getImports());
-                changedTestClasses.add(javaClass);
             }
         }
         builder.clear();
@@ -91,7 +87,7 @@ public class ClassFileIndex {
 
     private void addToIndex(JavaElement javaElement, String[] imports) {
         addToGraph(javaElement);
-        updateJavaElementWithImportReferences(javaElement, imports, 0);
+        updateJavaElementWithImportReferences(javaElement, imports);
     }
 
     private void addToGraph(JavaElement newClass) {
@@ -111,29 +107,22 @@ public class ClassFileIndex {
     }
 
     private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass,
-        String[] imports, int currentDepth) {
-
-        if (currentDepth >= MAX_DEPTH) return;
+        String[] imports) {
 
         for (String importz : imports) {
 
-            if (addImport(javaElementParentClass, importz)) {
-
-                JavaClass javaClass = builder.getClass(importz);
+            if (addImport(javaElementParentClass, importz) && filter.shouldBeIncluded(importz)) {
+                JavaClass javaClass = builder.getClassDescription(importz);
                 if (javaClass != null) {
-                    updateJavaElementWithImportReferences(javaElementParentClass, javaClass.getImports(),
-                        currentDepth + 1);
+                    updateJavaElementWithImportReferences(javaElementParentClass, javaClass.getImports());
                 }
             }
         }
     }
 
     private boolean addImport(JavaElement javaElementParentClass, String importz) {
-        // Avoid adding JDK classes (java, javax)
-        // Probably we need to make this configurable or provide some defaults like TomEE does: https://github.com/apache/tomee/blob/master/container/openejb-core/src/main/resources/default.exclusions
-        // To avoid scanning for example org.springframework.*, org.apache.*, ...  and provide a flag to avoid it as well
-        // Or another option would be do something inclusion which by default could be the first two parts of test package (i.e or.mycompany)
-        if (!importz.startsWith("java")) {
+
+        if (javaJdkFilter.shouldBeIncluded(importz)) {
 
             JavaElement importClass = new JavaElement(importz);
             if (!importClass.equals(javaElementParentClass)) {
@@ -141,13 +130,11 @@ public class ClassFileIndex {
                     graph.addVertex(importClass);
                 }
 
-                // This condition is required because we are flattering imports in graph
-                // This operation is fast since it is a containsKey call in a Map instance
+                // This condition is required because we are flattening imports in graph
                 if (!graph.containsEdge(javaElementParentClass, importClass)) {
                     graph.addEdge(javaElementParentClass, importClass);
                     return true;
                 }
-                graph.addEdge(javaElementParentClass, importClass);
             }
         }
 
@@ -157,13 +144,15 @@ public class ClassFileIndex {
 
     public Set<String> findTestsDependingOn(Set<File> classes) {
         return classes.stream()
-            .map(javaClass -> JavaToClassLocation.transform(javaClass, globPatterns))
-            .map(this.builder::classFileChanged)
-            .map(this.builder::getClass)
+            .map( javaClass -> {
+                final File classLocation = JavaToClassLocation.transform(javaClass, testVerifier);
+                final String className = this.builder.getClassName(classLocation);
+                return this.builder.getClassDescription(className);
+            })
             .map(JavaElement::new)
             .filter(graph::containsVertex)
             .map(this::getParents)
-            .flatMap(l -> l.stream())
+            .flatMap(tests -> tests.stream())
             .map(JavaElement::getClassName)
             .collect(Collectors.toSet());
     }

@@ -18,9 +18,6 @@ public class FileSystemTestClassDetectorTest {
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-
-
-
     @Test
     public void should_scan_for_tests_simple_projects() throws IOException {
 
@@ -30,7 +27,7 @@ public class FileSystemTestClassDetectorTest {
         createProjectLayoutWithTests(rootDirectory, "org.mytest", "MyFirstTest.java",
             "MySecondTest.java", "Utils.java");
 
-        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory);
+        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory, resource -> resource.toString().endsWith("Test.java"));
 
         // when
 
@@ -60,7 +57,7 @@ public class FileSystemTestClassDetectorTest {
         createProjectLayoutWithTests(moduleB.toFile(), "org.mytest", "MyThirdTest.java",
             "MyFourthTest.java", "Utils.java");
 
-        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory);
+        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory, resource -> resource.toString().endsWith("Test.java"));
 
         // when
 
