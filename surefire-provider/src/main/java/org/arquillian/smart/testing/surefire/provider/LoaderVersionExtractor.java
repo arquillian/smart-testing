@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +60,7 @@ public class LoaderVersionExtractor {
     public static String getVersionFromClassLoader(MavenLibrary mavenLibrary, ClassLoader loader) {
         if (loaderWithLibraryVersions.get(loader) != null) {
             if (!initLibraries.contains(mavenLibrary)) {
-                List<MavenLibrary> wrappedLibrary = Arrays.asList(mavenLibrary);
+                List<MavenLibrary> wrappedLibrary = Collections.singletonList(mavenLibrary);
                 Map<MavenLibrary, String> implTitleWithVersion = getTitleWithVersion(wrappedLibrary, loader);
                 loaderWithLibraryVersions.put(loader, implTitleWithVersion);
             }
