@@ -39,11 +39,11 @@ The values can be commit ids or using `HEAD` notation.
 For example: `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~`
 By default if not specified, default value is `HEAD`.
 * `git.last.commits` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`.
+For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
-`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=HEAD~`
+`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`
 
 Currently not committed changes (those that are _added_ and _untracked_) are considered as important tests as well.
 This effectively means that if you don't specify any commit range, only these information is considered.
