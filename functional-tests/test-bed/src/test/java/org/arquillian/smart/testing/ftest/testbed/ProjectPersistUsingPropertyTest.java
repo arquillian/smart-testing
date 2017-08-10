@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.testbed;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -13,12 +14,13 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class ProjectPersistUsingPropertyTest {
 
     @Test
@@ -28,7 +30,7 @@ public class ProjectPersistUsingPropertyTest {
         final Result result = JUnitCore.runClasses(ProjectPersistAnotherPass.class);
 
         assertThat(result.wasSuccessful()).isTrue();
-        assertThat(findPersistedProjects("smart-testing-dogfood-repo_ProjectPersistAnotherPass_should_pass")).hasSize(1);
+        assertThat(findPersistedProjects("repo.bundle_ProjectPersistAnotherPass_should_pass")).hasSize(1);
     }
 
     private List<Path> findPersistedProjects(String projectName) throws IOException {
@@ -39,7 +41,7 @@ public class ProjectPersistUsingPropertyTest {
 
     public static class ProjectPersistAnotherPass {
         @ClassRule
-        public static final GitClone GIT_CLONE = new GitClone();
+        public static final GitClone GIT_CLONE = new GitClone(gitTestRepo());
 
         @Rule
         public TestBed testBed = new TestBed(GIT_CLONE);
@@ -48,5 +50,9 @@ public class ProjectPersistUsingPropertyTest {
         public void should_pass() throws Exception {
             Assert.assertTrue(true);
         }
+    }
+
+    private static URL gitTestRepo() {
+        return Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
     }
 }
