@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +60,7 @@ public class LoaderVersionExtractor {
     public static String getVersionFromClassLoader(MavenLibrary mavenLibrary, ClassLoader loader) {
         if (loaderWithLibraryVersions.get(loader) != null) {
             if (!initLibraries.contains(mavenLibrary)) {
-                List<MavenLibrary> wrappedLibrary = Arrays.asList(new MavenLibrary[] {mavenLibrary});
+                List<MavenLibrary> wrappedLibrary = Collections.singletonList(mavenLibrary);
                 Map<MavenLibrary, String> implTitleWithVersion = getTitleWithVersion(wrappedLibrary, loader);
                 loaderWithLibraryVersions.put(loader, implTitleWithVersion);
             }
@@ -86,13 +86,13 @@ public class LoaderVersionExtractor {
                         .filter(library -> manifestURL.matches(library.getRegex()))
                         .findFirst();
 
-                if (matched.isPresent()) {
-                    MavenLibrary matchedLibrary = matched.get();
+                matched.ifPresent(mavenLibrary -> {
+                    MavenLibrary matchedLibrary = mavenLibrary;
                     String startWithVersion = manifestURL.replaceAll(matchedLibrary.getLeadingRegex(), "");
                     String version = startWithVersion.substring(0, startWithVersion.indexOf(File.separator));
                     implTitleWithVersion.put(matchedLibrary, version);
                     librariesToFind.remove(matchedLibrary);
-                }
+                });
             }
         } catch (Exception e) {
             logger.log(Level.WARNING,
@@ -142,9 +142,7 @@ public class LoaderVersionExtractor {
             final MavenLibrary that = (MavenLibrary) o;
 
             if (groupId != null ? !groupId.equals(that.groupId) : that.groupId != null) return false;
-            if (artifactId != null ? !artifactId.equals(that.artifactId) : that.artifactId != null) return false;
-
-            return true;
+            return artifactId != null ? artifactId.equals(that.artifactId) : that.artifactId == null;
         }
 
         @Override

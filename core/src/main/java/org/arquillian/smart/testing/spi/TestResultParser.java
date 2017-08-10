@@ -13,7 +13,7 @@ public interface TestResultParser {
      *
      * This method does not close the stream.
      * @param reportInputStream where results are stored.
-     * @return Set of all resutls parsed.
+     * @return Set of all results parsed.
      */
     Set<TestResult> parse(InputStream reportInputStream);
 

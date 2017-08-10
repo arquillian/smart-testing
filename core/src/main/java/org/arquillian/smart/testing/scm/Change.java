@@ -53,18 +53,12 @@ public class Change {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Change{");
-        sb.append("location='").append(location).append('\'');
-        sb.append(", changeType=").append(changeType);
-        sb.append('}');
-        return sb.toString();
+        return "Change{" + "location='" + location + '\'' + ", changeType=" + changeType + '}';
     }
 
     // FIXME or maybe just Serializable - so we produce binary
     public String write() {
-        final StringBuilder sb = new StringBuilder("");
-        sb.append(location).append(',').append(changeType);
-        return sb.toString();
+        return "" + location + ',' + changeType;
     }
 
     public static Change read(String serialized) {

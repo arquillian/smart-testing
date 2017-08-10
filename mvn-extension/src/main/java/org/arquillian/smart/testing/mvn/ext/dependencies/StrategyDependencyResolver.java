@@ -65,7 +65,7 @@ class StrategyDependencyResolver {
             try {
                 properties.load(new FileInputStream(this.propertiesPath.toFile()));
             } catch (IOException e) {
-                throw new RuntimeException("Unable to load custom startegy mapping", e);
+                throw new RuntimeException("Unable to load custom strategy mapping", e);
             }
         }
 

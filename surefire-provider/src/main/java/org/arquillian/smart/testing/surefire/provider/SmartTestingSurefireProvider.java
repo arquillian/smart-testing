@@ -29,6 +29,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
+    SmartTestingSurefireProvider(ProviderParameters bootParams, SurefireProviderFactory surefireProviderFactory) {
+        this.bootParams = bootParams;
+        this.paramParser = new ProviderParametersParser(this.bootParams);
+        this.surefireProviderFactory = surefireProviderFactory;
+        this.surefireProvider = surefireProviderFactory.createInstance();
+    }
+
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         final Configuration configuration = Configuration.load();
 

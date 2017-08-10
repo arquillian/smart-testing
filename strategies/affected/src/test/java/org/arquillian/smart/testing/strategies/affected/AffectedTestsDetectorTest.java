@@ -3,7 +3,6 @@ package org.arquillian.smart.testing.strategies.affected;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ public class AffectedTestsDetectorTest {
         // given
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);
-        when(changeStorage.read()).thenReturn(Optional.of(Arrays.asList(change)));
+        when(changeStorage.read()).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
             new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "", new CustomTestVerifier());

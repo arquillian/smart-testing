@@ -14,9 +14,9 @@ Let's see some examples:
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
-`$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed" `
+`$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed"`
 
-TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is the default mode if not specified.
+TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is the **default** mode.
 
 *You want to run only tests that validates new or modified business classes locally*
 
@@ -42,7 +42,7 @@ run with standard `surefire` / `failsafe` plugins.
 
 *Smart testing* extension hooks into `surefire` and `failsafe` lifecycle to provide the order/selection of tests to execute.
 
-It might be possible that you only want to use smart testing on `surefire` or `failsafe` plugin definition.
+If you only want to use smart testing on `surefire` or `failsafe` plugin definition.
 
 To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
 

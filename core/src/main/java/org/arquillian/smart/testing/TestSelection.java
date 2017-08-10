@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -22,7 +23,7 @@ public class TestSelection {
 
     public TestSelection(String className, String ... type) {
         this.className = className;
-        this.types = new HashSet<>(asList(type));
+        this.types = new LinkedHashSet<>(asList(type));
     }
 
     public String getClassName() {
@@ -50,7 +51,6 @@ public class TestSelection {
         return Objects.hash(getClassName());
     }
 
-    // TODO  test it
     public TestSelection merge(TestSelection other) {
 
         if (!className.equals(other.getClassName())) {

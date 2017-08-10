@@ -133,8 +133,6 @@ class JavaAssistClassParser {
 
     /**
      * Returns the classname of given .class file.
-     *
-     * @throws IOException
      */
     public String getClassName(File file) throws IOException {
         String sha1 = FilesCodec.sha1(file);
@@ -154,14 +152,12 @@ class JavaAssistClassParser {
         }
     }
 
-    CtClass makeClass(String className) throws IOException {
-            CtClass ctClass = getClassPool().makeClass(className);
-            return ctClass;
+    CtClass makeClass(String className) {
+        return getClassPool().makeClass(className);
     }
 
     CtClass makeClass(InputStream className) throws IOException {
-        CtClass ctClass = getClassPool().makeClass(className);
-        return ctClass;
+        return getClassPool().makeClass(className);
     }
 
     private boolean unparsableClass(CtClass cachedClass) {

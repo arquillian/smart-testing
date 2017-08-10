@@ -1,6 +1,11 @@
 package org.arquillian.smart.testing.ftest.testbed;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -18,19 +23,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProjectPersistTest {
 
     @Test
-    public void temp_projects_should_copied_in_target_if_test_is_failing() {
-        final Result result = JUnitCore.runClasses(ProjectPersistFail.class);
+    public void should_store_project_under_test_to_two_separated_directories_when_the_same_test_fails_twice_in_a_row() throws IOException {
+        final Result firstRun = JUnitCore.runClasses(ProjectPersistFail.class);
+        final Result secondRun = JUnitCore.runClasses(ProjectPersistFail.class);
 
-        assertThat(result.wasSuccessful()).isFalse();
-        assertThat(new File("target/projects/smart-testing-dogfood-repo_ProjectPersistFail_should_fail")).isDirectory().exists();
+        assertThat(firstRun.wasSuccessful()).isFalse();
+        assertThat(secondRun.wasSuccessful()).isFalse();
+        // it's rather shallow check, but if it's not equal it means second execution of the test failed for different reasons
+        assertThat(secondRun.getFailures()).hasSameSizeAs(firstRun.getFailures());
+
+        assertThat(findPersistedProjects("smart-testing-dogfood-repo_ProjectPersistFail_should_fail")).hasSize(2);
     }
 
     @Test
-    public void temp_test_projects_should_not_copied_in_target_if_test_is_passing() {
+    public void should_not_store_project_under_test_directory_when_test_is_passing() throws IOException {
         final Result result = JUnitCore.runClasses(ProjectPersistPass.class);
 
         assertThat(result.wasSuccessful()).isTrue();
-        assertThat(new File("target/projects/smart-testing-dogfood-repo_ProjectPersistPass_should_pass")).doesNotExist();
+        assertThat(findPersistedProjects("smart-testing-dogfood-repo_ProjectPersistPass_should_pass")).isEmpty();
+    }
+
+    private List<Path> findPersistedProjects(String projectName) throws IOException {
+        return Files.walk(new File("target" + File.separator + "test-bed-executions").toPath(), 2)
+            .filter(dir -> dir.toFile().getAbsolutePath().endsWith(projectName))
+            .collect(Collectors.toList());
     }
 
     public static class ProjectPersistFail {
@@ -59,4 +75,5 @@ public class ProjectPersistTest {
             Assert.assertTrue(true);
         }
     }
+
 }

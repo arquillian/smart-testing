@@ -25,15 +25,13 @@ public class FilesCodec {
 
     /**
      * Computes the hash code using SHA-1 of given file
-     * @param file
-     * @return
-     * @throws IOException
      */
-    public static final String sha1(final File file) throws IOException {
+    public static String sha1(final File file) throws IOException {
 
         try (InputStream is = new BufferedInputStream(new FileInputStream(file))) {
             final byte[] buffer = new byte[1024];
-            for (int read = 0; (read = is.read(buffer)) != -1;) {
+            int read;
+            while ((read = is.read(buffer)) != -1) {
                 messageDigest.update(buffer, 0, read);
             }
         }
@@ -46,8 +44,6 @@ public class FilesCodec {
 
     /**
      * Transforms array of bytes to Hex format
-     * @param bytes
-     * @return
      */
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];

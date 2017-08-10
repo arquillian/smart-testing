@@ -1,5 +1,7 @@
 == Developing
 
+IMPORTANT: This section will be improved as we continue with the SPI design to let you hook your own logic if needed.
+
 === Test Bed
 
 *Test Bed* brings a convenient way of writing functional tests. Here’s how the sample test looks like:
@@ -9,7 +11,7 @@
 include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/mixed/LocalChangesMixedStrategySelectionExecutionFunctionalTest.java[tag=documentation]
 ----
 
-We are using `arquillian-core` project (squashed repo) for running those tests. You can find it here: https://github.com/arquillian/smart-testing-dogfood-repo
+We are using `arquillian-core` project (in a form of snapshot and squashed repo) for running those tests. You can find it https://github.com/arquillian/smart-testing-dogfood-repo[here].
 
 ==== Design Idea
 
@@ -19,27 +21,25 @@ The main goal of *Test Bed* module is to automate this process and simplify func
 
 ====== Project configuration
 
-Easy way of configuring any Maven-based project in the test itself through simple and self-explanatory fluent API.
+Easy way of configuring any Maven-based project in the test itself is through simple and self-explanatory fluent API.
 
 [source, java, indent=0]
 ----
 include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/HistoricalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation]
 ----
 
-This snippet will modify root `pom.xml` of given project with all required elements to enable `smart-testing`.
-It will also apply test selection criteria as well as execution mode (`selecting` meaning only tests which belong to categories defined in `executionOrder`).
+This snippet will enable `smart-testing` extension in the background. It will also apply test selection criteria
+and execution mode (`selecting` meaning only tests which belong to categories defined in `executionOrder`).
 
 ====== Applying changes
 
 We decided to apply changes to the selected code base by modifying sample repository directly.
-This is done by creating atomic commits directly rather than applying code changes in the tests themselves (e.g. by using https://github.com/forge/roaster[Forge Roaster]).
-This comes with several advantages:
+This is done by creating atomic commits directly rather than applying code changes in the tests themselves
+(e.g. by using https://github.com/forge/roaster[Forge Roaster]). This comes with several advantages:
 
 * Ability to test those changes directly on the project
 * Easier refactoring
 * Ability to analyze execution when tests are failing by simply opening modified project rather than debugging test itself
-
-Creating change sets and test result expectations.
 
 Creating atomic change, which will be later used for tests, consists of following steps:
 
@@ -85,8 +85,9 @@ See `org.arquillian.smart.testing.ftest.testbed.testresults.Status` for all pref
 
 ====== Executing test optimization
 
-Once we configured the project and applied changes we can build it.
-This is what we want to really test. Under the hood it’s using https://github.com/shrinkwrap/resolver#embedded-maven[Embedded Maven].
+Once we configured the project and applied changes we can build it. This is what we want to really test after all.
+
+Under the hood it’s using https://github.com/shrinkwrap/resolver#embedded-maven[Embedded Maven].
 In addition, after the build is finished, it returns actual test results so we can verify expected and actual test execution. It’s done this way:
 
 include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/newtests/LocalChangesNewTestsSelectionExecutionFunctionalTest.java[tag=documentation_build]
@@ -101,32 +102,18 @@ for example:
 
 `smart-testing-dogfood-repo_HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest_should_only_execute_tests_related_to_multiple_commits_in_business_logic_when_affected_is_enabled/`
 
-====== Project Persistent
-
-You can check "project under test" for failed tests in `target/projects` with name followed by naming convention:
-
-`getClass().getSimpleName() + "_" + name.getMethodName()`
-
-You can persist project for each test by setting system property `est.bed.project.persist` to true irrespective of test result.
-
 ==== Troubleshooting tests
 
 You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.
 
-===== Features
+===== Built-in DSL features
 
 You can use project configuration DSL for enabling debug mode directly in the test code:
 
-[source, java]
+[source, java, indent=0]
 ----
-final List<TestResult> actualTestResults = project
-    .buildOptions()
-        .withRemoteDebugging()
-        .withRemoteSurefireDebugging()
-        .withDebugOutput()
-        .configure()
-    .build();
+include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/affected/ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalTest.java[tag=documentation_test_bed_debug]
 ----
 
 Setting up any of the debugging modes would set an agent in suspend mode for both Maven and Surefire execution, thus giving you time to attach debuggers to both.
@@ -147,4 +134,15 @@ Following system properties are available:
 If both system property and the programmatic option is used system property takes precedence.
 ====
 
+===== Storing project under test
+Project Persistence feature is included in Test Bed to store repository used test's embedded build. This lets you execute
+the same build outside of test execution for further analysis in case of failure.
+
+By default this feature is enabled to copy repository only in case of test failure.
+
+In order to copy repository for all tests irrespective of test result, explicitly set system property `test.bed.project.persist` to `true`.
+
+Persisted project are located in `target/test-bed-executions/[current timestamp]/` with name followed by naming convention:
+
+`getClass().getSimpleName() + "_" + name.getMethodName()`
 

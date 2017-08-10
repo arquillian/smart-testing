@@ -2,69 +2,74 @@
 
 === Modes
 
-So far in <<What is this?>> section we explained you that *Smart testing* changes the order of test execution plan
-to run first the important tests and then the rest. This is know as `ordering` mode, but we have more.
+So far in <<What is this?>> section we explained that *Smart testing* changes the order of test execution plan
+to run first the important tests and then the rest. This is know as `ordering` mode, but that's not the only one.
 
-`ordering`:: `ordering` mode as its name suggests orders the test execution plan so important tests are executed first and then the rest. This is the default mode.
+`ordering`:: `ordering` mode as its name suggests orders the test execution plan so important tests are executed first
+and then the rest. This is the default mode.
+
 `selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests.
 
 In order to define the mode use `smart.testing.mode` Java system property with either one.
 
 === Strategies
 
-Until now, you've read that smart testing is changing test execution plan running/filtering important tests.
-But how smart testing knows which tests are important and which ones not?
+Until now, you've read that smart testing is changing test execution plan running or only including important tests.
+But how do we know which tests are important and which ones not?
 
-There are several strategies that you can choose to detect what are the *important* tests.
-Currently next strategies are implemented: `new`, `changed`, `affected` and `failed`.
+There are several strategies that you can choose from which determine what are the *important* tests.
+Currently we have following strategies in place: `new`, `changed`, `affected` and `failed`.
 
 To set them you need to set Java system property `smart.testing` to one or more strategies in comma-separated value form.
 
-Let's explain all of them:
+Subsequent sections dive deeper into each and every one of them.
 
 ==== New
 
-`New` strategy uses _SCM_ information (currently only _Git_ is supported) to detect *new* tests and set them as *important*
+`New` strategy uses _SCM_ information (currently only _Git_ is supported) to detect *new* tests and treat them as *important*
 tests to run them first (_ordering_) or filtered (_selecting_).
 
-So internally this strategy just inspects your _SCM_ history (and local changes) and all tests that were added (so they are effectively new) are marked as important ones.
+So internally this strategy inspects your _SCM_ history (and local changes) and all tests that were added (so they are effectively new)
+are marked as important ones.
 
-This strategy supports several configuration properties which are set as Java system properties:
+This strategy can be configured in several ways through Java system properties:
 
 * `git.commit` and `git.previous.commit` are used to set the range of commits you want to inspect for new tests.
 The values can be commit ids or using `HEAD` notation.
 For example: `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~`
 By default if not specified, default value is `HEAD`.
 * `git.last.commits` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`.
+For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
-`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=HEAD~`
+`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`
 
 Currently not committed changes (those that are _added_ and _untracked_) are considered as important tests as well.
 This effectively means that if you don't specify any commit range, only these information is considered.
 
 ==== Changed
 
-`Changed` strategy is like <<New>> strategy, but it uses only tests that are *modified* (they were already committed in the past) instead of *new* ones.
+`Changed` strategy is like <<New>> strategy, but it uses only tests that are *modified* (they were already committed in the past)
+instead of *new* ones.
 
 In this strategy not committed changes (those that are _modified_ or _changed_) are considered as important tests as well.
 
-TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=new, affected`.
+TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=new, changed`.
 
 ==== Affected
 
 `Affected` strategy uses a different approach to choose what are the *important* tests to run first (_ordering_) or filtered (_selecting_).
-This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class between commits range and local changes as well.
-Notice that now the important change is that _SCM_ information is only used for retrieving business code.
+This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class
+between commits range and local changes as well.
 
 TIP: `git.commit`, `git.previous.commit` and `git.last.commits` Java system properties are valid as well.
 
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
-If tests uses a business class that has been modified, it is a test that might fail, hence it is marked as *important* test to give priority on test execution plan.
+If the test exercises a business class that has been modified, we treat it as *important*  so it will be executed earlier in the test plan.
 
-IMPORTANT: This strategy might only be used in case of _white box_ testing approach since we are analyzing direct code dependencies as of now.
+IMPORTANT: This strategy is currently only applicable for _white box_ testing approach. At this point our approach is to
+ analyze direct code dependencies, but we are working on broader use cases.
 
 ==== Failed
 

@@ -30,8 +30,8 @@ public class ProviderParameterParserTest {
     public void feedParameters() {
         DirectoryScannerParameters directoryScannerParameters = new DirectoryScannerParameters(
             new File(""),
-            Arrays.asList(new String[] {"**/*Test.java", "**/*TestCase.java", "**/Test*.java"}),
-            Arrays.asList(new String[] {"**/*$*", "**/*Failing.java"}),
+            Arrays.asList("**/*Test.java", "**/*TestCase.java", "**/Test*.java"),
+            Arrays.asList("**/*$*", "**/*Failing.java"),
             new ArrayList<>(),
             false,
             "filesystem");
