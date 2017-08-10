@@ -33,7 +33,7 @@ public class FileSystemTestClassDetector implements TestClassDetector {
     public Set<File> detect() {
         try (Stream<Path> stream = Files.walk(rootDirectory.toPath())) {
             return stream
-                .filter(path -> !Files.isDirectory(path) && isJavaFile(path) && verifier.isTest(path))
+                .filter(path -> Files.isRegularFile(path) && isJavaFile(path) && verifier.isTest(path))
                 .map(Path::toFile)
                 .collect(Collectors.toSet());
         } catch (IOException e) {
