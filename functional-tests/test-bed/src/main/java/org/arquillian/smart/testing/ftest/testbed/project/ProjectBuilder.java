@@ -6,7 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -14,6 +19,8 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
 
+import static java.util.Map.Entry.comparingByKey;
+import static java.util.stream.Collectors.toMap;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
@@ -46,12 +53,10 @@ public class ProjectBuilder {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
 
-        buildConfigurator.enableDebugOptions(embeddedMaven);
+        buildConfigurator.enableDebugOptions();
+        setCustomMavenInstallation(embeddedMaven);
 
-        final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
-        if (mvnInstallation != null) {
-            embeddedMaven.useInstallation(new File(mvnInstallation));
-        }
+        System.out.println("$ mvn " + Arrays.toString(goals).replaceAll("[\\[|\\]|,]", "") + " " + printSystemProperties());
 
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
@@ -60,7 +65,7 @@ public class ProjectBuilder {
                     .setDebug(buildConfigurator.isMavenDebugOutputEnabled())
                     .setQuiet(buildConfigurator.disableQuietWhenAnyDebugModeEnabled() && buildConfigurator.isQuietMode())
                     .skipTests(false)
-                    .setProperties(buildConfigurator.getSystemProperties())
+                    .setProperties(asProperties(buildConfigurator.getSystemProperties()))
                     .setMavenOpts(buildConfigurator.getMavenOpts())
                     .ignoreFailure()
                 .build();
@@ -71,6 +76,30 @@ public class ProjectBuilder {
         }
 
         return accumulatedTestResults();
+    }
+
+    private Properties asProperties(Map<String, String> propertyMap) {
+        final Properties properties = new Properties();
+        properties.putAll(propertyMap);
+        return properties;
+    }
+
+    private String printSystemProperties() {
+        final StringBuilder sb = new StringBuilder();
+        final Map<String, String> systemProperties = this.buildConfigurator.getSystemProperties()
+            .entrySet()
+            .stream()
+            .sorted(comparingByKey())
+            .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+        systemProperties.forEach((key, value) -> sb.append("-D").append(key).append('=').append(value).append(" "));
+        return sb.toString();
+    }
+
+    private void setCustomMavenInstallation(PomEquippedEmbeddedMaven embeddedMaven) {
+        final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
+        if (mvnInstallation != null) {
+            embeddedMaven.useInstallation(new File(mvnInstallation));
+        }
     }
 
     private List<TestResult> accumulatedTestResults() {

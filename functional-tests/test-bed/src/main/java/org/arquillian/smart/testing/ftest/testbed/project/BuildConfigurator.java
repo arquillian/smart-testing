@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
 
 import static java.lang.System.getProperty;
 import static java.util.Arrays.stream;
@@ -23,7 +23,7 @@ public class BuildConfigurator {
     private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
     private final ProjectBuilder projectBuilder;
-    private final Properties systemProperties = new Properties();
+    private final Map<String, String> systemProperties = new HashMap<>();
     private final Set<String> modulesToBeBuilt = new HashSet<>();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
@@ -149,7 +149,7 @@ public class BuildConfigurator {
         return this;
     }
 
-    public BuildConfigurator projects(String... projects) {
+    BuildConfigurator projects(String... projects) {
         this.modulesToBeBuilt.addAll(Arrays.asList(projects));
         return this;
     }
@@ -163,7 +163,7 @@ public class BuildConfigurator {
         return this;
     }
 
-    void enableDebugOptions(PomEquippedEmbeddedMaven embeddedMaven) {
+    void enableDebugOptions() {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
             addMavenOpts(debugOptions);
@@ -187,7 +187,7 @@ public class BuildConfigurator {
         return Boolean.valueOf(getProperty("test.bed.mvn.debug.output", Boolean.toString(this.mvnDebugOutput)));
     }
 
-    Properties getSystemProperties() {
+    Map<String, String> getSystemProperties() {
         return systemProperties;
     }
 
