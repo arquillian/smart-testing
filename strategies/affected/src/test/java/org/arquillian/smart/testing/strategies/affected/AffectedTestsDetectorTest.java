@@ -91,12 +91,7 @@ public class AffectedTestsDetectorTest {
                 // Since core class is also in test directory, we need that first time core class is detected as such
                 // but second tiem when real location of .class is found returns it is a class so it is resolved correctly to
                 // test-classes directory
-                if (coreClassCount == 0) {
-                    coreClassCount++;
-                    return false;
-                } else {
-                    return true;
-                }
+                return (coreClassCount++) != 0;
             }
 
             return false;

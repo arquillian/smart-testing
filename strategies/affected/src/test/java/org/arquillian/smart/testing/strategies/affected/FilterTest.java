@@ -12,10 +12,10 @@ public class FilterTest {
         Filter filter = new Filter(null, null);
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.mypackage.mycontroller.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.mypackage.mycontroller.Class");
 
         // then
-        assertThat(beIncluded).isTrue();
+        assertThat(isIncluded).isTrue();
     }
 
     @Test
@@ -24,10 +24,10 @@ public class FilterTest {
         Filter filter = new Filter(null, "org.mypackage.*, org.otherpackage.Class");
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.mypackage.mycontroller.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.mypackage.mycontroller.Class");
 
         // then
-        assertThat(beIncluded).isFalse();
+        assertThat(isIncluded).isFalse();
     }
 
     @Test
@@ -36,10 +36,10 @@ public class FilterTest {
         Filter filter = new Filter(null, "org.mypackage.*, org.otherpackage.Class");
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.otherpackage.mycontroller.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.otherpackage.mycontroller.Class");
 
         // then
-        assertThat(beIncluded).isTrue();
+        assertThat(isIncluded).isTrue();
     }
 
     @Test
@@ -48,10 +48,10 @@ public class FilterTest {
         Filter filter = new Filter(null, "org.mypackage.*, org.otherpackage.Class");
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.otherpackage.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.otherpackage.Class");
 
         // then
-        assertThat(beIncluded).isFalse();
+        assertThat(isIncluded).isFalse();
     }
 
     @Test
@@ -60,10 +60,10 @@ public class FilterTest {
         Filter filter = new Filter("org.mypackage.*, org.otherpackage.Class", null);
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.mypackage.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.mypackage.Class");
 
         // then
-        assertThat(beIncluded).isTrue();
+        assertThat(isIncluded).isTrue();
     }
 
     @Test
@@ -72,10 +72,10 @@ public class FilterTest {
         Filter filter = new Filter("org.mypackage.*, org.otherpackage.Class", null);
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.mystrangepackage.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.mystrangepackage.Class");
 
         // then
-        assertThat(beIncluded).isFalse();
+        assertThat(isIncluded).isFalse();
     }
 
     @Test
@@ -84,10 +84,10 @@ public class FilterTest {
         Filter filter = new Filter("org.mypackage.*, org.otherpackage.Class", "org.mypackage.*, org.otherpackage.Class");
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("org.mypackage.Class");
+        final boolean isIncluded = filter.shouldBeIncluded("org.mypackage.Class");
 
         // then
-        assertThat(beIncluded).isFalse();
+        assertThat(isIncluded).isFalse();
     }
 
     @Test
@@ -96,10 +96,10 @@ public class FilterTest {
         Filter filter = new Filter("", "java*");
 
         // when
-        final boolean beIncluded = filter.shouldBeIncluded("java.util.List");
+        final boolean isIncluded = filter.shouldBeIncluded("java.util.List");
 
         // then
-        assertThat(beIncluded).isFalse();
+        assertThat(isIncluded).isFalse();
     }
 
 }

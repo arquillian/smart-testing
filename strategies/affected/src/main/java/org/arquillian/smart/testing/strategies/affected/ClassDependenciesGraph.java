@@ -44,7 +44,7 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassDependenciesGraph {
 
-    private static final Filter coreJava = new Filter("", "java*");
+    private static final Filter coreJava = new Filter("", "java.*");
 
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaElement, DefaultEdge> graph;
