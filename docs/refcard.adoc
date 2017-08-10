@@ -57,4 +57,19 @@ a|`git.last.commits`
 a|`0`
 a|`new`, `changed`, `affected`
 
+a|`smart.testing.affected.inclusions`
+|Set classes to be included for scanning
+a|
+a|`affected`
+
+a|`smart.testing.affected.exclusions`
+|Set classes to be excluded for scanning
+a|
+a|`affected`
+
+a|`smart.testing.affected.config`
+|Set location of affected configuration file
+a|
+a|`affected`
+
 |===

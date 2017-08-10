@@ -89,7 +89,7 @@ inclusions/exclusions system proeprty:: you can set inclusions and/or exclusions
 For example: `-Dsmart.testing.affected.inclusions=org.mysuperbiz.*`.
 
 config properties file:: you can create a properties file containing inclusions and/or exclusions and set its location using `smart.testing.affected.config` system property.
-For example `.Dsmart.testing.affected.config=affected-configuration.properties`
+For example `-Dsmart.testing.affected.config=affected-configuration.properties`
 
 .affected-configuration.proeprties
 ----
