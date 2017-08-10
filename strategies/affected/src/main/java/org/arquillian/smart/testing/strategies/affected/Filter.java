@@ -44,26 +44,15 @@ public class Filter {
         return tokens;
     }
 
-    public boolean shouldBeIncluded(String element) {
+    boolean shouldBeIncluded(String element) {
 
         if (inclusions.isEmpty() && exclusions.isEmpty()) {
             return true;
         }
 
-        final boolean excluded = exclusions.stream()
-            .anyMatch(exclusion -> element.startsWith(exclusion));
+        final boolean excluded = exclusions.stream().anyMatch(element::startsWith);
 
-        if (!excluded) {
-
-            if (inclusions.isEmpty()) {
-                return true;
-            }
-
-            return inclusions.stream().anyMatch(inclusion -> element.startsWith(inclusion));
-        }
-
-        return false;
-
+        return !excluded && (inclusions.isEmpty() || inclusions.stream().anyMatch(element::startsWith));
     }
 
 }

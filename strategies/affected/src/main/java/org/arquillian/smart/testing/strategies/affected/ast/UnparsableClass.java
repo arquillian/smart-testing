@@ -28,14 +28,13 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
-import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 
 public class UnparsableClass implements JavaClass {
     private static final String[] NO_IMPORT = new String[0];
 
     private final String classname;
 
-    public UnparsableClass(String classname) {
+    UnparsableClass(String classname) {
         this.classname = classname;
     }
 
@@ -52,11 +51,6 @@ public class UnparsableClass implements JavaClass {
     @Override
     public String getName() {
         return classname;
-    }
-
-    @Override
-    public boolean locatedInClassFile() {
-        return false;
     }
 
     @Override

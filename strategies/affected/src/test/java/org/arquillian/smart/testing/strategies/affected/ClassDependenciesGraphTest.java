@@ -21,7 +21,7 @@ import org.junit.experimental.categories.Category;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class ClassFileIndexTest {
+public class ClassDependenciesGraphTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
@@ -29,17 +29,18 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_simple_test_to_execute() {
         // given
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -49,18 +50,19 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class() {
         // given
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -72,18 +74,19 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_test_with_multiple_main_classes() {
         // given
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyControllerObject.class.getResource("MyControllerObject.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -94,19 +97,20 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class_avoiding_duplicates() {
         // given
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
         mainObjectsChanged.add(new File(MyControllerObject.class.getResource("MyControllerObject.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -119,20 +123,21 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_all_changes_transitive() {
         // given
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
         final String testLocation3 = CTest.class.getResource("CTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
             new File(testLocation3)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(D.class.getResource("D.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -144,20 +149,21 @@ public class ClassFileIndexTest {
     public void should_exclude_imports_if_property_set() {
         // given
         System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_EXCLUSIONS, "org.arquillian.smart.testing.strategies.affected.fakeproject.main.B");
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
         final String testLocation3 = CTest.class.getResource("CTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
             new File(testLocation3)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(D.class.getResource("D.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
         assertThat(testsDependingOn)
@@ -168,13 +174,14 @@ public class ClassFileIndexTest {
     public void should_include_only_imports_if_property_set() {
         // given
         System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_INCLUSIONS, "org.arquillian.smart.testing.strategies.affected.fakeproject.main.A");
-        final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
         final String testLocation3 = CTest.class.getResource("CTest.class").getPath();
-        classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
             new File(testLocation3)));
 
         // when
@@ -182,7 +189,7 @@ public class ClassFileIndexTest {
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(D.class.getResource("A.class").getPath()));
 
-        final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
 
         // then
 

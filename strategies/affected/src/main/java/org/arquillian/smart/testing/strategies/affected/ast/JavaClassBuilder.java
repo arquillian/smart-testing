@@ -48,10 +48,6 @@ public class JavaClassBuilder {
         this.parser = parser;
     }
 
-    public void clear() {
-        parser.clear();
-    }
-
     public JavaClass getClassDescription(String classname) {
         try {
             return parser.getClass(classname);

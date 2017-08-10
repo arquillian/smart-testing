@@ -18,8 +18,6 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetector;
 
-import static org.arquillian.smart.testing.filter.GlobPatternMatcher.matchPatterns;
-
 public class AffectedTestsDetector implements TestExecutionPlanner {
 
     private static final Logger logger = Logger.getLogger(AffectedTestsDetector.class);
@@ -32,8 +30,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     private final ChangeStorage changeStorage;
     private final TestVerifier testVerifier;
 
-    public AffectedTestsDetector(final TestClassDetector testClassDetector,
-        String classpath, TestVerifier testVerifier) {
+    AffectedTestsDetector(final TestClassDetector testClassDetector, String classpath, TestVerifier testVerifier) {
         this(testClassDetector, new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
             new JavaSPILoader().onlyOne(ChangeResolver.class).get(), classpath,
             testVerifier);
@@ -55,7 +52,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<TestSelection> getTests() {
-        ClassFileIndex classFileIndex = configureTestClassDetector();
+        ClassDependenciesGraph classDependenciesGraph = configureTestClassDetector();
 
         // TODO this operations should be done in extension to avoid scanning for all modules.
         // TODO In case of Arquillian core is an improvement of 500 ms per module
@@ -64,7 +61,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         final long beforeDetection = System.currentTimeMillis();
 
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
-        classFileIndex.buildTestDependencyGraph(allTestsOfCurrentProject);
+        classDependenciesGraph.buildTestDependencyGraph(allTestsOfCurrentProject);
 
         final Collection<Change> files = changeStorage.read()
             .orElseGet(() -> {
@@ -83,7 +80,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
         final long beforeFind = System.currentTimeMillis();
 
-        final LinkedHashSet<TestSelection> affected = classFileIndex.findTestsDependingOn(mainClasses)
+        final LinkedHashSet<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(mainClasses)
             .stream()
             .map(s -> new TestSelection(s, "affected"))
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -93,9 +90,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         return affected;
     }
 
-    private ClassFileIndex configureTestClassDetector() {
-        ClassFileIndex classFileIndex =
-            new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath), testVerifier);
-        return classFileIndex;
+    private ClassDependenciesGraph configureTestClassDetector() {
+        return new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), this.classpath), testVerifier);
     }
 }

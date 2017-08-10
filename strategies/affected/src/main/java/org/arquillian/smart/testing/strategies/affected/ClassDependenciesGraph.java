@@ -1,5 +1,5 @@
 /*
- * Infinitest, a Continuous Test Runner.
+ * Derived from Infinitest, a Continuous Test Runner.
  *
  * Copyright (C) 2010-2013
  * "Ben Rady" <benrady@gmail.com>,
@@ -30,11 +30,9 @@ package org.arquillian.smart.testing.strategies.affected;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
@@ -44,28 +42,27 @@ import org.jgrapht.graph.DefaultEdge;
 
 import static org.jgrapht.Graphs.predecessorListOf;
 
-public class ClassFileIndex {
+public class ClassDependenciesGraph {
 
-    private Logger logger = Logger.getLogger(ClassFileIndex.class);
-    private static final Filter javaJdkFilter = new Filter("", "java*");
+    private static final Filter coreJava = new Filter("", "java*");
 
     private final JavaClassBuilder builder;
     private DirectedGraph<JavaElement, DefaultEdge> graph;
     private Filter filter;
     private TestVerifier testVerifier;
 
-    public ClassFileIndex(ClasspathProvider classpath, TestVerifier testVerifier) {
+    ClassDependenciesGraph(ClasspathProvider classpath, TestVerifier testVerifier) {
         this(new JavaClassBuilder(classpath));
         this.testVerifier = testVerifier;
     }
 
-    ClassFileIndex(JavaClassBuilder classBuilder) {
+    ClassDependenciesGraph(JavaClassBuilder classBuilder) {
         builder = classBuilder;
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
     }
 
-    public void buildTestDependencyGraph(Collection<File> testJavaFiles) {
+    void buildTestDependencyGraph(Collection<File> testJavaFiles) {
         // First update class index
         List<String> testClassesNames = new ArrayList<>();
         for (File testJavaFile : testJavaFiles) {
@@ -82,7 +79,6 @@ public class ClassFileIndex {
                 addToIndex(new JavaElement(javaClass), javaClass.getImports());
             }
         }
-        builder.clear();
     }
 
     private void addToIndex(JavaElement javaElement, String[] imports) {
@@ -106,8 +102,7 @@ public class ClassFileIndex {
         }
     }
 
-    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass,
-        String[] imports) {
+    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass, String[] imports) {
 
         for (String importz : imports) {
 
@@ -122,7 +117,7 @@ public class ClassFileIndex {
 
     private boolean addImport(JavaElement javaElementParentClass, String importz) {
 
-        if (javaJdkFilter.shouldBeIncluded(importz)) {
+        if (coreJava.shouldBeIncluded(importz)) {
 
             JavaElement importClass = new JavaElement(importz);
             if (!importClass.equals(javaElementParentClass)) {
@@ -142,7 +137,7 @@ public class ClassFileIndex {
     }
 
 
-    public Set<String> findTestsDependingOn(Set<File> classes) {
+    Set<String> findTestsDependingOn(Set<File> classes) {
         return classes.stream()
             .map( javaClass -> {
                 final File classLocation = JavaToClassLocation.transform(javaClass, testVerifier);
@@ -152,7 +147,7 @@ public class ClassFileIndex {
             .map(JavaElement::new)
             .filter(graph::containsVertex)
             .map(this::getParents)
-            .flatMap(tests -> tests.stream())
+            .flatMap(Collection::stream)
             .map(JavaElement::getClassName)
             .collect(Collectors.toSet());
     }
@@ -161,29 +156,12 @@ public class ClassFileIndex {
         return predecessorListOf(graph, childClass);
     }
 
-    public void clear() {
-        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-    }
-
-    public boolean isIndexed(Class<Object> clazz) {
-        return getIndexedClasses().contains(clazz.getName());
-    }
-
-    public Set<String> getIndexedClasses() {
-        Set<String> classes = new HashSet<>();
-        Set<JavaElement> vertexSet = graph.vertexSet();
-        for (JavaElement each : vertexSet) {
-            classes.add(each.getClassName());
-        }
-        return classes;
-    }
-
     @Override
     public String toString() {
         final Set<DefaultEdge> defaultEdges = graph.edgeSet();
         StringBuilder s = new StringBuilder(System.lineSeparator());
 
-        defaultEdges.stream().forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
+        defaultEdges.forEach(de -> s.append(de.toString()).append(System.lineSeparator()));
 
         return s.toString();
     }

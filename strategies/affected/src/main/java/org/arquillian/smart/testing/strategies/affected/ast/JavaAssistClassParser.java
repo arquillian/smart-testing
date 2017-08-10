@@ -47,16 +47,12 @@ import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 
 import static java.io.File.pathSeparator;
 
-public class JavaAssistClassParser {
+class JavaAssistClassParser {
     private final String classpath;
     private ClassPool classPool;
 
-    public JavaAssistClassParser(String classpath) {
+    JavaAssistClassParser(String classpath) {
         this.classpath = classpath;
-    }
-
-    public void clear() {
-        // classPool = null;
     }
 
     private ClassPool getClassPool() {
@@ -97,7 +93,7 @@ public class JavaAssistClassParser {
 
     private final static Map<String, JavaClass> CLASSES_BY_NAME = new HashMap<>();
 
-    public JavaClass getClass(String className) {
+    JavaClass getClass(String className) {
         JavaClass clazz = CLASSES_BY_NAME.get(className);
         if (clazz == null) {
             CtClass ctClass = getCachedClass(className);
@@ -129,7 +125,7 @@ public class JavaAssistClassParser {
         final String sha1;
         final String classname;
 
-        public CacheEntry(String sha1, String classname) {
+        CacheEntry(String sha1, String classname) {
             this.sha1 = sha1;
             this.classname = classname;
         }
