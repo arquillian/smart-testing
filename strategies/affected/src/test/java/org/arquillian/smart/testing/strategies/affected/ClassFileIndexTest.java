@@ -16,21 +16,19 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusin
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class ClassFileIndexTest {
-
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Test
     public void should_detect_simple_test_to_execute() {
-
         // given
-
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
@@ -38,23 +36,19 @@ public class ClassFileIndexTest {
         classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
 
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .containsExactly("org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest");
     }
 
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class() {
-
         // given
-
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
@@ -63,14 +57,12 @@ public class ClassFileIndexTest {
         classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
 
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .containsExactlyInAnyOrder(
                 "org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest",
@@ -79,9 +71,7 @@ public class ClassFileIndexTest {
 
     @Test
     public void should_detect_test_with_multiple_main_classes() {
-
         // given
-
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
@@ -90,14 +80,12 @@ public class ClassFileIndexTest {
         classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyControllerObject.class.getResource("MyControllerObject.class").getPath()));
 
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .containsExactly(
                 "org.arquillian.smart.testing.strategies.affected.fakeproject.test.MySecondBusinessObjectTest");
@@ -105,9 +93,7 @@ public class ClassFileIndexTest {
 
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class_avoiding_duplicates() {
-
         // given
-
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
@@ -116,7 +102,6 @@ public class ClassFileIndexTest {
         classFileIndex.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(MyBusinessObject.class.getResource("MyBusinessObject.class").getPath()));
         mainObjectsChanged.add(new File(MyControllerObject.class.getResource("MyControllerObject.class").getPath()));
@@ -124,7 +109,6 @@ public class ClassFileIndexTest {
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .containsExactlyInAnyOrder(
                 "org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest",
@@ -135,7 +119,6 @@ public class ClassFileIndexTest {
     @Test
     public void should_detect_all_changes_transitive() {
         // given
-
         final ClassFileIndex classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), ""),
             resource -> resource.toString().endsWith("Test.java"));
 
@@ -146,14 +129,12 @@ public class ClassFileIndexTest {
             new File(testLocation3)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(D.class.getResource("D.class").getPath()));
 
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .containsExactlyInAnyOrder(
                 "org.arquillian.smart.testing.strategies.affected.fakeproject.test.ATest", "org.arquillian.smart.testing.strategies.affected.fakeproject.test.BTest");
@@ -173,14 +154,12 @@ public class ClassFileIndexTest {
             new File(testLocation3)));
 
         // when
-
         Set<File> mainObjectsChanged = new HashSet<>();
         mainObjectsChanged.add(new File(D.class.getResource("D.class").getPath()));
 
         final Set<String> testsDependingOn = classFileIndex.findTestsDependingOn(mainObjectsChanged);
 
         // then
-
         assertThat(testsDependingOn)
             .isEmpty();
     }

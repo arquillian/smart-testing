@@ -8,12 +8,13 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class ProjectPersistTest {
 
     @Test

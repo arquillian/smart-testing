@@ -6,11 +6,12 @@ import org.apache.maven.model.Dependency;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class StrategyDependencyResolverTest {
 
     @Rule

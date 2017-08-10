@@ -12,6 +12,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class TestStrategyApplierTest {
 
     @Rule
