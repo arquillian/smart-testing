@@ -70,17 +70,17 @@ If the test exercises a business class that has been modified, we treat it as *i
 
 .About transitivity
 ****
-Currently any we are resolving in transitive way imports.
+Currently we are resolving in transitive way imports of classes.
 This means that any import of a business class is considered as a dependency of the test too.
-Let's look an example:
+Let's look at next example:
 
 Suppose we have `ATest.java` which imports `A.java`.
 At the same time `A.java` imports `B.java` (ATest -> A -> B).
 If `B.java` is modified, then `ATest.java` is considered an *important* test too.
 
-By default this import transitivity is applied to all imports except the ones from `java` and `javax`.
+By default this import transitivity is applied to all imports except the ones from `java`.
 
-Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with Spring, you'd probably want to *exclude* `org.springframework` imports.
+Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with any third-party library, you'd probably want to *exclude* its imports.
 Or maybe just *include* imports from your business code, for example all imports from `org.superbiz`.
 
 *Affected* provides two ways to provide _inclusions_ and _exclusions_:
@@ -104,7 +104,7 @@ INFO: Exclusions has precedence over inclusions.
 IMPORTANT: This strategy is currently only applicable for _white box_ testing approach. At this point our approach is to
  analyze direct code dependencies, but we are working on broader use cases.
 
-WARNING: This strategy does not work with Java 9.
+WARNING: At this moment, this strategy does not work with Java 9.
 
 ==== Failed
 
