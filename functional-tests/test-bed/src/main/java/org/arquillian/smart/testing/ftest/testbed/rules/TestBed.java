@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -50,10 +51,10 @@ public class TestBed implements TestRule {
     }
 
     private void copyTmpProjectInTarget() {
-        String path = "target" + File.separator + "projects";
+        String path = "target" + File.separator + "test-bed-executions" + File.separator + Instant.now().toEpochMilli();
         final File projectDir = new File(path);
         if (!projectDir.exists()) {
-            projectDir.mkdir();
+            projectDir.mkdirs();
         }
         if (targetRepoPerTestFolder != null) {
             final Path source = Paths.get(targetRepoPerTestFolder);
@@ -69,7 +70,7 @@ public class TestBed implements TestRule {
             } catch (IOException e1) {
                 throw new RuntimeException(e1);
             }
-            LOGGER.info("copied test repository for failed test in: " + target);
+            LOGGER.info("Copied test repository to: " + target);
         }
     }
 
