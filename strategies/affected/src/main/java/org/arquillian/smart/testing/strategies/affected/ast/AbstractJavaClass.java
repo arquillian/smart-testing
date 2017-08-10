@@ -27,8 +27,6 @@
  */
 package org.arquillian.smart.testing.strategies.affected.ast;
 
-import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
-
 public abstract class AbstractJavaClass implements JavaClass {
     @Override
     public boolean equals(Object obj) {

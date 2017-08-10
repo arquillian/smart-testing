@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -21,9 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 public class ProjectPersistUsingPropertyTest {
-
-    @Rule
-    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Test
     public void should_store_project_under_test_directory_when_test_is_passing_but_property_is_set() throws IOException {

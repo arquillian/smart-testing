@@ -28,7 +28,7 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
 class DescriptorParser {
-    public static String parseClassNameFromConstantPoolDescriptor(String descriptor) {
+    static String parseClassNameFromConstantPoolDescriptor(String descriptor) {
         String newDescriptor = descriptor.replaceAll("\\[", "");
         if (newDescriptor.startsWith("L")) {
             newDescriptor = newDescriptor.replaceFirst("L", "");

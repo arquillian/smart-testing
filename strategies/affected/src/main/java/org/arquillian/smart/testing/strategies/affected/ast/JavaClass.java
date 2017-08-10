@@ -38,7 +38,5 @@ public interface JavaClass {
      */
     String[] getImports();
 
-    boolean locatedInClassFile();
-
     File getClassFile();
 }

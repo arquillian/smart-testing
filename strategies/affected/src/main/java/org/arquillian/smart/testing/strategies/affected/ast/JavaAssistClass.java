@@ -54,7 +54,7 @@ public class JavaAssistClass extends AbstractJavaClass {
     private final String className;
     private File classFile;
 
-    public JavaAssistClass(CtClass classReference) {
+    JavaAssistClass(CtClass classReference) {
         imports = findImports(classReference);
         className = classReference.getName();
     }
@@ -170,11 +170,6 @@ public class JavaAssistClass extends AbstractJavaClass {
 
     public void setClassFile(File classFile) {
         this.classFile = classFile;
-    }
-
-    @Override
-    public boolean locatedInClassFile() {
-        return classFile != null;
     }
 
     @Override

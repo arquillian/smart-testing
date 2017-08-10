@@ -20,7 +20,7 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
 
     @Override
     public TestExecutionPlanner create(File projectDir, TestVerifier verifier, String[] globPatterns) {
-        return new AffectedTestsDetector(new FileSystemTestClassDetector(projectDir, globPatterns), "");
+        return new AffectedTestsDetector(new FileSystemTestClassDetector(projectDir, verifier), "", verifier);
     }
 
 }
