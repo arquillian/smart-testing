@@ -1219,7 +1219,7 @@ In addition, after the build is finished, it returns actual test results so we c
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
 </div>
 <div class="sect4">
-<h5 id="_features"><a class="anchor" href="#_features"></a>Features</h5>
+<h5 id="_built_in_dsl_features"><a class="anchor" href="#_built_in_dsl_features"></a>Built-in DSL features</h5>
 <div class="paragraph">
 <p>You can use project configuration DSL for enabling debug mode directly in the test code:</p>
 </div>
@@ -1288,10 +1288,10 @@ Following system properties are available:</p>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_project_persistent"><a class="anchor" href="#_project_persistent"></a>Project Persistent</h5>
+<h5 id="_storing_project_under_test"><a class="anchor" href="#_storing_project_under_test"></a>Storing project under test</h5>
 <div class="paragraph">
-<p>Project Persistence feature is included in Test Bed to store repository copy used by each and every test method to
-facilitate analysis in case of test failure.</p>
+<p>Project Persistence feature is included in Test Bed to store repository used test&#8217;s embedded build. This lets you execute
+the same build outside of test execution for further analysis in case of failure.</p>
 </div>
 <div class="paragraph">
 <p>By default this feature is enabled to copy repository only in case of test failure.</p>
@@ -1300,7 +1300,7 @@ facilitate analysis in case of test failure.</p>
 <p>In order to copy repository for all tests irrespective of test result, explicitly set system property <code>test.bed.project.persist</code> to <code>true</code>.</p>
 </div>
 <div class="paragraph">
-<p>Persisted project are located in <code>target/projects</code> with name followed by naming convention:</p>
+<p>Persisted project are located in <code>target/test-bed-executions/[current timestamp]/</code> with name followed by naming convention:</p>
 </div>
 <div class="paragraph">
 <p><code>getClass().getSimpleName() + "_" + name.getMethodName()</code></p>
@@ -1313,7 +1313,7 @@ facilitate analysis in case of test failure.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-09 21:09:12 UTC
+Last updated 2017-08-10 06:13:48 UTC
 </div>
 </div>
 </body>
