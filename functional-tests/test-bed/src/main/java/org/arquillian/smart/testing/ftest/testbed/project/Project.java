@@ -44,4 +44,9 @@ public class Project implements AutoCloseable {
     public ProjectBuilder build() {
         return this.projectBuilder;
     }
+
+    public ProjectBuilder build(String ... projects) {
+        projectBuilder.options().projects(projects);
+        return projectBuilder;
+    }
 }

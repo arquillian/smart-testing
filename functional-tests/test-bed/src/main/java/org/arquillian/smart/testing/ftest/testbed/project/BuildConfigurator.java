@@ -24,7 +24,7 @@ public class BuildConfigurator {
 
     private final ProjectBuilder projectBuilder;
     private final Properties systemProperties = new Properties();
-    private final Set<String> excludedProjects = new HashSet<>();
+    private final Set<String> modulesToBeBuilt = new HashSet<>();
 
     private int remotePort = DEFAULT_DEBUG_PORT;
     private int surefireRemotePort = DEFAULT_SUREFIRE_DEBUG_PORT;
@@ -149,8 +149,13 @@ public class BuildConfigurator {
         return this;
     }
 
+    public BuildConfigurator projects(String... projects) {
+        this.modulesToBeBuilt.addAll(Arrays.asList(projects));
+        return this;
+    }
+
     public BuildConfigurator excludeProjects(String... projects) {
-        this.excludedProjects.addAll(
+        this.modulesToBeBuilt.addAll(
             stream(projects)
                 .map(excludeProject -> "!" + excludeProject)
                 .collect(Collectors.toList())
@@ -186,8 +191,8 @@ public class BuildConfigurator {
         return systemProperties;
     }
 
-    String[] getExcludedProjects() {
-        return excludedProjects.toArray(new String[excludedProjects.size()]);
+    String[] getModulesToBeBuilt() {
+        return modulesToBeBuilt.toArray(new String[modulesToBeBuilt.size()]);
     }
 
     boolean isQuietMode() {

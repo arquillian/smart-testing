@@ -34,7 +34,15 @@ public class ProjectBuilder {
         return this.buildConfigurator;
     }
 
-    List<TestResult> build(String... goals) {
+    public List<TestResult> run() {
+        return run("clean", "package");
+    }
+
+    public List<TestResult> run(String... goals) {
+        return executeGoals(goals);
+    }
+
+    private List<TestResult> executeGoals(String... goals) {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
 
@@ -48,7 +56,7 @@ public class ProjectBuilder {
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
                     .setGoals(goals)
-                    .setProjects(buildConfigurator.getExcludedProjects())
+                    .setProjects(buildConfigurator.getModulesToBeBuilt())
                     .setDebug(buildConfigurator.isMavenDebugOutputEnabled())
                     .setQuiet(buildConfigurator.disableQuietWhenAnyDebugModeEnabled() && buildConfigurator.isQuietMode())
                     .skipTests(false)
@@ -86,13 +94,5 @@ public class ProjectBuilder {
         } catch (IOException e) {
             throw new RuntimeException("Failed extracting test results", e);
         }
-    }
-
-    public List<TestResult> run() {
-        return run("clean", "package");
-    }
-
-    public List<TestResult> run(String... goals) {
-        return build(goals);
     }
 }
