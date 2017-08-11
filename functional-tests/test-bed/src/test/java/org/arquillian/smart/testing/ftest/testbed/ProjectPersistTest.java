@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.testbed;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ProjectPersistTest {
         // it's rather shallow check, but if it's not equal it means second execution of the test failed for different reasons
         assertThat(secondRun.getFailures()).hasSameSizeAs(firstRun.getFailures());
 
-        assertThat(findPersistedProjects("smart-testing-dogfood-repo_ProjectPersistFail_should_fail")).hasSize(2);
+        assertThat(findPersistedProjects("repo.bundle_ProjectPersistFail_should_fail")).hasSize(2);
     }
 
     @Test
@@ -40,7 +41,7 @@ public class ProjectPersistTest {
         final Result result = JUnitCore.runClasses(ProjectPersistPass.class);
 
         assertThat(result.wasSuccessful()).isTrue();
-        assertThat(findPersistedProjects("smart-testing-dogfood-repo_ProjectPersistPass_should_pass")).isEmpty();
+        assertThat(findPersistedProjects("repo.bundle_ProjectPersistPass_should_pass")).isEmpty();
     }
 
     private List<Path> findPersistedProjects(String projectName) throws IOException {
@@ -50,9 +51,8 @@ public class ProjectPersistTest {
     }
 
     public static class ProjectPersistFail {
-
         @ClassRule
-        public static final GitClone GIT_CLONE = new GitClone();
+        public static final GitClone GIT_CLONE = new GitClone(gitTestRepo());
 
         @Rule
         public TestBed testBed = new TestBed(GIT_CLONE);
@@ -65,7 +65,7 @@ public class ProjectPersistTest {
 
     public static class ProjectPersistPass {
         @ClassRule
-        public static final GitClone GIT_CLONE = new GitClone();
+        public static final GitClone GIT_CLONE = new GitClone(gitTestRepo());
 
         @Rule
         public TestBed testBed = new TestBed(GIT_CLONE);
@@ -74,6 +74,10 @@ public class ProjectPersistTest {
         public void should_pass() throws Exception {
             Assert.assertTrue(true);
         }
+    }
+
+    private static URL gitTestRepo() {
+        return Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
     }
 
 }
