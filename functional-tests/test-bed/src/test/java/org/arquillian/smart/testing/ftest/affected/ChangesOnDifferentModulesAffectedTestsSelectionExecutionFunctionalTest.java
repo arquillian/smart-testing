@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.ftest.affected;
 
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -31,10 +31,10 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
             .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
+        final Collection<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
 
         // when
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
@@ -56,11 +56,11 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
             .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
+        final Collection<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
 
         // when
         // tag::documentation_test_bed_debug[]
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
             .options()
                 .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")

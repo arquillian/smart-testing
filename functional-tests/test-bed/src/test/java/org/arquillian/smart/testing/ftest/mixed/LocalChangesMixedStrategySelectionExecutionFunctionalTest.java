@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.ftest.mixed;
 
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -9,9 +9,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::documentation[]
@@ -33,12 +33,12 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
                 .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Single method body modification - sysout",
                 "Inlined variable in a method", "Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final Collection<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

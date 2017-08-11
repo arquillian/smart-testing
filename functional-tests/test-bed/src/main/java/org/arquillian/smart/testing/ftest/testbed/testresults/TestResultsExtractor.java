@@ -1,8 +1,9 @@
 package org.arquillian.smart.testing.ftest.testbed.testresults;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jgit.lib.ObjectId;
@@ -43,8 +44,8 @@ public class TestResultsExtractor {
      * @param commitId
      * @return list of expected test results
      */
-    public List<TestResult> expectedTestResults(ObjectId commitId) {
-        final List<TestResult> testResultExpectations = new ArrayList<>();
+    public Collection<TestResult> expectedTestResults(ObjectId commitId) {
+        final Set<TestResult> testResultExpectations = new HashSet<>();
         try (RevWalk revWalk = new RevWalk(repository)) {
             final RevCommit commit = revWalk.parseCommit(commitId);
             testResultExpectations.addAll(extractTestResultsExpectations(commit));
@@ -56,8 +57,8 @@ public class TestResultsExtractor {
         return testResultExpectations;
     }
 
-    private List<TestResult> extractTestResultsExpectations(RevCommit commit) {
-        final List<TestResult> testResultExpectations = new ArrayList<>();
+    private Collection<TestResult> extractTestResultsExpectations(RevCommit commit) {
+        final Set<TestResult> testResultExpectations = new HashSet<>();
         final String fullMessage = commit.getFullMessage();
 
         final Matcher matcher = TEST_RESULT_ENTRY_PATTERN.matcher(fullMessage);

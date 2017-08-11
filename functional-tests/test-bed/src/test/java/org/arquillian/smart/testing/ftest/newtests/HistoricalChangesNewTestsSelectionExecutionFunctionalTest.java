@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.ftest.newtests;
 
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -9,8 +9,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
@@ -33,11 +33,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
                .enable();
         // end::documentation[]
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
@@ -63,11 +63,11 @@ public class HistoricalChangesNewTestsSelectionExecutionFunctionalTest {
         project.applyAsCommits("Single method body modification - sysout",
             "Inlined variable in a method");
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("git.last.commits", "3")

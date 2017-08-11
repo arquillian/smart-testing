@@ -2,7 +2,7 @@ package org.arquillian.smart.testing.ftest.testbed.project;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -28,11 +28,11 @@ public class Project implements AutoCloseable {
         return new ProjectConfigurator(this, root);
     }
 
-    public List<TestResult> applyAsLocalChanges(String ... changeDescriptions) {
+    public Collection<TestResult> applyAsLocalChanges(String ... changeDescriptions) {
         return new ChangeApplier(repository).applyLocally(changeDescriptions);
     }
 
-    public List<TestResult> applyAsCommits(String ... changeDescriptions) {
+    public Collection<TestResult> applyAsCommits(String ... changeDescriptions) {
         return new ChangeApplier(repository).applyAsCommits(changeDescriptions);
     }
 

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.affected;
 
+import java.util.Collection;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
@@ -9,8 +10,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
@@ -31,7 +32,7 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
                     .inMode(SELECTING)
                .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Single method body modification - sysout");
 
         // when
@@ -51,7 +52,7 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
                     .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Single method body modification - sysout",
             "Inlined variable in a method");
 

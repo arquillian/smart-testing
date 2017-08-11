@@ -44,7 +44,7 @@ class ChangeApplier {
      *
      * @see TestResultsExtractor#expectedTestResults(ObjectId)
      */
-    List<TestResult> applyAsCommits(String... changeDescriptions) {
+    Collection<TestResult> applyAsCommits(String... changeDescriptions) {
        return apply(this::cherryPickTags, changeDescriptions);
     }
 
@@ -58,11 +58,11 @@ class ChangeApplier {
      *
      * @see TestResultsExtractor#expectedTestResults(ObjectId)
      */
-    List<TestResult> applyLocally(String... changeDescriptions) {
+    Collection<TestResult> applyLocally(String... changeDescriptions) {
         return apply(this::applyLocallyFromTags, changeDescriptions);
     }
 
-    List<TestResult> apply(ChangeApplicator applicator, String ... changeDescriptions) {
+    Collection<TestResult> apply(ChangeApplicator applicator, String ... changeDescriptions) {
         try {
             final Collection<RevTag> matchingTags = findMatchingTags(changeDescriptions);
             if (changeDescriptions.length != matchingTags.size()) {
@@ -76,11 +76,11 @@ class ChangeApplier {
     }
 
     interface ChangeApplicator {
-        List<TestResult> apply(Collection<RevTag> tags) throws GitAPIException;
+        Collection<TestResult> apply(Collection<RevTag> tags) throws GitAPIException;
     }
 
-    private List<TestResult> cherryPickTags(Collection<RevTag> tags) throws GitAPIException {
-        final List<TestResult> combinedTestResults = new ArrayList<>();
+    private Collection<TestResult> cherryPickTags(Collection<RevTag> tags) throws GitAPIException {
+        final Set<TestResult> combinedTestResults = new HashSet<>();
         for (final RevTag tag : tags) {
             final ObjectId tagId = tag.getObject().getId();
             git.cherryPick().include(tagId).call();
@@ -89,8 +89,8 @@ class ChangeApplier {
         return combinedTestResults;
     }
 
-    private List<TestResult> applyLocallyFromTags(Collection<RevTag> tags) throws GitAPIException {
-        final List<TestResult> combinedTestResults = new ArrayList<>();
+    private Collection<TestResult> applyLocallyFromTags(Collection<RevTag> tags) throws GitAPIException {
+        final Set<TestResult> combinedTestResults = new HashSet<>();
         final List<RevCommit> stashesToApply = new ArrayList<>();
         stashesToApply.add(git.stashCreate().setIncludeUntracked(true).call());
         for (final RevTag tag : tags) {

@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.ftest.newtests;
 
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -31,11 +31,11 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
                     .inMode(SELECTING)
                .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final Collection<TestResult> actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -55,11 +55,11 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
         project
             .applyAsCommits("Disable surefire and enable just failsafe plugin");
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run("clean", "verify");
+        final Collection<TestResult> actualTestResults = project.build().run("clean", "verify");
 
         // then
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -84,12 +84,12 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
         // end::documentation_apply[]
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
         // when
         // tag::documentation_build[]
-        final List<TestResult> actualTestResults = project.build().run();
+        final Collection<TestResult> actualTestResults = project.build().run();
         // end::documentation_build[]
 
         // then

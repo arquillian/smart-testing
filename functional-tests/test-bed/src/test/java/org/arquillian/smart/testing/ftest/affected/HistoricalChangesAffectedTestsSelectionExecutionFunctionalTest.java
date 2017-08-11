@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.ftest.affected;
 
-import java.util.List;
+import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
@@ -9,8 +9,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
@@ -31,11 +31,11 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
                     .inMode(SELECTING)
                .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
@@ -56,12 +56,12 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
                     .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project
+        final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("Single method body modification - sysout",
             "Inlined variable in a method");
 
         // when
-        final List<TestResult> actualTestResults = project
+        final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("git.last.commits", "2")
