@@ -29,7 +29,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true,  new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
@@ -44,7 +44,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true, new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
 
         expectedException.expect(IllegalArgumentException.class);
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
@@ -59,7 +59,7 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
         final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true, new String[] {});
+            new TestExecutionPlannerLoader(mockedSpiLoader, resource -> true);
 
         expectedException.expect(IllegalStateException.class);
         expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");
@@ -80,7 +80,7 @@ public class TestExecutionPlannerLoaderTest {
         }
 
         @Override
-        public TestExecutionPlanner create(File projectDir, TestVerifier verifier, String[] globPatterns) {
+        public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
             return new TestExecutionPlanner() {
                 @Override
                 public Collection<TestSelection> getTests() {

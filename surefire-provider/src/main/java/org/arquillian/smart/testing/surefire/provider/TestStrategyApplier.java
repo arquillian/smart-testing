@@ -50,7 +50,6 @@ class TestStrategyApplier {
             .stream()
             .map(TestSelection::getClassName)
             .filter(this::presentOnClasspath)
-            .filter(this::isInTestToRun) // only here because affected strategy doesn't use TestVerifier yet
             .map(testClass -> {
                 try {
                     return Class.forName(testClass);
@@ -69,7 +68,4 @@ class TestStrategyApplier {
         }
     }
 
-    private boolean isInTestToRun(String testClass) {
-        return testsToRun.getClassByName(testClass) != null;
-    }
 }

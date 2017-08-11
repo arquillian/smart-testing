@@ -18,7 +18,7 @@ public class ChangedFilesDetectorFactory implements TestExecutionPlannerFactory 
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, TestVerifier verifier, String[] globPatterns) {
+    public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
         return new ChangedTestsDetector(verifier);
     }
 }
