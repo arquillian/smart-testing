@@ -43,17 +43,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             new TestExecutionPlannerLoader(new JavaSPILoader(), resource -> {
                 final String className = new ClassNameExtractor().extractFullyQualifiedName(resource);
                 return testsToRun.getClassByName(className) != null;
-            }, getGlobPatterns());
+            });
 
         return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(
             configuration);
-    }
-
-    private String[] getGlobPatterns() { // FIXME(affected) Only temporarily for affected
-        final List<String> globPatterns = paramParser.getIncludes();
-        // TODO question why exclusions are added too?
-        globPatterns.addAll(paramParser.getExcludes());
-        return globPatterns.toArray(new String[globPatterns.size()]);
     }
 
     public Iterable<Class<?>> getSuites() {

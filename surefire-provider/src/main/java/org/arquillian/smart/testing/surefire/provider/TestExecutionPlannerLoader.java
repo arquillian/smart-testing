@@ -12,13 +12,11 @@ class TestExecutionPlannerLoader {
 
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
-    private final String[] globPatterns;
     private final TestVerifier verifier;
 
-    TestExecutionPlannerLoader(JavaSPILoader spiLoader, TestVerifier verifier, String[] globPatterns) {
+    TestExecutionPlannerLoader(JavaSPILoader spiLoader, TestVerifier verifier) {
         this.spiLoader = spiLoader;
         this.verifier = verifier;
-        this.globPatterns = globPatterns;
     }
 
     TestExecutionPlanner getPlannerForStrategy(String strategy) {
@@ -29,7 +27,7 @@ class TestExecutionPlannerLoader {
 
         if (availableStrategies.containsKey(strategy)) {
             final File projectDir = new File(System.getProperty("user.dir"));
-            return availableStrategies.get(strategy).create(projectDir, verifier, globPatterns);
+            return availableStrategies.get(strategy).create(projectDir, verifier);
         }
 
         throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()

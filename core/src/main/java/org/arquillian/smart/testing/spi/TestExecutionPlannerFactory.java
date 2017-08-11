@@ -10,6 +10,6 @@ public interface TestExecutionPlannerFactory {
 
     boolean isFor(String name);
 
-    TestExecutionPlanner create(File projectDir, TestVerifier testVerifier, String[] globPatterns);
+    TestExecutionPlanner create(File projectDir, TestVerifier testVerifier);
 
 }
