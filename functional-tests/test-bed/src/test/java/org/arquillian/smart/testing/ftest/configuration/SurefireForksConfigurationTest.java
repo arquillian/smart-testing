@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
+import java.util.Collection;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
@@ -62,7 +63,7 @@ public class SurefireForksConfigurationTest {
             .inMode(SELECTING)
             .enable();
 
-        final List<TestResult> expectedTestResults = project
+        Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Inlined variable in a method", "Adds new unit test");
 
         // when
