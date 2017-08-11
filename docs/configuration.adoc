@@ -70,9 +70,7 @@ If the test exercises a business class that has been modified, we treat it as *i
 
 .About transitivity
 ****
-Currently we are resolving in transitive way imports of classes.
-This means that any import of a business class is considered as a dependency of the test too.
-Let's look at next example:
+Our approach does not find only direct test classes related to the business code which was changed, but takes into an account transitivity. This means that any import of a business class is considered as a dependency of the test too.
 
 Suppose we have `ATest.java` which imports `A.java`.
 At the same time `A.java` imports `B.java` (ATest -> A -> B).
