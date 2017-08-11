@@ -24,10 +24,11 @@ import static java.util.stream.Collectors.toMap;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
+import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class ProjectBuilder {
 
-    private static final String TEST_REPORT_PREFIX = "TEST-";
+    public static final String TEST_REPORT_PREFIX = "TEST-";
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
@@ -70,7 +71,7 @@ public class ProjectBuilder {
                     .ignoreFailure()
                 .build();
 
-        if (build.getMavenBuildExitCode() != 0) {
+        if (!buildConfigurator.isIgnoreBuildFailure() && build.getMavenBuildExitCode() != 0) {
             System.out.println(build.getMavenLog());
             throw new IllegalStateException("Maven build has failed, see logs for details");
         }
@@ -105,7 +106,8 @@ public class ProjectBuilder {
     private List<TestResult> accumulatedTestResults() {
         try {
             return Files.walk(root)
-                .filter(path -> path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
+                .filter(path -> !path.toFile().getAbsolutePath().contains(TEMP_REPORT_DIR) &&
+                    path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
                 .map(path -> {
                         try {
                             final Set<TestResult> testResults = loadTestResults(new FileInputStream(path.toFile()));

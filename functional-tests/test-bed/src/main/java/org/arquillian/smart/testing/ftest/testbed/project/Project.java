@@ -24,6 +24,10 @@ public class Project implements AutoCloseable {
         return builder.readEnvironment().findGitDir(root.toFile()).build();
     }
 
+    public Path getRoot() {
+        return root;
+    }
+    
     public ProjectConfigurator configureSmartTesting() {
         return new ProjectConfigurator(this, root);
     }

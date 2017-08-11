@@ -2,6 +2,8 @@ package org.arquillian.smart.testing.spi;
 
 public class TestResult {
 
+    public static final String TEMP_REPORT_DIR = ".reports";
+
     private String className;
     private String testMethod;
     private Float testDuration;
