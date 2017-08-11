@@ -532,6 +532,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#_installation">4.1. Installation</a></li>
 <li><a href="#_configuration_2">4.2. Configuration</a></li>
+<li><a href="#_strategies_2">4.3. Strategies</a></li>
 </ul>
 </li>
 <li><a href="#_developing">5. Developing</a>
@@ -611,7 +612,7 @@ and <code>maven-failsafe-plugin</code>.</p>
 <dl>
 <dt class="hdlist1">Java</dt>
 <dd>
-<p>Requires Java 8.</p>
+<p>Requires Java 8. In case of using <a href="#_affected">Affected</a> strategy, Java 9 is not supported yet.</p>
 </dd>
 <dt class="hdlist1">Maven</dt>
 <dd>
@@ -796,6 +797,53 @@ between commits range and local changes as well.</p>
 <p>When this strategy gets all changes then inspect all tests of current project checking which ones <em>imports</em> these classes.
 If the test exercises a business class that has been modified, we treat it as <strong>important</strong>  so it will be executed earlier in the test plan.</p>
 </div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">About transitivity</div>
+<div class="paragraph">
+<p>Our approach does not find only direct test classes related to the business code which was changed, but takes into an account transitivity. This means that any import of a business class is considered as a dependency of the test too.</p>
+</div>
+<div class="paragraph">
+<p>Suppose we have <code>ATest.java</code> which imports <code>A.java</code>.
+At the same time <code>A.java</code> imports <code>B.java</code> (ATest &#8594; A &#8594; B).
+If <code>B.java</code> is modified, then <code>ATest.java</code> is considered an <strong>important</strong> test too.</p>
+</div>
+<div class="paragraph">
+<p>By default this import transitivity is applied to all imports except the ones from <code>java</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with any third-party library, you&#8217;d probably want to <strong>exclude</strong> its imports.
+Or maybe just <strong>include</strong> imports from your business code, for example all imports from <code>org.superbiz</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Affected</strong> provides two ways to provide <em>inclusions</em> and <em>exclusions</em>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">inclusions/exclusions system proeprty</dt>
+<dd>
+<p>you can set inclusions and/or exclusions by using <code>smart.testing.affected.inclusions</code>/<code>smart.testing.affected.exclusions</code> which accepts comma-separated values.
+For example: <code>-Dsmart.testing.affected.inclusions=org.mysuperbiz.*</code>.</p>
+</dd>
+<dt class="hdlist1">config properties file</dt>
+<dd>
+<p>you can create a properties file containing inclusions and/or exclusions and set its location using <code>smart.testing.affected.config</code> system property.
+For example <code>-Dsmart.testing.affected.config=affected-configuration.properties</code></p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="title">affected-configuration.proeprties</div>
+<div class="content">
+<pre>inclusions=org.mysuperbiz.*
+exclusions=org.springframework.*, org.apache.commons.*</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>INFO: Exclusions has precedence over inclusions.</p>
+</div>
+</div>
+</div>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -805,6 +853,18 @@ If the test exercises a business class that has been modified, we treat it as <s
 <td class="content">
 This strategy is currently only applicable for <em>white box</em> testing approach. At this point our approach is to
  analyze direct code dependencies, but we are working on broader use cases.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+At this moment, this strategy does not work with Java 9.
 </td>
 </tr>
 </table>
@@ -1006,6 +1066,93 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>4.3. Strategies</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 16%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Strategies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>git.previous.commit</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set first commit id for inspecting changes</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>HEAD~0</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>git.commit</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set last commit id for inspecting changes</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>HEAD</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>git.last.commits</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the number of commits from <code>HEAD</code> that you want to inspect</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>0</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.inclusions</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set classes to be included for scanning</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.exclusions</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set classes to be excluded for scanning</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.config</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set location of affected configuration file</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1048,12 +1195,12 @@ This section will be improved as we continue with the SPI design to let you hook
                 .inMode(SELECTING)
             .enable();
 
-        <span class="directive">final</span> <span class="predefined-type">List</span>&lt;TestResult&gt; expectedTestResults = project
+        <span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;TestResult&gt; expectedTestResults = project
             .applyAsLocalChanges(<span class="string"><span class="delimiter">&quot;</span><span class="content">Single method body modification - sysout</span><span class="delimiter">&quot;</span></span>,
                 <span class="string"><span class="delimiter">&quot;</span><span class="content">Inlined variable in a method</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Adds new unit test</span><span class="delimiter">&quot;</span></span>);
 
         <span class="comment">// when</span>
-        <span class="directive">final</span> <span class="predefined-type">List</span>&lt;TestResult&gt; actualTestResults = project.build().run();
+        <span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;TestResult&gt; actualTestResults = project.build().run();
 
         <span class="comment">// then</span>
         assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -1191,7 +1338,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>final List&lt;TestResult&gt; actualTestResults = project.build().run();</pre>
+<pre>final Collection&lt;TestResult&gt; actualTestResults = project.build().run();</pre>
 </div>
 </div>
 </div>
@@ -1225,7 +1372,7 @@ This gives better analysis of the build execution, as it lets us connect to the 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">List</span>&lt;TestResult&gt; actualTestResults = project
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;TestResult&gt; actualTestResults = project
     .build()
     .options()
         .withSystemProperties(<span class="string"><span class="delimiter">&quot;</span><span class="content">git.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">git.previous.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD~</span><span class="delimiter">&quot;</span></span>)
@@ -1313,7 +1460,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-10 06:13:48 UTC
+Last updated 2017-08-11 09:21:09 UTC
 </div>
 </div>
 </body>
