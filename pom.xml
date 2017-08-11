@@ -148,13 +148,32 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${version.surefire}</version>
-        <configuration>
-          <forkCount>${surefire.fork.count}</forkCount>
-          <threadCount>${surefire.thread.count}</threadCount>
-          <reuseForks>${surefire.reuse.forks}</reuseForks>
-          <argLine>-Xmx1024m</argLine>
-          <parallel>classesAndMethods</parallel>
-        </configuration>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <forkCount>${surefire.fork.count}</forkCount>
+              <threadCount>${surefire.thread.count}</threadCount>
+              <reuseForks>${surefire.reuse.forks}</reuseForks>
+              <argLine>-Xmx1024m</argLine>
+              <parallel>classesAndMethods</parallel>
+              <excludedGroups>net.jcip.annotations.NotThreadSafe</excludedGroups>
+            </configuration>
+          </execution>
+          <execution>
+            <id>not-thread-safe</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <reuseForks>false</reuseForks>
+              <groups>net.jcip.annotations.NotThreadSafe</groups>
+            </configuration>
+          </execution>
+        </executions>
 
       </plugin>
     </plugins>

@@ -34,7 +34,7 @@ public class UnparsableClass implements JavaClass {
 
     private final String classname;
 
-    public UnparsableClass(String classname) {
+    UnparsableClass(String classname) {
         this.classname = classname;
     }
 
@@ -51,11 +51,6 @@ public class UnparsableClass implements JavaClass {
     @Override
     public String getName() {
         return classname;
-    }
-
-    @Override
-    public boolean locatedInClassFile() {
-        return false;
     }
 
     @Override

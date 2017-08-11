@@ -2,18 +2,13 @@ package org.arquillian.smart.testing.strategies.affected.detector;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.arquillian.smart.testing.filter.TestVerifier;
 
 /**
  * Implementation that gets all tests using glob pattern () by default and using root directory as reference by default
@@ -21,47 +16,26 @@ import java.util.stream.Stream;
 public class FileSystemTestClassDetector implements TestClassDetector {
 
     private File rootDirectory;
-    private List<String> globPatterns;
+    private TestVerifier verifier;
 
-    public FileSystemTestClassDetector(File rootDirectory, String... globPatterns) {
+    public FileSystemTestClassDetector(File rootDirectory, TestVerifier verifier) {
         this.rootDirectory = rootDirectory;
-        if (globPatterns.length > 0) {
-            this.globPatterns = Arrays.asList(globPatterns);
-        } else {
-            this.globPatterns = Collections.singletonList("**/src/test/java/**/*Test*.*");
-        }
+        this.verifier = verifier;
     }
 
     @Override
     public Set<File> detect() {
-
-        final Set<File> tests = new HashSet<>();
-
-        for (String pattern : globPatterns) {
-            try {
-                tests.addAll(findTests(rootDirectory, getPathMatcher(pattern)));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return tests;
-    }
-
-    private Collection<? extends File> findTests(File rootDirectory, PathMatcher pathMatcher) throws IOException {
         try (Stream<Path> stream = Files.walk(rootDirectory.toPath())) {
             return stream
-                .filter(pathMatcher::matches)
+                .filter(path -> Files.isRegularFile(path) && isJavaFile(path) && verifier.isTest(path))
                 .map(Path::toFile)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
-    private PathMatcher getPathMatcher(String pattern) {
-        return FileSystems.getDefault().getPathMatcher("glob:" + pattern);
-    }
-
-    public List<String> getGlobPatterns() {
-        return globPatterns;
+    private boolean isJavaFile(Path path) {
+        return path.toString().toLowerCase().endsWith(".java");
     }
 }

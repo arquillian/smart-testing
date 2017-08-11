@@ -1,22 +1,22 @@
 package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
-import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetector;
-
-import static org.arquillian.smart.testing.filter.GlobPatternMatcher.matchPatterns;
 
 public class AffectedTestsDetector implements TestExecutionPlanner {
 
@@ -28,23 +28,21 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;
-    private final String mainClassesLocationPattern;
+    private final TestVerifier testVerifier;
 
-    public AffectedTestsDetector(final TestClassDetector testClassDetector,
-        String classpath) {
-        this.testClassDetector = testClassDetector;
-        this.changeResolver = new JavaSPILoader().onlyOne(ChangeResolver.class).get();
-        this.changeStorage = new JavaSPILoader().onlyOne(ChangeStorage.class).get();
-        this.classpath = classpath;
-        this.mainClassesLocationPattern = "**/src/main/java/**/*.java";
+    AffectedTestsDetector(final TestClassDetector testClassDetector, String classpath, TestVerifier testVerifier) {
+        this(testClassDetector, new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
+            new JavaSPILoader().onlyOne(ChangeResolver.class).get(), classpath,
+            testVerifier);
     }
 
-    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver, String mainClassesLocationPattern) {
+    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver,
+        String classpath, TestVerifier testVerifier) {
         this.testClassDetector = testClassDetector;
         this.changeStorage = changeStorage;
         this.changeResolver = changeResolver;
-        this.classpath = "";
-        this.mainClassesLocationPattern = mainClassesLocationPattern;
+        this.classpath = classpath;
+        this.testVerifier = testVerifier;
     }
 
     @Override
@@ -54,13 +52,16 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<TestSelection> getTests() {
-        ClassFileIndex classFileIndex = configureTestClassDetector();
+        ClassDependenciesGraph classDependenciesGraph = configureTestClassDetector();
 
         // TODO this operations should be done in extension to avoid scanning for all modules.
         // TODO In case of Arquillian core is an improvement of 500 ms per module
         // Scan disk finding all tests of current project
+
+        final long beforeDetection = System.currentTimeMillis();
+
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
-        classFileIndex.buildTestDependencyGraph(allTestsOfCurrentProject);
+        classDependenciesGraph.buildTestDependencyGraph(allTestsOfCurrentProject);
 
         final Collection<Change> files = changeStorage.read()
             .orElseGet(() -> {
@@ -68,30 +69,28 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
                 return changeResolver.diff();
             });
 
+        logger.log(Level.FINER, "Time To Build Affected Dependencies Graph %d ms",
+            (System.currentTimeMillis() - beforeDetection));
 
         final Set<File> mainClasses = files.stream()
-            // to have an interface called TestVerifier.isCoreClass(path) -> PatternTestDecider. include/globs etc
-            .filter(change -> matchPatterns(change.getLocation().toAbsolutePath().toString(),
-                mainClassesLocationPattern))
-            .map(change -> change.getLocation().toFile())
+            .map(Change::getLocation)
+            .filter(testVerifier::isCore)
+            .map(Path::toFile)
             .collect(Collectors.toSet());
 
-        return classFileIndex.findTestsDependingOn(mainClasses)
+        final long beforeFind = System.currentTimeMillis();
+
+        final LinkedHashSet<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(mainClasses)
             .stream()
             .map(s -> new TestSelection(s, "affected"))
             .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        logger.log(Level.FINER, "Time To Find Affected Tests %d ms", (System.currentTimeMillis() - beforeFind));
+
+        return affected;
     }
 
-    private ClassFileIndex configureTestClassDetector() {
-        ClassFileIndex classFileIndex;
-        if (testClassDetector instanceof FileSystemTestClassDetector) {
-            FileSystemTestClassDetector fileSystemTestClassDetector = (FileSystemTestClassDetector) testClassDetector;
-            classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath),
-                fileSystemTestClassDetector.getGlobPatterns());
-        } else {
-            classFileIndex = new ClassFileIndex(new StandaloneClasspath(Collections.emptyList(), this.classpath));
-        }
-        return classFileIndex;
+    private ClassDependenciesGraph configureTestClassDetector() {
+        return new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), this.classpath), testVerifier);
     }
-
 }

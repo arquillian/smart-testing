@@ -8,22 +8,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InProjectTestReportLoaderTest {
 
-
     @Test
     public void should_return_failing_test_classes() {
-
         // given
-
         final InProjectTestReportLoader surefireInProjectTestReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
         surefireInProjectTestReportLoader.setTempReportDir("src/test/resources");
 
         // when
-
         final Set<String> testClassesWithFailingCases = surefireInProjectTestReportLoader.loadTestResults();
 
         // then
         assertThat(testClassesWithFailingCases)
-            .containsExactly("org.arquillian.smart.testing.strategies.affected.ClassFileIndexTest");
+            .containsExactly("org.arquillian.smart.testing.strategies.affected.ClassDependenciesGraphTest");
 
     }
 

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -50,14 +51,12 @@ public class AffectedTestsDetectorTest {
     public void should_get_affected_tests_by_a_main_class_change() {
 
         // given
-        when(fileSystemTestClassDetector.getGlobPatterns()).thenReturn(Collections.singletonList("**/src/test/java/**/*.java"));
-
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);
         when(changeStorage.read()).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
-            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "**/src/test/java/**/*.java");
+            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "", new CustomTestVerifier());
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();
@@ -74,5 +73,27 @@ public class AffectedTestsDetectorTest {
         final Path path = Paths.get("src/test/java", packageDirectory, clazz.getSimpleName() + ".java");
 
         return path.toAbsolutePath();
+    }
+
+    private static class CustomTestVerifier implements TestVerifier {
+
+        private int coreClassCount = 0;
+
+        @Override
+        public boolean isTest(Path resource) {
+
+            if (resource.toString().endsWith("Test.java") || resource.toString().endsWith("TestCase.java")) {
+                return true;
+            }
+
+            if (resource.toString().endsWith("MyBusinessObject.java")) {
+                // Since core class is also in test directory, we need that first time core class is detected as such
+                // but second tiem when real location of .class is found returns it is a class so it is resolved correctly to
+                // test-classes directory
+                return (coreClassCount++) != 0;
+            }
+
+            return false;
+        }
     }
 }

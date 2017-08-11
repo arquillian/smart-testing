@@ -26,8 +26,8 @@ public class ClassNameExtractor {
                 return matcher.find() ? Stream.of(matcher.toMatchResult()) : null;
             }).findFirst();
             return pkgName.map(matchResult -> matchResult.group(2) + "." + className).orElse(className);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to analyze source file " + sourceFile.getAbsolutePath(), e);
+        } catch (Throwable t) {
+            throw new RuntimeException("Unable to analyze source file " + sourceFile.getAbsolutePath(), t);
         }
     }
 

@@ -20,8 +20,8 @@ public class JUnitTestResultParserTest {
 
         assertThat(testResults)
             .extracting(TestResult::getClassName, TestResult::getResult)
-            .containsExactlyInAnyOrder(tuple("org.arquillian.smart.testing.strategies.affected.ClassFileIndexTest", TestResult.Result.FAILURE),
-                tuple("org.arquillian.smart.testing.strategies.affected.ClassFileIndexTest", TestResult.Result.PASSED));
+            .containsExactlyInAnyOrder(tuple("org.arquillian.smart.testing.strategies.affected.ClassDependenciesGraphTest", TestResult.Result.FAILURE),
+                tuple("org.arquillian.smart.testing.strategies.affected.ClassDependenciesGraphTest", TestResult.Result.PASSED));
 
     }
 

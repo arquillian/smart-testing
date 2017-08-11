@@ -5,6 +5,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.COMMIT;
 import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.HEAD;
@@ -13,7 +14,7 @@ import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.PREVIOUS_
 import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.getPrevCommitDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class GitRunnerPropertiesTest {
 
     @Rule
