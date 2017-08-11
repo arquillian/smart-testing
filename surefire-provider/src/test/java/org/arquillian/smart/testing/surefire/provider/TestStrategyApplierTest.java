@@ -43,7 +43,7 @@ public class TestStrategyApplierTest {
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
-        defaultTestsToRun.add(ProviderParameterParserTest.class);
+        defaultTestsToRun.add(TestNgParametersTest.class);
         defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
@@ -74,7 +74,7 @@ public class TestStrategyApplierTest {
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new LinkedHashSet<>();
-        defaultTestsToRun.add(ProviderParameterParserTest.class);
+        defaultTestsToRun.add(TestNgParametersTest.class);
         defaultTestsToRun.add(TestStrategyApplierTest.class);
         defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
@@ -95,7 +95,7 @@ public class TestStrategyApplierTest {
 
         // then
         assertThat(realTestPlanning.getLocatedClasses())
-            .containsExactly(TestExecutionPlannerLoaderTest.class, ProviderParameterParserTest.class, TestStrategyApplierTest.class);
+            .containsExactly(TestExecutionPlannerLoaderTest.class, TestNgParametersTest.class, TestStrategyApplierTest.class);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class TestStrategyApplierTest {
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new HashSet<>();
-        defaultTestsToRun.add(ProviderParameterParserTest.class);
+        defaultTestsToRun.add(TestNgParametersTest.class);
         defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
 
         final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);

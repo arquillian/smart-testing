@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.util.List;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 
 public class ProviderParametersParser {
@@ -9,14 +8,6 @@ public class ProviderParametersParser {
 
     public ProviderParametersParser(ProviderParameters providerParameters) {
         this.providerParameters = providerParameters;
-    }
-
-    public List<String> getIncludes() {
-        return providerParameters.getDirectoryScannerParameters().getIncludes();
-    }
-
-    public List<String> getExcludes() {
-        return providerParameters.getDirectoryScannerParameters().getExcludes();
     }
 
     public String getProperty(String key) {
