@@ -23,12 +23,16 @@ public class GitClone extends ExternalResource {
     private String gitRepoFolder;
     private File tempFolder;
 
-    public GitClone() {
+    public GitClone(String gitRepoUrl) {
         try {
-            this.gitRepo = new URL("https://github.com/arquillian/smart-testing-dogfood-repo.git").toExternalForm();
+            this.gitRepo = new URL(gitRepoUrl).toExternalForm();
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public GitClone() {
+        this("https://github.com/arquillian/smart-testing-dogfood-repo.git");
     }
 
     public GitClone(URL gitRepo) {
