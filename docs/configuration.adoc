@@ -68,8 +68,41 @@ TIP: `git.commit`, `git.previous.commit` and `git.last.commits` Java system prop
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
 If the test exercises a business class that has been modified, we treat it as *important*  so it will be executed earlier in the test plan.
 
+.About transitivity
+****
+Our approach does not find only direct test classes related to the business code which was changed, but takes into an account transitivity. This means that any import of a business class is considered as a dependency of the test too.
+
+Suppose we have `ATest.java` which imports `A.java`.
+At the same time `A.java` imports `B.java` (ATest -> A -> B).
+If `B.java` is modified, then `ATest.java` is considered an *important* test too.
+
+By default this import transitivity is applied to all imports except the ones from `java`.
+
+Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with any third-party library, you'd probably want to *exclude* its imports.
+Or maybe just *include* imports from your business code, for example all imports from `org.superbiz`.
+
+*Affected* provides two ways to provide _inclusions_ and _exclusions_:
+
+inclusions/exclusions system proeprty:: you can set inclusions and/or exclusions by using `smart.testing.affected.inclusions`/`smart.testing.affected.exclusions` which accepts comma-separated values.
+For example: `-Dsmart.testing.affected.inclusions=org.mysuperbiz.*`.
+
+config properties file:: you can create a properties file containing inclusions and/or exclusions and set its location using `smart.testing.affected.config` system property.
+For example `-Dsmart.testing.affected.config=affected-configuration.properties`
+
+.affected-configuration.proeprties
+----
+inclusions=org.mysuperbiz.*
+exclusions=org.springframework.*, org.apache.commons.*
+----
+
+INFO: Exclusions has precedence over inclusions.
+
+****
+
 IMPORTANT: This strategy is currently only applicable for _white box_ testing approach. At this point our approach is to
  analyze direct code dependencies, but we are working on broader use cases.
+
+WARNING: At this moment, this strategy does not work with Java 9.
 
 ==== Failed
 

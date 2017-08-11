@@ -35,3 +35,41 @@ a|`smart.testing.apply.to`
 a|`surefire`, `failsafe`
 a|`surefire, failsafe`
 |===
+
+=== Strategies
+
+[cols="1,2,2,1", options="header"]
+|===
+|Property | Description | Default | Strategies
+
+a|`git.previous.commit`
+|Set first commit id for inspecting changes
+a|`HEAD~0`
+a|`new`, `changed`, `affected`
+
+a|`git.commit`
+|Set last commit id for inspecting changes
+a|`HEAD`
+a|`new`, `changed`, `affected`
+
+a|`git.last.commits`
+|Set the number of commits from `HEAD` that you want to inspect
+a|`0`
+a|`new`, `changed`, `affected`
+
+a|`smart.testing.affected.inclusions`
+|Set classes to be included for scanning
+a|
+a|`affected`
+
+a|`smart.testing.affected.exclusions`
+|Set classes to be excluded for scanning
+a|
+a|`affected`
+
+a|`smart.testing.affected.config`
+|Set location of affected configuration file
+a|
+a|`affected`
+
+|===
