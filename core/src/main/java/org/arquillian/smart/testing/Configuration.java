@@ -2,7 +2,7 @@ package org.arquillian.smart.testing;
 
 public class Configuration {
 
-    public static final String DEFAULT_MODE = "ordering";
+    public static final String DEFAULT_MODE = "selecting";
     public static final String DEFAULT_STRATEGIES = "";
 
     public static final String SMART_TESTING = "smart.testing";

@@ -37,7 +37,7 @@ public class TestStrategyApplierTest {
     private TestExecutionPlanner testExecutionPlanner;
 
     @Test
-    public void should_return_tests_only_from_strategies_when_filtering_mode_configured() {
+    public void should_return_tests_only_relevant_for_defined_strategies_when_selecting_mode_configured() {
         // given
         System.setProperty(Configuration.SMART_TESTING_MODE, "selecting");
         System.setProperty(Configuration.SMART_TESTING, "static");
@@ -68,9 +68,39 @@ public class TestStrategyApplierTest {
     }
 
     @Test
-    public void should_return_tests_ordered_by_default() {
-
+    public void should_return_tests_selected_by_default() {
         // given
+        System.setProperty(Configuration.SMART_TESTING, "static");
+
+        final Set<Class<?>> defaultTestsToRun = new LinkedHashSet<>();
+        defaultTestsToRun.add(TestNgParametersTest.class);
+        defaultTestsToRun.add(TestStrategyApplierTest.class);
+        defaultTestsToRun.add(TestExecutionPlannerLoaderTest.class);
+
+        final TestsToRun testsToRun = new TestsToRun(defaultTestsToRun);
+
+        when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
+
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "static"));
+
+        when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
+
+        // when
+        final Configuration configuration = Configuration.load();
+        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader,
+            Thread.currentThread().getContextClassLoader());
+        final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
+
+        // then
+        assertThat(realTestPlanning.getLocatedClasses())
+            .containsExactly(TestExecutionPlannerLoaderTest.class);
+    }
+
+    @Test
+    public void should_return_all_tests_when_ordering_selected() {
+        // given
+        System.setProperty(Configuration.SMART_TESTING_MODE, "ordering");
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> defaultTestsToRun = new LinkedHashSet<>();

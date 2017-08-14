@@ -18,7 +18,7 @@ include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
 a|`smart.testing.mode`
 |Set running mode
 a|`ordering`, `selecting`
-a|`ordering`
+a|`selecting`
 
 a|`smart.testing`
 |Set strategies in CSV

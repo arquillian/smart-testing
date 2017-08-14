@@ -6,9 +6,9 @@ So far in <<What is this?>> section we explained that *Smart testing* changes th
 to run first the important tests and then the rest. This is know as `ordering` mode, but that's not the only one.
 
 `ordering`:: `ordering` mode as its name suggests orders the test execution plan so important tests are executed first
-and then the rest. This is the default mode.
+and then the rest.
 
-`selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests.
+`selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests. This is the default mode.
 
 In order to define the mode use `smart.testing.mode` Java system property with either one.
 
