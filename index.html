@@ -678,11 +678,11 @@ to run first the important tests and then the rest. This is know as <code>orderi
 <dt class="hdlist1"><code>ordering</code></dt>
 <dd>
 <p><code>ordering</code> mode as its name suggests orders the test execution plan so important tests are executed first
-and then the rest. This is the default mode.</p>
+and then the rest.</p>
 </dd>
 <dt class="hdlist1"><code>selecting</code></dt>
 <dd>
-<p><code>selecting</code> mode just selects the important tests and execute them, skipping the rest of the tests.</p>
+<p><code>selecting</code> mode just selects the important tests and execute them, skipping the rest of the tests. This is the default mode.</p>
 </dd>
 </dl>
 </div>
@@ -833,14 +833,23 @@ For example <code>-Dsmart.testing.affected.config=affected-configuration.propert
 </dl>
 </div>
 <div class="listingblock">
-<div class="title">affected-configuration.proeprties</div>
+<div class="title">affected-configuration.properties</div>
 <div class="content">
 <pre>inclusions=org.mysuperbiz.*
 exclusions=org.springframework.*, org.apache.commons.*</pre>
 </div>
 </div>
-<div class="paragraph">
-<p>INFO: Exclusions has precedence over inclusions.</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Exclusions has precedence over inclusions.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1026,7 +1035,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 <p><code>ordering</code>, <code>selecting</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>ordering</code></p>
+<p><code>selecting</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1460,7 +1469,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-11 09:21:09 UTC
+Last updated 2017-08-14 18:15:33 UTC
 </div>
 </div>
 </body>
