@@ -15,6 +15,7 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.report.SmartTestExecutionReport;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplier {
@@ -58,6 +59,12 @@ class TestStrategyApplier {
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
 
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
+
+        if (System.getProperty("smart.testing.report.disable") != null) {
+            final SmartTestExecutionReport
+                smartTestExecutionReport = new SmartTestExecutionReport(testSelections, configuration);
+            smartTestExecutionReport.create();
+        }
 
         return testSelections
             .stream()
