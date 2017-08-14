@@ -41,8 +41,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             configureExtension(session, configuration);
             calculateChanges();
         } else {
-            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.",
-                Configuration.SMART_TESTING);
+            logStrategiesNotDefined();
         }
     }
 
@@ -55,8 +54,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
         } else {
-            logger.warn("Smart Testing is installed but no strategies are provided using %s system property.",
-                Configuration.SMART_TESTING);
+            logStrategiesNotDefined();
         }
     }
 
@@ -73,5 +71,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
+    }
+
+    private void logStrategiesNotDefined() {
+        logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
+            + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 }
