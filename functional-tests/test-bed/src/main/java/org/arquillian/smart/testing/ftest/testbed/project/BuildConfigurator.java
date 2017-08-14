@@ -149,7 +149,7 @@ public class BuildConfigurator {
         return this;
     }
 
-    BuildConfigurator projects(String... projects) {
+    public BuildConfigurator projects(String... projects) {
         this.modulesToBeBuilt.addAll(Arrays.asList(projects));
         return this;
     }
