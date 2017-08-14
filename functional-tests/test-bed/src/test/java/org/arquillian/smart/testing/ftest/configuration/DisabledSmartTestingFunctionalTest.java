@@ -49,30 +49,4 @@ public class DisabledSmartTestingFunctionalTest {
         // then
         assertThat(actualTestResults).hasSize(74);
     }
-
-    @Test
-    public void should_return_empty_set_when_test_execution_is_skipped() throws Exception {
-        // given
-        final Project project = testBed.getProject();
-
-        project.configureSmartTesting()
-            .executionOrder(AFFECTED)
-            .inMode(SELECTING)
-            .enable();
-
-        project
-            .applyAsCommits("Disable surefire and enable just failsafe plugin");
-
-        // when
-        final List<TestResult> actualTestResults = project
-            .build()
-                .options()
-                    .skipTests(true)
-                .configure()
-            .run();
-
-        // then
-        assertThat(actualTestResults).isEmpty();
-    }
-
 }

@@ -71,8 +71,14 @@ public class ProjectBuilder {
                     .ignoreFailure()
                 .build();
 
+        final String mavenLog = build.getMavenLog();
+
+        if (buildConfigurator.isMavenLoggingEnabled()) {
+                buildConfigurator.setMavenLog(mavenLog);
+        }
+
         if (!buildConfigurator.isIgnoreBuildFailure() && build.getMavenBuildExitCode() != 0) {
-            System.out.println(build.getMavenLog());
+            System.out.println(mavenLog);
             throw new IllegalStateException("Maven build has failed, see logs for details");
         }
 

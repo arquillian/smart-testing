@@ -11,6 +11,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
+import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -38,6 +39,31 @@ class MavenProjectConfigurator {
     }
 
     void configureTestRunner(Model model) {
+        final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
+
+        if (!effectiveTestRunnerPluginConfigurations.isEmpty()) {
+            logger.info("Enabling Smart Testing %s for %s", ExtensionVersion.version().toString(),
+                effectiveTestRunnerPluginConfigurations.stream()
+                    .map(Plugin::getArtifactId)
+                    .collect(Collectors.toList()).toString());
+
+            dependencyResolver.addRequiredDependencies(model);
+
+            effectiveTestRunnerPluginConfigurations
+                .forEach(testRunnerPlugin -> {
+                    dependencyResolver.addAsPluginDependency(testRunnerPlugin);
+                    final Object configuration = testRunnerPlugin.getConfiguration();
+                    if (configuration != null) {
+                        final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
+                        final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
+                        properties.addChild(defineUsageMode());
+                        properties.addChild(defineTestSelectionCriteria());
+                    }
+                });
+        }
+    }
+
+    private List<Plugin> getEffectivePlugins(Model model) {
         final List<Plugin> testRunnerPluginConfigurations = model.getBuild().getPlugins()
             .stream()
             .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
@@ -58,21 +84,10 @@ class MavenProjectConfigurator {
             failBecauseOfPluginVersionMismatch(model);
         }
 
-        dependencyResolver.addRequiredDependencies(model);
-
-        testRunnerPluginConfigurations.stream()
+        return testRunnerPluginConfigurations.stream()
             .filter(
                 testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
-            .forEach(testRunnerPlugin -> {
-                dependencyResolver.addAsPluginDependency(testRunnerPlugin);
-                final Object configuration = testRunnerPlugin.getConfiguration();
-                if (configuration != null) {
-                    final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                    final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
-                    properties.addChild(defineUsageMode());
-                    properties.addChild(defineTestSelectionCriteria());
-                }
-            });
+            .collect(Collectors.toList());
     }
 
     boolean isSkipTestExecutionSet() {
