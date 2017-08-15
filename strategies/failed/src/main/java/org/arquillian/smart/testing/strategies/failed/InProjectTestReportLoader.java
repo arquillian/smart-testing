@@ -14,13 +14,12 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestResult;
 import org.arquillian.smart.testing.spi.TestResultParser;
 
+import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
+
 public class InProjectTestReportLoader implements TestReportLoader {
 
-    private static final String IN_PROJECT_DIR = ".reports";
-
-    private String inProjectDir = IN_PROJECT_DIR;
+    private String tempReportDir = TEMP_REPORT_DIR;
     private JavaSPILoader javaSPILoader;
-
 
     public InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
         this.javaSPILoader = javaSPILoader;
@@ -32,7 +31,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
         final Set<String> testResults = new HashSet<>();
 
-        final Path reportDir = Paths.get(".", inProjectDir);
+        final Path reportDir = Paths.get(".", tempReportDir);
 
         if (Files.exists(reportDir)) {
 
@@ -68,7 +67,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
         return testResults;
     }
 
-    void setInProjectDir(String inProjectDir) {
-        this.inProjectDir = inProjectDir;
+    void setTempReportDir(String tempReportDir) {
+        this.tempReportDir = tempReportDir;
     }
 }

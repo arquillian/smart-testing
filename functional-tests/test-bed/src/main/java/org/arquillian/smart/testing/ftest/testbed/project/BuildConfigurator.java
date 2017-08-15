@@ -33,6 +33,7 @@ public class BuildConfigurator {
     private boolean suspend = true;
     private boolean mvnDebugOutput;
     private boolean enableSurefireRemoteDebugging = false;
+    private boolean ignoreBuildFailure = false;
     private String mavenOpts = "-Xms512m -Xmx1024m";
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
@@ -109,6 +110,11 @@ public class BuildConfigurator {
 
     public BuildConfigurator quiet(boolean quiet) {
         this.quietMode = quiet;
+        return this;
+    }
+
+    public BuildConfigurator ignoreBuildFailure() {
+        this.ignoreBuildFailure = true;
         return this;
     }
 
@@ -227,6 +233,10 @@ public class BuildConfigurator {
             getProperty("test.bed.mvn.surefire.remote.debug.port", Integer.toString(this.surefireRemotePort)));
     }
 
+    boolean isIgnoreBuildFailure() {
+        return ignoreBuildFailure;
+    }
+    
     private int getAvailableLocalPort() {
         ServerSocket socket = null;
         try {
