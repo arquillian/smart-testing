@@ -1220,6 +1220,17 @@ This section will be improved as we continue with the SPI design to let you hook
 <div class="paragraph">
 <p>We are using <code>arquillian-core</code> project (in a form of snapshot and squashed repo) for running those tests. You can find it <a href="https://github.com/arquillian/smart-testing-dogfood-repo">here</a>.</p>
 </div>
+<div class="paragraph">
+<p>You can also run particular tests or all tests against defined repo. For the first option simply <code>GitClone</code> rule constructor</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> GitClone(<span class="predefined-type">String</span> gitRepoUrl)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
+</div>
 <div class="sect3">
 <h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>5.1.1. Design Idea</h4>
 <div class="paragraph">
@@ -1375,7 +1386,7 @@ In addition, after the build is finished, it returns actual test results so we c
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
 </div>
 <div class="sect4">
-<h5 id="_built_in_dsl_features"><a class="anchor" href="#_built_in_dsl_features"></a>Built-in DSL features</h5>
+<h5 id="_built_in_dsl_debugging_features"><a class="anchor" href="#_built_in_dsl_debugging_features"></a>Built-in DSL debugging features</h5>
 <div class="paragraph">
 <p>You can use project configuration DSL for enabling debug mode directly in the test code:</p>
 </div>
@@ -1469,7 +1480,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-14 18:15:33 UTC
+Last updated 2017-08-15 10:44:00 UTC
 </div>
 </div>
 </body>
