@@ -56,17 +56,17 @@ class TestStrategyApplier {
             .stream()
             .map(TestSelection::getClassName)
             .filter(this::presentOnClasspath)
-            .map(testClass -> {
-                try {
-                    return Class.forName(testClass);
-                } catch (ClassNotFoundException e) {
-                    throw new IllegalStateException(e);
-                }
-            }).collect(Collectors.toCollection(LinkedHashSet::new));
+            .filter(this::isInTestToRun)
+            .map(this::mapToClassInstance)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private boolean testSelectionWithAnyStrategyIsChosen(Configuration configuration) {
         return configuration.isSelectingMode() && configuration.getStrategies().length > 0;
+    }
+
+    private boolean isInTestToRun(String testClass) {
+        return testsToRun.getClassByName(testClass) != null;
     }
 
     private boolean presentOnClasspath(String testClass) {
@@ -78,4 +78,11 @@ class TestStrategyApplier {
         }
     }
 
+    private Class<?> mapToClassInstance(String testClass) {
+        try {
+            return Class.forName(testClass);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
+    }
 }
