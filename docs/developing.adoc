@@ -13,6 +13,15 @@ include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing
 
 We are using `arquillian-core` project (in a form of snapshot and squashed repo) for running those tests. You can find it https://github.com/arquillian/smart-testing-dogfood-repo[here].
 
+You can also run particular tests or all tests against defined repo. For the first option simply `GitClone` rule constructor
+
+[source, java, indent=0]
+----
+include::../functional-tests/test-bed/src/main/java/org/arquillian/smart/testing/ftest/testbed/rules/GitClone.java[tag=git_clone_custom_repo]
+----
+
+or define system property `test.bed.repo` which will replace the default repository for all the tests which are relying on it.
+
 ==== Design Idea
 
 The main goal of *Test Bed* module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.
@@ -107,7 +116,7 @@ for example:
 You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.
 
-===== Built-in DSL features
+===== Built-in DSL debugging features
 
 You can use project configuration DSL for enabling debug mode directly in the test code:
 

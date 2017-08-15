@@ -23,7 +23,10 @@ public class GitClone extends ExternalResource {
     private String gitRepoFolder;
     private File tempFolder;
 
-    public GitClone(String gitRepoUrl) {
+    // tag::git_clone_custom_repo[]
+    public GitClone(String gitRepoUrl)
+    // end::git_clone_custom_repo[]
+    {
         try {
             this.gitRepo = new URL(gitRepoUrl).toExternalForm();
         } catch (MalformedURLException e) {
@@ -32,7 +35,7 @@ public class GitClone extends ExternalResource {
     }
 
     public GitClone() {
-        this("https://github.com/arquillian/smart-testing-dogfood-repo.git");
+        this(System.getProperty("test.bed.repo", "https://github.com/arquillian/smart-testing-dogfood-repo.git"));
     }
 
     public GitClone(URL gitRepo) {
