@@ -18,6 +18,8 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.report.SmartTestExecutionReport;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
+import static java.lang.System.getProperty;
+
 class TestStrategyApplier {
 
     private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
@@ -60,7 +62,7 @@ class TestStrategyApplier {
 
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
 
-        if (System.getProperty("smart.testing.report.disable") != null) {
+        if (isReportEnabled()) {
             final SmartTestExecutionReport
                 smartTestExecutionReport = new SmartTestExecutionReport(testSelections, configuration);
             smartTestExecutionReport.create();
@@ -116,5 +118,9 @@ class TestStrategyApplier {
         }
 
         return testSelections;
+    }
+
+    private boolean isReportEnabled() {
+        return Boolean.valueOf(getProperty("smart.testing.report.enable", Boolean.toString(false)));
     }
 }
