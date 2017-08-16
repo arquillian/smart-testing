@@ -37,7 +37,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
-                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .configure()
             .run();
 
@@ -63,7 +63,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         final Collection<TestResult> actualTestResults = project
             .build()
             .options()
-                .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .withDebugOutput()
                 .withRemoteDebugging()
                 .withRemoteSurefireDebugging()

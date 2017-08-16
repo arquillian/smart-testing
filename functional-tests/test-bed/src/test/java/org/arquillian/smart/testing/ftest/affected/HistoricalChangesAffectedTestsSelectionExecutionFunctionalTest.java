@@ -38,7 +38,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
-                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .configure()
             .run();
 
@@ -64,7 +64,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build()
                 .options()
-                    .withSystemProperties("git.last.commits", "2")
+                    .withSystemProperties("scm.last.changes", "2")
                 .configure()
             .run();
 

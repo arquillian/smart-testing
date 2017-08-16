@@ -14,7 +14,7 @@ Let's see some examples:
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
-`$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed"`
+`$ mvn clean test -Dsmart.testing.mode=ordering -Dscm.last.changes=1 -Dsmart.testing="new, changed"`
 
 TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is the **default** mode.
 
