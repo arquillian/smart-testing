@@ -722,14 +722,14 @@ are marked as important ones.</p>
 <div class="ulist">
 <ul>
 <li>
-<p><code>git.commit</code> and <code>git.previous.commit</code> are used to set the range of commits you want to inspect for new tests.
+<p><code>scm.range.head</code> and <code>scm.range.tail</code> are used to set the range of commits you want to inspect for new tests.
 The values can be commit ids or using <code>HEAD</code> notation.
-For example: <code>-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~</code>
+For example: <code>-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~</code>
 By default if not specified, default value is <code>HEAD</code>.</p>
 </li>
 <li>
-<p><code>git.last.commits</code> can be used to set the number of commits from <code>HEAD</code> that you want to inspect.
-For example <code>-Dgit.last.commits=3</code> will be equivalent as <code>-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~~</code>.</p>
+<p><code>scm.last.changes</code> can be used to set the number of commits from <code>HEAD</code> that you want to inspect.
+For example <code>-Dscm.last.changes=3</code> will be equivalent as <code>-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~~</code>.</p>
 </li>
 </ul>
 </div>
@@ -742,7 +742,7 @@ For example <code>-Dgit.last.commits=3</code> will be equivalent as <code>-Dgit.
 <td class="content">
 Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using <a href="https://wiki.jenkins.io/display/JENKINS/Git+Plugin">Git Plugin</a> you can configure your build as follows:
-<code>$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=GIT_PREVIOUS_COMMIT</code>
+<code>$ mvn clean verify -Dsmart.testing=new, affected -Dscm.range.head=GIT_COMMIT -Dscm.range.tail=GIT_PREVIOUS_COMMIT</code>
 </td>
 </tr>
 </table>
@@ -788,7 +788,7 @@ between commits range and local changes as well.</p>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<code>git.commit</code>, <code>git.previous.commit</code> and <code>git.last.commits</code> Java system properties are valid as well.
+<code>scm.range.head</code>, <code>scm.range.tail</code> and <code>scm.last.changes</code> Java system properties are valid as well.
 </td>
 </tr>
 </table>
@@ -921,7 +921,7 @@ Let&#8217;s see some examples:</p>
 <p><strong>You want to run all tests but given priority to the latest tests added or modified</strong></p>
 </div>
 <div class="paragraph">
-<p><code>$ mvn clean test -Dsmart.testing.mode=ordering -Dgit.last.commits=1 -Dsmart.testing="new, changed"</code></p>
+<p><code>$ mvn clean test -Dsmart.testing.mode=ordering -Dscm.last.changes=1 -Dsmart.testing="new, changed"</code></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1095,7 +1095,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>git.previous.commit</code></p>
+<p><code>scm.range.tail</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set first commit id for inspecting changes</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
@@ -1107,7 +1107,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>git.commit</code></p>
+<p><code>scm.range.head</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set last commit id for inspecting changes</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
@@ -1119,7 +1119,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>git.last.commits</code></p>
+<p><code>scm.last.changes</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set the number of commits from <code>HEAD</code> that you want to inspect</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
@@ -1395,7 +1395,7 @@ This gives better analysis of the build execution, as it lets us connect to the 
 <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;TestResult&gt; actualTestResults = project
     .build()
     .options()
-        .withSystemProperties(<span class="string"><span class="delimiter">&quot;</span><span class="content">git.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">git.previous.commit</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD~</span><span class="delimiter">&quot;</span></span>)
+        .withSystemProperties(<span class="string"><span class="delimiter">&quot;</span><span class="content">scm.range.head</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">scm.range.tail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD~</span><span class="delimiter">&quot;</span></span>)
         .withDebugOutput()
         .withRemoteDebugging()
         .withRemoteSurefireDebugging()
@@ -1480,7 +1480,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-08-15 10:44:00 UTC
+Last updated 2017-08-17 13:25:37 UTC
 </div>
 </div>
 </body>
