@@ -29,7 +29,7 @@ public class Project implements AutoCloseable {
     }
     
     public String getMavenLog() {
-        return projectBuilder.options().getMavenLog();
+        return projectBuilder.getMavenLog();
     }
 
     public ProjectConfigurator configureSmartTesting() {

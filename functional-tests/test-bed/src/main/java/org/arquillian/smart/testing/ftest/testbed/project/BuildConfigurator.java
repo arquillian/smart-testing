@@ -35,7 +35,6 @@ public class BuildConfigurator {
     private boolean enableSurefireRemoteDebugging = false;
     private boolean ignoreBuildFailure = false;
     private boolean skipTests = false;
-    private String mavenLog = "false";
     private String mavenOpts = "-Xms512m -Xmx1024m";
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
@@ -125,11 +124,6 @@ public class BuildConfigurator {
         return this;
     }
 
-    public BuildConfigurator withMavenLog() {
-        this.mavenLog = "true";
-        return this;
-    }
-
     public BuildConfigurator logBuildOutput() {
         return logBuildOutput(false);
     }
@@ -193,14 +187,6 @@ public class BuildConfigurator {
         }
     }
 
-    void setMavenLog(String mavenLog) {
-        this.mavenLog = mavenLog;
-    }
-
-    String getMavenLog() {
-        return mavenLog;
-    }
-
     void addMavenOpts(String options) {
         this.mavenOpts += " " + options;
     }
@@ -227,10 +213,6 @@ public class BuildConfigurator {
 
     boolean isSkipTestsEnabled() {
         return skipTests;
-    }
-
-    boolean isMavenLoggingEnabled() {
-        return Boolean.valueOf(mavenLog);
     }
 
     String getMavenOpts() {
