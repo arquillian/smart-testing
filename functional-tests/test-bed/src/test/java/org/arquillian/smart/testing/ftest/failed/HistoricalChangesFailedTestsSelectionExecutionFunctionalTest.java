@@ -51,7 +51,7 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
         final List<TestResult> actualTestResults = project
             .build()
                 .options()
-                    .withSystemProperties("git.commit", "HEAD", "git.previous.commit", "HEAD~")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .configure()
             .run();
 

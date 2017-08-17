@@ -42,17 +42,17 @@ a|`surefire, failsafe`
 |===
 |Property | Description | Default | Strategies
 
-a|`git.previous.commit`
+a|`scm.range.tail`
 |Set first commit id for inspecting changes
 a|`HEAD~0`
 a|`new`, `changed`, `affected`
 
-a|`git.commit`
+a|`scm.range.head`
 |Set last commit id for inspecting changes
 a|`HEAD`
 a|`new`, `changed`, `affected`
 
-a|`git.last.commits`
+a|`scm.last.changes`
 |Set the number of commits from `HEAD` that you want to inspect
 a|`0`
 a|`new`, `changed`, `affected`

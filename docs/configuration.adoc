@@ -34,16 +34,16 @@ are marked as important ones.
 
 This strategy can be configured in several ways through Java system properties:
 
-* `git.commit` and `git.previous.commit` are used to set the range of commits you want to inspect for new tests.
+* `scm.range.head` and `scm.range.tail` are used to set the range of commits you want to inspect for new tests.
 The values can be commit ids or using `HEAD` notation.
-For example: `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~`
+For example: `-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~`
 By default if not specified, default value is `HEAD`.
-* `git.last.commits` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dgit.last.commits=3` will be equivalent as `-Dgit.commit=HEAD -Dgit.previous.commit=HEAD~~`.
+* `scm.last.changes` can be used to set the number of commits from `HEAD` that you want to inspect.
+For example `-Dscm.last.changes=3` will be equivalent as `-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
-`$ mvn clean verify -Dsmart.testing=new, affected -Dgit.commit=GIT_COMMIT -Dgit.previous.commit=GIT_PREVIOUS_COMMIT`
+`$ mvn clean verify -Dsmart.testing=new, affected -Dscm.range.head=GIT_COMMIT -Dscm.range.tail=GIT_PREVIOUS_COMMIT`
 
 Currently not committed changes (those that are _added_ and _untracked_) are considered as important tests as well.
 This effectively means that if you don't specify any commit range, only these information is considered.
@@ -63,7 +63,7 @@ TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=n
 This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class
 between commits range and local changes as well.
 
-TIP: `git.commit`, `git.previous.commit` and `git.last.commits` Java system properties are valid as well.
+TIP: `scm.range.head`, `scm.range.tail` and `scm.last.changes` Java system properties are valid as well.
 
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
 If the test exercises a business class that has been modified, we treat it as *important*  so it will be executed earlier in the test plan.

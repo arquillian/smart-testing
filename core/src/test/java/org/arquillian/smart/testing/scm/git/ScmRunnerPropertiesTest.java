@@ -7,15 +7,15 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
-import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.HEAD;
-import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.LAST_COMMITS;
-import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.PREVIOUS_COMMIT;
-import static org.arquillian.smart.testing.scm.git.GitRunnerProperties.getPrevCommitDefaultValue;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.LAST_COMMITS;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.getPrevCommitDefaultValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class GitRunnerPropertiesTest {
+public class ScmRunnerPropertiesTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
