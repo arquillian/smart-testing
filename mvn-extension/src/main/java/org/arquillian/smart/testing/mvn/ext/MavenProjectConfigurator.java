@@ -15,6 +15,8 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
+
 class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
@@ -88,22 +90,6 @@ class MavenProjectConfigurator {
             .filter(
                 testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
             .collect(Collectors.toList());
-    }
-
-    boolean isSkipTestExecutionSet() {
-        return isSkipTests() || isSkip();
-    }
-
-    private boolean isSkipTests() {
-        return Boolean.valueOf(System.getProperty("skipTests", "false"));
-    }
-
-    private boolean isSkipITs() {
-        return Boolean.valueOf(System.getProperty("skipITs", "false"));
-    }
-
-    private boolean isSkip() {
-        return Boolean.valueOf(System.getProperty("maven.test.skip", "false"));
     }
 
     private Xpp3Dom defineTestSelectionCriteria() {

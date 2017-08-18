@@ -15,6 +15,7 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -28,23 +29,17 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
-    private boolean skipExtension;
-
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
 
-        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-
-        skipExtension = configuration.isDisabled() || mavenProjectConfigurator.isSkipTestExecutionSet();
-
-        if (skipExtension) {
+        if (isSkipExtension()) {
             return;
         }
 
         if (configuration.areStrategiesDefined()) {
-            configureExtension(session, mavenProjectConfigurator);
+            configureExtension(session, configuration);
             calculateChanges();
         } else {
             logStrategiesNotDefined();
@@ -53,7 +48,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (skipExtension) {
+        if (isSkipExtension()) {
             return;
         }
 
@@ -74,12 +69,17 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         changeStorage.store(changes);
     }
 
-    private void configureExtension(MavenSession session, MavenProjectConfigurator mavenProjectConfigurator) {
+    private void configureExtension(MavenSession session, Configuration configuration) {
+        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
     }
 
     private void logStrategiesNotDefined() {
         logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
             + "For details on how to configure it head over to http://bit.ly/st-config");
+    }
+
+    private boolean isSkipExtension() {
+        return configuration.isDisabled() || isSkipTestExecutionSet();
     }
 }
