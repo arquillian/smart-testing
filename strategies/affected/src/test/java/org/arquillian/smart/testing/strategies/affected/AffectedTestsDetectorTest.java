@@ -56,7 +56,7 @@ public class AffectedTestsDetectorTest {
         when(changeStorage.read()).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
-            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "", new CustomTestVerifier());
+            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new CustomTestVerifier());
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();
@@ -81,19 +81,14 @@ public class AffectedTestsDetectorTest {
 
         @Override
         public boolean isTest(Path resource) {
-
             if (resource.toString().endsWith("Test.java") || resource.toString().endsWith("TestCase.java")) {
                 return true;
             }
 
-            if (resource.toString().endsWith("MyBusinessObject.java")) {
-                // Since core class is also in test directory, we need that first time core class is detected as such
-                // but second tiem when real location of .class is found returns it is a class so it is resolved correctly to
-                // test-classes directory
-                return (coreClassCount++) != 0;
-            }
-
-            return false;
+            // Since core class is also in test directory, we need that first time core class is detected as such
+            // but second time when real location of .class is found returns it is a class so it is resolved correctly to
+            // test-classes directory
+            return resource.toString().endsWith("MyBusinessObject.java") && (coreClassCount++) != 0;
         }
     }
 }

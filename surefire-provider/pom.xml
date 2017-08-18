@@ -46,6 +46,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven.surefire</groupId>
+      <artifactId>maven-surefire-common</artifactId>
+      <version>${version.surefire}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>junit-test-result-parser</artifactId>
       <version>${project.version}</version>

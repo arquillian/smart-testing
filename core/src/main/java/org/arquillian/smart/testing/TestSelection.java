@@ -3,7 +3,6 @@ package org.arquillian.smart.testing;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 
@@ -49,6 +48,11 @@ public class TestSelection {
     @Override
     public int hashCode() {
         return Objects.hash(getClassName());
+    }
+
+    @Override
+    public String toString() {
+        return "TestSelection{" + "className='" + className + '\'' + ", types=" + types + '}';
     }
 
     public TestSelection merge(TestSelection other) {
