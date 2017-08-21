@@ -35,6 +35,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = Configuration.load();
 
         if (isSkipExtension()) {
+            logExtensionDisableReason();
             return;
         }
 
@@ -44,6 +45,20 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         } else {
             logStrategiesNotDefined();
         }
+    }
+
+    private void logExtensionDisableReason() {
+        String reason = "Not Defined";
+
+        if (configuration.isDisabled()) {
+            reason = "System Property `smart.testing.disable` is set.";
+        } else if (isSkipTestExecutionSet()) {
+            reason = "Test Execution has been skipped.";
+        } else if (isSpecificTestClassSet()) {
+            reason = "Single Test Class execution is set.";
+        }
+
+        logger.info("Smart Testing is disabled. Reason: %s", reason);
     }
 
     @Override
@@ -80,6 +95,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private boolean isSkipExtension() {
-        return configuration.isDisabled() || isSkipTestExecutionSet();
+        return configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
     }
 }
