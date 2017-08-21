@@ -15,7 +15,7 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.report.SmartTestExecutionReport;
+import org.arquillian.smart.testing.report.ExecutionReporter;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 import static java.lang.System.getProperty;
@@ -52,7 +52,8 @@ class TestStrategyApplier {
                 + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
-        final List<TestSelection> selectedTests = new ArrayList<>();
+
+        final Collection<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             selectedTests.addAll(plannerForStrategy.getTests());
@@ -63,9 +64,9 @@ class TestStrategyApplier {
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
 
         if (isReportEnabled()) {
-            final SmartTestExecutionReport
-                smartTestExecutionReport = new SmartTestExecutionReport(testSelections, configuration);
-            smartTestExecutionReport.create();
+            final ExecutionReporter
+                executionReporter = new ExecutionReporter(testSelections, configuration);
+            executionReporter.createReport();
         }
 
         return testSelections

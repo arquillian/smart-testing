@@ -15,8 +15,8 @@
     </executionConfiguration>
     <selection>
         <tests>
-            <test name="org.arquillian.smart.testing.report.SmartTestExecutionReportTest" strategies="new,changed"/>
-            <test name="org.arquillian.smart.testing.report.SmartTestExecutionReportUsingPropertyTest" strategies="new"/>
+            <test name="org.arquillian.smart.testing.report.ExecutionReporterTest" strategies="new,changed"/>
+            <test name="org.arquillian.smart.testing.report.ExecutionReporterUsingPropertyTest" strategies="new"/>
         </tests>
     </selection>
 </smart-testing-execution>

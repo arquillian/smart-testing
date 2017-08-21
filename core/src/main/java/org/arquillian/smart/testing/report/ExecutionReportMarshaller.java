@@ -5,12 +5,12 @@ import java.io.IOException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-public class SmartTestExecutionReportMarshaller {
+public class ExecutionReportMarshaller {
 
     private final String reportDir;
     private final String fileName;
 
-    public SmartTestExecutionReportMarshaller(String reportDir, String fileName) {
+    public ExecutionReportMarshaller(String reportDir, String fileName) {
         this.reportDir = reportDir != null ? getAbsoluteReportDir(reportDir) : getDefaultReportDir();
         this.fileName = fileName != null ? getFileName(fileName) : "smart-testing-report.xml";
     }

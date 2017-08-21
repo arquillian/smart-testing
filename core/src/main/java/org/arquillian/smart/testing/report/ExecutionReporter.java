@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.report;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
 
-public class SmartTestExecutionReport {
+public class ExecutionReporter {
 
     static final String SMART_TESTING_REPORT_DIR = "smart.testing.report.dir";
     static final String SMART_TESTING_REPORT_NAME = "smart.testing.report.name";
@@ -21,7 +20,7 @@ public class SmartTestExecutionReport {
     private final Collection<TestSelection> testSelections;
     private final Configuration configuration;
 
-    public SmartTestExecutionReport(Collection<TestSelection> testSelections, Configuration configuration) {
+    public ExecutionReporter(Collection<TestSelection> testSelections, Configuration configuration) {
         this.testSelections = testSelections;
         this.configuration = configuration;
     }
@@ -30,9 +29,9 @@ public class SmartTestExecutionReport {
         return testSelections;
     }
 
-    public void create() {
-        SmartTestExecutionReportMarshaller service =
-            new SmartTestExecutionReportMarshaller(System.getProperty(SMART_TESTING_REPORT_DIR),
+    public void createReport() {
+        ExecutionReportMarshaller service =
+            new ExecutionReportMarshaller(System.getProperty(SMART_TESTING_REPORT_DIR),
                 System.getProperty(SMART_TESTING_REPORT_NAME));
         service.marshal(getSmartTestingExecution(configuration));
     }
