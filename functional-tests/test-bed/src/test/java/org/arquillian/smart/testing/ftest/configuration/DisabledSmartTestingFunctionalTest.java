@@ -49,5 +49,4 @@ public class DisabledSmartTestingFunctionalTest {
         // then
         assertThat(actualTestResults).hasSize(74);
     }
-
 }

@@ -32,6 +32,7 @@ public class ProjectBuilder {
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
+    private BuiltProject builtProject;
 
     ProjectBuilder(Path root) {
         this.root = root;
@@ -47,10 +48,11 @@ public class ProjectBuilder {
     }
 
     public List<TestResult> run(String... goals) {
-        return executeGoals(goals);
+        builtProject = executeGoals(goals);
+        return accumulatedTestResults();
     }
 
-    private List<TestResult> executeGoals(String... goals) {
+    private BuiltProject executeGoals(String... goals) {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
 
@@ -65,8 +67,8 @@ public class ProjectBuilder {
                     .setProjects(buildConfigurator.getModulesToBeBuilt())
                     .setDebug(buildConfigurator.isMavenDebugOutputEnabled())
                     .setQuiet(buildConfigurator.disableQuietWhenAnyDebugModeEnabled() && buildConfigurator.isQuietMode())
-                    .skipTests(false)
                     .setProperties(asProperties(buildConfigurator.getSystemProperties()))
+                    .skipTests(buildConfigurator.isSkipTestsEnabled())
                     .setMavenOpts(buildConfigurator.getMavenOpts())
                     .ignoreFailure()
                 .build();
@@ -76,7 +78,11 @@ public class ProjectBuilder {
             throw new IllegalStateException("Maven build has failed, see logs for details");
         }
 
-        return accumulatedTestResults();
+        return build;
+    }
+
+    String getMavenLog() {
+        return builtProject.getMavenLog();
     }
 
     private Properties asProperties(Map<String, String> propertyMap) {

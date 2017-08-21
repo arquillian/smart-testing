@@ -34,6 +34,7 @@ public class BuildConfigurator {
     private boolean mvnDebugOutput;
     private boolean enableSurefireRemoteDebugging = false;
     private boolean ignoreBuildFailure = false;
+    private boolean skipTests = false;
     private String mavenOpts = "-Xms512m -Xmx1024m";
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
@@ -115,6 +116,11 @@ public class BuildConfigurator {
 
     public BuildConfigurator ignoreBuildFailure() {
         this.ignoreBuildFailure = true;
+        return this;
+    }
+
+    public BuildConfigurator skipTests(boolean skipTests) {
+        this.skipTests = skipTests;
         return this;
     }
 
@@ -203,6 +209,10 @@ public class BuildConfigurator {
 
     boolean isQuietMode() {
         return quietMode;
+    }
+
+    boolean isSkipTestsEnabled() {
+        return skipTests;
     }
 
     String getMavenOpts() {

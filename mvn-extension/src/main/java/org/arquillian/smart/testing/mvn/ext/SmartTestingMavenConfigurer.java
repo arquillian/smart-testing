@@ -15,6 +15,7 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -33,7 +34,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         configuration = Configuration.load();
 
-        if (configuration.isDisabled()) {
+        if (isSkipExtension()) {
             return;
         }
 
@@ -47,7 +48,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (configuration.isDisabled()) {
+        if (isSkipExtension()) {
             return;
         }
 
@@ -76,5 +77,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     private void logStrategiesNotDefined() {
         logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
             + "For details on how to configure it head over to http://bit.ly/st-config");
+    }
+
+    private boolean isSkipExtension() {
+        return configuration.isDisabled() || isSkipTestExecutionSet();
     }
 }
