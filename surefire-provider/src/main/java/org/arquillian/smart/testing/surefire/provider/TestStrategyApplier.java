@@ -1,10 +1,14 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
@@ -44,7 +48,7 @@ class TestStrategyApplier {
                 + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
-        final Set<TestSelection> selectedTests = new LinkedHashSet<>();
+        final Collection<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             selectedTests.addAll(plannerForStrategy.getTests());
@@ -52,7 +56,9 @@ class TestStrategyApplier {
         logger.info("Applied strategies: %s", strategies);
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
 
-        return selectedTests
+        final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
+
+        return testSelections
             .stream()
             .map(TestSelection::getClassName)
             .filter(this::presentOnClasspath)
@@ -84,5 +90,23 @@ class TestStrategyApplier {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
+        List<String> strategies) {
+
+        final Collection<TestSelection> testSelections = selectedTests
+            .stream()
+            .filter(testSelection -> presentOnClasspath(testSelection.getClassName()))
+            .collect(Collectors.toMap(TestSelection::getClassName, Function.identity(), TestSelection::merge,
+                LinkedHashMap::new))
+            .values();
+
+        if (strategies.size() > 1) {
+            StrategyComparator byStrategy = new StrategyComparator(strategies);
+            return testSelections.stream().sorted(byStrategy.reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+
+        return testSelections;
     }
 }
