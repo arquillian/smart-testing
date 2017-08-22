@@ -23,8 +23,6 @@ public class SpecificTestClassExecutionFunctionalTest {
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
 
-    //private static String[] dependencyModules = new String[] {"core/api", "core/spi", "core/impl-base", "config/api", "config/impl-base"};
-
     private static final String module = "config/impl-base";
 
     private static final String EXPECTED_LOG_PART = "Enabling Smart Testing";
@@ -46,8 +44,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build(module)
                 .options()
-                    .withWorkingDirectory(module)
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "PropertiesParserTestCase")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "PropertiesParserTestCase", "failIfNoTests", "false")
                 .configure()
             .run("clean", "test");
 
@@ -74,8 +71,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build(module)
                 .options()
-                    .withWorkingDirectory(module)
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "*Properties*")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "*Properties*", "failIfNoTests", "false")
                 .configure()
             .run("clean", "test");
 
@@ -102,8 +98,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build(module)
                 .options()
-                    .withWorkingDirectory(module)
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*", "failIfNoTests", "false")
                     .ignoreBuildFailure()
                 .configure()
             .run("clean", "test");
@@ -133,8 +128,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build(module)
                 .options()
-                    .withWorkingDirectory(module)
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Configuration*")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Configuration*", "failIfNoTests", "false")
                 .configure()
             .run("clean", "test");
 
