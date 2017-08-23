@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,7 +49,7 @@ class TestStrategyApplier {
                 + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
-        final Collection<TestSelection> selectedTests = new ArrayList<>();
+        final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             selectedTests.addAll(plannerForStrategy.getTests());
@@ -61,8 +62,6 @@ class TestStrategyApplier {
         return testSelections
             .stream()
             .map(TestSelection::getClassName)
-            .filter(this::presentOnClasspath)
-            .filter(this::isInTestToRun)
             .map(this::mapToClassInstance)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
@@ -92,19 +91,21 @@ class TestStrategyApplier {
         }
     }
 
-    Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
+    private Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
         List<String> strategies) {
 
         final Collection<TestSelection> testSelections = selectedTests
             .stream()
-            .filter(testSelection -> presentOnClasspath(testSelection.getClassName()))
-            .collect(Collectors.toMap(TestSelection::getClassName, Function.identity(), TestSelection::merge,
-                LinkedHashMap::new))
+            .filter(testSelection -> presentOnClasspath(testSelection.getClassName()) && isInTestToRun(testSelection.getClassName()))
+            .collect(Collectors.toMap(TestSelection::getClassName, Function.identity(), TestSelection::merge, LinkedHashMap::new))
             .values();
 
         if (strategies.size() > 1) {
-            StrategyComparator byStrategy = new StrategyComparator(strategies);
-            return testSelections.stream().sorted(byStrategy.reversed()).collect(Collectors.toCollection(LinkedHashSet::new));
+            final StrategiesComparator byStrategies = new StrategiesComparator(strategies);
+
+            return testSelections.stream()
+                .sorted(Comparator.comparing(TestSelection::getTypes, byStrategies))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
         return testSelections;
