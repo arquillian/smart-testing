@@ -163,8 +163,8 @@ public class BuildConfigurator {
         return this;
     }
 
-    public BuildConfigurator withWorkingDirectory(String filePath) {
-        this.workingDirectory = new File(filePath);
+    public BuildConfigurator withWorkingDirectory(String newWorkingDirectory) {
+        this.workingDirectory = new File(newWorkingDirectory);
         return this;
     }
 

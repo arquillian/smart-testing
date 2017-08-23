@@ -51,7 +51,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         String reason = "Not Defined";
 
         if (configuration.isDisabled()) {
-            reason = "System Property `smart.testing.disable` is set.";
+            reason = "System Property `SMART_TESTING_DISABLE` is set.";
         } else if (isSkipTestExecutionSet()) {
             reason = "Test Execution has been skipped.";
         } else if (isSpecificTestClassSet()) {

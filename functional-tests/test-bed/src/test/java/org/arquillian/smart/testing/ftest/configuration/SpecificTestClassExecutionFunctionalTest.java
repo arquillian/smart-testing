@@ -28,7 +28,7 @@ public class SpecificTestClassExecutionFunctionalTest {
     private static final String EXPECTED_LOG_PART = "Enabling Smart Testing";
 
     @Test
-    public void should_disable_extension_and_only_execute_specified_test_when_single_test_set() throws Exception {
+    public void should_disable_extension_and_only_execute_specific_test_when_single_test_set() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -46,12 +46,68 @@ public class SpecificTestClassExecutionFunctionalTest {
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "PropertiesParserTestCase", "failIfNoTests", "false")
                 .configure()
-            .run("clean", "test");
+            .run();
 
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
         assertThat(actualTestResults).doesNotContainAnyElementsOf(expectedTestResults).hasSize(1);
+    }
+
+    @Test
+    public void should_disable_extension_and_only_execute_specified_tests_when_tests_without_pattern_set() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+                .executionOrder(NEW)
+                .inMode(ORDERING)
+            .enable();
+
+        final Collection<TestResult> expectedTestResults = project
+            .applyAsCommits("Adds new unit test");
+
+        // when
+        final Collection<TestResult> actualTestResults = project
+            .build(module)
+                .options()
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
+                        "test", "PropertiesParserTestCase, ConfigurationRegistrarTestCase", "failIfNoTests", "false")
+                .configure()
+            .run();
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
+        assertThat(actualTestResults).doesNotContainAnyElementsOf(expectedTestResults).hasSize(2);
+    }
+
+    @Test
+    public void should_not_disable_extension_execute_all_specified_tests_when_tests_with_pattern_set() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+                .executionOrder(NEW)
+                .inMode(ORDERING)
+            .enable();
+
+        final Collection<TestResult> expectedTestResults = project
+            .applyAsCommits("Adds new unit test");
+
+        // when
+        final Collection<TestResult> actualTestResults = project
+            .build(module)
+                .options()
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
+                        "test", "*Properties*, ConfigurationRegistrarTestCase", "failIfNoTests", "false")
+                .configure()
+            .run();
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
+        assertThat(actualTestResults).containsSequence(expectedTestResults).hasSize(4);
     }
 
     @Test
@@ -73,7 +129,7 @@ public class SpecificTestClassExecutionFunctionalTest {
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "*Properties*", "failIfNoTests", "false")
                 .configure()
-            .run("clean", "test");
+            .run();
 
         // then
         String capturedMavenLog = project.getMavenLog();
@@ -82,7 +138,7 @@ public class SpecificTestClassExecutionFunctionalTest {
     }
 
     @Test
-    public void should_not_execute_any_test_when_test_class_used_with_selecting_mode_does_not_fit_strategy() throws Exception {
+    public void should_not_execute_any_test_when_test_class_pattern_used_with_selecting_mode_does_not_fit_strategy() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -98,10 +154,9 @@ public class SpecificTestClassExecutionFunctionalTest {
         final Collection<TestResult> actualTestResults = project
             .build(module)
                 .options()
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*", "failIfNoTests", "false")
-                    .ignoreBuildFailure()
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*")
                 .configure()
-            .run("clean", "test");
+            .run();
 
         // then
         String capturedMavenLog = project.getMavenLog();
@@ -120,7 +175,7 @@ public class SpecificTestClassExecutionFunctionalTest {
                 .inMode(SELECTING)
             .enable();
 
-        final Collection<TestResult> expectedTestResults = project
+        project
             .applyAsCommits("Single method body modification - sysout",
                 "Inlined variable in a method");
 
@@ -130,11 +185,12 @@ public class SpecificTestClassExecutionFunctionalTest {
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Configuration*", "failIfNoTests", "false")
                 .configure()
-            .run("clean", "test");
+            .run();
 
         // then
        String capturedMavenLog = project.getMavenLog();
        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-       assertThat(actualTestResults).isSubsetOf(expectedTestResults).hasSize(1);
+       assertThat(actualTestResults).extracting("className")
+           .containsOnly("org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase");
     }
 }

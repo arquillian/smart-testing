@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,12 +25,13 @@ class MavenPropertyResolver {
     }
 
     static boolean isSpecificTestClassSet() {
-        String specificTestClasses = System.getProperty("test");
-        return specificTestClasses != null && !containsPattern(specificTestClasses);
+        String testClasses = System.getProperty("test");
+        return testClasses != null && !containsPattern(testClasses);
     }
 
-    private static boolean containsPattern(String specificTestClasses) {
-        Matcher matcher = TEST_CLASS_PATTERN.matcher(specificTestClasses);
-        return matcher.find();
+    private static boolean containsPattern(String testClasses) {
+        return Arrays.stream(testClasses.split(","))
+            .map(TEST_CLASS_PATTERN::matcher)
+            .anyMatch(Matcher::find);
     }
 }

@@ -48,29 +48,35 @@ To do it you just need to set `smart.testing.apply.to` with either `surefire` or
 
 === Specifying Concrete Set of Test Classes
 
-During development, you may want to run a single test class or a set of concrete test classes repeatedly. You can do this
-by setting the maven `test` property to specific test class(es).
+During development, you may want to run a single test class or a set of concrete test classes repeatedly. 
+You can do this by setting the maven `test` property to specific test class(es).
 
-*To Run a Single Test*
+==== To Run a Single Test
 
-`$ mvn -Dtest=SampleTest test`
+`$ mvn test -Dtest=SampleTest`
 
 NOTE: This configuration disables smart testing and executes only the specified sample test.
 
-*To Run Multiple Test Classes*
+==== To Run Multiple Test Classes
 
-You can choose to execute multiple test classes using patterns as supported by maven.
+You can also choose to run only a concrete set of multiple test classes.
 
-`$ mvn -Dtest=RemoteReusable*Test test`
+`$ mvn test -Dtest=SampleOneTest, SampleTwoTest`
 
-This property can also be coupled with smart testing's `selecting` and `ordering` mode to choose specific test classes.
+NOTE: When multiple specific tests are set without any pattern, smart testing is disabled just like the case 
+for single test.
 
-When used with `ordering` mode, the specified tests are executed in the order defined by the smart testing strategy used.
-If none is applicable to the strategy, they are executed one after the other in no specific order.
+You can further choose to execute multiple test classes in combination with smart testing's <<configuration#_modes, 
+`selecting`>> and <<configuration#_modes,`ordering`>> mode by using patterns as 
+http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html[supported by Maven].
+
+`$ mvn test -Dtest=Sample*Test`
+
+When used with `ordering` mode, the specified tests are executed in the order defined by the smart testing
+strategy used. If none is applicable to the strategy, they are executed in order defined by Surefire.
 
 When used with `selecting` mode, the specified tests that fit the defined strategy are executed.
-However, if none fulfil the strategy filter, no tests would be executed resulting in build failure.
-To avoid build failure, either execute using `ordering` mode or by disabling smart testing.
+However, if none fulfil the strategy criteria, no tests would be executed.
 
 === Running Examples
 
