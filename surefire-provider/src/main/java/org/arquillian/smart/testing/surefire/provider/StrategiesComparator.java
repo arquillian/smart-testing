@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 
 class StrategiesComparator implements Comparator<Collection<String>> {
     private final Map<String, Double> priorities;
-    private final List<String> strategies;
+    private final List<String> strategiesByPriority;
 
-    StrategiesComparator(List<String> strategies) {
-        this.strategies = strategies;
+    StrategiesComparator(List<String> strategiesByPriority) {
+        this.strategiesByPriority = strategiesByPriority;
         this.priorities = getPriorities();
     }
 
@@ -20,16 +20,15 @@ class StrategiesComparator implements Comparator<Collection<String>> {
     public int compare(Collection<String> list1, Collection<String> list2) {
         final double sum1 = list1.stream().mapToDouble(priorities::get).sum();
         final double sum2 = list2.stream().mapToDouble(priorities::get).sum();
-
         return Double.compare(sum2, sum1);
     }
 
     private Map<String, Double> getPriorities() {
-        return strategies.stream()
+        return strategiesByPriority.stream()
             .collect(Collectors.toMap(Function.identity(), this::getPriority));
     }
 
     private Double getPriority(String strategy) {
-        return Math.pow(10, strategies.size() - strategies.indexOf(strategy) - 1);
+        return Math.pow(10, strategiesByPriority.size() - strategiesByPriority.indexOf(strategy) - 1);
     }
 }
