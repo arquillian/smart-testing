@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
 public class StrategiesComparatorTest {
@@ -33,34 +34,29 @@ public class StrategiesComparatorTest {
     }
 
     @Parameterized.Parameter
-    public List<List<String>> actual;
+    public List<List<String>> strategyCombinations;
 
     @Parameterized.Parameter(1)
-    public List<List<String>> expected;;
+    public List<List<String>> expectedOrder;
 
+    private final StrategiesComparator strategiesComparator = new StrategiesComparator(Arrays.asList("a", "b", "c", "d", "e"));
 
     @Test
-    public void should_order_collection_with_strategies_priority_() {
-        // given
-        final List<String> strategies = Arrays.asList("a", "b", "c", "d", "e");
-
-        StrategiesComparator strategiesComparator = new StrategiesComparator(strategies);
-
+    public void should_order_strategies_combinations_based_on_their_priority() {
         // when
-         actual.sort(strategiesComparator);
+        strategyCombinations.sort(strategiesComparator);
 
-        //then
-        Assertions.assertThat(actual).isEqualTo(expected);
-    }
-
-    private static List<String> strategiesOf(String strategies) {
-        return Arrays.asList(strategies.split("\\s*,\\s*"));
+        // then
+        assertThat(strategyCombinations).isEqualTo(expectedOrder);
     }
 
     private static List<List<String>> strategiesListOf(String... strategies) {
         final List<List<String>> list = new ArrayList<>();
         Arrays.stream(strategies).forEach(s -> list.add(strategiesOf(s)));
-
         return list;
+    }
+
+    private static List<String> strategiesOf(String strategies) {
+        return Arrays.asList(strategies.split("\\s*,\\s*"));
     }
 }
