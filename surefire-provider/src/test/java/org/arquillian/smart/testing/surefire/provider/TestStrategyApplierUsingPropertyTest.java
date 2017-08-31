@@ -57,7 +57,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         final Configuration configuration = Configuration.load();
-        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, providerParameters.getTestClassLoader());
+        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, providerParameters.getTestClassLoader(), ".");
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
@@ -89,7 +89,7 @@ public class TestStrategyApplierUsingPropertyTest {
         // when
         final Configuration configuration = Configuration.load();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader,
-            Thread.currentThread().getContextClassLoader());
+            Thread.currentThread().getContextClassLoader(), ".");
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
@@ -120,7 +120,7 @@ public class TestStrategyApplierUsingPropertyTest {
         // when
         final Configuration configuration = Configuration.load();
         TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader,
-            Thread.currentThread().getContextClassLoader());
+            Thread.currentThread().getContextClassLoader(), ".");
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then
@@ -149,7 +149,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         final Configuration configuration = Configuration.load();
-        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+        TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader(), ".");
         final TestsToRun realTestPlanning = testStrategyApplier.apply(configuration);
 
         // then

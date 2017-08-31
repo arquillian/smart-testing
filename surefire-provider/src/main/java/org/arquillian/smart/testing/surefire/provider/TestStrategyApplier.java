@@ -28,12 +28,14 @@ class TestStrategyApplier {
     private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
+    private final String baseDir;
     private TestsToRun testsToRun;
 
-    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader) {
+    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader, String baseDir) {
         this.testsToRun = testsToRun;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
         this.testClassLoader = testClassLoader;
+        this.baseDir = baseDir;
     }
 
     TestsToRun apply(Configuration configuration) {
@@ -66,7 +68,7 @@ class TestStrategyApplier {
 
         if (isReportEnabled()) {
             final SmartTestingReportGenerator
-                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, getBaseDir());
+                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, baseDir);
             reportGenerator.generateReport();
         }
 
@@ -124,15 +126,5 @@ class TestStrategyApplier {
 
     private boolean isReportEnabled() {
         return Boolean.valueOf(getProperty("smart.testing.report.enable", Boolean.toString(false)));
-    }
-
-    private String getBaseDir() {
-        final URL[] classLoadersUrls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
-
-        return Arrays.stream(classLoadersUrls)
-            .filter(url -> url.getPath().endsWith("test-classes" + File.separator))
-            .map(url -> url.getPath().split(File.separator + "target")[0])
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Can't find test-classes in classLoader"));
     }
 }

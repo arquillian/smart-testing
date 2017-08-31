@@ -28,7 +28,7 @@ public class TestStrategyApplierTest {
 
         final Set<Class<?>> classes = new LinkedHashSet<>(Collections.singletonList(TestExecutionPlannerLoaderTest.class));
 
-           final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+           final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader(), ".");
 
         // when
         final Collection<TestSelection> testSelections =
@@ -47,7 +47,7 @@ public class TestStrategyApplierTest {
         final TestSelection testSelectionChanged =
             new TestSelection(TestStrategyApplierTest.class.getName(), "changed");
         final Set<Class<?>> classes = new LinkedHashSet<>(asList(TestExecutionPlannerLoaderTest.class, TestStrategyApplierTest.class));
-        final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+        final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader(), ".");
 
         // when
         final Collection<TestSelection> testSelections =

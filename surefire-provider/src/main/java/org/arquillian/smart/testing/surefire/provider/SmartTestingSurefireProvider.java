@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
@@ -45,8 +46,13 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
                 return testsToRun.getClassByName(className) != null;
             });
 
-        return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader()).apply(
+        return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader(), getBasedir()).apply(
             configuration);
+    }
+
+    private String getBasedir() {
+        final String path = this.bootParams.getReporterConfiguration().getReportsDirectory().getPath();
+        return path.substring(0, path.indexOf(File.separator + "target"));
     }
 
     public Iterable<Class<?>> getSuites() {
