@@ -1,5 +1,8 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +18,7 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.report.ExecutionReporter;
+import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 import static java.lang.System.getProperty;
@@ -48,12 +51,10 @@ class TestStrategyApplier {
     private Set<Class<?>> selectTests(Configuration configuration) {
         final List<String> strategies = Arrays.asList(configuration.getStrategies());
         if (strategies.isEmpty()) {
-            logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
-                + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
 
-        final Collection<TestSelection> selectedTests = new ArrayList<>();
+        final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             selectedTests.addAll(plannerForStrategy.getTests());
@@ -64,9 +65,9 @@ class TestStrategyApplier {
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
 
         if (isReportEnabled()) {
-            final ExecutionReporter
-                executionReporter = new ExecutionReporter(testSelections, configuration);
-            executionReporter.createReport();
+            final SmartTestingReportGenerator
+                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, getBaseDir());
+            reportGenerator.generateReport();
         }
 
         return testSelections
@@ -101,7 +102,7 @@ class TestStrategyApplier {
         }
     }
 
-    private Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
+    Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
         List<String> strategies) {
 
         final Collection<TestSelection> testSelections = selectedTests
@@ -123,5 +124,15 @@ class TestStrategyApplier {
 
     private boolean isReportEnabled() {
         return Boolean.valueOf(getProperty("smart.testing.report.enable", Boolean.toString(false)));
+    }
+
+    private String getBaseDir() {
+        final URL[] classLoadersUrls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
+
+        return Arrays.stream(classLoadersUrls)
+            .filter(url -> url.getPath().endsWith("test-classes" + File.separator))
+            .map(url -> url.getPath().split(File.separator + "target")[0])
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Can't find test-classes in classLoader"));
     }
 }

@@ -1,6 +1,9 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.assertj.core.api.Assertions;
@@ -15,24 +18,23 @@ import static java.util.Arrays.asList;
 public class TestStrategyApplierTest {
 
     @Mock
-    private TestsToRun testsToRun;
-
-    @Mock
     private TestExecutionPlannerLoader testExecutionPlannerLoader;
 
     @Test
     public void should_return_merged_test_selections_if_test_selection_has_same_class() {
         // given
-        final TestSelection
-            testSelectionNew = new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "new");
+        final TestSelection testSelectionNew = new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "new");
         final TestSelection testSelectionChanged = new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "changed");
-        final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+
+        final Set<Class<?>> classes = new LinkedHashSet<>(Collections.singletonList(TestExecutionPlannerLoaderTest.class));
+
+           final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
 
         // when
         final Collection<TestSelection> testSelections =
-            testStrategyApplier.filterAndMergeTestSelection(asList(testSelectionNew, testSelectionChanged));
+            testStrategyApplier.filterMergeAndOrderTestSelection(asList(testSelectionNew, testSelectionChanged), asList("new", "changed"));
 
-        //then
+        // then
         Assertions.assertThat(testSelections)
             .hasSize(1)
             .flatExtracting("types").containsExactly("new", "changed");
@@ -44,12 +46,12 @@ public class TestStrategyApplierTest {
         final TestSelection testSelectionNew = new TestSelection(TestExecutionPlannerLoaderTest.class.getName(), "new");
         final TestSelection testSelectionChanged =
             new TestSelection(TestStrategyApplierTest.class.getName(), "changed");
-        final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
+        final Set<Class<?>> classes = new LinkedHashSet<>(asList(TestExecutionPlannerLoaderTest.class, TestStrategyApplierTest.class));
+        final TestStrategyApplier testStrategyApplier = new TestStrategyApplier(new TestsToRun(classes), testExecutionPlannerLoader, Thread.currentThread().getContextClassLoader());
 
         // when
         final Collection<TestSelection> testSelections =
-            testStrategyApplier.filterAndMergeTestSelection(asList(testSelectionNew, testSelectionChanged));
-
+            testStrategyApplier.filterMergeAndOrderTestSelection(asList(testSelectionNew, testSelectionChanged), asList("new", "changed"));
 
         // then
         Assertions.assertThat(testSelections)
