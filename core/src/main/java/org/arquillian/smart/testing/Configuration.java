@@ -10,6 +10,7 @@ public class Configuration {
     public static final String SMART_TESTING_APPLY_TO = "smart.testing.apply.to";
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
+    public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
 
     private String[] strategies = new String[0];
     private RunMode mode;

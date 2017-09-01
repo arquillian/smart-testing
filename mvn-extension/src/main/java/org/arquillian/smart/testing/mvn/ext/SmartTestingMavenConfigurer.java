@@ -88,12 +88,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
+        session.getAllProjects().forEach(mavenProject -> {
+            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            logger.debug("Effective pom:" + mavenProjectConfigurator.showPom(mavenProject.getModel()));
+        });
     }
 
     private void logStrategiesNotDefined() {
-        logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
-            + "For details on how to configure it head over to http://bit.ly/st-config");
+        logger.warn(
+            "Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
+                + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 
     private boolean shouldSkipExtensionInstallation() {

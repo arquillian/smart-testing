@@ -1,8 +1,10 @@
 package org.arquillian.smart.testing;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
 import static java.lang.String.format;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
 
 public class Logger {
 
@@ -12,6 +14,24 @@ public class Logger {
 
     private Logger(java.util.logging.Logger logger) {
         this.jul = logger;
+       /* try(InputStream configFile = getClass().getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(configFile);
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load default logging properties.", e);
+        }*/
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        setLogLevel();
+        consoleHandler.setLevel(Level.FINEST);
+        this.jul.addHandler(consoleHandler);
+    }
+
+    private void setLogLevel() {
+        if (isDebugEnabled()) {
+            jul.info("Smart Testing is enabled in Debug Mode.");
+            jul.setLevel(Level.FINEST);
+        } else {
+            jul.setLevel(Level.INFO);
+        }
     }
 
     /**
@@ -143,6 +163,22 @@ public class Logger {
      */
     public void finest(String msg, Object... args) {
         jul.finest(getFormattedMsg(msg, args));
+    }
+
+    /**
+     * Log a formatted FINE message with given arguments using java.util.logging.Logger
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void debug(String msg, Object... args) {
+        jul.fine(getFormattedMsg(msg, args));
+    }
+
+    public Boolean isDebugEnabled() {
+        return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false"));
     }
 
     private String getFormattedMsg(String msg, Object... args) {

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
@@ -32,9 +33,10 @@ class MavenProjectConfigurator {
         this.dependencyResolver = new DependencyResolver(configuration);
     }
 
-    void showPom(Model model) {
+    File showPom(Model model) {
         try (StringWriter pomOut = new StringWriter()) {
             new MavenXpp3Writer().write(pomOut, model);
+            return model.getPomFile();
         } catch (IOException e) {
             throw new RuntimeException("Failed writing updated pom file: " + model.getPomFile().getAbsolutePath(), e);
         }
@@ -44,7 +46,7 @@ class MavenProjectConfigurator {
         final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
 
         if (!effectiveTestRunnerPluginConfigurations.isEmpty()) {
-            logger.info("Enabling Smart Testing %s for %s", ExtensionVersion.version().toString(),
+            logger.info("Enabling Smart Testing %s with %s", ExtensionVersion.version().toString(),
                 effectiveTestRunnerPluginConfigurations.stream()
                     .map(Plugin::getArtifactId)
                     .collect(Collectors.toList()).toString());
