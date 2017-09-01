@@ -1,5 +1,8 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,19 +18,24 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
+
+import static java.lang.System.getProperty;
 
 class TestStrategyApplier {
 
     private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final ClassLoader testClassLoader;
+    private final String baseDir;
     private TestsToRun testsToRun;
 
-    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader) {
+    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader, String baseDir) {
         this.testsToRun = testsToRun;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
         this.testClassLoader = testClassLoader;
+        this.baseDir = baseDir;
     }
 
     TestsToRun apply(Configuration configuration) {
@@ -45,10 +53,9 @@ class TestStrategyApplier {
     private Set<Class<?>> selectTests(Configuration configuration) {
         final List<String> strategies = Arrays.asList(configuration.getStrategies());
         if (strategies.isEmpty()) {
-            logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
-                + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
+
         final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
@@ -58,6 +65,12 @@ class TestStrategyApplier {
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
 
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
+
+        if (isReportEnabled()) {
+            final SmartTestingReportGenerator
+                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, baseDir);
+            reportGenerator.generateReport();
+        }
 
         return testSelections
             .stream()
@@ -91,7 +104,7 @@ class TestStrategyApplier {
         }
     }
 
-    private Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
+    Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
         List<String> strategies) {
 
         final Collection<TestSelection> testSelections = selectedTests
@@ -109,5 +122,9 @@ class TestStrategyApplier {
         }
 
         return testSelections;
+    }
+
+    private boolean isReportEnabled() {
+        return Boolean.valueOf(getProperty("smart.testing.report.enable", Boolean.toString(false)));
     }
 }

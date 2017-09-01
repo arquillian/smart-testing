@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
+import org.apache.maven.surefire.report.ReporterConfiguration;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +40,7 @@ public class SmartTestingProviderTest {
 
         providerFactory = mock(SurefireProviderFactory.class);
         when(providerFactory.createInstance()).thenReturn(surefireProvider);
+        when(providerParameters.getReporterConfiguration()).thenReturn(new ReporterConfiguration(new File("surefire-provider/target"), false));
     }
 
     @Test
