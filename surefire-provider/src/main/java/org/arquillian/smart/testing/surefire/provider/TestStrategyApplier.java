@@ -40,7 +40,6 @@ class TestStrategyApplier {
 
     TestsToRun apply(Configuration configuration) {
         final Set<Class<?>> selectedTests = selectTests(configuration);
-        System.out.println(System.getenv("CLASSPATH"));
         if (testSelectionWithAnyStrategyIsChosen(configuration)) {
             return new TestsToRun(selectedTests);
         } else {
