@@ -27,6 +27,12 @@
  */
 package org.arquillian.smart.testing.strategies.affected.ast;
 
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+import org.arquillian.smart.testing.FilesCodec;
+import org.arquillian.smart.testing.strategies.affected.MissingClassException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,11 +43,6 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.NotFoundException;
-import org.arquillian.smart.testing.FilesCodec;
-import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 
 class JavaAssistClassParser {
     private ClassPool classPool;
@@ -57,13 +58,13 @@ class JavaAssistClassParser {
             // OK.
             classPool = new ClassPool(true);
             try {
-                Arrays.stream(((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs()).map(
-                    URL::toExternalForm).forEach(
+                Arrays.stream(getLoadedClasses()).map(URL::toExternalForm).forEach(
                     s -> {
                         try {
-                            classPool.appendClassPath(s.replace("file:", ""));
+                            classPool.appendClassPath(s.replace("file:", "")); // removes file prefix, as JavaAssist doesn't like it
                         } catch (NotFoundException e) {
-                            throw new RuntimeException(e);
+                            throw new RuntimeException("Failed configuring JavaAssist ClassPool" +
+                                " while loading resources from Context Class Loader", e);
                         }
                     }
                 );
@@ -75,6 +76,11 @@ class JavaAssistClassParser {
             }
         }
         return classPool;
+    }
+
+    private URL[] getLoadedClasses()
+    {
+        return ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
     }
 
     private final static Map<String, JavaClass> CLASSES_BY_NAME = new HashMap<>();
