@@ -8,6 +8,7 @@ import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +25,9 @@ public class SurefireForksConfigurationTest {
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public TestName name= new TestName();
 
     @Test
     public void test_with_reuse_forks_false() {
@@ -71,9 +75,13 @@ public class SurefireForksConfigurationTest {
         // when
         final List<TestResult> actualTestResults =
             project
-                .build("config/impl-base")
+                .build()
                 .options()
+                    //.withRemoteDebugging()
+                    //.withRemoteSurefireDebugging()
                     .withSystemProperties(systemPropertiesPairs)
+                    .withSystemProperties("graph.name", name.getMethodName())
+                    .withSystemProperties("smart.testing.debug", "true") // This will only be propagated to surefire for "not_reusing_forks" option
                     .configure()
                 .run();
 

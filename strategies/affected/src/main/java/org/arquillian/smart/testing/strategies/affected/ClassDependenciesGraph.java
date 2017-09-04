@@ -27,19 +27,19 @@
  */
 package org.arquillian.smart.testing.strategies.affected;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.arquillian.smart.testing.filter.TestVerifier;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.jgrapht.Graphs.predecessorListOf;
 
@@ -75,6 +75,10 @@ public class ClassDependenciesGraph {
             if (javaClass != null) {
                 addToIndex(new JavaElement(javaClass), javaClass.getImports());
             }
+        }
+
+        if (Boolean.valueOf(System.getProperty("smart.testing.debug", "false"))) {
+            new GraphExporter().dumpGraph(this.graph, System.getProperty("graph.name", UUID.randomUUID().toString()));
         }
     }
 
