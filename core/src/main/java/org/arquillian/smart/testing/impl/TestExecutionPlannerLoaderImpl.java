@@ -15,14 +15,9 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
     private final TestVerifier verifier;
     private File projectDir;
 
-    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier) {
+    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir) {
         this.spiLoader = spiLoader;
         this.verifier = verifier;
-        this.projectDir = new File(System.getProperty("user.dir"));
-    }
-
-    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir) {
-        this(spiLoader, verifier);
         this.projectDir = projectDir;
     }
 
