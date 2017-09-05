@@ -29,12 +29,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
+    private boolean extensionNotLoaded;
+
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
 
-        if (isSkipExtension()) {
+        extensionNotLoaded = isSkipExtension();
+
+        if (extensionNotLoaded) {
             logExtensionDisableReason();
             return;
         }
@@ -63,7 +67,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (isSkipExtension()) {
+        if (extensionNotLoaded) {
             return;
         }
 

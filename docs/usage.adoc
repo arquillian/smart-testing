@@ -48,7 +48,7 @@ To do it you just need to set `smart.testing.apply.to` with either `surefire` or
 
 === Specifying Concrete Set of Test Classes
 
-During development, you may want to run a single test class or a set of concrete test classes repeatedly. 
+During development, you may want to run a single test class or a set of concrete test classes.
 You can do this by setting the maven `test` property to specific test class(es).
 
 ==== To Run a Single Test
