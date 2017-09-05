@@ -53,6 +53,14 @@ public class Configuration {
         return mode;
     }
 
+    public void setMode(RunMode mode) {
+        this.mode = mode;
+    }
+
+    public void setStrategies(String[] strategies) {
+        this.strategies = strategies;
+    }
+
     public String[] getStrategies() {
         return strategies;
     }

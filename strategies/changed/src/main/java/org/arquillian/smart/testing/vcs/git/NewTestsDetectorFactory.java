@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
@@ -19,6 +19,6 @@ public class NewTestsDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
-        return new NewTestsDetector(verifier);
+        return new NewTestsDetector(projectDir, verifier);
     }
 }

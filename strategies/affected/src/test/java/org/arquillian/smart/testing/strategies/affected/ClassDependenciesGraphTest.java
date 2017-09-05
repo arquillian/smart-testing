@@ -29,7 +29,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_simple_test_to_execute() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
@@ -49,7 +49,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_multiple_tests_to_execute_against_same_main_class() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -72,7 +72,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_test_with_multiple_main_classes() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -94,7 +94,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_multiple_tests_to_execute_against_same_main_class_avoiding_duplicates() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -119,7 +119,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_all_changes_transitive() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
@@ -144,7 +144,7 @@ public class ClassDependenciesGraphTest {
         // given
         System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_EXCLUSIONS, "org.arquillian.smart.testing.strategies.affected.fakeproject.main.B");
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
@@ -168,7 +168,7 @@ public class ClassDependenciesGraphTest {
         // given
         System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_INCLUSIONS, "org.arquillian.smart.testing.strategies.affected.fakeproject.main.A");
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(resource -> resource.toString().endsWith("Test.java"));
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
