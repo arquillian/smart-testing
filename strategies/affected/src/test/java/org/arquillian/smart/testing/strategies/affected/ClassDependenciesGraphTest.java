@@ -12,7 +12,6 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.test.ATest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.BTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.CTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
@@ -21,7 +20,6 @@ import org.junit.experimental.categories.Category;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-@Ignore
 public class ClassDependenciesGraphTest {
 
     @Rule
