@@ -70,6 +70,7 @@ public class ProjectBuilder {
                     .setProperties(asProperties(buildConfigurator.getSystemProperties()))
                     .skipTests(buildConfigurator.isSkipTestsEnabled())
                     .setMavenOpts(buildConfigurator.getMavenOpts())
+                    .setAlsoMake(true)
                     .ignoreFailure()
                 .build();
 
