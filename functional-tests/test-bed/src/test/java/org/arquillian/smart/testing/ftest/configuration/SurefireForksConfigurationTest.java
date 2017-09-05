@@ -68,7 +68,7 @@ public class SurefireForksConfigurationTest {
         // when
         final List<TestResult> actualTestResults =
             project
-                .build()
+                .build("config/impl-base")
                 .options()
                     .withSystemProperties(systemPropertiesPairs)
                     .configure()
