@@ -39,7 +39,6 @@ public class SurefireForksConfigurationTest {
     }
 
     @Test
-    //@Ignore("FIXME https://github.com/arquillian/smart-testing/issues/124")
     public void test_with_multiple_forks() {
         verifyTestSuiteExecution("forkCount", "2");
     }
@@ -71,7 +70,6 @@ public class SurefireForksConfigurationTest {
             project
                 .build()
                 .options()
-                    //.withRemoteSurefireDebugging()
                     .withSystemProperties(systemPropertiesPairs)
                     .configure()
                 .run();
