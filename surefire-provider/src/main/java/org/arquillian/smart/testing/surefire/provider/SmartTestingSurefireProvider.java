@@ -22,6 +22,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private final SurefireProviderFactory surefireProviderFactory;
     private final ProviderParameters bootParams;
 
+    @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
@@ -36,6 +37,30 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
+    public Iterable<Class<?>> getSuites() {
+        return getOptimizedTestsToRun((TestsToRun) surefireProvider.getSuites());
+    }
+
+    public RunResult invoke(Object forkTestSet) throws TestSetFailedException, ReporterException, InvocationTargetException {
+        final TestsToRun orderedTests = getTestsToRun(forkTestSet);
+        this.surefireProvider = surefireProviderFactory.createInstance();
+        return surefireProvider.invoke(orderedTests);
+    }
+
+    public void cancel() {
+        surefireProvider.cancel();
+    }
+
+    private TestsToRun getTestsToRun(Object forkTestSet) throws TestSetFailedException {
+        if (forkTestSet instanceof TestsToRun) {
+            return (TestsToRun) forkTestSet;
+        } else if (forkTestSet instanceof Class) {
+            return fromClass((Class<?>) forkTestSet);
+        } else {
+            return (TestsToRun) getSuites();
+        }
+    }
+
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         Set<TestSelection> selection = SmartTesting
             .with(className -> testsToRun.getClassByName(className) != null)
@@ -48,37 +73,5 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private String getBasedir() {
         final String path = this.bootParams.getReporterConfiguration().getReportsDirectory().getPath();
         return path.substring(0, path.indexOf(File.separator + "target"));
-    }
-
-    public Iterable<Class<?>> getSuites() {
-        Iterable<Class<?>> originalSuites = surefireProvider.getSuites();
-        return getOptimizedTestsToRun((TestsToRun) originalSuites);
-    }
-
-    public RunResult invoke(Object forkTestSet)
-        throws TestSetFailedException, ReporterException, InvocationTargetException {
-
-        final TestsToRun orderedTests = getTestsToRun(forkTestSet);
-        if (orderedTests.containsExactly(0)) {
-            orderedTests.markTestSetFinished();
-            return RunResult.noTestsRun();
-        }
-        surefireProvider = surefireProviderFactory.createInstance();
-        return surefireProvider.invoke(orderedTests);
-    }
-
-    private TestsToRun getTestsToRun(Object forkTestSet) throws TestSetFailedException {
-
-        if (forkTestSet instanceof TestsToRun) {
-            return (TestsToRun) forkTestSet;
-        } else if (forkTestSet instanceof Class) {
-            return fromClass((Class<?>) forkTestSet);
-        } else {
-            return (TestsToRun) getSuites();
-        }
-    }
-
-    public void cancel() {
-        surefireProvider.cancel();
     }
 }

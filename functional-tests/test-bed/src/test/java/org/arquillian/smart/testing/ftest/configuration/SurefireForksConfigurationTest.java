@@ -1,16 +1,14 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
+import java.util.Collection;
+import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.Collection;
-import java.util.List;
 
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
@@ -41,7 +39,6 @@ public class SurefireForksConfigurationTest {
     }
 
     @Test
-    @Ignore("FIXME https://github.com/arquillian/smart-testing/issues/124")
     public void test_with_multiple_forks() {
         verifyTestSuiteExecution("forkCount", "2");
     }
@@ -71,7 +68,7 @@ public class SurefireForksConfigurationTest {
         // when
         final List<TestResult> actualTestResults =
             project
-                .build()
+                .build("config/impl-base")
                 .options()
                     .withSystemProperties(systemPropertiesPairs)
                     .configure()
