@@ -29,12 +29,15 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
+    private Boolean skipExtensionInstallation;
+
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
 
-        if (isSkipExtension()) {
+        if (shouldSkipExtensionInstallation()) {
+            logExtensionDisableReason();
             return;
         }
 
@@ -46,9 +49,23 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
+    private void logExtensionDisableReason() {
+        String reason = "Not Defined";
+
+        if (configuration.isDisabled()) {
+            reason = "System Property `SMART_TESTING_DISABLE` is set.";
+        } else if (isSkipTestExecutionSet()) {
+            reason = "Test Execution has been skipped.";
+        } else if (isSpecificTestClassSet()) {
+            reason = "Single Test Class execution is set.";
+        }
+
+        logger.info("Smart Testing is disabled. Reason: %s", reason);
+    }
+
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (isSkipExtension()) {
+        if (skipExtensionInstallation) {
             return;
         }
 
@@ -79,7 +96,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 
-    private boolean isSkipExtension() {
-        return configuration.isDisabled() || isSkipTestExecutionSet();
+    private boolean shouldSkipExtensionInstallation() {
+        if (skipExtensionInstallation == null) {
+            skipExtensionInstallation = configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
+        }
+        return skipExtensionInstallation;
     }
 }
