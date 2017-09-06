@@ -29,16 +29,14 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
-    private boolean extensionNotLoaded;
+    private Boolean skipExtensionInstallation;
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
 
-        extensionNotLoaded = isSkipExtension();
-
-        if (extensionNotLoaded) {
+        if (shouldSkipExtensionInstallation()) {
             logExtensionDisableReason();
             return;
         }
@@ -67,7 +65,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
-        if (extensionNotLoaded) {
+        if (skipExtensionInstallation) {
             return;
         }
 
@@ -98,7 +96,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 
-    private boolean isSkipExtension() {
-        return configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
+    private boolean shouldSkipExtensionInstallation() {
+        if (skipExtensionInstallation == null) {
+            skipExtensionInstallation = configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
+        }
+        return skipExtensionInstallation;
     }
 }
