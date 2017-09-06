@@ -534,7 +534,8 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_examples">3.1. Examples</a></li>
 <li><a href="#_disabling_smart_testing">3.2. Disabling Smart Testing</a></li>
 <li><a href="#_plugin_selection">3.3. Plugin Selection</a></li>
-<li><a href="#_running_examples">3.4. Running Examples</a></li>
+<li><a href="#_specifying_concrete_set_of_test_classes">3.4. Specifying Concrete Set of Test Classes</a></li>
+<li><a href="#_running_examples">3.5. Running Examples</a></li>
 </ul>
 </li>
 <li><a href="#_reports">4. Reports</a>
@@ -993,13 +994,75 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.4. Running Examples</h3>
+<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>3.4. Specifying Concrete Set of Test Classes</h3>
+<div class="paragraph">
+<p>During development, you may want to run a single test class or a set of concrete test classes.
+You can do this by setting the maven <code>test</code> property to specific test class(es).</p>
+</div>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.4.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
+<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>3.4.1. To Run a Single Test</h4>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=SampleTest</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This configuration disables smart testing and executes only the specified sample test.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>3.4.2. To Run Multiple Test Classes</h4>
+<div class="paragraph">
+<p>You can also choose to run only a concrete set of multiple test classes.</p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=SampleOneTest, SampleTwoTest</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When multiple specific tests are set without any pattern, smart testing is disabled just like the case
+for single test.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can further choose to execute multiple test classes in combination with smart testing&#8217;s <a href="configuration.html#_modes"><code>selecting</code></a> and <a href="configuration.html#_modes"><code>ordering</code></a> mode by using patterns as
+<a href="http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html">supported by Maven</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=Sample*Test</code></p>
+</div>
+<div class="paragraph">
+<p>When used with <code>ordering</code> mode, the specified tests are executed in the order defined by the smart testing
+strategy used. If none is applicable to the strategy, they are executed in order defined by Surefire.</p>
+</div>
+<div class="paragraph">
+<p>When used with <code>selecting</code> mode, the specified tests that fit the defined strategy are executed.
+However, if none fulfil the strategy criteria, no tests would be executed.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.5. Running Examples</h3>
+<div class="sect3">
+<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.5.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
 </div>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.4.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.5.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
 </div>
 </div>
@@ -1286,7 +1349,7 @@ This section will be improved as we continue with the SPI design to let you hook
     <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> GitClone GIT_CLONE = <span class="keyword">new</span> GitClone();
 
     <span class="annotation">@Rule</span>
-    <span class="directive">public</span> TestBed testBed = <span class="keyword">new</span> TestBed(GIT_CLONE);
+    <span class="directive">public</span> <span class="directive">final</span> TestBed testBed = <span class="keyword">new</span> TestBed(GIT_CLONE);
 
     <span class="annotation">@Test</span>
     <span class="directive">public</span> <span class="type">void</span> should_execute_all_new_tests_and_related_to_production_code_changes() <span class="directive">throws</span> <span class="exception">Exception</span> {
@@ -1574,7 +1637,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-01 09:18:41 UTC
+Last updated 2017-09-06 11:29:31 UTC
 </div>
 </div>
 </body>
