@@ -14,7 +14,7 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
     private final Configuration configuration;
     private TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestVerifier testVerifier;
-    private File projectDir = new File(System.getProperty("user.dir"));
+    private File projectDir;
 
     public ConfiguredSmartTestingImpl(TestVerifier testVerifier, Configuration configuration) {
         this.testVerifier = testVerifier;
@@ -49,6 +49,9 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
     }
 
     private TestStrategyApplier createApplier() {
+        if (projectDir == null){
+            projectDir = new File(System.getProperty("basedir"));
+        }
         if (testExecutionPlannerLoader == null) {
             testExecutionPlannerLoader =
                 new TestExecutionPlannerLoaderImpl(new JavaSPILoader(), testVerifier, projectDir);
