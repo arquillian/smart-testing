@@ -19,6 +19,8 @@ import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
+
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
     private static final Logger logger = Logger.getLogger(TestStrategyApplierImpl.class);
@@ -110,6 +112,6 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     private boolean isReportEnabled() {
-        return Boolean.valueOf(System.getProperty("smart.testing.report.enable", Boolean.toString(false)));
+        return Boolean.valueOf(System.getProperty(ENABLE_REPORT_PROPERTY, "false"));
     }
 }

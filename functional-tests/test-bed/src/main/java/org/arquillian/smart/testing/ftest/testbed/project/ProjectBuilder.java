@@ -94,6 +94,10 @@ public class ProjectBuilder {
         return builtProject.getMavenLog();
     }
 
+    public BuiltProject getBuiltProject() {
+        return builtProject;
+    }
+
     private Properties asProperties(Map<String, String> propertyMap) {
         final Properties properties = new Properties();
         properties.putAll(propertyMap);
