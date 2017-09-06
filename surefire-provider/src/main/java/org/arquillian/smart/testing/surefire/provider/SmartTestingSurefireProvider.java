@@ -2,15 +2,15 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
-import org.arquillian.smart.testing.ClassNameExtractor;
-import org.arquillian.smart.testing.Configuration;
-import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.api.SmartTesting;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 
@@ -37,16 +37,12 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
-        final Configuration configuration = Configuration.load();
+        Set<TestSelection> selection = SmartTesting
+            .with(className -> testsToRun.getClassByName(className) != null)
+            .in(getBasedir())
+            .applyOnClasses(testsToRun);
 
-        final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(new JavaSPILoader(), resource -> {
-                final String className = new ClassNameExtractor().extractFullyQualifiedName(resource);
-                return testsToRun.getClassByName(className) != null;
-            });
-
-        return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader(), getBasedir()).apply(
-            configuration);
+        return new TestsToRun(SmartTesting.getClasses(selection));
     }
 
     private String getBasedir() {

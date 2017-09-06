@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;

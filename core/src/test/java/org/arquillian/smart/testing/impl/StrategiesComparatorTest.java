@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
