@@ -5,8 +5,8 @@ import java.util.Objects;
 
 public class TestResult {
 
-    private String className;
-    private String testMethod;
+    private final String className;
+    private final String testMethod;
     private Status result;
 
     public TestResult(String className, String testMethod, Status status) {

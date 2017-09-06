@@ -24,7 +24,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     private static final Logger logger = Logger.getLogger(TestStrategyApplierImpl.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final File projectDir;
-    private Configuration configuration;
+    private final Configuration configuration;
 
     TestStrategyApplierImpl(Configuration configuration, TestExecutionPlannerLoader testExecutionPlannerLoader,
         File projectDir) {
@@ -38,7 +38,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     public Set<TestSelection> applyOnClasses(Iterable<Class<?>> testsToRun) {
-        return apply(testsToRun, clazz -> clazz.getName());
+        return apply(testsToRun, Class::getName);
     }
 
     private <TESTCLASS> Set<TestSelection> apply(Iterable<TESTCLASS> testsToRun,

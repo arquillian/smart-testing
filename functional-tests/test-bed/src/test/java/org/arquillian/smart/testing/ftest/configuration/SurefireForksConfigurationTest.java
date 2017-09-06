@@ -23,7 +23,7 @@ public class SurefireForksConfigurationTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void test_with_reuse_forks_false() {

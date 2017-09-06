@@ -15,8 +15,8 @@ import org.arquillian.smart.testing.api.TestVerifier;
  */
 public class FileSystemTestClassDetector implements TestClassDetector {
 
-    private File rootDirectory;
-    private TestVerifier verifier;
+    private final File rootDirectory;
+    private final TestVerifier verifier;
 
     public FileSystemTestClassDetector(File rootDirectory, TestVerifier verifier) {
         this.rootDirectory = rootDirectory;

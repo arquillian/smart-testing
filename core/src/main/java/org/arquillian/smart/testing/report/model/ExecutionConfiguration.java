@@ -46,7 +46,7 @@ public class ExecutionConfiguration {
         private String usageMode;
         private List<Property> properties;
 
-        private SmartTestingExecution.Builder executionBuilder;
+        private final SmartTestingExecution.Builder executionBuilder;
 
         Builder(SmartTestingExecution.Builder builder) {
             this.executionBuilder = builder;

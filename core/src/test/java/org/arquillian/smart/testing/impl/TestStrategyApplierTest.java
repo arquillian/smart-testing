@@ -70,7 +70,7 @@ public class TestStrategyApplierTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = mock(TestExecutionPlannerLoader.class);
         when(testExecutionPlannerLoader.getVerifier())
             .thenReturn(
-                className -> testsToRun.stream().map(clazz -> clazz.getName()).anyMatch(name -> name.equals(className)));
+                className -> testsToRun.stream().map(Class::getName).anyMatch(name -> name.equals(className)));
 
         return testExecutionPlannerLoader;
     }

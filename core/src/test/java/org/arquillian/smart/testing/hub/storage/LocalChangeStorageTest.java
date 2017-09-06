@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalChangeStorageTest {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void should_read_changes_when_current_dir_is_equal_to_root_dir() {

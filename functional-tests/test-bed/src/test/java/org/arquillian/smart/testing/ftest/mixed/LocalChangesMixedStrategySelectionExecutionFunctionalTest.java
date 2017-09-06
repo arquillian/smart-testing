@@ -21,7 +21,7 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {

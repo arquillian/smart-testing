@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChangedTestsDetectorTest {
 
     @Rule
-    public TemporaryFolder gitFolder = new TemporaryFolder();
+    public final TemporaryFolder gitFolder = new TemporaryFolder();
 
     @Before
     public void unpack_repo() {

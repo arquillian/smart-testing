@@ -13,7 +13,7 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
     private final JavaSPILoader spiLoader;
     private final TestVerifier verifier;
-    private File projectDir;
+    private final File projectDir;
 
     TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir) {
         this.spiLoader = spiLoader;

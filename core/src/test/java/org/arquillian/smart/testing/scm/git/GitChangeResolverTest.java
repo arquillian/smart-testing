@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.tuple;
 public class GitChangeResolverTest {
 
     @Rule
-    public TemporaryFolder gitFolder = new TemporaryFolder();
+    public final TemporaryFolder gitFolder = new TemporaryFolder();
 
     private GitChangeResolver gitChangeResolver;
 

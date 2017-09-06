@@ -48,7 +48,7 @@ public class SmartTesting {
      * @return Retrieved a set of class-names from the given {@link TestSelection}s
      */
     public static Set<String> getNames(Set<TestSelection> testSelections) {
-        return mapSelection(testSelections, testSelection -> testSelection.getClassName());
+        return mapSelection(testSelections, TestSelection::getClassName);
     }
 
     /**

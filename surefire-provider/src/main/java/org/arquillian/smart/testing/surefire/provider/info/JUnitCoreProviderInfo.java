@@ -9,7 +9,7 @@ import org.arquillian.smart.testing.surefire.provider.Validate;
 
 public class JUnitCoreProviderInfo extends JUnitProviderInfo {
 
-    private ProviderParametersParser paramParser;
+    private final ProviderParametersParser paramParser;
 
     public JUnitCoreProviderInfo(ProviderParametersParser paramParser) {
         super(LoaderVersionExtractor.getJunitVersion());

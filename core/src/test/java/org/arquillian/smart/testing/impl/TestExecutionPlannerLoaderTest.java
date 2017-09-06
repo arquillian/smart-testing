@@ -20,9 +20,9 @@ import static org.mockito.Mockito.when;
 public class TestExecutionPlannerLoaderTest {
 
     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    public final ExpectedException expectedException = ExpectedException.none();
 
-    private File projectDir = new File(System.getProperty("user.dir"));
+    private final File projectDir = new File(System.getProperty("user.dir"));
 
     @Test
     public void should_find_matching_strategy() throws Exception {

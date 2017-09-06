@@ -21,7 +21,7 @@ class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
 
-    private static Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
+    private static final Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
 
     private final Configuration configuration;
 

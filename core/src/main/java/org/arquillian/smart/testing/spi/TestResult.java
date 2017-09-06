@@ -4,9 +4,9 @@ public class TestResult {
 
     public static final String TEMP_REPORT_DIR = ".reports";
 
-    private String className;
-    private String testMethod;
-    private Float testDuration;
+    private final String className;
+    private final String testMethod;
+    private final Float testDuration;
     private Result result;
 
     public TestResult(String className, String testMethod, Float testDuration) {

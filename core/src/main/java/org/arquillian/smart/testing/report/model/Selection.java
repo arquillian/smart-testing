@@ -27,7 +27,7 @@ public class Selection {
     public static class Builder {
 
         private List<TestConfiguration> testConfigurations = new ArrayList<>();
-        private SmartTestingExecution.Builder executionBuilder;
+        private final SmartTestingExecution.Builder executionBuilder;
 
         Builder(SmartTestingExecution.Builder builder) {
             this.executionBuilder = builder;

@@ -17,7 +17,7 @@ public class TestSelectionTest {
     private static final String CLASS_NAME_1 = "smart.testing.Class1";
 
     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    public final ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void should_merge_test_selection_with_different_strategy_for_same_class() {
@@ -64,7 +64,6 @@ public class TestSelectionTest {
         // given
         final Path path = getPath("DummyClassWithDefaultPackageName.java");
         final TestSelection testSelection = new TestSelection(path, AFFECTED);
-
         // when
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(path, NEW));
 

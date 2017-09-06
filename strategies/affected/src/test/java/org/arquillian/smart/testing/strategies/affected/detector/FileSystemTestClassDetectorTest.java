@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FileSystemTestClassDetectorTest {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void should_scan_for_tests_simple_projects() throws IOException {

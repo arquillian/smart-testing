@@ -11,7 +11,7 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
 
-    private Configuration configuration;
+    private final Configuration configuration;
     private TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestVerifier testVerifier;
     private File projectDir = new File(System.getProperty("user.dir"));

@@ -18,9 +18,9 @@ import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
-    private ProviderParametersParser paramParser;
-    private SurefireProviderFactory surefireProviderFactory;
-    private ProviderParameters bootParams;
+    private final ProviderParametersParser paramParser;
+    private final SurefireProviderFactory surefireProviderFactory;
+    private final ProviderParameters bootParams;
 
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;

@@ -2,8 +2,8 @@ package org.arquillian.smart.testing.strategies.affected.fakeproject.main;
 
 public class B {
 
-    private C c;
-    private D d;
+    private final C c;
+    private final D d;
 
     public B() {
         this.c = new C();

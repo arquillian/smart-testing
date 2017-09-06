@@ -21,7 +21,7 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_previously_failing_tests_when_failed_is_enabled() throws Exception {
