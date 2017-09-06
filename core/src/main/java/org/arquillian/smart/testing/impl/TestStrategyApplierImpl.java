@@ -112,6 +112,6 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     private boolean isReportEnabled() {
-        return Boolean.valueOf(System.getProperty(ENABLE_REPORT_PROPERTY, Boolean.toString(false)));
+        return Boolean.valueOf(System.getProperty(ENABLE_REPORT_PROPERTY, "false"));
     }
 }
