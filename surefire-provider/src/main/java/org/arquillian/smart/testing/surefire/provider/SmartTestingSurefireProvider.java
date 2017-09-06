@@ -64,14 +64,25 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         Set<TestSelection> selection = SmartTesting
             .with(className -> testsToRun.getClassByName(className) != null)
-            .in(getBasedir())
+            .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
         return new TestsToRun(SmartTesting.getClasses(selection));
     }
 
-    private String getBasedir() {
-        final String path = this.bootParams.getReporterConfiguration().getReportsDirectory().getPath();
-        return path.substring(0, path.indexOf(File.separator + "target"));
+    private File getProjectDir() {
+        if (System.getProperty("basedir") == null) {
+            final File testSourceDirectory = bootParams.getTestRequest().getTestSourceDirectory();
+            return findFirstMatchingPom(testSourceDirectory);
+        } else {
+            return new File(System.getProperty("basedir"));
+        }
+    }
+
+    private File findFirstMatchingPom(File source) {
+        if (source.isDirectory() && new File(source, "pom.xml").exists()) {
+            return source;
+        }
+        return findFirstMatchingPom(source.getParentFile());
     }
 }

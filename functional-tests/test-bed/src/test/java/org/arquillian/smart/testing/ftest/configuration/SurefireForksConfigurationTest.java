@@ -1,11 +1,16 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.assertj.core.api.FileAssert;
+import org.assertj.core.api.JUnitSoftAssertions;
+import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,12 +18,16 @@ import org.junit.Test;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.DEFAULT_REPORT_FILE_NAME;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
 
 public class SurefireForksConfigurationTest {
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone();
+
+    @Rule
+    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
@@ -66,15 +75,43 @@ public class SurefireForksConfigurationTest {
             .applyAsLocalChanges("Inlined variable in a method", "Adds new unit test", "fixes tests");
 
         // when
-        final List<TestResult> actualTestResults =
-            project
-                .build("config/impl-base")
-                .options()
-                    .withSystemProperties(systemPropertiesPairs)
-                    .configure()
-                .run();
+        ProjectBuilder projectBuilder = project.build("config/impl-base");
+        final List<TestResult> actualTestResults = projectBuilder
+            .options()
+                .withSystemProperties(systemPropertiesPairs)
+                .withSystemProperties(ENABLE_REPORT_PROPERTY, "true")
+            .configure()
+            .run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        softly.assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject());
+    }
+
+    private void assertThatAllBuiltSubmodulesHaveReportsIncluded(BuiltProject module) {
+        module.getModules().forEach(this::assertThatReportFileIsIncludedIn);
+    }
+
+    private void assertThatReportFileIsIncludedIn(BuiltProject subModule) {
+        final File targetDirectory = subModule.getTargetDirectory();
+        final FileAssert fileAssert = softly.assertThat(new File(targetDirectory, DEFAULT_REPORT_FILE_NAME));
+        if (isJar(subModule)) {
+            if (testsWereExecuted(targetDirectory)) {
+                fileAssert.exists();
+            } else {
+                fileAssert.doesNotExist();
+            }
+        } else {
+            assertThatAllBuiltSubmodulesHaveReportsIncluded(subModule);
+            fileAssert.doesNotExist();
+        }
+    }
+
+    private boolean isJar(BuiltProject subModule) {
+        return subModule.getModel().getPackaging().equals("jar");
+    }
+
+    private boolean testsWereExecuted(File target) {
+        return new File(target, "test-classes").exists();
     }
 }

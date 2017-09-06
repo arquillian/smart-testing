@@ -6,7 +6,6 @@ import org.arquillian.smart.testing.TestSelection;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
-import static org.arquillian.smart.testing.report.ExecutionReporterHelper.getBaseDir;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ExecutionReporterTest {
@@ -17,7 +16,7 @@ public class ExecutionReporterTest {
         final TestSelection testSelectionNew = new TestSelection(ExecutionReporterTest.class.getName(), "new");
         final TestSelection testSelectionChanged = new TestSelection(ExecutionReporterTest.class.getName(), "changed");
         final SmartTestingReportGenerator smartTestingReportGenerator =
-            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), Configuration.load(),  getBaseDir(getClass()));
+            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), Configuration.load(),  System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();

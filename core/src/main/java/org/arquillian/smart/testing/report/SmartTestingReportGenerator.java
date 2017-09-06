@@ -14,6 +14,9 @@ import org.arquillian.smart.testing.report.model.TestConfiguration;
 
 public class SmartTestingReportGenerator {
 
+    public static final String DEFAULT_REPORT_FILE_NAME = "smart-testing-report.xml";
+    public static final String ENABLE_REPORT_PROPERTY = "smart.testing.report.enable";
+
     static final String SMART_TESTING_REPORT_DIR = "smart.testing.report.dir";
     static final String SMART_TESTING_REPORT_NAME = "smart.testing.report.name";
 

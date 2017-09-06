@@ -14,7 +14,6 @@ import org.junit.experimental.categories.Category;
 import static java.util.Arrays.asList;
 import static org.arquillian.smart.testing.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.Configuration.SMART_TESTING_MODE;
-import static org.arquillian.smart.testing.report.ExecutionReporterHelper.getBaseDir;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.SMART_TESTING_REPORT_DIR;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.SMART_TESTING_REPORT_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +41,7 @@ public class ExecutionReporterUsingPropertyTest {
         System.setProperty(SMART_TESTING_MODE, "selecting");
         final TestSelection newChangedTestSelection = new TestSelection(ExecutionReporterTest.class.getName(), "new", "changed");
         final TestSelection newTestSelection = new TestSelection(ExecutionReporterUsingPropertyTest.class.getName(), "new");
-        smartTestingReportGenerator = new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), Configuration.load(), getBaseDir(getClass()));
+        smartTestingReportGenerator = new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), Configuration.load(), System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();
