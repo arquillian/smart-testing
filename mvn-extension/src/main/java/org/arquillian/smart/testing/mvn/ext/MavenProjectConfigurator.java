@@ -52,16 +52,7 @@ class MavenProjectConfigurator {
             dependencyResolver.addRequiredDependencies(model);
 
             effectiveTestRunnerPluginConfigurations
-                .forEach(testRunnerPlugin -> {
-                    dependencyResolver.addAsPluginDependency(testRunnerPlugin);
-                    final Object configuration = testRunnerPlugin.getConfiguration();
-                    if (configuration != null) {
-                        final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                        final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
-                        properties.addChild(defineUsageMode());
-                        properties.addChild(defineTestSelectionCriteria());
-                    }
-                });
+                .forEach(dependencyResolver::addAsPluginDependency);
         }
     }
 
