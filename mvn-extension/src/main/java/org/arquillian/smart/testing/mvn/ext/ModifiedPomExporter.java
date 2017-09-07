@@ -14,6 +14,8 @@ class ModifiedPomExporter {
 
     static Logger logger = Logger.getLogger(ModifiedPomExporter.class);
 
+    private static String SMART_TESTING_POM_FILE = "smart-testing-pom.xml";
+
     static void showPom(Model model) {
         try (StringWriter pomOut = new StringWriter()) {
             new MavenXpp3Writer().write(pomOut, model);
@@ -28,7 +30,7 @@ class ModifiedPomExporter {
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
-        final Path target = Paths.get(path + File.separator + "modifiedPom.xml");
+        final Path target = Paths.get(path + File.separator + SMART_TESTING_POM_FILE);
         Files.write(target, modifiedPom.toString().getBytes());
         logger.debug("Copied modified pom to: " + target);
     }

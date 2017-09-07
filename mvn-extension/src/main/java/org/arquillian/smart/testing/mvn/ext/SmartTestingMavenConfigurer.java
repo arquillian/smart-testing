@@ -36,6 +36,8 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         configuration = Configuration.load();
 
+        logger.debug("Applied user properties: %s", session.getUserProperties());
+
         if (shouldSkipExtensionInstallation()) {
             logExtensionDisableReason();
             return;

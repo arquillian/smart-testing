@@ -1,10 +1,7 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 import java.util.StringJoiner;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -46,22 +43,11 @@ class MavenProjectConfigurator {
             effectiveTestRunnerPluginConfigurations
                 .forEach(dependencyResolver::addAsPluginDependency);
         }
-        if (logger.isDebugEnabled()) {
+
+        if (logger.enableDebugLogLevel()) {
             logger.debug("Version: %s", ExtensionVersion.version().toString());
-            logSystemProperties();
             ModifiedPomExporter.showPom(model);
         }
-    }
-
-    private void logSystemProperties() {
-        final Properties properties = System.getProperties();
-
-        Map<String, String> systemProperties = properties.stringPropertyNames()
-            .stream()
-            .filter(name -> name.startsWith("smart.testing") || name.startsWith("scm") || name.contains("skip"))
-            .collect(Collectors.toMap(Function.identity(), properties::getProperty));
-
-        logger.debug("Applied system properties: %s", systemProperties);
     }
 
     private List<Plugin> getEffectivePlugins(Model model) {

@@ -50,6 +50,6 @@ public class DebugModeSmartTestingFunctionalTest {
         // then
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
-        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), "smart-testing/modifiedPom.xml");
+        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 }

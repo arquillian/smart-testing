@@ -18,7 +18,7 @@ public class Logger {
     }
 
     private void setLogLevel() {
-        if (isDebugEnabled()) {
+        if (enableDebugLogLevel()) {
             jul.setLevel(Level.FINEST);
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.FINEST);
@@ -107,7 +107,7 @@ public class Logger {
      *     arguments to the message
      */
     public void debug(String msg, Object... args) {
-        if (isDebugEnabled()) {
+        if (enableDebugLogLevel()) {
             System.out.println(getFormattedMsg("DEBUG", msg, args));
         }
     }
@@ -172,7 +172,7 @@ public class Logger {
         jul.finest(getFormattedMsg(msg, args));
     }
 
-    public Boolean isDebugEnabled() {
+    public Boolean enableDebugLogLevel() {
         return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false"));
     }
 
