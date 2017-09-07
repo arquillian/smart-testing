@@ -29,7 +29,6 @@ public class DependencyResolver {
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-        logger.debug("System Properties Applied: %s ", dependencies);
         for (final String strategy : strategies) {
             final Dependency dependency = dependencies.get(strategy);
             model.addDependency(dependency);

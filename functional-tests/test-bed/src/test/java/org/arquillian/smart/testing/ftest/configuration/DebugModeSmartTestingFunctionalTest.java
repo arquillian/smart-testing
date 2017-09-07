@@ -14,6 +14,8 @@ import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesHaveReportsIncluded;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.COMMIT;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.PREVIOUS_COMMIT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DebugModeSmartTestingFunctionalTest {
@@ -41,7 +43,7 @@ public class DebugModeSmartTestingFunctionalTest {
         ProjectBuilder projectBuilder = project.build("config/impl-base");
         final Collection<TestResult> actualTestResults = projectBuilder
                 .options()
-                    .withSystemProperties(SMART_TESTING_DEBUG, "true")
+                    .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", SMART_TESTING_DEBUG, "true", "skipITs", "true")
                 .configure()
             .run();
 
