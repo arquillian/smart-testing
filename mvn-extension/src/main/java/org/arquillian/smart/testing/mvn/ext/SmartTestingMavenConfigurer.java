@@ -17,6 +17,7 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DISABLE;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
 
@@ -62,7 +63,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         String reason = "Not Defined";
 
         if (configuration.isDisabled()) {
-            reason = "System Property `SMART_TESTING_DISABLE` is set.";
+            reason = "System Property " + SMART_TESTING_DISABLE + " is set.";
         } else if (isSkipTestExecutionSet()) {
             reason = "Test Execution has been skipped.";
         } else if (isSpecificTestClassSet()) {
