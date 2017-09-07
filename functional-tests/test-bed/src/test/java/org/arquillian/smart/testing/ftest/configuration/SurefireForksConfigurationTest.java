@@ -77,8 +77,6 @@ public class SurefireForksConfigurationTest {
             project
                 .build()
                 .options()
-                    //.withRemoteDebugging()
-                    //.withRemoteSurefireDebugging()
                     .withSystemProperties(systemPropertiesPairs)
                     .withSystemProperties("graph.name", name.getMethodName())
                     .withSystemProperties("smart.testing.debug", "true") // This will only be propagated to surefire for "not_reusing_forks" option
