@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.rules.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.assertj.core.api.FileAssert;
 import org.assertj.core.api.JUnitSoftAssertions;
@@ -15,6 +15,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
@@ -24,7 +25,7 @@ import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.EN
 public class SurefireForksConfigurationTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public final JUnitSoftAssertions softly = new JUnitSoftAssertions();

@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.ftest.testbed.rules;
+package org.arquillian.smart.testing.rules;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +31,6 @@ public class GitClone extends ExternalResource {
         } catch (MalformedURLException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public GitClone() {
-        this(System.getProperty("test.bed.repo", "https://github.com/arquillian/smart-testing-dogfood-repo.git"));
     }
 
     public GitClone(URL gitRepo) {

@@ -2,14 +2,15 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.rules.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);

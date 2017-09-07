@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.ftest.testbed.rules;
+package org.arquillian.smart.testing.rules;
 
 import java.io.File;
 import java.io.IOException;
