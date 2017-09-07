@@ -10,6 +10,8 @@ public class Logger {
 
     private final java.util.logging.Logger jul;
 
+    private Boolean mavenDebugLogLevel = false;
+
     private static final String PREFIX = "%s: Smart-Testing - ";
 
     private Logger(java.util.logging.Logger logger) {
@@ -173,7 +175,11 @@ public class Logger {
     }
 
     public Boolean enableDebugLogLevel() {
-        return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false"));
+        return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false")) || mavenDebugLogLevel;
+    }
+
+    public void enableMavenDebugLogLevel(Boolean mavenDebugLevel) {
+        this.mavenDebugLogLevel = mavenDebugLevel;
     }
 
     private String getFormattedMsg(String msg, Object... args) {

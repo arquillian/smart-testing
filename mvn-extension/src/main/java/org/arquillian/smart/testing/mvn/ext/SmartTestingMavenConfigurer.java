@@ -36,6 +36,11 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         configuration = Configuration.load();
 
+        if (session.getRequest().getLoggingLevel() == 0) {
+            logger.enableMavenDebugLogLevel(true);
+            logger.debug("Maven build run in debug log level.");
+        }
+
         logger.debug("Applied user properties: %s", session.getUserProperties());
 
         if (shouldSkipExtensionInstallation()) {
