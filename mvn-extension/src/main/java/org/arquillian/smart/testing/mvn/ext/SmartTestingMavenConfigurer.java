@@ -88,10 +88,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> {
-            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            logger.debug("Effective pom:" + mavenProjectConfigurator.showPom(mavenProject.getModel()));
-        });
+        session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
     }
 
     private void logStrategiesNotDefined() {

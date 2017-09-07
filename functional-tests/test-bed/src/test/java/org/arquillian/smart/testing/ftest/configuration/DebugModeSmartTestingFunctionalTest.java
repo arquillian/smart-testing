@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.configuration;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -9,7 +10,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
+import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesHaveReportsIncluded;
+import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,8 +23,6 @@ public class DebugModeSmartTestingFunctionalTest {
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
 
-    private static String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
-
     @Test
     public void should_show_debug_logs_when_smart_testing_is_executed_in_debug_mode() throws Exception {
         // given
@@ -29,7 +30,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         project.configureSmartTesting()
                 .executionOrder(AFFECTED)
-                .inMode(SELECTING)
+                .inMode(ORDERING)
             .enable();
 
         project
@@ -37,16 +38,16 @@ public class DebugModeSmartTestingFunctionalTest {
                 "Inlined variable in a method");
 
         // when
-        final Collection<TestResult> actualTestResults = project
-            .build()
+        ProjectBuilder projectBuilder = project.build("config/impl-base");
+        final Collection<TestResult> actualTestResults = projectBuilder
                 .options()
-                    .excludeProjects(modules)
-                    .withSystemProperties("smart.testing.debug", "true")
+                    .withSystemProperties(SMART_TESTING_DEBUG, "true")
                 .configure()
             .run();
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains("Smart Testing is enabled in Debug Mode.");
+        assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
+        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), "smart-testing/modifiedPom.xml");
     }
 }

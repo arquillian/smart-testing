@@ -74,8 +74,9 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
         }
         logger.info("Applied strategies: %s", strategies);
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
-
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
+
+        logger.debug("Test Selections: %s", testSelections.toString());
 
         if (isReportEnabled()) {
             final SmartTestingReportGenerator

@@ -14,23 +14,15 @@ public class Logger {
 
     private Logger(java.util.logging.Logger logger) {
         this.jul = logger;
-       /* try(InputStream configFile = getClass().getClassLoader().getResourceAsStream("logging.properties")) {
-            LogManager.getLogManager().readConfiguration(configFile);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to load default logging properties.", e);
-        }*/
-        ConsoleHandler consoleHandler = new ConsoleHandler();
         setLogLevel();
-        consoleHandler.setLevel(Level.FINEST);
-        this.jul.addHandler(consoleHandler);
     }
 
     private void setLogLevel() {
         if (isDebugEnabled()) {
-            jul.info("Smart Testing is enabled in Debug Mode.");
             jul.setLevel(Level.FINEST);
-        } else {
-            jul.setLevel(Level.INFO);
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setLevel(Level.FINEST);
+            jul.addHandler(consoleHandler);
         }
     }
 
@@ -106,6 +98,21 @@ public class Logger {
     }
 
     /**
+     * Will format the given message with the given arguments and prints it on standard output with the prefix:
+     * "DEBUG: Smart-Testing - ", if debug mode is enabled.
+     *
+     * @param msg
+     *     The string message (or a key in the message catalog)
+     * @param args
+     *     arguments to the message
+     */
+    public void debug(String msg, Object... args) {
+        if (isDebugEnabled()) {
+            System.out.println(getFormattedMsg("DEBUG", msg, args));
+        }
+    }
+
+    /**
      * Log a formatted SEVERE message with given arguments using java.util.logging.Logger
      *
      * @param msg
@@ -163,18 +170,6 @@ public class Logger {
      */
     public void finest(String msg, Object... args) {
         jul.finest(getFormattedMsg(msg, args));
-    }
-
-    /**
-     * Log a formatted FINE message with given arguments using java.util.logging.Logger
-     *
-     * @param msg
-     *     The string message (or a key in the message catalog)
-     * @param args
-     *     arguments to the message
-     */
-    public void debug(String msg, Object... args) {
-        jul.fine(getFormattedMsg(msg, args));
     }
 
     public Boolean isDebugEnabled() {

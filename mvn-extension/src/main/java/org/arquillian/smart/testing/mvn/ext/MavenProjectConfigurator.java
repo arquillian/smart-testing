@@ -1,14 +1,10 @@
 package org.arquillian.smart.testing.mvn.ext;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
@@ -16,7 +12,7 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
 
@@ -33,15 +29,6 @@ class MavenProjectConfigurator {
         this.dependencyResolver = new DependencyResolver(configuration);
     }
 
-    File showPom(Model model) {
-        try (StringWriter pomOut = new StringWriter()) {
-            new MavenXpp3Writer().write(pomOut, model);
-            return model.getPomFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed writing updated pom file: " + model.getPomFile().getAbsolutePath(), e);
-        }
-    }
-
     void configureTestRunner(Model model) {
         final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
 
@@ -55,6 +42,10 @@ class MavenProjectConfigurator {
 
             effectiveTestRunnerPluginConfigurations
                 .forEach(dependencyResolver::addAsPluginDependency);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("Version: %s", ExtensionVersion.version().toString());
+            ModifiedPomExporter.showPom(model);
         }
     }
 

@@ -6,11 +6,14 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 
 public class DependencyResolver {
 
     private final Configuration configuration;
+
+    private Logger logger = Logger.getLogger(DependencyResolver.class);
 
     public DependencyResolver(Configuration configuration) {
         this.configuration = configuration;
@@ -26,6 +29,7 @@ public class DependencyResolver {
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+        logger.debug("System Properties Applied: %s ", dependencies);
         for (final String strategy : strategies) {
             final Dependency dependency = dependencies.get(strategy);
             model.addDependency(dependency);
