@@ -46,6 +46,13 @@ If you only want to use smart testing on `surefire` or `failsafe` plugin definit
 
 To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
 
+=== Debug Mode
+
+In order to get diagnostic information related to Smart testing extension, you can enable the debug mode by either
+setting the system property `smart.testing.debug` or by setting the mvn debug output `(-X)` flag along with smart testing.
+
+Debug mode by default writes smart testing debug level logs to the console.
+
 === Specifying Concrete Set of Test Classes
 
 During development, you may want to run a single test class or a set of concrete test classes.
