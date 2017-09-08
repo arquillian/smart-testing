@@ -59,10 +59,9 @@ class MavenProjectConfigurator {
         final Xpp3Dom count = pluginConfiguration.getChild(skipAfterFailureCountProperty);
         if (count == null) {
             final Xpp3Dom xpp3Dom = new Xpp3Dom(skipAfterFailureCountProperty);
-            final String skipAfterFailureCount = System.getProperty("surefire.skipAfterFailureCount");
-            final String skipAfterFailureCountValue = skipAfterFailureCount != null ? skipAfterFailureCount : "1";
-
-            xpp3Dom.setValue(skipAfterFailureCountValue);
+            final String failureCount = System.getProperty("surefire.skipAfterFailureCount", "1");
+            xpp3Dom.setValue(failureCount);
+            logger.info("Setting `skipAfterFailureCount` to %s by Smart Testing", failureCount);
             pluginConfiguration.addChild(xpp3Dom);
         }
     }
