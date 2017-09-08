@@ -10,7 +10,6 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.failed.TestReportHandler.copySurefireReports;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
@@ -46,8 +45,6 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
         final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("fix: Introduces error by changing return value");
 
-        copySurefireReports(project);
-
         // when
         final TestResults actualTestResults = project
             .build()
@@ -58,5 +55,6 @@ public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        ReportsVerifier.assertNoReportsDirectoryPresent(project);
     }
 }
