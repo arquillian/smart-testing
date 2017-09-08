@@ -12,7 +12,6 @@ import java.util.Comparator;
 import java.util.logging.Logger;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
 import org.junit.rules.ExternalResource;
 
 public class GitClone extends ExternalResource {
@@ -53,7 +52,8 @@ public class GitClone extends ExternalResource {
                 Files.walk(tempFolder.toPath(), FileVisitOption.FOLLOW_LINKS)
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .forEach(File::deleteOnExit);
+                    .forEach(File::delete);
+                tempFolder.delete();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
@@ -83,19 +83,12 @@ public class GitClone extends ExternalResource {
     }
 
     private static void cloneRepository(String repoTarget, String repo) throws GitAPIException, IOException {
-        final Repository repository = Git.cloneRepository()
+        Git.cloneRepository()
                     .setURI(repo)
                     .setDirectory(new File(repoTarget))
                     .setCloneAllBranches(true)
-                .call()
-            .getRepository();
-
-        if (!repository.getFullBranch().endsWith("master")) {
-            Git.wrap(repository)
-                .checkout()
-                    .setName("master")
+                    .setBranch("master")
                 .call();
-        }
 
         LOGGER.info("Cloned test repository to: " + repoTarget);
     }
