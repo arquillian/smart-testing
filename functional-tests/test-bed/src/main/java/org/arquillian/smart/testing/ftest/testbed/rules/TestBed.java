@@ -42,15 +42,15 @@ public class TestBed implements TestRule {
 
     private void succeeded(Description description) {
         if (isPersistFolderEnabled()) {
-            copyTmpProjectInTarget();
+            copyTmpProjectToTarget();
         }
     }
 
     private void failed(Throwable e, Description description) {
-        copyTmpProjectInTarget();
+        copyTmpProjectToTarget();
     }
 
-    private void copyTmpProjectInTarget() {
+    private void copyTmpProjectToTarget() {
         String path = "target" + File.separator + "test-bed-executions" + File.separator + Instant.now().toEpochMilli();
         final File projectDir = new File(path);
         if (!projectDir.exists()) {
