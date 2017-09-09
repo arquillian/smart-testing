@@ -17,18 +17,17 @@ import org.eclipse.jgit.lib.StoredConfig;
  * As an origin you can point to a bundle file (see git-bundle), other git repository or local file system to clone
  *
  *
- * This will get the content of the bundle.file and clone into to temporary folder (e.g. /tmp/junit8011663866191655452) and
+ * This will get the content of the bundle.file and clone into to temporary folder (e.g. /tmp/git-cloned-repo-8011663866191655452-repo-name) and
  * expose this repository over HTTP, so when calling
  *
  * git clone http://localhost:8765
  *
  * you will clone the repository served by it.
  *
- * 8765 is a default port. This can changed either by passing extra constructor argument, or setting
+ * 8765 is a default port. This can changed either by passing extra constructor argument, or setting system property git.server.port
  *
  * Current limitations
  *   - repository name after the name doesn't matter, it's always only one per given server
- *   - write operations to the target repo served in the temporary directory differs from what you would expect
  *
  * Code inspired by https://github.com/centic9/jgit-cookbook/tree/master/httpserver
  */
