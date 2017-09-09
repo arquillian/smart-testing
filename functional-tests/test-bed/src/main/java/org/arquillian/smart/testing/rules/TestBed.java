@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
@@ -115,7 +116,7 @@ public class TestBed implements TestRule {
     }
 
     private Path createPerTestRepository() throws IOException {
-        final Path source = Paths.get(this.gitClone.getGitRepoFolder());
+        final Path source = Paths.get(this.gitClone.getGitRepoFolder().toURI());
         final Path target = Paths.get(targetRepoPerTestFolder);
         final List<Path> sources = Files.walk(source).collect(toList());
         final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)

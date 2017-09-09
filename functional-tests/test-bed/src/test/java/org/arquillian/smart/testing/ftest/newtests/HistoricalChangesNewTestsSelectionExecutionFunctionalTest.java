@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.ftest.newtests;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
-import org.arquillian.smart.testing.rules.GitClone;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.junit.ClassRule;
 import org.junit.Rule;

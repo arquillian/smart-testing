@@ -2,7 +2,7 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.rules.GitClone;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;

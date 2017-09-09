@@ -8,7 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.jcip.annotations.NotThreadSafe;
-import org.arquillian.smart.testing.rules.GitClone;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.junit.Assert;
 import org.junit.ClassRule;
