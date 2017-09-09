@@ -14,15 +14,15 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
 
 /**
- * As an origin you can point to a bundle file (see git-bundle), other git repository or local file system to clone
+ * Embedded web server hosting single git repository. As a source you can point to a bundle file (see git-bundle), other git repository or
+ * local file system to clone.
  *
- *
- * This will get the content of the bundle.file and clone into to temporary folder (e.g. /tmp/git-cloned-repo-8011663866191655452-repo-name) and
- * expose this repository over HTTP, so when calling
+ * This will get the content of remote repository, clone into to temporary folder (e.g. /tmp/git-cloned-repo-8011663866191655452-repo-name) and
+ * expose this repository over HTTP, so you can call
  *
  * git clone http://localhost:8765
  *
- * you will clone the repository served by it.
+ * and can interact with it locally.
  *
  * 8765 is a default port. This can changed either by passing extra constructor argument, or setting system property git.server.port
  *

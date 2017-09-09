@@ -7,17 +7,17 @@ import org.junit.rules.ExternalResource;
 
 /**
  *
- * This rule starts a HTTP Git Server serving Git repository imported from other location so it can be used while testing
- * git-related logic.
+ * This rule starts a Git Web Server ({@link EmbeddedHttpGitServer}) serving Git repository imported from other location,
+ * so it can be used while testing git-related logic (e.g. when using JGit as a client).
  *
- * To use it simply add
+ * To use it simply add following to your test class.
  *
  * <pre>
  * &#064;Rule
  * public final TestRule gitServer = GitServer.fromBundle("bundle.file").create();
  * </pre>
  *
- * @see EmbeddedHttpGitServer
+ * @see EmbeddedHttpGitServer for details about the features.
  */
 public class GitServer extends ExternalResource {
 
