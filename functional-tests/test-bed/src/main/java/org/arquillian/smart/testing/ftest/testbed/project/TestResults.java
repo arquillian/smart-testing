@@ -33,7 +33,7 @@ public class TestResults {
         return Lists.newArrayList(testResultPerClass.values());
     }
 
-    public List<TestResult> getTestsWithStatus(Status ... statuses) {
+    public List<TestResult> testsWithStatuses(Status ... statuses) {
         final List<Status> expectedStatuses = Arrays.asList(statuses);
         return testResults.stream()
             .filter(testResult -> expectedStatuses.isEmpty() || expectedStatuses.contains(testResult.getStatus()))
