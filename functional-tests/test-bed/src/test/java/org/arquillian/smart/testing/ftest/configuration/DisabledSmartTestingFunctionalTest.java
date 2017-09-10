@@ -1,10 +1,9 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class DisabledSmartTestingFunctionalTest {
                 "Inlined variable in a method");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .excludeProjects(modules)
@@ -47,6 +46,6 @@ public class DisabledSmartTestingFunctionalTest {
             .run();
 
         // then
-        assertThat(actualTestResults).hasSize(74);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSize(74);
     }
 }

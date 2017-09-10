@@ -2,9 +2,9 @@ package org.arquillian.smart.testing.ftest.configuration;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -76,7 +76,7 @@ public class SurefireForksConfigurationTest {
 
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
-        final List<TestResult> actualTestResults = projectBuilder
+        final TestResults actualTestResults = projectBuilder
             .options()
                 .withSystemProperties(systemPropertiesPairs)
                 .withSystemProperties(ENABLE_REPORT_PROPERTY, "true")
@@ -84,7 +84,7 @@ public class SurefireForksConfigurationTest {
             .run();
 
         // then
-        softly.assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject());
     }
 

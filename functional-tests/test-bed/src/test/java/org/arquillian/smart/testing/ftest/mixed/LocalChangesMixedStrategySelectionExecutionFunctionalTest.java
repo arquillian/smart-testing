@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.mixed;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -38,10 +39,10 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
                 "Inlined variable in a method", "Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 }
 // end::documentation[]

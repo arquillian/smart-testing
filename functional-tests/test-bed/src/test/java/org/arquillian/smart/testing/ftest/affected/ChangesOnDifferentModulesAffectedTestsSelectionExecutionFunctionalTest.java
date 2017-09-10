@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -34,7 +35,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         final Collection<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
@@ -42,7 +43,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
             .run();
 
         // then
-        assertThat(actualTestResults).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
 
         // when
         // tag::documentation_test_bed_debug[]
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
             .options()
                 .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
@@ -72,7 +73,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         // end::documentation_test_bed_debug[]
 
         // then
-        assertThat(actualTestResults).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
     }
 
 }
