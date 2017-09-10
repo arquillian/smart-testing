@@ -33,14 +33,11 @@ public class TestResults {
         return Lists.newArrayList(testResultPerClass.values());
     }
 
-    private TestResult perClassTestResult(TestResult testResult) {
-        return new TestResult(testResult.getClassName(), "*", testResult.getStatus());
-    }
-
     public List<TestResult> getTestsWithStatus(Status ... statuses) {
         final List<Status> expectedStatuses = Arrays.asList(statuses);
         return testResults.stream()
             .filter(testResult -> expectedStatuses.isEmpty() || expectedStatuses.contains(testResult.getStatus()))
             .collect(Collectors.toList());
     }
+
 }
