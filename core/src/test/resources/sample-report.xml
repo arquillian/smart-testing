@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<smart-testing-execution>
+    <module>core</module>
+    <executionConfiguration>
+        <usageMode>selecting</usageMode>
+        <strategies>
+            <strategy>new</strategy>
+            <strategy>changed</strategy>
+        </strategies>
+        <properties>
+            <property name="smart.testing" value="new,changed"/>
+            <property name="smart.testing.mode" value="selecting"/>
+            <property name="smart.testing.report.dir" value="target/smart-testing-report"/>
+            <property name="smart.testing.report.name" value="report"/>
+        </properties>
+    </executionConfiguration>
+    <selection>
+        <tests>
+            <test name="org.arquillian.smart.testing.report.ExecutionReporterTest" strategies="new,changed"/>
+            <test name="org.arquillian.smart.testing.report.ExecutionReporterUsingPropertyTest" strategies="new"/>
+        </tests>
+    </selection>
+</smart-testing-execution>

@@ -6,7 +6,7 @@ import static java.lang.String.format;
 
 public class Logger {
 
-    private java.util.logging.Logger jul;
+    private final java.util.logging.Logger jul;
 
     private static final String PREFIX = "%s: Smart-Testing - ";
 

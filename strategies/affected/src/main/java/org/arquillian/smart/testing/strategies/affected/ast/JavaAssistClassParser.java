@@ -27,32 +27,27 @@
  */
 package org.arquillian.smart.testing.strategies.affected.ast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
 import org.arquillian.smart.testing.FilesCodec;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 
-import static java.io.File.pathSeparator;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 class JavaAssistClassParser {
-    private final String classpath;
     private ClassPool classPool;
 
-    JavaAssistClassParser(String classpath) {
-        this.classpath = classpath;
+    JavaAssistClassParser() {
     }
 
     private ClassPool getClassPool() {
@@ -63,10 +58,18 @@ class JavaAssistClassParser {
             // OK.
             classPool = new ClassPool(true);
             try {
-                for (String pathElement : getPathElements()) {
-                    classPool.appendClassPath(pathElement);
-                }
-            } catch (NotFoundException e) {
+                Arrays.stream(getLoadedClasses()).map(URL::toExternalForm).forEach(
+                    s -> {
+                        try {
+                            classPool.appendClassPath(s.replace("file:", "")); // removes file prefix, as JavaAssist doesn't like it
+                        } catch (NotFoundException e) {
+                            throw new RuntimeException("Failed configuring JavaAssist ClassPool" +
+                                " while loading resources from Context Class Loader", e);
+                        }
+                    }
+                );
+
+            } catch (RuntimeException e) {
                 classPool = null; // RISK Untested
                 // Blank out the class pool so we try again next time
                 throw new MissingClassException("Could not create class pool", e);
@@ -75,20 +78,9 @@ class JavaAssistClassParser {
         return classPool;
     }
 
-    private Iterable<String> getPathElements() {
-        final String[] split = classpath.split(pathSeparator);
-        List<String> entries = new ArrayList<>(Arrays.asList(split));
-        ListIterator<String> iter = entries.listIterator();
-        while (iter.hasNext()) {
-            if (entryDoesNotExist(iter)) {
-                iter.remove();
-            }
-        }
-        return entries;
-    }
-
-    private boolean entryDoesNotExist(ListIterator<String> iter) {
-        return !new File(iter.next()).exists();
+    private URL[] getLoadedClasses()
+    {
+        return ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
     }
 
     private final static Map<String, JavaClass> CLASSES_BY_NAME = new HashMap<>();
@@ -134,7 +126,7 @@ class JavaAssistClassParser {
     /**
      * Returns the classname of given .class file.
      */
-    public String getClassName(File file) throws IOException {
+    String getClassName(File file) throws IOException {
         String sha1 = FilesCodec.sha1(file);
         CacheEntry entry = BY_PATH.get(file.getAbsolutePath());
         if ((entry != null) && (entry.sha1.equals(sha1))) {

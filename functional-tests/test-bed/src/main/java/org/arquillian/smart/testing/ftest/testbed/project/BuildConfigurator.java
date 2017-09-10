@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
@@ -35,6 +36,7 @@ public class BuildConfigurator {
     private boolean enableSurefireRemoteDebugging = false;
     private boolean ignoreBuildFailure = false;
     private boolean skipTests = false;
+    private File workingDirectory;
     private String mavenOpts = "-Xms512m -Xmx1024m";
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
@@ -161,6 +163,11 @@ public class BuildConfigurator {
         return this;
     }
 
+    public BuildConfigurator withWorkingDirectory(String newWorkingDirectory) {
+        this.workingDirectory = new File(newWorkingDirectory);
+        return this;
+    }
+
     public BuildConfigurator projects(String... projects) {
         this.modulesToBeBuilt.addAll(Arrays.asList(projects));
         return this;
@@ -217,6 +224,10 @@ public class BuildConfigurator {
 
     String getMavenOpts() {
         return mavenOpts;
+    }
+
+    File getWorkingDirectory() {
+        return workingDirectory;
     }
 
     private boolean isRemoteDebugEnabled() {

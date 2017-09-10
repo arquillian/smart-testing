@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(Parameterized.class)
 public class LoaderVersionExtractorJUnitTest {
 
-    private String junitVersion;
+    private final String junitVersion;
 
     public LoaderVersionExtractorJUnitTest(String junitVersion) {
         this.junitVersion = junitVersion;

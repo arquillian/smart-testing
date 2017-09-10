@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.tuple;
 public class GitChangeResolverTest {
 
     @Rule
-    public TemporaryFolder gitFolder = new TemporaryFolder();
+    public final TemporaryFolder gitFolder = new TemporaryFolder();
 
     private GitChangeResolver gitChangeResolver;
 
@@ -66,7 +66,7 @@ public class GitChangeResolverTest {
     public void should_fetch_all_untracked_files() throws IOException {
         // given
         gitFolder.newFile("untracked.txt");
-        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "HEAD", "HEAD");
 
         // when
         final Set<Change> untrackedChanges = gitChangeResolver.diff();
@@ -80,7 +80,7 @@ public class GitChangeResolverTest {
     public void should_fetch_all_added_files() throws IOException, GitAPIException {
         // given
         gitFolder.newFile("newadd.txt");
-        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "HEAD", "HEAD");
         GitRepositoryOperations.addFile(gitFolder.getRoot(), "newadd.txt");
 
         // when
@@ -94,7 +94,7 @@ public class GitChangeResolverTest {
     @Test
     public void should_fetch_all_modified_files() throws IOException {
         // given
-        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot());
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "HEAD", "HEAD");
         final Path readme = Paths.get(gitFolder.getRoot().getAbsolutePath(), "README.adoc");
         Files.write(readme, "More".getBytes(), StandardOpenOption.APPEND);
 

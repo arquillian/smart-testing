@@ -35,7 +35,7 @@ public class ClassNameExtractorTest {
     }
 
     @Test
-    @Ignore("FIXME: improve the pattern to handle this case") // FIXME
+    @Ignore("FIXME: improve the pattern to handle this case")
     public void should_extract_fully_qualified_name_from_source_file_with_defined_package_ignoring_comments() throws Exception {
         // given
         final ClassNameExtractor classNameExtractor = new ClassNameExtractor();
@@ -43,7 +43,7 @@ public class ClassNameExtractorTest {
         // when
         final File dummyClass = load("HostileDummyClassWithPackageName.java");
         final String fullyQualifiedName = classNameExtractor.extractFullyQualifiedName(dummyClass);
-        System.out.println(fullyQualifiedName);
+
         // then
         assertThat(fullyQualifiedName).isEqualTo("dummy.correct.cls.HostileDummyClassWithPackageName");
     }

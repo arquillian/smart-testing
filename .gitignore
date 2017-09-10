@@ -13,7 +13,7 @@
 target/
 timing.properties
 
-#Gradle
+# Gradle
 .gradle
 
 # TestNG

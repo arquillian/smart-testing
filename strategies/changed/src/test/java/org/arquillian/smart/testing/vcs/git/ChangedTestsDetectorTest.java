@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChangedTestsDetectorTest {
 
     @Rule
-    public TemporaryFolder gitFolder = new TemporaryFolder();
+    public final TemporaryFolder gitFolder = new TemporaryFolder();
 
     @Before
     public void unpack_repo() {
@@ -35,7 +35,7 @@ public class ChangedTestsDetectorTest {
         // given
         final ChangedTestsDetector changedTestsDetector =
             new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
-                path -> path.toString().endsWith("Test.java"));
+                className -> className.endsWith("Test"));
 
         // when
         final Iterable<TestSelection> changedTests = changedTestsDetector.getTests();
@@ -54,7 +54,7 @@ public class ChangedTestsDetectorTest {
 
         final ChangedTestsDetector changedTestsDetector =
             new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> path.toString().endsWith("Test.java"));
+                className -> className.endsWith("Test"));
 
         // when
         final Collection<TestSelection> modifiedTests = changedTestsDetector.getTests();
@@ -74,7 +74,7 @@ public class ChangedTestsDetectorTest {
 
         final ChangedTestsDetector changedTestsDetector =
             new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
-                path -> path.toString().endsWith("Test.java"));
+                className -> className.endsWith("Test"));
 
         // when
         final Collection<TestSelection> newTests = changedTestsDetector.getTests();
@@ -90,7 +90,7 @@ public class ChangedTestsDetectorTest {
         //given
         final ChangedTestsDetector changedTestsDetector =
             new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> path.toString().endsWith("Test.java"));
+                className -> className.endsWith("Test"));
 
         // when
         final Collection<TestSelection> modifiedTests = changedTestsDetector.getTests();
@@ -119,7 +119,7 @@ public class ChangedTestsDetectorTest {
 
         final ChangedTestsDetector changedTestsDetector =
             new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
-                path -> path.toString().endsWith("Test.java"));
+                className -> className.endsWith("Test"));
 
         // when
         final Collection<TestSelection> changedTest = changedTestsDetector.getTests();

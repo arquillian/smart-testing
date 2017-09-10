@@ -1,0 +1,32 @@
+== Reports
+
+=== Build Artifacts
+After running build with `Smart testing` Maven extension installed, It's quite cumbersome to look entire logs
+to identify which tests are selected to run? How tests are ordered? The selected tests are belongs to which strategy? What are properties
+used to configure smart testing?
+
+To overcome this `Smart testing` is providing report in `XML` format.
+
+`Smart testing` report will give you details about usageMode, different strategies configured to run
+tests, all other properties related to smart testing, Test Selection with different strategies etc.
+
+=== How to Configure?
+By default this feature is disabled. You can enable it by setting property `smart.testing.report.enable` to `true`.
+
+You will get generated reports in `target/smart-testing-report.xml` by default.
+
+To change the location of the generated output report, following properties
+should be set to the desired alternative location.
+
+`smart.testing.report.dir`:: To configure dir location to put generated reports.
+`smart.testing.report.name`:: To configure the file name of the generated report.
+
+=== Sample Report
+
+Here’s how the sample report looks like:
+
+[source, xml, indent=0]
+----
+include::../core/src/test/resources/sample-report.xml[]
+----
+

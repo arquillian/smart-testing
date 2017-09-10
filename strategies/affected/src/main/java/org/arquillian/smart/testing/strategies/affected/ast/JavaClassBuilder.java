@@ -30,7 +30,6 @@ package org.arquillian.smart.testing.strategies.affected.ast;
 import java.io.File;
 import java.io.IOException;
 import javassist.NotFoundException;
-import org.arquillian.smart.testing.strategies.affected.ClasspathProvider;
 import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 
 /**
@@ -39,8 +38,8 @@ import org.arquillian.smart.testing.strategies.affected.MissingClassException;
 public class JavaClassBuilder {
     private final JavaAssistClassParser parser;
 
-    public JavaClassBuilder(ClasspathProvider classpath) {
-        this(new JavaAssistClassParser(classpath.getCompleteClasspath()));
+    public JavaClassBuilder() {
+        this(new JavaAssistClassParser());
     }
 
     public JavaClassBuilder(JavaAssistClassParser parser) {

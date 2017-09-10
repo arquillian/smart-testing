@@ -3,14 +3,13 @@ package org.arquillian.smart.testing.strategies.affected;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -24,24 +23,20 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
     // TODO TestClassDetector is something that can be moved to extension
     private final TestClassDetector testClassDetector;
-    private final String classpath;
 
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;
     private final TestVerifier testVerifier;
 
-    AffectedTestsDetector(final TestClassDetector testClassDetector, String classpath, TestVerifier testVerifier) {
+    AffectedTestsDetector(final TestClassDetector testClassDetector, TestVerifier testVerifier) {
         this(testClassDetector, new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
-            new JavaSPILoader().onlyOne(ChangeResolver.class).get(), classpath,
-            testVerifier);
+            new JavaSPILoader().onlyOne(ChangeResolver.class).get(), testVerifier);
     }
 
-    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver,
-        String classpath, TestVerifier testVerifier) {
+    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver, TestVerifier testVerifier) {
         this.testClassDetector = testClassDetector;
         this.changeStorage = changeStorage;
         this.changeResolver = changeResolver;
-        this.classpath = classpath;
         this.testVerifier = testVerifier;
     }
 
@@ -80,7 +75,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
         final long beforeFind = System.currentTimeMillis();
 
-        final LinkedHashSet<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(mainClasses)
+        final Set<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(mainClasses)
             .stream()
             .map(s -> new TestSelection(s, "affected"))
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -91,6 +86,6 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     }
 
     private ClassDependenciesGraph configureTestClassDetector() {
-        return new ClassDependenciesGraph(new StandaloneClasspath(Collections.emptyList(), this.classpath), testVerifier);
+        return new ClassDependenciesGraph(testVerifier);
     }
 }

@@ -46,6 +46,38 @@ If you only want to use smart testing on `surefire` or `failsafe` plugin definit
 
 To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
 
+=== Specifying Concrete Set of Test Classes
+
+During development, you may want to run a single test class or a set of concrete test classes.
+You can do this by setting the maven `test` property to specific test class(es).
+
+==== To Run a Single Test
+
+`$ mvn test -Dtest=SampleTest`
+
+NOTE: This configuration disables smart testing and executes only the specified sample test.
+
+==== To Run Multiple Test Classes
+
+You can also choose to run only a concrete set of multiple test classes.
+
+`$ mvn test -Dtest=SampleOneTest, SampleTwoTest`
+
+NOTE: When multiple specific tests are set without any pattern, smart testing is disabled just like the case 
+for single test.
+
+You can further choose to execute multiple test classes in combination with smart testing's <<configuration#_modes, 
+`selecting`>> and <<configuration#_modes,`ordering`>> mode by using patterns as 
+http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html[supported by Maven].
+
+`$ mvn test -Dtest=Sample*Test`
+
+When used with `ordering` mode, the specified tests are executed in the order defined by the smart testing
+strategy used. If none is applicable to the strategy, they are executed in order defined by Surefire.
+
+When used with `selecting` mode, the specified tests that fit the defined strategy are executed.
+However, if none fulfil the strategy criteria, no tests would be executed.
+
 === Skipping Tests
 
 To skip executing the tests for a particular project, Smart Testing aligns with 

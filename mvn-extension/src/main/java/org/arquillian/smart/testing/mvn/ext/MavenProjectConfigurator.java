@@ -21,7 +21,7 @@ class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
 
-    private static Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
+    private static final Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
 
     private final Configuration configuration;
 
@@ -52,16 +52,7 @@ class MavenProjectConfigurator {
             dependencyResolver.addRequiredDependencies(model);
 
             effectiveTestRunnerPluginConfigurations
-                .forEach(testRunnerPlugin -> {
-                    dependencyResolver.addAsPluginDependency(testRunnerPlugin);
-                    final Object configuration = testRunnerPlugin.getConfiguration();
-                    if (configuration != null) {
-                        final Xpp3Dom configurationDom = (Xpp3Dom) configuration;
-                        final Xpp3Dom properties = getOrCreatePropertiesChild(configurationDom);
-                        properties.addChild(defineUsageMode());
-                        properties.addChild(defineTestSelectionCriteria());
-                    }
-                });
+                .forEach(dependencyResolver::addAsPluginDependency);
         }
     }
 

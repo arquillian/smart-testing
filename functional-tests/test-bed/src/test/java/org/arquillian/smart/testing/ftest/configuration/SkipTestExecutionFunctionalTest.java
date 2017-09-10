@@ -19,11 +19,11 @@ public class SkipTestExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     private static final String EXPECTED_LOG_PART = "Enabling Smart Testing";
 
-    private static String[] modules = new String[] {"core/api", "core/spi", "core/impl-base"};
+    private static final String[] modules = new String[] {"core/api", "core/spi", "core/impl-base"};
 
     @Test
     public void should_execute_all_unit_tests_when_integration_test_execution_is_skipped() throws Exception {

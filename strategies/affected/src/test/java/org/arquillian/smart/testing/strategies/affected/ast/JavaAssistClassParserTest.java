@@ -9,7 +9,7 @@ public class JavaAssistClassParserTest {
     @Test
     public void should_resolve_direct_imports() {
         // given
-        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
 
         // when
         final JavaClass simpleImportsClass =
@@ -25,7 +25,7 @@ public class JavaAssistClassParserTest {
     @Test
     public void should_resolve_different_packages_with_same_class_name_fields() {
         // given
-        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
 
         // when
         final JavaClass duplicatedClass =
@@ -41,7 +41,7 @@ public class JavaAssistClassParserTest {
     @Test
     public void should_resolve_different_packages_with_same_class_name_local_variables() {
         // given
-        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
 
         // when
         final JavaClass duplicatedClass =
@@ -58,7 +58,7 @@ public class JavaAssistClassParserTest {
     @Test
     public void should_resolve_annotations() {
         // given
-        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser("");
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
 
         // when
         final JavaClass annotationClass =

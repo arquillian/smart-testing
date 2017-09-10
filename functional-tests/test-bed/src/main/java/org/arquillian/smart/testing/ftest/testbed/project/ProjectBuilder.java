@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
@@ -29,6 +30,8 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 public class ProjectBuilder {
 
     public static final String TEST_REPORT_PREFIX = "TEST-";
+
+    private static final Logger LOGGER = Logger.getLogger(ProjectBuilder.class.getName());
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
@@ -70,12 +73,18 @@ public class ProjectBuilder {
                     .setProperties(asProperties(buildConfigurator.getSystemProperties()))
                     .skipTests(buildConfigurator.isSkipTestsEnabled())
                     .setMavenOpts(buildConfigurator.getMavenOpts())
+                    .setWorkingDirectory(buildConfigurator.getWorkingDirectory())
+                    .setAlsoMake(true)
                     .ignoreFailure()
                 .build();
 
         if (!buildConfigurator.isIgnoreBuildFailure() && build.getMavenBuildExitCode() != 0) {
-            System.out.println(build.getMavenLog());
-            throw new IllegalStateException("Maven build has failed, see logs for details");
+            if (build.getMavenLog().contains("No tests were executed!")) {
+                LOGGER.info("No tests were executed!");
+            } else {
+                System.out.println(build.getMavenLog());
+                throw new IllegalStateException("Maven build has failed, see logs for details");
+            }
         }
 
         return build;
@@ -83,6 +92,10 @@ public class ProjectBuilder {
 
     String getMavenLog() {
         return builtProject.getMavenLog();
+    }
+
+    public BuiltProject getBuiltProject() {
+        return builtProject;
     }
 
     private Properties asProperties(Map<String, String> propertyMap) {

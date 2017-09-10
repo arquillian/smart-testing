@@ -19,9 +19,9 @@ public class DisabledSmartTestingFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
-    private static String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
+    private static final String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
 
     @Test
     public void should_execute_all_tests_when_smart_testing_is_disabled_irrespective_of_strategy() throws Exception {

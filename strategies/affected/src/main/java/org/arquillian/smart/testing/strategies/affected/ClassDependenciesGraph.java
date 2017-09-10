@@ -33,7 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -47,19 +47,15 @@ public class ClassDependenciesGraph {
     private static final Filter coreJava = new Filter("", "java.*");
 
     private final JavaClassBuilder builder;
-    private DirectedGraph<JavaElement, DefaultEdge> graph;
-    private Filter filter;
-    private TestVerifier testVerifier;
+    private final DirectedGraph<JavaElement, DefaultEdge> graph;
+    private final Filter filter;
+    private final TestVerifier testVerifier;
 
-    ClassDependenciesGraph(ClasspathProvider classpath, TestVerifier testVerifier) {
-        this(new JavaClassBuilder(classpath));
+    ClassDependenciesGraph(TestVerifier testVerifier) {
+        this.builder = new JavaClassBuilder();
+        this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        this.filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
         this.testVerifier = testVerifier;
-    }
-
-    ClassDependenciesGraph(JavaClassBuilder classBuilder) {
-        builder = classBuilder;
-        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
     }
 
     void buildTestDependencyGraph(Collection<File> testJavaFiles) {

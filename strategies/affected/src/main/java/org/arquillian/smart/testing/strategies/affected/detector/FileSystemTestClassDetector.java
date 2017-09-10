@@ -8,15 +8,15 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 
 /**
  * Implementation that gets all tests using glob pattern () by default and using root directory as reference by default
  */
 public class FileSystemTestClassDetector implements TestClassDetector {
 
-    private File rootDirectory;
-    private TestVerifier verifier;
+    private final File rootDirectory;
+    private final TestVerifier verifier;
 
     public FileSystemTestClassDetector(File rootDirectory, TestVerifier verifier) {
         this.rootDirectory = rootDirectory;

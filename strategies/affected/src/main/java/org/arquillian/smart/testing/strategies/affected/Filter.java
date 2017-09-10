@@ -6,8 +6,8 @@ import java.util.StringTokenizer;
 
 public class Filter {
 
-    private List<String> inclusions = new ArrayList<>();
-    private List<String> exclusions = new ArrayList<>();
+    private final List<String> inclusions = new ArrayList<>();
+    private final List<String> exclusions = new ArrayList<>();
 
     /**
      * Constructor to set inclusions and exlusions to filter.

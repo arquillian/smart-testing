@@ -19,7 +19,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
     public static final GitClone GIT_CLONE = new GitClone();
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {

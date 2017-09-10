@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class FilesCodec {
 
-    private static MessageDigest messageDigest = null;
+    private static final MessageDigest messageDigest;
 
     static {
         try {

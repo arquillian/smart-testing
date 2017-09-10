@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -56,7 +56,7 @@ public class AffectedTestsDetectorTest {
         when(changeStorage.read()).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
-            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, "", new CustomTestVerifier());
+            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new CustomTestVerifier());
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();
@@ -81,19 +81,19 @@ public class AffectedTestsDetectorTest {
 
         @Override
         public boolean isTest(Path resource) {
+            return isTest(resource.toString());
+        }
 
-            if (resource.toString().endsWith("Test.java") || resource.toString().endsWith("TestCase.java")) {
+        @Override
+        public boolean isTest(String className) {
+            if (className.endsWith("Test.java") || className.endsWith("TestCase.java")) {
                 return true;
             }
 
-            if (resource.toString().endsWith("MyBusinessObject.java")) {
-                // Since core class is also in test directory, we need that first time core class is detected as such
-                // but second tiem when real location of .class is found returns it is a class so it is resolved correctly to
-                // test-classes directory
-                return (coreClassCount++) != 0;
-            }
-
-            return false;
+            // Since core class is also in test directory, we need that first time core class is detected as such
+            // but second time when real location of .class is found returns it is a class so it is resolved correctly to
+            // test-classes directory
+            return className.endsWith("MyBusinessObject.java") && (coreClassCount++) != 0;
         }
     }
 }

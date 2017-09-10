@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Set;
+import org.arquillian.smart.testing.strategies.affected.EndingWithTestTestVerifier;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FileSystemTestClassDetectorTest {
 
     @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void should_scan_for_tests_simple_projects() throws IOException {
@@ -27,7 +28,8 @@ public class FileSystemTestClassDetectorTest {
         createProjectLayoutWithTests(rootDirectory, "org.mytest", "MyFirstTest.java",
             "MySecondTest.java", "Utils.java");
 
-        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory, resource -> resource.toString().endsWith("Test.java"));
+        final TestClassDetector testClassDetector =
+            new FileSystemTestClassDetector(rootDirectory, new EndingWithTestTestVerifier());
 
         // when
 
@@ -57,7 +59,8 @@ public class FileSystemTestClassDetectorTest {
         createProjectLayoutWithTests(moduleB.toFile(), "org.mytest", "MyThirdTest.java",
             "MyFourthTest.java", "Utils.java");
 
-        final TestClassDetector testClassDetector = new FileSystemTestClassDetector(rootDirectory, resource -> resource.toString().endsWith("Test.java"));
+        final TestClassDetector testClassDetector =
+            new FileSystemTestClassDetector(rootDirectory, new EndingWithTestTestVerifier());
 
         // when
 

@@ -40,13 +40,13 @@ public class GitChangeResolver implements ChangeResolver {
     private final Git git;
 
     public GitChangeResolver() {
-        this(Paths.get("").toAbsolutePath().toFile(),
-            System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue()),
-            System.getProperty(COMMIT, HEAD));
+        this(Paths.get("").toAbsolutePath().toFile());
     }
 
-    public GitChangeResolver(File dir) {
-        this(dir, "HEAD", "HEAD");
+    public GitChangeResolver(File projectDir) {
+        this(projectDir,
+            System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue()),
+            System.getProperty(COMMIT, HEAD));
     }
 
     public GitChangeResolver(File dir, String previous, String head) {
