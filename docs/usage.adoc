@@ -48,16 +48,9 @@ To do it you just need to set `smart.testing.apply.to` with either `surefire` or
 
 === Skipping Tests
 
-To skip running the tests for a particular project, Smart Testing extension provides support with 
+To skip executing the tests for a particular project, Smart Testing aligns with 
 http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html[Maven Surefire/Failsafe 
-plugins' skip test functionality] offered by system properties `skipTests`, `skipITs` and `maven.test.skip`.
-
-Setting properties `skipTests` or `maven.test.skip` disables Smart Testing extension and exhibits standard 
-Surefire/Failsafe plugin behavior.
-
-`skipITs` when used with Smart Testing extension in default mode with both Surefire and Failsafe plugins, 
-skips only the integration tests being run by the Failsafe plugin and continues with unit test(s) execution by 
-Surefire plugin configured with Smart Testing configuration.
+plugins' skip test functionality] and respects system properties `skipTests`, `skipITs` and `maven.test.skip`.
 
 === Running Examples
 
