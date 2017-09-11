@@ -15,7 +15,9 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
+import static org.arquillian.smart.testing.LoggerConfigurator.enableMavenDebugLogLevel;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -37,7 +39,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = Configuration.load();
 
         if (session.getRequest().getLoggingLevel() == 0) {
-            logger.enableMavenDebugLogLevel(true);
+            enableMavenDebugLogLevel(true);
             logger.debug("Maven build run in debug log level.");
         }
 

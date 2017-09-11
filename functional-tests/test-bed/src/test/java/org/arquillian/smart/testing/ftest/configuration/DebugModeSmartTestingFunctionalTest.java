@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
+import static org.arquillian.smart.testing.LoggerConfigurator.SMART_TESTING_LOG_ENABLE;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesHaveReportsIncluded;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
@@ -80,5 +81,34 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
         assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
+    }
+
+    @Test
+    public void should_show_and_store_debug_logs_when_debug_mode_is_set_with_file() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+            .executionOrder(AFFECTED)
+            .inMode(ORDERING)
+            .enable();
+
+        project
+            .applyAsCommits("Single method body modification - sysout",
+                "Inlined variable in a method");
+
+        // when
+        ProjectBuilder projectBuilder = project.build("config/impl-base");
+        final Collection<TestResult> actualTestResults = projectBuilder
+                .options()
+                    .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", SMART_TESTING_DEBUG, "true",  SMART_TESTING_LOG_ENABLE, "")
+                .configure()
+            .run();
+
+        // then
+        String projectMavenLog = project.getMavenLog();
+        System.out.println(projectMavenLog);
+        assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
+        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), "smart-testing-debug.log");
     }
 }

@@ -1,31 +1,19 @@
 package org.arquillian.smart.testing;
 
-import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
 import static java.lang.String.format;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
+import static org.arquillian.smart.testing.LoggerConfigurator.enableDebugLogLevel;
 
 public class Logger {
 
     private final java.util.logging.Logger jul;
 
-    private Boolean mavenDebugLogLevel = false;
-
     private static final String PREFIX = "%s: Smart-Testing - ";
 
     private Logger(java.util.logging.Logger logger) {
         this.jul = logger;
-        setLogLevel();
-    }
-
-    private void setLogLevel() {
-        if (enableDebugLogLevel()) {
-            jul.setLevel(Level.FINEST);
-            ConsoleHandler consoleHandler = new ConsoleHandler();
-            consoleHandler.setLevel(Level.FINEST);
-            jul.addHandler(consoleHandler);
-        }
+        new LoggerConfigurator(jul);
     }
 
     /**
@@ -172,14 +160,6 @@ public class Logger {
      */
     public void finest(String msg, Object... args) {
         jul.finest(getFormattedMsg(msg, args));
-    }
-
-    public Boolean enableDebugLogLevel() {
-        return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false")) || mavenDebugLogLevel;
-    }
-
-    public void enableMavenDebugLogLevel(Boolean mavenDebugLevel) {
-        this.mavenDebugLogLevel = mavenDebugLevel;
     }
 
     private String getFormattedMsg(String msg, Object... args) {
