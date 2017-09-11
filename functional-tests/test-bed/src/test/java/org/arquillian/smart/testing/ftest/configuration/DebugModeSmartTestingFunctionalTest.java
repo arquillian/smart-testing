@@ -1,11 +1,10 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
-        final Collection<TestResult> actualTestResults = projectBuilder
+        final TestResults actualTestResults = projectBuilder
                 .options()
                     .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", SMART_TESTING_DEBUG, "true", "skipITs", "true")
                 .configure()
@@ -70,7 +69,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
-        final Collection<TestResult> actualTestResults = projectBuilder
+        final TestResults actualTestResults = projectBuilder
                 .options()
                     .withDebugOutput()
                     .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", "skipITs", "true")
@@ -99,7 +98,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
-        final Collection<TestResult> actualTestResults = projectBuilder
+        final TestResults actualTestResults = projectBuilder
                 .options()
                     .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", SMART_TESTING_DEBUG, "true",  SMART_TESTING_LOG_ENABLE, "")
                 .configure()

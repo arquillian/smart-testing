@@ -84,7 +84,6 @@ public class SurefireForksConfigurationTest {
                 .withSystemProperties(ENABLE_REPORT_PROPERTY, "true")
             .configure()
             .run();
-
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), DEFAULT_REPORT_FILE_NAME);
