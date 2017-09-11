@@ -52,10 +52,7 @@ public class GitCloner {
     }
 
     private File createTempFolder() throws IOException {
-        final String suffix = this.repositoryUrl.substring(repositoryUrl.lastIndexOf('/') + 1).replace(".git", "");
-        final File createdFolder = File.createTempFile("git-cloned-repo", suffix, null);
-        createdFolder.delete();
-        createdFolder.mkdir();
-        return createdFolder;
+        final String repoName = this.repositoryUrl.substring(repositoryUrl.lastIndexOf('/') + 1).replace(".git", "");
+        return Files.createTempDirectory("git-cloned-repo-" + repoName + "-").toFile();
     }
 }
