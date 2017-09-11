@@ -11,7 +11,8 @@ import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 
 /**
  * Aggregates test results from the build execution and exposes them either on a test method granularity
- * or overall test class. In the latter case status is set to failing if any of the partial results is failing {@link TestResult#isFailing()}.
+ * or overall test class. In the latter case status is set to failing if any of the partial results is failing {@link
+ * TestResult#isFailing()}.
  */
 public class TestResults {
 
@@ -24,25 +25,31 @@ public class TestResults {
     public List<TestResult> accumulatedPerTestClass() {
         final Map<String, TestResult> testResultPerClass = new LinkedHashMap<>();
         testResults.forEach(methodTestResult -> {
-            final TestResult perClassTestResult = new TestResult(methodTestResult.getClassName(), "*", methodTestResult.getStatus());
-            testResultPerClass.putIfAbsent(methodTestResult.getClassName(), perClassTestResult);
+            testResultPerClass.putIfAbsent(methodTestResult.getClassName(),
+                new TestResult(methodTestResult.getClassName(), "*", methodTestResult.getStatus()));
+            final TestResult perClassTestResult = testResultPerClass.get(methodTestResult.getClassName());
             if (methodTestResult.isFailing()) {
-                testResultPerClass.put(methodTestResult.getClassName(), new TestResult(methodTestResult.getClassName(), "*", Status.FAILURE));
+                testResultPerClass.put(methodTestResult.getClassName(),
+                    new TestResult(methodTestResult.getClassName(), "*", Status.FAILURE));
+            } else if (methodTestResult.isPassing() && !perClassTestResult.isFailing()) {
+                // We might have SKIPPED methods stored so far
+                // On the class level anything which is not failing we consider a success (even skipped)
+                testResultPerClass.put(methodTestResult.getClassName(),
+                    new TestResult(methodTestResult.getClassName(), "*", Status.PASSED));
             }
         });
         return Lists.newArrayList(testResultPerClass.values());
     }
 
-    public List<TestResult> testsWithStatuses(Status ... statuses) {
+    public List<TestResult> testsWithStatuses(Status... statuses) {
         final List<Status> expectedStatuses = Arrays.asList(statuses);
-        
+
         if (expectedStatuses.isEmpty()) {
             return testResults;
-        } else {
-            return testResults.stream()
-                .filter(testResult -> expectedStatuses.contains(testResult.getStatus()))
-                .collect(Collectors.toList());
         }
-    }
 
+        return testResults.stream()
+            .filter(testResult -> expectedStatuses.contains(testResult.getStatus()))
+            .collect(Collectors.toList());
+    }
 }

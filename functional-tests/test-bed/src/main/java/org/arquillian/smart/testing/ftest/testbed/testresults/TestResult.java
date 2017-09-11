@@ -35,7 +35,10 @@ public class TestResult {
         return this.result == Status.ERROR || this.result == Status.FAILURE || this.result == Status.RE_RUN_FAILURE;
     }
 
-    // TODO we are operating on a class level now....
+    public boolean isPassing() {
+        return this.result == Status.PASSED;
+    }
+
     public static TestResult from(String ... testResultParts) {
         if (testResultParts.length > 2) {
             throw new IllegalArgumentException(
