@@ -9,12 +9,14 @@ import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
+import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
+import static org.arquillian.smart.testing.LoggerConfigurator.enableDebugLogLevel;
 import static org.arquillian.smart.testing.LoggerConfigurator.enableMavenDebugLogLevel;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
@@ -76,6 +78,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
         if (skipExtensionInstallation) {
             return;
+        }
+
+        if (enableDebugLogLevel()) {
+            logger.debug("Version: %s", ExtensionVersion.version().toString());
+            session.getAllProjects().forEach(mavenProject ->
+                ModifiedPomExporter.showPom(mavenProject.getModel()));
         }
 
         if (configuration.areStrategiesDefined()) {

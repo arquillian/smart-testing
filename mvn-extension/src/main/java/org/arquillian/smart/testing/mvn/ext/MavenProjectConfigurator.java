@@ -12,7 +12,6 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import static org.arquillian.smart.testing.LoggerConfigurator.enableDebugLogLevel;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
@@ -43,11 +42,6 @@ class MavenProjectConfigurator {
 
             effectiveTestRunnerPluginConfigurations
                 .forEach(dependencyResolver::addAsPluginDependency);
-        }
-
-        if (enableDebugLogLevel()) {
-            logger.debug("Version: %s", ExtensionVersion.version().toString());
-            ModifiedPomExporter.showPom(model);
         }
     }
 
