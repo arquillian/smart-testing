@@ -14,6 +14,10 @@
 
   <description>JUnit 4.x rules to work with git from your unit tests</description>
 
+  <properties>
+    <version.jetty>9.4.6.v20170531</version.jetty>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -33,7 +37,7 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>9.4.6.v20170531</version>
+      <version>${version.jetty}</version>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
