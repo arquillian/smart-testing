@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.configuration;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -41,7 +42,7 @@ public class SpecificTestClassExecutionFunctionalTest {
             .applyAsCommits("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "PropertiesParserTestCase", "failIfNoTests", "false")
@@ -51,7 +52,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).doesNotContainAnyElementsOf(expectedTestResults).hasSize(1);
+        assertThat(actualTestResults.accumulatedPerTestClass()).doesNotContainAnyElementsOf(expectedTestResults).hasSize(1);
     }
 
     @Test
@@ -68,7 +69,7 @@ public class SpecificTestClassExecutionFunctionalTest {
             .applyAsCommits("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
@@ -79,7 +80,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).doesNotContainAnyElementsOf(expectedTestResults).hasSize(2);
+        assertThat(actualTestResults.accumulatedPerTestClass()).doesNotContainAnyElementsOf(expectedTestResults).hasSize(2);
     }
 
     @Test
@@ -96,7 +97,7 @@ public class SpecificTestClassExecutionFunctionalTest {
             .applyAsCommits("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
@@ -107,7 +108,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).containsSequence(expectedTestResults).hasSize(4);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsSequence(expectedTestResults).hasSize(4);
     }
 
     @Test
@@ -124,7 +125,7 @@ public class SpecificTestClassExecutionFunctionalTest {
             .applyAsCommits("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "*Properties*", "failIfNoTests", "false")
@@ -134,7 +135,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).containsSequence(expectedTestResults).hasSize(3);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsSequence(expectedTestResults).hasSize(3);
     }
 
     @Test
@@ -151,7 +152,7 @@ public class SpecificTestClassExecutionFunctionalTest {
             .applyAsCommits("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*")
@@ -161,7 +162,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).isEmpty();
+        assertThat(actualTestResults.accumulatedPerTestClass()).isEmpty();
     }
 
    @Test
@@ -180,7 +181,7 @@ public class SpecificTestClassExecutionFunctionalTest {
                 "Inlined variable in a method");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(module)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Configuration*", "failIfNoTests", "false")
@@ -190,7 +191,7 @@ public class SpecificTestClassExecutionFunctionalTest {
         // then
        String capturedMavenLog = project.getMavenLog();
        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-       assertThat(actualTestResults).extracting("className")
+       assertThat(actualTestResults.accumulatedPerTestClass()).extracting("className")
            .containsOnly("org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase");
     }
 }

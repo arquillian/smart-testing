@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -35,7 +36,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
@@ -43,7 +44,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
             .run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
     @Test
@@ -61,7 +62,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("scm.last.changes", "2")
@@ -69,7 +70,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
             .run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
 }
