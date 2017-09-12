@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
@@ -47,7 +46,7 @@ class MavenProjectConfigurator {
     private void configurePlugin(Plugin testRunnerPlugin) {
             dependencyResolver.addAsPluginDependency(testRunnerPlugin);
 
-            if (!this.configuration.isSelectingMode()) {
+            if (!this.configuration.isSelectingMode() && !isFailsafePlugin(testRunnerPlugin)) {
                 final List<PluginExecution> executions = testRunnerPlugin.getExecutions();
                 executions.forEach(this::addSkipAfterFailureCount);
             }
@@ -55,13 +54,13 @@ class MavenProjectConfigurator {
 
     private void addSkipAfterFailureCount(PluginExecution pluginExecution) {
         final Xpp3Dom pluginConfiguration = getOrCreatePluginConfiguration(pluginExecution);
-        final String skipAfterFailureCountProperty = "skipAfterFailureCount";
-        final Xpp3Dom count = pluginConfiguration.getChild(skipAfterFailureCountProperty);
+        final String skipAfterFailureCount = "skipAfterFailureCount";
+        final Xpp3Dom count = pluginConfiguration.getChild(skipAfterFailureCount);
         if (count == null) {
-            final Xpp3Dom xpp3Dom = new Xpp3Dom(skipAfterFailureCountProperty);
+            final Xpp3Dom xpp3Dom = new Xpp3Dom(skipAfterFailureCount);
             final String failureCount = System.getProperty("surefire.skipAfterFailureCount", "1");
             xpp3Dom.setValue(failureCount);
-            logger.info("Setting `skipAfterFailureCount` to %s by Smart Testing", failureCount);
+            logger.info("Setting " + skipAfterFailureCount + " to %s", failureCount);
             pluginConfiguration.addChild(xpp3Dom);
         }
     }
@@ -88,8 +87,7 @@ class MavenProjectConfigurator {
         }
 
         return testRunnerPluginConfigurations.stream()
-            .filter(
-                testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
+            .filter(testRunnerPlugin -> !(isFailsafePlugin(testRunnerPlugin) && isSkipITs()))
             .collect(Collectors.toList());
     }
 
@@ -120,6 +118,9 @@ class MavenProjectConfigurator {
         return !"pom".equals(model.getPackaging().trim());
     }
 
+    private boolean isFailsafePlugin(Plugin testRunnerPlugin) {
+       return "maven-failsafe-plugin".equals(testRunnerPlugin.getArtifactId());
+    }
     private void logCurrentPlugins(Model model) {
 
         model.getBuild().getPlugins()

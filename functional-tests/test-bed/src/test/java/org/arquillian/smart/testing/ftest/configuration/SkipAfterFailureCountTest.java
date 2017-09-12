@@ -1,11 +1,10 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
 import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.Status;
+import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +13,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.CHANGED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.SKIPPED;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
 
 public class SkipAfterFailureCountTest {
 
@@ -24,7 +24,7 @@ public class SkipAfterFailureCountTest {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_skip_all_remaining_tests_with_first_failure_when_ordering_enabled() throws Exception {
+    public void should_not_execute_remaining_tests_after_first_failure_as_skipAfterFailureCount_set_to_one_by_smart_testing_when_ordering_enabled() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -36,22 +36,26 @@ public class SkipAfterFailureCountTest {
         project.applyAsCommits("Introduces error by changing return value");
 
         // when
-        final Map<Status, Long> resultCount = new LinkedHashMap<>();
-
-        project.build("container/impl-base")
+        final TestResults testResults = project.build("container/impl-base")
             .options()
                 .ignoreBuildFailure()
             .configure()
-            .run(resultCount);
-
+            .run();
 
         // then
-        final Long skippedCount = resultCount.get(SKIPPED);
-        assertThat(skippedCount).isGreaterThan(4);
+        assertThat(testResults.testsWithStatuses(SKIPPED))
+            .extracting(TestResult::getClassName, TestResult::getTestMethod)
+            .contains(
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase", "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase", "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase")
+            );
     }
 
     @Test
-    public void should_override_skip_after_failure_count_system_property_when_ordering_enabled() throws Exception {
+    public void should_execute_remaining_tests_after_failure_as_skipAfterFailureCount_set_to_zero_with_system_property_when_ordering_enabled() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -63,16 +67,22 @@ public class SkipAfterFailureCountTest {
         project.applyAsCommits("Introduces error by changing return value");
 
         // when
-        final Map<Status, Long> resultStatusCount = new LinkedHashMap<>();
-        project.build("container/impl-base")
+        final TestResults testResults = project.build("container/impl-base")
             .options()
                 .withSystemProperties("surefire.skipAfterFailureCount", "0")
                 .ignoreBuildFailure()
             .configure()
-            .run(resultStatusCount);
+            .run();
 
         // then
-        final Long skippedCount = resultStatusCount.get(SKIPPED);
-        assertThat(skippedCount).isEqualTo(4);
+        assertThat(testResults.testsWithStatuses(SKIPPED))
+            .extracting(TestResult::getClassName, TestResult::getTestMethod)
+            .doesNotContain(
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase", "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase"),
+                tuple("org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase", "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase")
+            );
     }
 }
