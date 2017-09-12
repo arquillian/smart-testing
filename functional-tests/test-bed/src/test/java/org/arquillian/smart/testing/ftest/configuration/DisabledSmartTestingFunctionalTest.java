@@ -1,14 +1,14 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
+import org.arquillian.smart.testing.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,12 +16,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DisabledSmartTestingFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
-    private static String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
+    private static final String[] modules = new String[] {"testng", "testng/core", "testng/container", "testng/standalone"};
 
     @Test
     public void should_execute_all_tests_when_smart_testing_is_disabled_irrespective_of_strategy() throws Exception {
@@ -38,7 +38,7 @@ public class DisabledSmartTestingFunctionalTest {
                 "Inlined variable in a method");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .excludeProjects(modules)
@@ -47,6 +47,6 @@ public class DisabledSmartTestingFunctionalTest {
             .run();
 
         // then
-        assertThat(actualTestResults).hasSize(74);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSize(74);
     }
 }

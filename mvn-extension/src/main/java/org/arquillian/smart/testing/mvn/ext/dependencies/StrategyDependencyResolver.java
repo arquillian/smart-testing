@@ -28,7 +28,7 @@ class StrategyDependencyResolver {
 
     private static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
 
-    private Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
+    private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
 
     StrategyDependencyResolver(Path propertiesPath) {
         this.propertiesPath = propertiesPath;

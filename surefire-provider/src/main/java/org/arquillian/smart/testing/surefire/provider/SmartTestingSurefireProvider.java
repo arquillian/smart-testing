@@ -2,15 +2,15 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
-import org.arquillian.smart.testing.ClassNameExtractor;
-import org.arquillian.smart.testing.Configuration;
-import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.api.SmartTesting;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 
@@ -18,10 +18,11 @@ import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private SurefireProvider surefireProvider;
-    private ProviderParametersParser paramParser;
-    private SurefireProviderFactory surefireProviderFactory;
-    private ProviderParameters bootParams;
+    private final ProviderParametersParser paramParser;
+    private final SurefireProviderFactory surefireProviderFactory;
+    private final ProviderParameters bootParams;
 
+    @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
@@ -36,43 +37,21 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProvider = surefireProviderFactory.createInstance();
     }
 
-    private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
-        final Configuration configuration = Configuration.load();
-
-        final TestExecutionPlannerLoader testExecutionPlannerLoader =
-            new TestExecutionPlannerLoader(new JavaSPILoader(), resource -> {
-                final String className = new ClassNameExtractor().extractFullyQualifiedName(resource);
-                return testsToRun.getClassByName(className) != null;
-            });
-
-        return new TestStrategyApplier(testsToRun, testExecutionPlannerLoader, bootParams.getTestClassLoader(), getBasedir()).apply(
-            configuration);
-    }
-
-    private String getBasedir() {
-        final String path = this.bootParams.getReporterConfiguration().getReportsDirectory().getPath();
-        return path.substring(0, path.indexOf(File.separator + "target"));
-    }
-
     public Iterable<Class<?>> getSuites() {
-        Iterable<Class<?>> originalSuites = surefireProvider.getSuites();
-        return getOptimizedTestsToRun((TestsToRun) originalSuites);
+        return getOptimizedTestsToRun((TestsToRun) surefireProvider.getSuites());
     }
 
-    public RunResult invoke(Object forkTestSet)
-        throws TestSetFailedException, ReporterException, InvocationTargetException {
-
+    public RunResult invoke(Object forkTestSet) throws TestSetFailedException, ReporterException, InvocationTargetException {
         final TestsToRun orderedTests = getTestsToRun(forkTestSet);
-        if (orderedTests.containsExactly(0)) {
-            orderedTests.markTestSetFinished();
-            return RunResult.noTestsRun();
-        }
-        surefireProvider = surefireProviderFactory.createInstance();
+        this.surefireProvider = surefireProviderFactory.createInstance();
         return surefireProvider.invoke(orderedTests);
     }
 
-    private TestsToRun getTestsToRun(Object forkTestSet) throws TestSetFailedException {
+    public void cancel() {
+        surefireProvider.cancel();
+    }
 
+    private TestsToRun getTestsToRun(Object forkTestSet) throws TestSetFailedException {
         if (forkTestSet instanceof TestsToRun) {
             return (TestsToRun) forkTestSet;
         } else if (forkTestSet instanceof Class) {
@@ -82,7 +61,28 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         }
     }
 
-    public void cancel() {
-        surefireProvider.cancel();
+    private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
+        Set<TestSelection> selection = SmartTesting
+            .with(className -> testsToRun.getClassByName(className) != null)
+            .in(getProjectDir())
+            .applyOnClasses(testsToRun);
+
+        return new TestsToRun(SmartTesting.getClasses(selection));
+    }
+
+    private File getProjectDir() {
+        if (System.getProperty("basedir") == null) {
+            final File testSourceDirectory = bootParams.getTestRequest().getTestSourceDirectory();
+            return findFirstMatchingPom(testSourceDirectory);
+        } else {
+            return new File(System.getProperty("basedir"));
+        }
+    }
+
+    private File findFirstMatchingPom(File source) {
+        if (source.isDirectory() && new File(source, "pom.xml").exists()) {
+            return source;
+        }
+        return findFirstMatchingPom(source.getParentFile());
     }
 }

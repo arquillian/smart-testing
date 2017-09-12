@@ -16,7 +16,7 @@ class AffectedRunnerProperties {
     static final String INCLUSIONS = "inclusions";
     static final String EXCLUSIONS = "exclusions";
 
-    static Properties properties = new Properties();
+    static final Properties properties = new Properties();
 
     // To just read once the configuration file.
     static {

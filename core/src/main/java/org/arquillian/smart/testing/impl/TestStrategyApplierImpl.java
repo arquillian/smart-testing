@@ -1,8 +1,6 @@
-package org.arquillian.smart.testing.surefire.provider;
+package org.arquillian.smart.testing.impl;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,45 +12,58 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-import static java.lang.System.getProperty;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
 
-class TestStrategyApplier {
+class TestStrategyApplierImpl implements TestStrategyApplier {
 
-    private static final Logger logger = Logger.getLogger(TestStrategyApplier.class);
+    private static final Logger logger = Logger.getLogger(TestStrategyApplierImpl.class);
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
-    private final ClassLoader testClassLoader;
-    private final String baseDir;
-    private TestsToRun testsToRun;
+    private final File projectDir;
+    private final Configuration configuration;
 
-    TestStrategyApplier(TestsToRun testsToRun, TestExecutionPlannerLoader testExecutionPlannerLoader, ClassLoader testClassLoader, String baseDir) {
-        this.testsToRun = testsToRun;
+    TestStrategyApplierImpl(Configuration configuration, TestExecutionPlannerLoader testExecutionPlannerLoader,
+        File projectDir) {
+        this.configuration = configuration;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
-        this.testClassLoader = testClassLoader;
-        this.baseDir = baseDir;
+        this.projectDir = projectDir;
     }
 
-    TestsToRun apply(Configuration configuration) {
-        final Set<Class<?>> selectedTests = selectTests(configuration);
-        System.out.println(System.getenv("CLASSPATH"));
+    public Set<TestSelection> applyOnNames(Iterable<String> testsToRun) {
+        return apply(testsToRun, className -> className);
+    }
+
+    public Set<TestSelection> applyOnClasses(Iterable<Class<?>> testsToRun) {
+        return apply(testsToRun, Class::getName);
+    }
+
+    private <TESTCLASS> Set<TestSelection> apply(Iterable<TESTCLASS> testsToRun,
+        Function<TESTCLASS, String> mapperToName) {
+        final Set<TestSelection> selectedTests = selectTests(configuration);
         if (testSelectionWithAnyStrategyIsChosen(configuration)) {
-            return new TestsToRun(selectedTests);
+            return selectedTests;
         } else {
-            final Set<Class<?>> orderedTests = new LinkedHashSet<>(selectedTests);
-            testsToRun.iterator().forEachRemaining(orderedTests::add);
-            return new TestsToRun(orderedTests);
+            final Set<TestSelection> orderedTests = new LinkedHashSet<>(selectedTests);
+            testsToRun
+                .iterator()
+                .forEachRemaining(testclass -> orderedTests.add(new TestSelection(mapperToName.apply(testclass))));
+            return orderedTests;
         }
     }
 
-    private Set<Class<?>> selectTests(Configuration configuration) {
+    private Set<TestSelection> selectTests(Configuration configuration) {
+
         final List<String> strategies = Arrays.asList(configuration.getStrategies());
         if (strategies.isEmpty()) {
+            logger.warn(
+                "Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
+                    + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
 
@@ -68,40 +79,15 @@ class TestStrategyApplier {
 
         if (isReportEnabled()) {
             final SmartTestingReportGenerator
-                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, baseDir);
+                reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, projectDir);
             reportGenerator.generateReport();
         }
 
-        return testSelections
-            .stream()
-            .map(TestSelection::getClassName)
-            .map(this::mapToClassInstance)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        return new LinkedHashSet<>(testSelections);
     }
 
     private boolean testSelectionWithAnyStrategyIsChosen(Configuration configuration) {
         return configuration.isSelectingMode() && configuration.getStrategies().length > 0;
-    }
-
-    private boolean isInTestToRun(String testClass) {
-        return testsToRun.getClassByName(testClass) != null;
-    }
-
-    private boolean presentOnClasspath(String testClass) {
-        try {
-            Class<?> aClass = testClassLoader.loadClass(testClass);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    private Class<?> mapToClassInstance(String testClass) {
-        try {
-            return Class.forName(testClass);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     Collection<TestSelection> filterMergeAndOrderTestSelection(Collection<TestSelection> selectedTests,
@@ -109,8 +95,9 @@ class TestStrategyApplier {
 
         final Collection<TestSelection> testSelections = selectedTests
             .stream()
-            .filter(testSelection -> presentOnClasspath(testSelection.getClassName()) && isInTestToRun(testSelection.getClassName()))
-            .collect(Collectors.toMap(TestSelection::getClassName, Function.identity(), TestSelection::merge, LinkedHashMap::new))
+            .filter(testExecutionPlannerLoader.getVerifier()::isTest)
+            .collect(Collectors.toMap(TestSelection::getClassName, Function.identity(), TestSelection::merge,
+                LinkedHashMap::new))
             .values();
 
         if (strategies.size() > 1) {
@@ -125,6 +112,6 @@ class TestStrategyApplier {
     }
 
     private boolean isReportEnabled() {
-        return Boolean.valueOf(getProperty("smart.testing.report.enable", Boolean.toString(false)));
+        return Boolean.valueOf(System.getProperty(ENABLE_REPORT_PROPERTY, "false"));
     }
 }

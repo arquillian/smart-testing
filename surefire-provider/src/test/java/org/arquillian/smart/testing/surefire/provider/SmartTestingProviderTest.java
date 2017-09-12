@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 public class SmartTestingProviderTest {
 
-    private Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
+    private final Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
     private ProviderParameters providerParameters;
     private SurefireProviderFactory providerFactory;
 

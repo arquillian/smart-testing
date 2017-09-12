@@ -1,11 +1,8 @@
 package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.util.List;
-import org.arquillian.smart.testing.filter.TestVerifier;
+
+import org.arquillian.smart.testing.api.TestVerifier;
 
 public class JavaToClassLocation {
 

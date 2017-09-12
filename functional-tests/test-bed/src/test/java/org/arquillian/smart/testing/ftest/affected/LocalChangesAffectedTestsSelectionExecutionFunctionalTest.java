@@ -1,15 +1,16 @@
 package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
-import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
+import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_tests_related_to_single_local_change_in_production_code_when_affected_is_enabled() throws Exception {
@@ -36,10 +37,10 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
     @Test
@@ -57,10 +58,10 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
 }

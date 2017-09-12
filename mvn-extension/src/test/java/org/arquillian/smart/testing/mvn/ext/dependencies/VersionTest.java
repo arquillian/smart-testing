@@ -22,9 +22,9 @@ public class VersionTest {
         });
     }
 
-    private Version version1;
-    private Version version2;
-    private boolean isGreater;
+    private final Version version1;
+    private final Version version2;
+    private final boolean isGreater;
 
     public VersionTest(String version1, String version2, boolean isGreater) {
         this.version1 = Version.from(version1);

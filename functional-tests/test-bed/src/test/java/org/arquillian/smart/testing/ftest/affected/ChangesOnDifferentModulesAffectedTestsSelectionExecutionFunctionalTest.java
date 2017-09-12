@@ -2,14 +2,16 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
+import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_detect_changes_on_maven_modules_and_execute_test() {
@@ -34,7 +36,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         final Collection<TestResult> expectedTestResults = project.applyAsCommits("Adds class in one module to affect test in another");
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
@@ -42,7 +44,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
             .run();
 
         // then
-        assertThat(actualTestResults).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
     }
 
     @Test
@@ -60,7 +62,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
 
         // when
         // tag::documentation_test_bed_debug[]
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build()
             .options()
                 .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
@@ -72,7 +74,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         // end::documentation_test_bed_debug[]
 
         // then
-        assertThat(actualTestResults).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).hasSameSizeAs(expectedTestResults).containsAll(expectedTestResults);
     }
 
 }

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
@@ -21,14 +22,14 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquipped
 
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.stream.Collectors.toMap;
-import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.FAILURE;
-import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.PASSED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class ProjectBuilder {
 
     public static final String TEST_REPORT_PREFIX = "TEST-";
+
+    private static final Logger LOGGER = Logger.getLogger(ProjectBuilder.class.getName());
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
@@ -43,11 +44,10 @@ public class ProjectBuilder {
         return this.buildConfigurator;
     }
 
-    public List<TestResult> run() {
+    public TestResults run() {
         return run("clean", "package");
     }
-
-    public List<TestResult> run(String... goals) {
+    public TestResults run(String... goals) {
         builtProject = executeGoals(goals);
         return accumulatedTestResults();
     }
@@ -70,12 +70,18 @@ public class ProjectBuilder {
                     .setProperties(asProperties(buildConfigurator.getSystemProperties()))
                     .skipTests(buildConfigurator.isSkipTestsEnabled())
                     .setMavenOpts(buildConfigurator.getMavenOpts())
+                    .setWorkingDirectory(buildConfigurator.getWorkingDirectory())
+                    .setAlsoMake(true)
                     .ignoreFailure()
                 .build();
 
         if (!buildConfigurator.isIgnoreBuildFailure() && build.getMavenBuildExitCode() != 0) {
-            System.out.println(build.getMavenLog());
-            throw new IllegalStateException("Maven build has failed, see logs for details");
+            if (build.getMavenLog().contains("No tests were executed!")) {
+                LOGGER.info("No tests were executed!");
+            } else {
+                System.out.println(build.getMavenLog());
+                throw new IllegalStateException("Maven build has failed, see logs for details");
+            }
         }
 
         return build;
@@ -83,6 +89,10 @@ public class ProjectBuilder {
 
     String getMavenLog() {
         return builtProject.getMavenLog();
+    }
+
+    public BuiltProject getBuiltProject() {
+        return builtProject;
     }
 
     private Properties asProperties(Map<String, String> propertyMap) {
@@ -109,25 +119,23 @@ public class ProjectBuilder {
         }
     }
 
-    private List<TestResult> accumulatedTestResults() {
+    private TestResults accumulatedTestResults() {
         try {
-            return Files.walk(root)
-                .filter(path -> !path.toFile().getAbsolutePath().contains(TEMP_REPORT_DIR) &&
-                    path.getFileName().toString().startsWith(TEST_REPORT_PREFIX))
+            final List<TestResult> collect = Files.walk(root)
+                .filter(path -> !path.toFile().getAbsolutePath().contains(TEMP_REPORT_DIR) && path.getFileName()
+                    .toString()
+                    .startsWith(TEST_REPORT_PREFIX))
                 .map(path -> {
-                        try {
-                            final Set<TestResult> testResults = loadTestResults(new FileInputStream(path.toFile()));
-                            return testResults.stream()
-                                .reduce(new TestResult("", "*", PASSED),
-                                    (previous, current) -> new TestResult(current.getClassName(), "*",
-                                        (previous.isFailing() || current.isFailing()) ? FAILURE : PASSED));
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
+                    try {
+                        return Lists.newArrayList(loadTestResults(new FileInputStream(path.toFile())));
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
-                )
+                })
+                .flatMap(List::stream)
                 .distinct()
                 .collect(Collectors.toList());
+            return new TestResults(collect);
         } catch (IOException e) {
             throw new RuntimeException("Failed extracting test results", e);
         }

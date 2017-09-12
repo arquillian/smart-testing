@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.DEFAULT_REPORT_FILE_NAME;
+
 class ExecutionReportMarshaller {
 
     private final String reportDir;
@@ -17,7 +19,7 @@ class ExecutionReportMarshaller {
     ExecutionReportMarshaller(String baseDir, String reportDir, String fileName) {
         this.baseDir = baseDir;
         this.reportDir = reportDir != null ? getReportDir(reportDir) : getDefaultReportDir();
-        this.fileName = fileName != null ? getFileName(fileName) : "smart-testing-report.xml";
+        this.fileName = fileName != null ? getFileName(fileName) : DEFAULT_REPORT_FILE_NAME;
     }
 
     void marshal(Object object) {

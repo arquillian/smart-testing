@@ -70,7 +70,7 @@ public class Version implements Comparable<Version> {
                         if (this.preRelease == null && v.preRelease != null) {
                             return 1;
                         } else {
-                            if (this.preRelease != null && v.preRelease == null) {
+                            if (this.preRelease != null) {
                                 return -1;
                             } else {
                                 return 0;

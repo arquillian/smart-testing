@@ -19,11 +19,10 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 public class InProjectTestReportLoader implements TestReportLoader {
 
     private String tempReportDir = TEMP_REPORT_DIR;
-    private JavaSPILoader javaSPILoader;
+    private final JavaSPILoader javaSPILoader;
 
-    public InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
+    InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
         this.javaSPILoader = javaSPILoader;
-
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.filter.TestVerifier;
+import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -81,14 +81,19 @@ public class AffectedTestsDetectorTest {
 
         @Override
         public boolean isTest(Path resource) {
-            if (resource.toString().endsWith("Test.java") || resource.toString().endsWith("TestCase.java")) {
+            return isTest(resource.toString());
+        }
+
+        @Override
+        public boolean isTest(String className) {
+            if (className.endsWith("Test.java") || className.endsWith("TestCase.java")) {
                 return true;
             }
 
             // Since core class is also in test directory, we need that first time core class is detected as such
             // but second time when real location of .class is found returns it is a class so it is resolved correctly to
             // test-classes directory
-            return resource.toString().endsWith("MyBusinessObject.java") && (coreClassCount++) != 0;
+            return className.endsWith("MyBusinessObject.java") && (coreClassCount++) != 0;
         }
     }
 }

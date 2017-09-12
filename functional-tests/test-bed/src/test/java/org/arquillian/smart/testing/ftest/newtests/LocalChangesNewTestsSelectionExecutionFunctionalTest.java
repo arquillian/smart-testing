@@ -2,13 +2,15 @@ package org.arquillian.smart.testing.ftest.newtests;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
+import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
-    public TestBed testBed = new TestBed(GIT_CLONE);
+    public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
     public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
@@ -35,10 +37,10 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
     @Test
@@ -59,10 +61,10 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final Collection<TestResult> actualTestResults = project.build().run("clean", "verify");
+        final TestResults actualTestResults = project.build().run("clean", "verify");
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
     }
 
@@ -89,11 +91,11 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // when
         // tag::documentation_build[]
-        final Collection<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
         // end::documentation_build[]
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
 }

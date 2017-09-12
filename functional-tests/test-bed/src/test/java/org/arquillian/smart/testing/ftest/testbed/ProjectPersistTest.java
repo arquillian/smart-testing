@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.jcip.annotations.NotThreadSafe;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,7 +33,7 @@ public class ProjectPersistTest {
         // it's rather shallow check, but if it's not equal it means second execution of the test failed for different reasons
         assertThat(secondRun.getFailures()).hasSameSizeAs(firstRun.getFailures());
 
-        assertThat(findPersistedProjects("repo.bundle_ProjectPersistFail_should_fail")).hasSize(2);
+        assertThat(findPersistedProjects("repo.bundle", "ProjectPersistFail_should_fail")).hasSize(2);
     }
 
     @Test
@@ -41,12 +41,15 @@ public class ProjectPersistTest {
         final Result result = JUnitCore.runClasses(ProjectPersistPass.class);
 
         assertThat(result.wasSuccessful()).isTrue();
-        assertThat(findPersistedProjects("repo.bundle_ProjectPersistPass_should_pass")).isEmpty();
+        assertThat(findPersistedProjects("repo.bundle", "ProjectPersistPass_should_pass")).isEmpty();
     }
 
-    private List<Path> findPersistedProjects(String projectName) throws IOException {
+    private List<Path> findPersistedProjects(String projectName, String suffix) throws IOException {
         return Files.walk(new File("target" + File.separator + "test-bed-executions").toPath(), 2)
-            .filter(dir -> dir.toFile().getAbsolutePath().endsWith(projectName))
+            .filter(dir -> {
+                final String absolutePath = dir.toFile().getAbsolutePath();
+                return absolutePath.contains(projectName) && absolutePath.endsWith(suffix);
+            })
             .collect(Collectors.toList());
     }
 

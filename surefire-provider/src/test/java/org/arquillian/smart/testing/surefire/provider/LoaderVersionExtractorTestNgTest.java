@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(Parameterized.class)
 public class LoaderVersionExtractorTestNgTest {
 
-    private String testNgVersion;
+    private final String testNgVersion;
 
     public LoaderVersionExtractorTestNgTest(String testNgVersion) {
         this.testNgVersion = testNgVersion;
