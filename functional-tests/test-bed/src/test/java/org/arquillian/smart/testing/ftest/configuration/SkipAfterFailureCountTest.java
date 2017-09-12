@@ -2,23 +2,22 @@ package org.arquillian.smart.testing.ftest.configuration;
 
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.configuration.assertions.TestResultAssert.assertThat;
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.CHANGED;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.Status.SKIPPED;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
 
 public class SkipAfterFailureCountTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone();
+    public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
@@ -44,13 +43,12 @@ public class SkipAfterFailureCountTest {
 
         // then
         assertThat(testResults.testsWithStatuses(SKIPPED))
-            .extracting(TestResult::getClassName, TestResult::getTestMethod)
-            .contains(
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase", "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase", "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase")
+            .hasSkippedClasses(
+                "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase",
+                "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase",
+                "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase",
+                "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase",
+                "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase"
             );
     }
 
@@ -75,14 +73,12 @@ public class SkipAfterFailureCountTest {
             .run();
 
         // then
-        assertThat(testResults.testsWithStatuses(SKIPPED))
-            .extracting(TestResult::getClassName, TestResult::getTestMethod)
-            .doesNotContain(
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase", "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase", "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase"),
-                tuple("org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase", "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase")
+        assertThat(testResults.testsWithStatuses(SKIPPED)).doesNotHaveSkippedClasses(
+                "org.jboss.arquillian.container.impl.client.container.ContainerLifecycleControllerTestCase",
+                "org.jboss.arquillian.container.impl.client.container.DeploymentExceptionHandlerTestCase",
+                "org.jboss.arquillian.container.impl.client.container.ContainerRegistryCreatorTestCase",
+                "org.jboss.arquillian.container.impl.client.container.ContainerDeployControllerTestCase",
+                "org.jboss.arquillian.container.impl.client.deployment.ArchiveDeploymentExporterTestCase"
             );
     }
 }

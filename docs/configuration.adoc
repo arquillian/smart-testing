@@ -12,7 +12,7 @@ and then the rest.
 
 In order to define the mode use `smart.testing.mode` Java system property with either one.
 
-IMPORTANT: To get fast feedback loop *Smart testing* is setting `skipAfterFailureCount` to `1`. However you can overwrite it by setting system
+IMPORTANT: To get fast feedback loop *Smart testing* is setting `http://maven.apache.org/surefire/maven-surefire-plugin/examples/skip-after-failure.html[skipAfterFailureCount]` to `1`. However you can overwrite it by setting system
 property `surefire.skipAfterFailureCount` to required value. This behaviour is applicable only if user is using `surefire` plugin to execute
 test having smart testing enabled with `ordering` mode. This is not applicable for `selecting` mode because user can execute all `new/modified/affected`
 tests, identify all failed tests using results and rework on it at once.
