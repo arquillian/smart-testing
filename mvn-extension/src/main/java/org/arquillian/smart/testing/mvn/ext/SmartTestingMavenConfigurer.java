@@ -16,8 +16,6 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.arquillian.smart.testing.LoggerConfigurator.enableDebugLogLevel;
-import static org.arquillian.smart.testing.LoggerConfigurator.enableMavenDebugLogLevel;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
 
@@ -41,8 +39,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = Configuration.load();
 
         if (session.getRequest().getLoggingLevel() == 0) {
-            enableMavenDebugLogLevel(true);
-            logger.debug("Maven build run in debug log level.");
+            logger.enableMavenDebugLogLevel(true);
         }
 
         logger.debug("Applied user properties: %s", session.getUserProperties());
@@ -80,10 +77,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        if (enableDebugLogLevel()) {
+        if (logger.isDebugLogLevelEnabled()) {
             logger.debug("Version: %s", ExtensionVersion.version().toString());
             session.getAllProjects().forEach(mavenProject ->
-                ModifiedPomExporter.showPom(mavenProject.getModel()));
+                ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
         }
 
         if (configuration.areStrategiesDefined()) {

@@ -11,11 +11,11 @@ class CustomAssertions {
     @Rule
     public static final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
-    static void assertThatAllBuiltSubmodulesHaveReportsIncluded(BuiltProject module, String reportDir) {
-        module.getModules().forEach(subModule -> assertThatReportFileIsIncludedIn(subModule, reportDir));
+    static void assertThatAllBuiltSubmodulesContainBuildArtifact(BuiltProject module, String reportDir) {
+        module.getModules().forEach(subModule -> assertThatFileIsIncludedIn(subModule, reportDir));
     }
 
-    private static void assertThatReportFileIsIncludedIn(BuiltProject subModule, String reportDir) {
+    private static void assertThatFileIsIncludedIn(BuiltProject subModule, String reportDir) {
         final File targetDirectory = subModule.getTargetDirectory();
         final FileAssert fileAssert = softly.assertThat(new File(targetDirectory, reportDir));
         if (isJar(subModule)) {
@@ -25,7 +25,7 @@ class CustomAssertions {
                 fileAssert.doesNotExist();
             }
         } else {
-            assertThatAllBuiltSubmodulesHaveReportsIncluded(subModule, reportDir);
+            assertThatAllBuiltSubmodulesContainBuildArtifact(subModule, reportDir);
             fileAssert.doesNotExist();
         }
     }

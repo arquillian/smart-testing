@@ -1,9 +1,10 @@
 package org.arquillian.smart.testing;
 
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
 import static java.lang.String.format;
-import static org.arquillian.smart.testing.LoggerConfigurator.enableDebugLogLevel;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
 
 public class Logger {
 
@@ -11,9 +12,11 @@ public class Logger {
 
     private static final String PREFIX = "%s: Smart-Testing - ";
 
+    private boolean mavenDebugLogLevel = false;
+
     private Logger(java.util.logging.Logger logger) {
         this.jul = logger;
-        new LoggerConfigurator(jul);
+        setLogLevel();
     }
 
     /**
@@ -97,13 +100,14 @@ public class Logger {
      *     arguments to the message
      */
     public void debug(String msg, Object... args) {
-        if (enableDebugLogLevel()) {
+        if (isDebugLogLevelEnabled()) {
             System.out.println(getFormattedMsg("DEBUG", msg, args));
         }
     }
 
     /**
-     * Log a formatted SEVERE message with given arguments using java.util.logging.Logger
+     * Will format the given message with the given arguments and prints it on standard output with the prefix:
+     * "SEVERE: Smart-Testing - ", if debug mode is enabled.
      *
      * @param msg
      *     The string message (or a key in the message catalog)
@@ -111,55 +115,28 @@ public class Logger {
      *     arguments to the message
      */
     public void severe(String msg, Object... args) {
-        jul.severe(getFormattedMsg(msg, args));
+        System.err.println(getFormattedMsg("SEVERE", msg, args));
     }
 
-    /**
-     * Log a formatted CONFIG message with given arguments using java.util.logging.Logger
-     *
-     * @param msg
-     *     The string message (or a key in the message catalog)
-     * @param args
-     *     arguments to the message
-     */
-    public void config(String msg, Object... args) {
-        jul.config(getFormattedMsg(msg, args));
+    public Boolean isDebugLogLevelEnabled() {
+        return Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG, "false")) || mavenDebugLogLevel;
     }
 
-    /**
-     * Log a formatted FINE message with given arguments using java.util.logging.Logger
-     *
-     * @param msg
-     *     The string message (or a key in the message catalog)
-     * @param args
-     *     arguments to the message
-     */
-    public void fine(String msg, Object... args) {
-        jul.fine(getFormattedMsg(msg, args));
+    public void enableMavenDebugLogLevel(Boolean mavenDebugLevel) {
+        mavenDebugLogLevel = mavenDebugLevel;
     }
 
-    /**
-     * Log a formatted FINER message with given arguments using java.util.logging.Logger
-     *
-     * @param msg
-     *     The string message (or a key in the message catalog)
-     * @param args
-     *     arguments to the message
-     */
-    public void finer(String msg, Object... args) {
-        jul.finer(getFormattedMsg(msg, args));
+    private void setLogLevel() {
+        if (isDebugLogLevelEnabled()) {
+            jul.setLevel(Level.FINEST);
+            addConsoleHandler();
+        }
     }
 
-    /**
-     * Log a formatted FINEST message with given arguments using java.util.logging.Logger
-     *
-     * @param msg
-     *     The string message (or a key in the message catalog)
-     * @param args
-     *     arguments to the message
-     */
-    public void finest(String msg, Object... args) {
-        jul.finest(getFormattedMsg(msg, args));
+    private void addConsoleHandler() {
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.FINEST);
+        jul.addHandler(consoleHandler);
     }
 
     private String getFormattedMsg(String msg, Object... args) {

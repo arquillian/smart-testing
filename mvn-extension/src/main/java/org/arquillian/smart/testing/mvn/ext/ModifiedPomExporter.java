@@ -16,23 +16,23 @@ class ModifiedPomExporter {
 
     private static String SMART_TESTING_POM_FILE = "smart-testing-pom.xml";
 
-    static void showPom(Model model) {
+    static void exportModifiedPom(Model model) {
         try (StringWriter pomOut = new StringWriter()) {
             new MavenXpp3Writer().write(pomOut, model);
-            copyModifiedPomInTarget(pomOut, model.getProjectDirectory());
+            writeModifiedPomToTarget(pomOut, model.getProjectDirectory());
         } catch (IOException e) {
             throw new RuntimeException("Failed writing updated pom file: " + model.getPomFile().getAbsolutePath(), e);
         }
     }
 
-    static void copyModifiedPomInTarget(StringWriter modifiedPom, File project) throws IOException {
+    static void writeModifiedPomToTarget(StringWriter modifiedPom, File project) throws IOException {
         Path path = Paths.get(project.toPath() + File.separator + "target", "smart-testing");
         if (!Files.exists(path)) {
             Files.createDirectories(path);
         }
         final Path target = Paths.get(path + File.separator + SMART_TESTING_POM_FILE);
         Files.write(target, modifiedPom.toString().getBytes());
-        logger.debug("Copied modified pom to: " + target);
+        logger.debug("Modified pom stored at: " + target);
     }
 }
 

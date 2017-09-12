@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.io.File;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
@@ -8,15 +7,13 @@ import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
-import org.assertj.core.api.FileAssert;
 import org.assertj.core.api.JUnitSoftAssertions;
-import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesHaveReportsIncluded;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
+import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
@@ -86,6 +83,6 @@ public class SurefireForksConfigurationTest {
             .run();
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject(), DEFAULT_REPORT_FILE_NAME);
+        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), DEFAULT_REPORT_FILE_NAME);
     }
 }

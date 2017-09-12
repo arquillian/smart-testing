@@ -6,14 +6,11 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.Configuration;
-import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 
 public class DependencyResolver {
 
     private final Configuration configuration;
-
-    private Logger logger = Logger.getLogger(DependencyResolver.class);
 
     public DependencyResolver(Configuration configuration) {
         this.configuration = configuration;

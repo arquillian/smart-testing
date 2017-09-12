@@ -49,9 +49,14 @@ To do it you just need to set `smart.testing.apply.to` with either `surefire` or
 === Debug Mode
 
 In order to get diagnostic information related to Smart testing extension, you can enable the debug mode by either
-setting the system property `smart.testing.debug` or by setting the mvn debug output `(-X)` flag along with smart testing.
+setting the system property `smart.testing.debug` or by setting the mvn debug output `(-X)` flag 
+along with smart testing.
 
 Debug mode by default writes smart testing debug level logs to the console.
+
+Debug logs retrieves information related to smart testing logged at Debug level, system properties set by the user, 
+test selection information and modified pom.xml stored at `target/smart-testing` directory of each 
+sub-module as `smart-testing-pom.xml`
 
 === Specifying Concrete Set of Test Classes
 
