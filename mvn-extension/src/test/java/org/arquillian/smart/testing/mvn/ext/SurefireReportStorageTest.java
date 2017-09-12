@@ -10,6 +10,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,6 +26,9 @@ public class SurefireReportStorageTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Rule
+    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     private Model project;
     private File surefireReportsDir;
@@ -53,11 +57,11 @@ public class SurefireReportStorageTest {
 
         // then
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
-        assertThat(reportsDir).exists();
+        softly.assertThat(reportsDir).exists();
 
         Arrays.stream(reportsDir.listFiles()).forEach(file -> {
-            assertThat(expectedReports).containsKey(file.getName());
-            assertThat(file).hasSameContentAs(expectedReports.get(file.getName()));
+            softly.assertThat(expectedReports).containsKey(file.getName());
+            softly.assertThat(file).hasSameContentAs(expectedReports.get(file.getName()));
         });
     }
 
@@ -75,7 +79,7 @@ public class SurefireReportStorageTest {
         SurefireReportStorage.purgeReports(mavenSession);
 
         // then
-        assertThat(reportsDir).doesNotExist();
+        softly.assertThat(reportsDir).doesNotExist();
     }
 
     @Test
@@ -88,7 +92,7 @@ public class SurefireReportStorageTest {
 
         // then
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
-        assertThat(reportsDir).doesNotExist();
+        softly.assertThat(reportsDir).doesNotExist();
     }
 
     private Map<String, File> feedWithReports(File surefireReportsDir) throws IOException {
