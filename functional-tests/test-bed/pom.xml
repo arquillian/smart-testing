@@ -28,6 +28,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>git-rules</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <!-- Maven Extension JAR is added because we need to get version from extension_version file in case tester does not specify any version-->
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>smart-testing-maven-lifecycle-extension</artifactId>

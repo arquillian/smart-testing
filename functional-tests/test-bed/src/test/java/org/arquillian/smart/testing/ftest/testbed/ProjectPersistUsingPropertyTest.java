@@ -8,8 +8,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.jcip.annotations.NotThreadSafe;
-import org.arquillian.smart.testing.ftest.testbed.rules.GitClone;
-import org.arquillian.smart.testing.ftest.testbed.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.rules.TestBed;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -30,12 +30,15 @@ public class ProjectPersistUsingPropertyTest {
         final Result result = JUnitCore.runClasses(ProjectPersistAnotherPass.class);
 
         assertThat(result.wasSuccessful()).isTrue();
-        assertThat(findPersistedProjects("repo.bundle_ProjectPersistAnotherPass_should_pass")).hasSize(1);
+        assertThat(findPersistedProjects("repo.bundle", "ProjectPersistAnotherPass_should_pass")).hasSize(1);
     }
 
-    private List<Path> findPersistedProjects(String projectName) throws IOException {
+    private List<Path> findPersistedProjects(String projectName, String suffix) throws IOException {
         return Files.walk(new File("target" + File.separator + "test-bed-executions").toPath(), 2)
-            .filter(dir -> dir.toFile().getAbsolutePath().endsWith(projectName))
+            .filter(dir -> {
+                final String absolutePath = dir.toFile().getAbsolutePath();
+                return absolutePath.contains(projectName) && absolutePath.endsWith(suffix);
+            })
             .collect(Collectors.toList());
     }
 

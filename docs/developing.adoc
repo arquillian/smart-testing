@@ -17,7 +17,7 @@ You can also run particular tests or all tests against defined repo. For the fir
 
 [source, java, indent=0]
 ----
-include::../functional-tests/test-bed/src/main/java/org/arquillian/smart/testing/ftest/testbed/rules/GitClone.java[tag=git_clone_custom_repo]
+include::../functional-tests/git-rules/src/main/java/org/arquillian/smart/testing/rules/git/GitClone.java[tag=git_clone_custom_repo]
 ----
 
 or define system property `test.bed.repo` which will replace the default repository for all the tests which are relying on it.
