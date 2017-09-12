@@ -2,11 +2,10 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.when;
 public class SurefireReportStorageTest {
 
     @Rule
-    public TemporaryFolder folder= new TemporaryFolder();
+    public TemporaryFolder folder = new TemporaryFolder();
 
     private Model project;
     private File surefireReportsDir;
@@ -103,7 +102,7 @@ public class SurefireReportStorageTest {
 
     private File createDummyFile(File directory, String fileName) throws IOException {
         File file = new File(directory, fileName);
-        FileUtils.writeStringToFile(file, fileName, Charset.defaultCharset());
+        Files.write(file.toPath(), fileName.getBytes());
         return file;
     }
 }

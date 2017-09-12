@@ -3,8 +3,9 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
-import org.apache.commons.io.FileUtils;
+import java.util.Comparator;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -53,10 +54,11 @@ class SurefireReportStorage {
     private static void copyReportFile(File src, File destDir) {
         File destination = new File(destDir, src.getName());
         try {
-            FileUtils.copyFile(src, destination);
+            Files.copy(src.toPath(), destination.toPath());
         } catch (IOException e) {
             logger.severe("There occurred an error when the file %s was being copied to %s. See the error message: %s",
                 src, destination, e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -67,12 +69,24 @@ class SurefireReportStorage {
 
             if (reportsDir.exists()) {
                 try {
-                    FileUtils.deleteDirectory(reportsDir);
+                    Files
+                        .walk(reportsDir.toPath())
+                        .sorted(Comparator.reverseOrder())
+                        .forEach(SurefireReportStorage::deleteFile);
                 } catch (IOException e) {
                     logger.severe("There occurred an error when the directory %s was being removed: %s", reportsDir,
                         e.getMessage());
                 }
             }
         });
+    }
+
+    private static void deleteFile(Path path){
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            logger.severe("There occurred an error when the file %s was being removed: %s", path,
+                e.getMessage());
+        }
     }
 }
