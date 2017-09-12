@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Logger;
-import org.codehaus.plexus.util.FileUtils;
 
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
@@ -41,6 +41,7 @@ class SurefireReportStorage {
             } catch (IOException e) {
                 logger.severe("There occurred an error when the directory %s was being created: %s", reportsDir,
                     e.getMessage());
+                return;
             }
         }
 

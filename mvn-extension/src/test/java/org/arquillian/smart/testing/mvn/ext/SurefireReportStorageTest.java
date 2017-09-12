@@ -2,11 +2,11 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -47,7 +47,7 @@ public class SurefireReportStorageTest {
     @Test
     public void should_copy_xml_files() throws IOException {
         // given
-        Map<String, Long> expectedReports = feedWithReports(surefireReportsDir);
+        Map<String, File> expectedReports = feedWithReports(surefireReportsDir);
 
         // when
         SurefireReportStorage.copySurefireReports(project);
@@ -56,9 +56,10 @@ public class SurefireReportStorageTest {
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
         assertThat(reportsDir).exists();
 
-        Map<String, Long> actualReports = Arrays.stream(reportsDir.listFiles())
-            .collect(Collectors.toMap(File::getName, File::length));
-        assertThat(actualReports).containsAllEntriesOf(expectedReports).hasSameSizeAs(expectedReports);
+        Arrays.stream(reportsDir.listFiles()).forEach(file -> {
+            assertThat(expectedReports).containsKey(file.getName());
+            assertThat(file).hasSameContentAs(expectedReports.get(file.getName()));
+        });
     }
 
     @Test
@@ -72,7 +73,6 @@ public class SurefireReportStorageTest {
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
 
         // when
-        assertThat(reportsDir).exists();
         SurefireReportStorage.purgeReports(mavenSession);
 
         // then
@@ -80,7 +80,7 @@ public class SurefireReportStorageTest {
     }
 
     @Test
-    public void should_not_create_nor_copy_anything() throws IOException {
+    public void should_not_create_nor_copy_anything_if_surefire_reports_dir_does_not_exist() throws IOException {
         // given
         surefireReportsDir.delete();
 
@@ -92,8 +92,8 @@ public class SurefireReportStorageTest {
         assertThat(reportsDir).doesNotExist();
     }
 
-    private Map<String, Long> feedWithReports(File surefireReportsDir) throws IOException {
-        Map<String, Long> expectedReports = new HashMap<>();
+    private Map<String, File> feedWithReports(File surefireReportsDir) throws IOException {
+        Map<String, File> expectedReports = new HashMap<>();
         expectedReports.put("first-report.xml", createDummyFile(surefireReportsDir, "first-report.xml"));
         expectedReports.put("second-report.xml", createDummyFile(surefireReportsDir, "second-report.xml"));
         expectedReports.put("third-report.xml", createDummyFile(surefireReportsDir, "third-report.xml"));
@@ -101,10 +101,9 @@ public class SurefireReportStorageTest {
         return expectedReports;
     }
 
-    private long createDummyFile(File directory, String fileName) throws IOException {
+    private File createDummyFile(File directory, String fileName) throws IOException {
         File file = new File(directory, fileName);
-        RandomAccessFile raf = new RandomAccessFile(file, "rw");
-        raf.setLength(fileName.length());
-        return file.length();
+        FileUtils.writeStringToFile(file, fileName, Charset.defaultCharset());
+        return file;
     }
 }

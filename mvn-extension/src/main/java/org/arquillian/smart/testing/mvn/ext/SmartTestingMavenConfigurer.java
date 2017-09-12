@@ -44,7 +44,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
 
         if (configuration.areStrategiesDefined()) {
-            configureExtensionPrepareReports(session, configuration);
+            configureExtension(session, configuration);
             calculateChanges();
         } else {
             logStrategiesNotDefined();
@@ -91,7 +91,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         changeStorage.store(changes);
     }
 
-    private void configureExtensionPrepareReports(MavenSession session, Configuration configuration) {
+    private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
