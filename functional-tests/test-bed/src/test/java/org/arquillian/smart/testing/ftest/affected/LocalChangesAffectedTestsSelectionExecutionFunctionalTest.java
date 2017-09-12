@@ -1,8 +1,8 @@
 package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
-import java.util.List;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -37,10 +37,10 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             .applyAsLocalChanges("Single method body modification - sysout");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
     @Test
@@ -58,10 +58,10 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
 
         // when
-        final List<TestResult> actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
-        assertThat(actualTestResults).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
 }

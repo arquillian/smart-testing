@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.ftest.testbed.testresults;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -17,7 +18,7 @@ import javax.xml.stream.events.XMLEvent;
  */
 public class SurefireReportReader {
 
-    public static Set<TestResult> loadTestResults(InputStream surefireInputStream) {
+    public static Collection<TestResult> loadTestResults(InputStream surefireInputStream) {
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader eventReader = null;
 
@@ -37,7 +38,7 @@ public class SurefireReportReader {
         }
     }
 
-    private static Set<TestResult> readTestResults(XMLEventReader eventReader) throws XMLStreamException {
+    private static Collection<TestResult> readTestResults(XMLEventReader eventReader) throws XMLStreamException {
         final Set<TestResult> testResults = new HashSet<>();
         TestResult currentTestResult = null;
 

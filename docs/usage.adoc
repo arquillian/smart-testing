@@ -78,6 +78,12 @@ strategy used. If none is applicable to the strategy, they are executed in order
 When used with `selecting` mode, the specified tests that fit the defined strategy are executed.
 However, if none fulfil the strategy criteria, no tests would be executed.
 
+=== Skipping Tests
+
+To skip executing the tests for a particular project, Smart Testing aligns with 
+http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html[Maven Surefire/Failsafe 
+plugins' skip test functionality] and respects system properties `skipTests`, `skipITs` and `maven.test.skip`.
+
 === Running Examples
 
 ==== Execute Smart Testing with Changed strategy and Selecting Mode

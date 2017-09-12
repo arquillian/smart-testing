@@ -1,10 +1,9 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
-import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.rules.TestBed;
-import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class SkipTestExecutionFunctionalTest {
             .enable();
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(modules)
                 .options()
                     .withSystemProperties("skipITs", "true")
@@ -47,7 +46,7 @@ public class SkipTestExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).size().isEqualTo(20);
+        assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(20);
     }
 
     @Test
@@ -61,7 +60,7 @@ public class SkipTestExecutionFunctionalTest {
             .enable();
 
         // when
-        final Collection<TestResult> actualTestResults = project
+        final TestResults actualTestResults = project
             .build(modules)
                 .options()
                     .skipTests(true)
@@ -71,6 +70,6 @@ public class SkipTestExecutionFunctionalTest {
         // then
         String capturedMavenLog = project.getMavenLog();
         assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
-        assertThat(actualTestResults).size().isEqualTo(0);
+        assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
     }
 }
