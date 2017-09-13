@@ -4,17 +4,17 @@ import java.io.File;
 import org.arquillian.smart.testing.rules.git.GitCloner;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.After;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GitServerRuleTest {
+public class GitServerClassLevelRuleTest {
 
-    @Rule
-    public final GitServer gitServer = GitServer.fromBundle("repo.bundle")
+    @ClassRule
+    public static final GitServer gitServer = GitServer.fromBundle("repo.bundle")
         .fromBundle("launchpad", "saas-launchpad.bundle")
-        .usingAnyFreePort() // this way we can run this test in parallel
+        .usingPort(6655)
         .create();
 
     private GitCloner gitCloner;
@@ -22,7 +22,7 @@ public class GitServerRuleTest {
     @Test
     public void should_clone_repository_using_http_call_and_custom_port_through_rule() throws Exception {
         // when
-        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/repo.bundle");
+        gitCloner = new GitCloner("http://localhost:6655/repo.bundle");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then
@@ -32,7 +32,7 @@ public class GitServerRuleTest {
     @Test
     public void should_clone_second_repository_using_http_call_and_custom_port_through_rule() throws Exception {
         // when
-        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/launchpad");
+        gitCloner = new GitCloner("http://localhost:6655/launchpad");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then
