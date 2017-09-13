@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
@@ -85,6 +86,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
+            if (isFailedStrategyUsed()) {
+                SurefireReportStorage.purgeReports(session);
+            }
         } else {
             logStrategiesNotDefined();
         }
@@ -102,7 +106,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
+        session.getAllProjects().forEach(mavenProject -> {
+            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            if (isFailedStrategyUsed()) {
+                SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+            }
+        });
+    }
+
+    private boolean isFailedStrategyUsed(){
+        return Arrays.asList(configuration.getStrategies()).contains("failed");
     }
 
     private void logStrategiesNotDefined() {
