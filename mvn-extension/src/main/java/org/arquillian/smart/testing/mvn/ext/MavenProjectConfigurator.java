@@ -33,10 +33,10 @@ class MavenProjectConfigurator {
         final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
 
         if (!effectiveTestRunnerPluginConfigurations.isEmpty()) {
-            logger.info("Enabling Smart Testing %s with %s", ExtensionVersion.version().toString(),
+            logger.debug("Enabling Smart Testing %s for plugin %s in %s module", ExtensionVersion.version().toString(),
                 effectiveTestRunnerPluginConfigurations.stream()
                     .map(Plugin::getArtifactId)
-                    .collect(Collectors.toList()).toString());
+                    .collect(Collectors.toList()).toString(), model.getArtifactId());
 
             dependencyResolver.addRequiredDependencies(model);
 
