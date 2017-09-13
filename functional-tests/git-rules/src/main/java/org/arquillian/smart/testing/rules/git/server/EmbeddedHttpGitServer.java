@@ -60,7 +60,6 @@ public class EmbeddedHttpGitServer {
     }
 
     public void start() throws Exception {
-
         this.server = createGitServer(port);
     }
 
@@ -82,7 +81,9 @@ public class EmbeddedHttpGitServer {
 
     private void stopServer() {
         try {
-            this.server.stop();
+            if (this.server != null) {
+                this.server.stop();
+            }
         } catch (Exception e) {
             throw new RuntimeException("Failed while stopping server", e);
         }
