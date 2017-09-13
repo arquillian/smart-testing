@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
@@ -29,7 +29,7 @@ public class ProjectBuilder {
 
     public static final String TEST_REPORT_PREFIX = "TEST-";
 
-    private static final Logger LOGGER = Logger.getLogger(ProjectBuilder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger();
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
