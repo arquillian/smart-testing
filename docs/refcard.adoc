@@ -81,7 +81,7 @@ a|`affected`
 |Property | Description | Default
 
 a|`smart.testing.debug`
-a|enables the debug mode by either (alternatively you can use Maven debug output `(-X)` flag)
+a|enables the debug mode (alternatively you can use Maven debug output `(-X)` flag)
 a|`false`
 
 a|`smart.testing.report.dir`
