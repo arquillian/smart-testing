@@ -1,16 +1,11 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Optional;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.SubDirectoryDirectoryAction;
 
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
@@ -34,61 +29,14 @@ class SurefireReportStorage {
     }
 
     private static void copyReportsDirectory(Model model, File surefireReportsDir) {
-        File reportsDir = new File(model.getProjectDirectory(), TEMP_REPORT_DIR);
-        logger.debug("Copying surefire report directory from [%s] to [%s]", surefireReportsDir, reportsDir);
+        SubDirectoryDirectoryAction reportsDirectory =
+            new LocalStorage(model.getProjectDirectory())
+                .execution()
+                .directory(TEMP_REPORT_DIR);
+        logger.debug("Copying surefire report directory from [%s] to [%s]", surefireReportsDir,
+            reportsDirectory.getPath());
 
-        if (!reportsDir.exists()) {
-            try {
-                Files.createDirectory(reportsDir.toPath());
-            } catch (IOException e) {
-                logger.error("An error occurred when trying to create the directory [%s]: %s", reportsDir,
-                    e.getMessage());
-                return;
-            }
-        }
-
-        final File[] files = Optional.ofNullable(surefireReportsDir.listFiles()).orElse(new File[0]);
-        Arrays.stream(files)
-            .filter(file -> file.isFile() && file.getName().endsWith(".xml"))
-            .forEach(file -> copyReportFile(file, reportsDir));
-    }
-
-    private static void copyReportFile(File src, File destDir) {
-        File destination = new File(destDir, src.getName());
-        try {
-            Files.copy(src.toPath(), destination.toPath());
-        } catch (IOException e) {
-            logger.error("An error occurred when trying to copy file [%s] to the directory [%s]: %s",
-                src, destination, e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    static void purgeReports(MavenSession session) {
-        session.getAllProjects().forEach(mavenProject -> {
-            File reportsDir = new File(mavenProject.getModel().getProjectDirectory(), TEMP_REPORT_DIR);
-            logger.debug("Deleting reports directory at the location %s", reportsDir);
-
-            if (reportsDir.exists()) {
-                try {
-                    Files
-                        .walk(reportsDir.toPath())
-                        .sorted(Comparator.reverseOrder())
-                        .forEach(SurefireReportStorage::deleteFile);
-                } catch (IOException e) {
-                    logger.error("An error occurred when trying to delete the directory [%s]: %s", reportsDir,
-                        e.getMessage());
-                }
-            }
-        });
-    }
-
-    private static void deleteFile(Path path){
-        try {
-            Files.delete(path);
-        } catch (IOException e) {
-            logger.error("An error occurred when trying to remove the file [%s]: %s", path,
-                e.getMessage());
-        }
+        reportsDirectory.create(surefireReportsDir.toPath(), file -> file.isFile() && file.getName().endsWith(".xml"),
+            true);
     }
 }

@@ -12,11 +12,6 @@ public class NoopStorage implements ChangeStorage {
     }
 
     @Override
-    public void purgeAll() {
-
-    }
-
-    @Override
     public Optional<Collection<Change>> read() {
         return Optional.empty();
     }
