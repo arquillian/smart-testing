@@ -25,8 +25,8 @@ TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is t
 When you are running Smart Testing, you'll see following logs in the console, showing your current configuration:
 
 ----
-INFO: Smart-Testing - Applied strategies: [new, affected]
-INFO: Smart-Testing - Applied usage: [selecting]
+[INFO] [Smart Testing Extension] Applied strategies: [new, affected]
+[INFO] [Smart Testing Extension] Applied usage: [selecting]
 ----
 
 This can be used as feedback to check that the extension has been installed correctly.
@@ -45,6 +45,16 @@ run with standard `surefire` / `failsafe` plugins.
 If you only want to use smart testing on `surefire` or `failsafe` plugin definition.
 
 To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
+
+=== Debug Mode
+
+In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
+setting the system property `smart.testing.debug` or by setting the mvn debug output `(-X)` flag to have the entire build execution
+in the debug mode (available out of the box in Maven).
+
+Debug logs provide information related to smart testing execution, system properties set by the user,
+test selection information. In addition for each and every module we store modified `pom.xml` at `target/smart-testing`
+as `smart-testing-effective-pom.xml`
 
 === Specifying Concrete Set of Test Classes
 

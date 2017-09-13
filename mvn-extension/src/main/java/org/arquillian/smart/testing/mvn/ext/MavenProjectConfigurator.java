@@ -1,13 +1,10 @@
 package org.arquillian.smart.testing.mvn.ext;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
@@ -15,13 +12,13 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
 
-    private static final Logger logger = Logger.getLogger(MavenProjectConfigurator.class);
+    private static final Logger logger = Logger.getLogger();
 
     private final Configuration configuration;
 
@@ -32,22 +29,14 @@ class MavenProjectConfigurator {
         this.dependencyResolver = new DependencyResolver(configuration);
     }
 
-    void showPom(Model model) {
-        try (StringWriter pomOut = new StringWriter()) {
-            new MavenXpp3Writer().write(pomOut, model);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed writing updated pom file: " + model.getPomFile().getAbsolutePath(), e);
-        }
-    }
-
     void configureTestRunner(Model model) {
         final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
 
         if (!effectiveTestRunnerPluginConfigurations.isEmpty()) {
-            logger.info("Enabling Smart Testing %s for %s", ExtensionVersion.version().toString(),
+            logger.debug("Enabling Smart Testing %s for plugin %s in %s module", ExtensionVersion.version().toString(),
                 effectiveTestRunnerPluginConfigurations.stream()
                     .map(Plugin::getArtifactId)
-                    .collect(Collectors.toList()).toString());
+                    .collect(Collectors.toList()).toString(), model.getArtifactId());
 
             dependencyResolver.addRequiredDependencies(model);
 
@@ -109,7 +98,7 @@ class MavenProjectConfigurator {
     }
 
     private void failBecauseOfPluginVersionMismatch(Model model) {
-        logger.severe(
+        logger.error(
             "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
             ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
         logCurrentPlugins(model);
@@ -131,7 +120,7 @@ class MavenProjectConfigurator {
         model.getBuild().getPlugins()
             .stream()
             .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
-            .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
+            .forEach(plugin -> logger.error("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
                 plugin.getArtifactId(), plugin.getVersion()));
     }
 }

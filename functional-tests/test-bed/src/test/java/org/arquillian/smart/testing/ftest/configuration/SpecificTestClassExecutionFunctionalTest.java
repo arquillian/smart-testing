@@ -19,15 +19,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpecificTestClassExecutionFunctionalTest {
 
+    private static final String SMART_TESTING_EXTENSION_DISABLED = "[Smart Testing Extension] Smart Testing is disabled.";
+    private static final String SMART_TESTING_EXTENSION_ENABLED = "[Smart Testing Extension] Enabling extension.";
+    private static final String BASE_CONFIG = "config/impl-base";
+
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
-
-    private static final String module = "config/impl-base";
-
-    private static final String EXPECTED_LOG_PART = "Enabling Smart Testing";
 
     @Test
     public void should_disable_extension_and_only_execute_specific_test_when_single_test_set() throws Exception {
@@ -44,7 +44,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "PropertiesParserTestCase", "failIfNoTests", "false")
                 .configure()
@@ -52,7 +52,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
+        assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
         assertThat(actualTestResults.accumulatedPerTestClass()).doesNotContainAnyElementsOf(expectedTestResults).hasSize(1);
     }
 
@@ -71,7 +71,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
                         "test", "PropertiesParserTestCase, ConfigurationRegistrarTestCase", "failIfNoTests", "false")
@@ -80,7 +80,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        assertThat(capturedMavenLog).doesNotContain(EXPECTED_LOG_PART);
+        assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
         assertThat(actualTestResults.accumulatedPerTestClass()).doesNotContainAnyElementsOf(expectedTestResults).hasSize(2);
     }
 
@@ -99,7 +99,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~",
                         "test", "*Properties*, ConfigurationRegistrarTestCase", "failIfNoTests", "false")
@@ -108,7 +108,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
+        assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
         assertThat(actualTestResults.accumulatedPerTestClass()).containsSequence(expectedTestResults).hasSize(4);
     }
 
@@ -127,7 +127,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "*Properties*", "failIfNoTests", "false")
                 .configure()
@@ -135,7 +135,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
+        assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
         assertThat(actualTestResults.accumulatedPerTestClass()).containsSequence(expectedTestResults).hasSize(3);
     }
 
@@ -154,7 +154,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Properties*")
                 .configure()
@@ -162,7 +162,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
+        assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
         assertThat(actualTestResults.accumulatedPerTestClass()).isEmpty();
     }
 
@@ -183,7 +183,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // when
         final TestResults actualTestResults = project
-            .build(module)
+            .build(BASE_CONFIG)
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "test", "Configuration*", "failIfNoTests", "false")
                 .configure()
@@ -191,7 +191,7 @@ public class SpecificTestClassExecutionFunctionalTest {
 
         // then
        String capturedMavenLog = project.getMavenLog();
-       assertThat(capturedMavenLog).contains(EXPECTED_LOG_PART);
+       assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
        assertThat(actualTestResults.accumulatedPerTestClass()).extracting("className")
            .containsOnly("org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase");
     }

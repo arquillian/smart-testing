@@ -10,6 +10,7 @@ import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
+import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
@@ -25,7 +26,7 @@ import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpeci
     hint = "smart-testing")
 class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
-    private static final Logger logger = Logger.getLogger(SmartTestingMavenConfigurer.class);
+    private static final Logger logger = Logger.getLogger();
 
     private final ChangeStorage changeStorage = new LocalChangeStorage(".");
 
@@ -37,6 +38,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
+
+        if (session.getRequest().getLoggingLevel() == 0) {
+            logger.enableMavenDebugLogLevel(true);
+        }
+
+        logger.debug("Applied user properties: %s", session.getUserProperties());
 
         if (shouldSkipExtensionInstallation()) {
             logExtensionDisableReason();
@@ -71,6 +78,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
+        if (logger.isDebugLogLevelEnabled()) {
+            logger.debug("Version: %s", ExtensionVersion.version().toString());
+            session.getAllProjects().forEach(mavenProject ->
+                ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
+        }
+
         if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
             if (isFailedStrategyUsed()) {
@@ -92,6 +105,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
+        logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
@@ -106,8 +120,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void logStrategiesNotDefined() {
-        logger.warn("Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
-            + "For details on how to configure it head over to http://bit.ly/st-config");
+        logger.warn(
+            "Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
+                + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 
     private boolean shouldSkipExtensionInstallation() {
