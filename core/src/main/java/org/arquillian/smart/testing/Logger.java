@@ -5,7 +5,7 @@ import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
 
 public class Logger {
 
-    private static final String PREFIX = "%s: Smart-Testing - ";
+    private static final String PREFIX = "[%s] [Smart Testing Extension] ";
 
     private boolean mavenDebugLogLevel = false;
 
