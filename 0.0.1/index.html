@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
+<meta name="generator" content="Asciidoctor 1.5.2">
 <title>Smart Testing</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
-/* Remove comment around @import statement below when using as a custom stylesheet */
-/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+/* Remove the comments around the @import statement below when using this as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400";*/
 article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
 audio,canvas,video{display:inline-block}
 audio:not([controls]){display:none;height:0}
 [hidden],template{display:none}
 script{display:none!important}
 html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
 a{background:transparent}
 a:focus{outline:thin dotted}
 a:active,a:hover{outline:0}
@@ -51,11 +52,12 @@ textarea{overflow:auto;vertical-align:top}
 table{border-collapse:collapse;border-spacing:0}
 *,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
 html,body{font-size:100%}
-body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
 a:hover{cursor:pointer}
 img,object,embed{max-width:100%;height:auto}
 object,embed{height:100%}
 img{-ms-interpolation-mode:bicubic}
+#map_canvas img,#map_canvas embed,#map_canvas object,.map_canvas img,.map_canvas embed,.map_canvas object{max-width:none!important}
 .left{float:left!important}
 .right{float:right!important}
 .text-left{text-align:left!important}
@@ -63,11 +65,10 @@ img{-ms-interpolation-mode:bicubic}
 .text-center{text-align:center!important}
 .text-justify{text-align:justify!important}
 .hide{display:none}
-img,object,svg{display:inline-block;vertical-align:middle}
+.antialiased,body{-webkit-font-smoothing:antialiased}
+img{display:inline-block;vertical-align:middle}
 textarea{height:auto;min-height:50px}
 select{width:100%}
-.center{margin-left:auto;margin-right:auto}
-.spread{width:100%}
 p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
 .subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
 div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
@@ -110,8 +111,7 @@ blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
 h1{font-size:2.75em}
 h2{font-size:2.3125em}
 h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
-h4{font-size:1.4375em}}
-table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+h4{font-size:1.4375em}}table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
 table thead,table tfoot{background:#f7f8f7;font-weight:bold}
 table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
 table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
@@ -121,14 +121,10 @@ h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-s
 h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
 .clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
 .clearfix:after,.float-group:after{clear:both}
-*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
-*:not(pre)>code.nobreak{word-wrap:normal}
-*:not(pre)>code.nowrap{white-space:nowrap}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
 pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
-em em{font-style:normal}
-strong strong{font-weight:400}
 .keyseq{color:rgba(51,51,51,.8)}
-kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+kbd{display:inline-block;color:rgba(0,0,0,.8);font-size:.75em;line-height:1.4;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:-.15em .15em 0 .15em;padding:.2em .6em .2em .5em;vertical-align:middle;white-space:nowrap}
 .keyseq kbd:first-child{margin-left:0}
 .keyseq kbd:last-child{margin-right:0}
 .menuseq,.menu{color:rgba(0,0,0,.8)}
@@ -159,33 +155,29 @@ p a>code:hover{color:rgba(0,0,0,.9)}
 #toc ul.sectlevel0>li>a{font-style:italic}
 #toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
 #toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
-#toc li{line-height:1.3334;margin-top:.3334em}
 #toc a{text-decoration:none}
 #toc a:active{text-decoration:underline}
 #toctitle{color:#7a2518;font-size:1.2em}
 @media only screen and (min-width:768px){#toctitle{font-size:1.375em}
 body.toc2{padding-left:15em;padding-right:0}
 #toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
-#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2 #toctitle{margin-top:0;font-size:1.2em}
 #toc.toc2>ul{font-size:.9em;margin-bottom:0}
 #toc.toc2 ul ul{margin-left:0;padding-left:1em}
 #toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
 body.toc2.toc-right{padding-left:0;padding-right:15em}
-body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}
-@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
 #toc.toc2{width:20em}
 #toc.toc2 #toctitle{font-size:1.375em}
 #toc.toc2>ul{font-size:.95em}
 #toc.toc2 ul ul{padding-left:1.25em}
-body.toc2.toc-right{padding-left:0;padding-right:20em}}
-#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
 #content #toc>:first-child{margin-top:0}
 #content #toc>:last-child{margin-bottom:0}
 #footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
 #footer-text{color:rgba(255,255,255,.8);line-height:1.44}
 .sect1{padding-bottom:.625em}
-@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}
-.sect1+.sect1{border-top:1px solid #efefed}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}.sect1+.sect1{border-top:1px solid #efefed}
 #content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
 #content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
 #content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
@@ -214,9 +206,7 @@ table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inh
 .sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
 .literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
 .literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
-@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}
-@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}
-.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
 .listingblock pre.highlightjs{padding:0}
 .listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
 .listingblock pre.prettyprint{border-width:0}
@@ -226,7 +216,7 @@ table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inh
 .listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
 .listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
 table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
-table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0;line-height:1.45}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0}
 table.pyhltable td.code{padding-left:.75em;padding-right:0}
 pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
 pre.pygments .lineno{display:inline-block;margin-right:.25em}
@@ -247,12 +237,13 @@ table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
 .verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
 .quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
 .quoteblock .attribution br,.verseblock .attribution br{display:none}
-.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.05em;color:rgba(0,0,0,.6)}
 .quoteblock.abstract{margin:0 0 1.25em 0;display:block}
 .quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
 .quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
 table.tableblock{max-width:100%;border-collapse:separate}
 table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.spread{width:100%}
 table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
 table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
 table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
@@ -298,8 +289,8 @@ ol.upperroman{list-style-type:upper-roman}
 ol.lowergreek{list-style-type:lower-greek}
 .hdlist>table,.colist>table{border:0;background:none}
 .hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
-td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
-td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist1{padding-right:.75em;font-weight:bold}
+td.hdlist1,td.hdlist2{vertical-align:top}
 .literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
 .colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
 .colist>table tr>td:last-of-type{padding:.25em 0}
@@ -312,14 +303,13 @@ td.hdlist1{font-weight:bold;padding-bottom:1.25em}
 .image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
 .image.left{margin-right:.625em}
 .image.right{margin-left:.625em}
-a.image{text-decoration:none;display:inline-block}
-a.image object{pointer-events:none}
-sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
-sup.footnote a,sup.footnoteref a{text-decoration:none}
-sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+a.image{text-decoration:none}
+span.footnote,span.footnoteref{vertical-align:super;font-size:.875em}
+span.footnote a,span.footnoteref a{text-decoration:none}
+span.footnote a:active,span.footnoteref a:active{text-decoration:underline}
 #footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
 #footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
-#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;text-indent:-1.05em;margin-bottom:.2em}
+#footnotes .footnote{padding:0 .375em;line-height:1.3;font-size:.875em;margin-left:1.2em;text-indent:-1.2em;margin-bottom:.2em}
 #footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
 #footnotes .footnote:last-of-type{margin-bottom:0}
 #content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
@@ -377,10 +367,11 @@ span.icon>.fa{cursor:default}
 pre .conum[data-value]{position:relative;top:-.125em}
 b.conum *{color:inherit!important}
 .conum:not([data-value]):empty{display:none}
-dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
-h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
-p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
-p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+h1,h2{letter-spacing:-.01em}
+dt,th.tableblock,td.content{text-rendering:optimizeLegibility}
+p,td.content{letter-spacing:-.01em}
+p strong,td.content strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content{font-size:1.0625rem}
 p{margin-bottom:1.25rem}
 .sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
 .exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
@@ -391,9 +382,9 @@ a{color:inherit!important;text-decoration:underline!important}
 a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
 a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
 abbr[title]:after{content:" (" attr(title) ")"}
-pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+pre,blockquote,tr,img{page-break-inside:avoid}
 thead{display:table-header-group}
-svg{max-width:100%}
+img{max-width:100%!important}
 p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
 h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
 #toc,.sidebarblock,.exampleblock>.content{background:none!important}
@@ -417,15 +408,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .hide-for-print{display:none!important}
 .show-for-print{display:inherit!important}}
 </style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
 <style>
 /* Stylesheet for CodeRay to match GitHub theme | MIT License | http://foundation.zurb.com */
 /*pre.CodeRay {background-color:#f7f7f8;}*/
 .CodeRay .line-numbers{border-right:1px solid #d8d8d8;padding:0 0.5em 0 .25em}
 .CodeRay span.line-numbers{display:inline-block;margin-right:.5em;color:rgba(0,0,0,.3)}
-.CodeRay .line-numbers strong{color:rgba(0,0,0,.4)}
+.CodeRay .line-numbers strong{font-weight: normal}
 table.CodeRay{border-collapse:separate;border-spacing:0;margin-bottom:0;border:0;background:none}
-table.CodeRay td{vertical-align: top;line-height:1.45}
+table.CodeRay td{vertical-align: top}
 table.CodeRay td.line-numbers{text-align:right}
 table.CodeRay td.line-numbers>pre{padding:0;color:rgba(0,0,0,.3)}
 table.CodeRay td.code{padding:0 0 0 .5em}
@@ -460,7 +451,7 @@ table.CodeRay td.code>pre{padding:0}
 .CodeRay .hex{color:#058}
 .CodeRay .integer,.CodeRay .float{color:#099}
 .CodeRay .include{color:#555}
-.CodeRay .inline{color:#000}
+.CodeRay .inline{color:#00}
 .CodeRay .inline .inline{background:#ccc}
 .CodeRay .inline .inline .inline{background:#bbb}
 .CodeRay .inline .inline-delimiter{color:#d14}
@@ -510,11 +501,61 @@ table.CodeRay td.code>pre{padding:0}
 .CodeRay .head .head{color:#f4f}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>Smart Testing</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_what_is_this">1. What is this?</a>
+<ul class="sectlevel2">
+<li><a href="#_integrations">1.1. Integrations</a></li>
+<li><a href="#_minimum_requirements">1.2. Minimum requirements</a></li>
+<li><a href="#_maven_extension">1.3. Maven Extension</a></li>
+</ul>
+</li>
+<li><a href="#_configuration">2. Configuration</a>
+<ul class="sectlevel2">
+<li><a href="#_modes">2.1. Modes</a></li>
+<li><a href="#_strategies">2.2. Strategies</a></li>
+</ul>
+</li>
+<li><a href="#_usage">3. Usage</a>
+<ul class="sectlevel2">
+<li><a href="#_examples">3.1. Examples</a></li>
+<li><a href="#_disabling_smart_testing">3.2. Disabling Smart Testing</a></li>
+<li><a href="#_plugin_selection">3.3. Plugin Selection</a></li>
+<li><a href="#_debug_mode">3.4. Debug Mode</a></li>
+<li><a href="#_specifying_concrete_set_of_test_classes">3.5. Specifying Concrete Set of Test Classes</a></li>
+<li><a href="#_skipping_tests">3.6. Skipping Tests</a></li>
+<li><a href="#_running_examples">3.7. Running Examples</a></li>
+</ul>
+</li>
+<li><a href="#_reports">4. Reports</a>
+<ul class="sectlevel2">
+<li><a href="#_build_artifacts">4.1. Build Artifacts</a></li>
+<li><a href="#_configuration_2">4.2. Configuration</a></li>
+</ul>
+</li>
+<li><a href="#_reference_card">5. Reference Card</a>
+<ul class="sectlevel2">
+<li><a href="#_installation">5.1. Installation</a></li>
+<li><a href="#_configuration_3">5.2. Configuration</a></li>
+<li><a href="#_strategies_2">5.3. Strategies</a></li>
+<li><a href="#_getting_insights_of_the_execution">5.4. Getting insights of the execution</a></li>
+</ul>
+</li>
+<li><a href="#_developing">6. Developing</a>
+<ul class="sectlevel2">
+<li><a href="#_test_bed">6.1. Test Bed</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p><span class="image"><a class="image" href="https://travis-ci.org/arquillian/smart-testing"><img src="https://travis-ci.org/arquillian/smart-testing.svg?branch=master" alt="Build Status"></a></span></p>
 </div>
@@ -531,13 +572,1135 @@ an impact on the build time and thus we waste time waiting for the most importan
 <div class="paragraph">
 <p>We created <strong>Smart Testing</strong> to give you the fastest possible feedback loop when it comes to executing your tests.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_is_this"><a class="anchor" href="#_what_is_this"></a>1. What is this?</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>To read complete documentation head over to <a href="http://arquillian.org/smart-testing/" class="bare">http://arquillian.org/smart-testing/</a></p>
+<p><strong>Smart Testing</strong> is a tool that speeds up the test running phase by reordering test execution plan to increase a probability of
+fail-fast execution and thus give you faster feedback about your project&#8217;s health.</p>
+</div>
+<div class="paragraph">
+<p>Suppose that you need to implement a new feature in your current project.
+If you are following <em>TDD</em> / <em>BDD</em> approach, you&#8217;ll write some test(s) to validate that the new feature behaves as expected.
+Then you&#8217;ll implement the new feature and when you get that all tests passes. Last step is to push this code to your source
+control, which probably will trigger a new build in your CI server running all the tests.</p>
+</div>
+<div class="paragraph">
+<p>And at this point two things can happen:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The build takes several minutes and it does not fail.</p>
+</li>
+<li>
+<p>The build takes several minutes but it fails because your new tests are failing (yes I know it worked in your machine).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Usually you don&#8217;t have that much influence on when your new tests are going to be executed.
+They could be the first ones, in that case your build will fail fast, or they might be the last ones, so you&#8217;ll need to
+wait some time until you get the failure.</p>
+</div>
+<div class="paragraph">
+<p><strong>Smart testing</strong> project aims to solve this uncertainty by ordering tests so that the first tests that could fail (because for example they
+are new or because failed previously) are going to be executed first.</p>
+</div>
+<div class="sect2">
+<h3 id="_integrations"><a class="anchor" href="#_integrations"></a>1.1. Integrations</h3>
+<div class="paragraph">
+<p>Currently Smart Testing supports Maven through Maven Extension mechanism and works together with <code>maven-surefire-plugin</code>
+and <code>maven-failsafe-plugin</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_minimum_requirements"><a class="anchor" href="#_minimum_requirements"></a>1.2. Minimum requirements</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Java</dt>
+<dd>
+<p>Requires Java 8. In case of using <a href="#_affected">Affected</a> strategy, Java 9 is not supported yet.</p>
+</dd>
+<dt class="hdlist1">Maven</dt>
+<dd>
+<p>Tested with Maven <code>3.3.9</code> and <code>3.5.0</code> but any version above <code>3.1.X</code> should work. Our recommendation is that you
+use at least <code>3.3.X</code> version to avoid any extension API problems.</p>
+</dd>
+<dt class="hdlist1">Surefire/Failsafe</dt>
+<dd>
+<p>Minimum version required is <code>2.19.1</code> or above. It is important to make sure that you have it defined
+in your <code>pom.xml</code>, as Maven comes with the default version which might not be compatible with our extension.
+== Installation</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maven_extension"><a class="anchor" href="#_maven_extension"></a>1.3. Maven Extension</h3>
+<div class="paragraph">
+<p><strong>Smart Testing</strong> is a Maven extension, so needs to be installed as is.</p>
+</div>
+<div class="sect3">
+<h4 id="_maven_3_1_x"><a class="anchor" href="#_maven_3_1_x"></a>1.3.1. Maven &gt;= 3.1.X</h4>
+<div class="paragraph">
+<p>Get Smart Testing <em>shaded</em> copy from <a href="https://bintray.com/arquillian/Arquillian/smart-testing">Bintray</a> and copy it to <code>M2_HOME/lib/ext</code></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_maven_3_3_x"><a class="anchor" href="#_maven_3_3_x"></a>1.3.2. Maven &gt;= 3.3.X</h4>
+<div class="paragraph">
+<p>You can still use the process described at <a href="#_maven_3_1_x">Maven &gt;= 3.1.X</a> or use the new <em>core extension configuration mechanism</em> by
+creating folder called <code>.mvn</code> in the root of your project and create inside it an <code>extensions.xml</code> file
+which registers the smart testing extension:</p>
+</div>
+<div class="listingblock">
+<div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;extensions&gt;</span>
+  <span class="tag">&lt;extension&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.arquillian.smart.testing<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>smart-testing-maven-lifecycle-extension<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${version}<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;/extension&gt;</span>
+<span class="tag">&lt;/extensions&gt;</span></code></pre>
+</div>
+</div>
+<script type="text/javascript" src="https://asciinema.org/a/131840.js" id="asciicast-131840" async></script>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>2. Configuration</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_modes"><a class="anchor" href="#_modes"></a>2.1. Modes</h3>
+<div class="paragraph">
+<p>So far in <a href="#_what_is_this">What is this?</a> section we explained that <strong>Smart testing</strong> changes the order of test execution plan
+to run first the important tests and then the rest. This is know as <code>ordering</code> mode, but that&#8217;s not the only one.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>ordering</code></dt>
+<dd>
+<p><code>ordering</code> mode as its name suggests orders the test execution plan so important tests are executed first
+and then the rest.</p>
+</dd>
+<dt class="hdlist1"><code>selecting</code></dt>
+<dd>
+<p><code>selecting</code> mode just selects the important tests and execute them, skipping the rest of the tests. This is the default mode.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>In order to define the mode use <code>smart.testing.mode</code> Java system property with either one.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_strategies"><a class="anchor" href="#_strategies"></a>2.2. Strategies</h3>
+<div class="paragraph">
+<p>Until now, you&#8217;ve read that smart testing is changing test execution plan running or only including important tests.
+But how do we know which tests are important and which ones not?</p>
+</div>
+<div class="paragraph">
+<p>There are several strategies that you can choose from which determine what are the <strong>important</strong> tests.
+Currently we have following strategies in place: <code>new</code>, <code>changed</code>, <code>affected</code> and <code>failed</code>.</p>
+</div>
+<div class="paragraph">
+<p>To set them you need to set Java system property <code>smart.testing</code> to one or more strategies in comma-separated value form.</p>
+</div>
+<div class="paragraph">
+<p>Subsequent sections dive deeper into each and every one of them.</p>
+</div>
+<div class="sect3">
+<h4 id="_new"><a class="anchor" href="#_new"></a>2.2.1. New</h4>
+<div class="paragraph">
+<p><code>New</code> strategy uses <em>SCM</em> information (currently only <em>Git</em> is supported) to detect <strong>new</strong> tests and treat them as <strong>important</strong>
+tests to run them first (<em>ordering</em>) or filtered (<em>selecting</em>).</p>
+</div>
+<div class="paragraph">
+<p>So internally this strategy inspects your <em>SCM</em> history (and local changes) and all tests that were added (so they are effectively new)
+are marked as important ones.</p>
+</div>
+<div class="paragraph">
+<p>This strategy can be configured in several ways through Java system properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>scm.range.head</code> and <code>scm.range.tail</code> are used to set the range of commits you want to inspect for new tests.
+The values can be commit ids or using <code>HEAD</code> notation.
+For example: <code>-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~</code>
+By default if not specified, default value is <code>HEAD</code>.</p>
+</li>
+<li>
+<p><code>scm.last.changes</code> can be used to set the number of commits from <code>HEAD</code> that you want to inspect.
+For example <code>-Dscm.last.changes=3</code> will be equivalent as <code>-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~~</code>.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Those properties might be in particular handy when used in the CI builds.
+For example in Jenkins when using <a href="https://wiki.jenkins.io/display/JENKINS/Git+Plugin">Git Plugin</a> you can configure your build as follows:
+<code>$ mvn clean verify -Dsmart.testing=new, affected -Dscm.range.head=GIT_COMMIT -Dscm.range.tail=GIT_PREVIOUS_COMMIT</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Currently not committed changes (those that are <em>added</em> and <em>untracked</em>) are considered as important tests as well.
+This effectively means that if you don&#8217;t specify any commit range, only these information is considered.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_changed"><a class="anchor" href="#_changed"></a>2.2.2. Changed</h4>
+<div class="paragraph">
+<p><code>Changed</code> strategy is like <a href="#_new">New</a> strategy, but it uses only tests that are <strong>modified</strong> (they were already committed in the past)
+instead of <strong>new</strong> ones.</p>
+</div>
+<div class="paragraph">
+<p>In this strategy not committed changes (those that are <em>modified</em> or <em>changed</em>) are considered as important tests as well.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Usually <code>new</code> and <code>changed</code> strategies are used together <code>-Dsmart.testing=new, changed</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_affected"><a class="anchor" href="#_affected"></a>2.2.3. Affected</h4>
+<div class="paragraph">
+<p><code>Affected</code> strategy uses a different approach to choose what are the <strong>important</strong> tests to run first (<em>ordering</em>) or filtered (<em>selecting</em>).
+This strategy also relies on <em>SCM</em> information but in this case it retrieves any <strong>new</strong> or <strong>modified</strong> business class
+between commits range and local changes as well.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>scm.range.head</code>, <code>scm.range.tail</code> and <code>scm.last.changes</code> Java system properties are valid as well.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>When this strategy gets all changes then inspect all tests of current project checking which ones <em>imports</em> these classes.
+If the test exercises a business class that has been modified, we treat it as <strong>important</strong>  so it will be executed earlier in the test plan.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">About transitivity</div>
+<div class="paragraph">
+<p>Our approach does not find only direct test classes related to the business code which was changed, but takes into an account transitivity. This means that any import of a business class is considered as a dependency of the test too.</p>
+</div>
+<div class="paragraph">
+<p>Suppose we have <code>ATest.java</code> which imports <code>A.java</code>.
+At the same time <code>A.java</code> imports <code>B.java</code> (ATest &#8594; A &#8594; B).
+If <code>B.java</code> is modified, then <code>ATest.java</code> is considered an <strong>important</strong> test too.</p>
+</div>
+<div class="paragraph">
+<p>By default this import transitivity is applied to all imports except the ones from <code>java</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with any third-party library, you&#8217;d probably want to <strong>exclude</strong> its imports.
+Or maybe just <strong>include</strong> imports from your business code, for example all imports from <code>org.superbiz</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Affected</strong> provides two ways to provide <em>inclusions</em> and <em>exclusions</em>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">inclusions/exclusions system proeprty</dt>
+<dd>
+<p>you can set inclusions and/or exclusions by using <code>smart.testing.affected.inclusions</code>/<code>smart.testing.affected.exclusions</code> which accepts comma-separated values.
+For example: <code>-Dsmart.testing.affected.inclusions=org.mysuperbiz.*</code>.</p>
+</dd>
+<dt class="hdlist1">config properties file</dt>
+<dd>
+<p>you can create a properties file containing inclusions and/or exclusions and set its location using <code>smart.testing.affected.config</code> system property.
+For example <code>-Dsmart.testing.affected.config=affected-configuration.properties</code></p>
+</dd>
+</dl>
+</div>
+<div class="listingblock">
+<div class="title">affected-configuration.properties</div>
+<div class="content">
+<pre>inclusions=org.mysuperbiz.*
+exclusions=org.springframework.*, org.apache.commons.*</pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Exclusions has precedence over inclusions.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This strategy is currently only applicable for <em>white box</em> testing approach. At this point our approach is to
+ analyze direct code dependencies, but we are working on broader use cases.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+At this moment, this strategy does not work with Java 9.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_failed"><a class="anchor" href="#_failed"></a>2.2.4. Failed</h4>
+<div class="paragraph">
+<p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>).</p>
+</div>
+<div class="paragraph">
+<p>This strategy uses the <em>JUnit</em> XML <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.
+All reports from previous local build are automatically copied by the maven extension to a temp directory <code>${project.directory}/.smart-testing/execution/reports</code> and when the build is finished the directory is removed.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>3. Usage</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_examples"><a class="anchor" href="#_examples"></a>3.1. Examples</h3>
+<div class="paragraph">
+<p>After <a href="#_installation">installing</a> <strong>Smart Testing Maven Extension</strong> you can use any goal you use with <code>maven-surefire-plugin</code>
+or <code>maven-failsafe-plugin</code>.</p>
+</div>
+<div class="paragraph">
+<p>To configure it you only need to pass from CLI the Java system properties.
+Let&#8217;s see some examples:</p>
+</div>
+<div class="paragraph">
+<p><strong>You want to run only tests that you&#8217;ve just added or modified locally</strong></p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed"</code></p>
+</div>
+<div class="paragraph">
+<p><strong>You want to run all tests but given priority to the latest tests added or modified</strong></p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn clean test -Dsmart.testing.mode=ordering -Dscm.last.changes=1 -Dsmart.testing="new, changed"</code></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>smart.testing.mode</code> is not mandatory in case of <code>ordering</code> because it is the <strong>default</strong> mode.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>You want to run only tests that validates new or modified business classes locally</strong></p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="affected"</code></p>
+</div>
+<div class="paragraph">
+<p>When you are running Smart Testing, you&#8217;ll see following logs in the console, showing your current configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>[INFO] [Smart Testing Extension] Applied strategies: [new, affected]
+[INFO] [Smart Testing Extension] Applied usage: [selecting]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This can be used as feedback to check that the extension has been installed correctly.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disabling_smart_testing"><a class="anchor" href="#_disabling_smart_testing"></a>3.2. Disabling Smart Testing</h3>
+<div class="paragraph">
+<p>Sometimes you might want to disable smart testing extension without removing it.</p>
+</div>
+<div class="paragraph">
+<p>To do it you just need to set <code>smart.testing.disable</code> Java system property to <code>true</code> and then tests will
+run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_plugin_selection"><a class="anchor" href="#_plugin_selection"></a>3.3. Plugin Selection</h3>
+<div class="paragraph">
+<p><strong>Smart testing</strong> extension hooks into <code>surefire</code> and <code>failsafe</code> lifecycle to provide the order/selection of tests to execute.</p>
+</div>
+<div class="paragraph">
+<p>If you only want to use smart testing on <code>surefire</code> or <code>failsafe</code> plugin definition.</p>
+</div>
+<div class="paragraph">
+<p>To do it you just need to set <code>smart.testing.apply.to</code> with either <code>surefire</code> or <code>failsafe</code> to just enable in one of them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>3.4. Debug Mode</h3>
+<div class="paragraph">
+<p>In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
+setting the system property <code>smart.testing.debug</code> or by setting the mvn debug output <code>(-X)</code> flag to have the entire build execution
+in the debug mode (available out of the box in Maven).</p>
+</div>
+<div class="paragraph">
+<p>Debug logs provide information related to smart testing execution, system properties set by the user,
+test selection information. In addition for each and every module we store modified <code>pom.xml</code> at <code>target/smart-testing</code>
+as <code>smart-testing-effective-pom.xml</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>3.5. Specifying Concrete Set of Test Classes</h3>
+<div class="paragraph">
+<p>During development, you may want to run a single test class or a set of concrete test classes.
+You can do this by setting the maven <code>test</code> property to specific test class(es).</p>
+</div>
+<div class="sect3">
+<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>3.5.1. To Run a Single Test</h4>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=SampleTest</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This configuration disables smart testing and executes only the specified sample test.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>3.5.2. To Run Multiple Test Classes</h4>
+<div class="paragraph">
+<p>You can also choose to run only a concrete set of multiple test classes.</p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=SampleOneTest, SampleTwoTest</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+When multiple specific tests are set without any pattern, smart testing is disabled just like the case
+for single test.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can further choose to execute multiple test classes in combination with smart testing&#8217;s <a href="configuration.html#_modes"><code>selecting</code></a> and <a href="configuration.html#_modes"><code>ordering</code></a> mode by using patterns as
+<a href="http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html">supported by Maven</a>.</p>
+</div>
+<div class="paragraph">
+<p><code>$ mvn test -Dtest=Sample*Test</code></p>
+</div>
+<div class="paragraph">
+<p>When used with <code>ordering</code> mode, the specified tests are executed in the order defined by the smart testing
+strategy used. If none is applicable to the strategy, they are executed in order defined by Surefire.</p>
+</div>
+<div class="paragraph">
+<p>When used with <code>selecting</code> mode, the specified tests that fit the defined strategy are executed.
+However, if none fulfil the strategy criteria, no tests would be executed.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>3.6. Skipping Tests</h3>
+<div class="paragraph">
+<p>To skip executing the tests for a particular project, Smart Testing aligns with
+<a href="http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html">Maven Surefire/Failsafe
+plugins' skip test functionality</a> and respects system properties <code>skipTests</code>, <code>skipITs</code> and <code>maven.test.skip</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.7. Running Examples</h3>
+<div class="sect3">
+<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
+<script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
+</div>
+<div class="sect3">
+<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
+<script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reports"><a class="anchor" href="#_reports"></a>4. Reports</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>4.1. Build Artifacts</h3>
+<div class="paragraph">
+<p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
+most efficient way to get a quick answer to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>How tests are ordered?</p>
+</li>
+<li>
+<p>To which strategy they belong?</p>
+</li>
+<li>
+<p>What was the configuration used?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>Smart Testing</code> provides concise report in the <code>XML</code> format with all this information at hand.</p>
+</div>
+<div class="paragraph">
+<p>Here’s how the sample report looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span>
+<span class="tag">&lt;smart-testing-execution&gt;</span>
+    <span class="tag">&lt;module&gt;</span>core<span class="tag">&lt;/module&gt;</span>
+    <span class="tag">&lt;executionConfiguration&gt;</span>
+        <span class="tag">&lt;usageMode&gt;</span>selecting<span class="tag">&lt;/usageMode&gt;</span>
+        <span class="tag">&lt;strategies&gt;</span>
+            <span class="tag">&lt;strategy&gt;</span>new<span class="tag">&lt;/strategy&gt;</span>
+            <span class="tag">&lt;strategy&gt;</span>changed<span class="tag">&lt;/strategy&gt;</span>
+        <span class="tag">&lt;/strategies&gt;</span>
+        <span class="tag">&lt;properties&gt;</span>
+            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">new,changed</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.mode</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">selecting</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.report.dir</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">target/smart-testing-report</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.report.name</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">report</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/properties&gt;</span>
+    <span class="tag">&lt;/executionConfiguration&gt;</span>
+    <span class="tag">&lt;selection&gt;</span>
+        <span class="tag">&lt;tests&gt;</span>
+            <span class="tag">&lt;test</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.arquillian.smart.testing.report.ExecutionReporterTest</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">strategies</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">new,changed</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+            <span class="tag">&lt;test</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">org.arquillian.smart.testing.report.ExecutionReporterUsingPropertyTest</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">strategies</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">new</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
+        <span class="tag">&lt;/tests&gt;</span>
+    <span class="tag">&lt;/selection&gt;</span>
+<span class="tag">&lt;/smart-testing-execution&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>4.2. Configuration</h3>
+<div class="paragraph">
+<p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>You will get generated reports in <code>target/smart-testing-report.xml</code> by default.</p>
+</div>
+<div class="paragraph">
+<p>To change the location of the generated output report, following properties
+should be set to the desired alternative location.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>smart.testing.report.dir</code></dt>
+<dd>
+<p>To configure directory where generated reports should be stored.</p>
+</dd>
+<dt class="hdlist1"><code>smart.testing.report.name</code></dt>
+<dd>
+<p>To configure the file name of the generated report.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>5. Reference Card</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_installation"><a class="anchor" href="#_installation"></a>5.1. Installation</h3>
+<div class="listingblock">
+<div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
+<span class="tag">&lt;extensions&gt;</span>
+  <span class="tag">&lt;extension&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.arquillian.smart.testing<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>smart-testing-maven-lifecycle-extension<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${version}<span class="tag">&lt;/version&gt;</span>
+  <span class="tag">&lt;/extension&gt;</span>
+<span class="tag">&lt;/extensions&gt;</span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>5.2. Configuration</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 16%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Possible Values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.mode</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set running mode</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>selecting</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>ordering</code>, <code>selecting</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set strategies in CSV</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.disable</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Disable Smart Testing</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>true</code>, <code>false</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.apply.to</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set plugin to apply Smart Testing in CSV</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>surefire, failsafe</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>surefire</code>, <code>failsafe</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>5.3. Strategies</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 33%;">
+<col style="width: 33%;">
+<col style="width: 16%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Applicable Strategies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>scm.range.tail</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set first commit id for inspecting changes</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>HEAD~0</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>scm.range.head</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set last commit id for inspecting changes</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>HEAD</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>scm.last.changes</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the number of commits from <code>HEAD</code> that you want to inspect</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>0</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>new</code>, <code>changed</code>, <code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.inclusions</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set classes to be included for scanning</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.exclusions</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set classes to be excluded for scanning</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.affected.config</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set location of affected configuration file</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>affected</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>5.4. Getting insights of the execution</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.debug</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>enables the debug mode (alternatively you can use Maven debug output <code>(-X)</code> flag)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.report.dir</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">directory where generated reports should be stored</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>target</code> of the current module being built</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.report.name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the file name of the generated report</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart-testing-report.xml</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>6. Developing</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This section will be improved as we continue with the SPI design to let you hook your own logic if needed.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>6.1. Test Bed</h3>
+<div class="paragraph">
+<p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">LocalChangesMixedStrategySelectionExecutionFunctionalTest</span> {
+
+    <span class="annotation">@ClassRule</span>
+    <span class="directive">public</span> <span class="directive">static</span> <span class="directive">final</span> GitClone GIT_CLONE = <span class="keyword">new</span> GitClone(testRepository());
+
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> TestBed testBed = <span class="keyword">new</span> TestBed(GIT_CLONE);
+
+    <span class="annotation">@Test</span>
+    <span class="directive">public</span> <span class="type">void</span> should_execute_all_new_tests_and_related_to_production_code_changes() <span class="directive">throws</span> <span class="exception">Exception</span> {
+        <span class="comment">// given</span>
+        <span class="directive">final</span> Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+                .executionOrder(NEW, AFFECTED)
+                .inMode(SELECTING)
+            .enable();
+
+        <span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;TestResult&gt; expectedTestResults = project
+            .applyAsLocalChanges(<span class="string"><span class="delimiter">&quot;</span><span class="content">Single method body modification - sysout</span><span class="delimiter">&quot;</span></span>,
+                <span class="string"><span class="delimiter">&quot;</span><span class="content">Inlined variable in a method</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Adds new unit test</span><span class="delimiter">&quot;</span></span>);
+
+        <span class="comment">// when</span>
+        <span class="directive">final</span> TestResults actualTestResults = project.build().run();
+
+        <span class="comment">// then</span>
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_SCM_CHANGES);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_WORKING_DIRECTORY_NAME);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We are using <code>arquillian-core</code> project (in a form of snapshot and squashed repo) for running those tests. You can find it <a href="https://github.com/arquillian/smart-testing-dogfood-repo">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can also run particular tests or all tests against defined repo. For the first option simply <code>GitClone</code> rule constructor</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> GitClone(<span class="predefined-type">String</span> repositoryUrl)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
+</div>
+<div class="sect3">
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>6.1.1. Design Idea</h4>
+<div class="paragraph">
+<p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
+</div>
+<div class="sect4">
+<h5 id="_key_principles"><a class="anchor" href="#_key_principles"></a>Key Principles</h5>
+<div class="sect5">
+<h6 id="_project_configuration"><a class="anchor" href="#_project_configuration"></a>Project configuration</h6>
+<div class="paragraph">
+<p>Easy way of configuring any Maven-based project in the test itself is through simple and self-explanatory fluent API.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">project.configureSmartTesting()
+            .executionOrder(NEW)
+            .inMode(SELECTING)
+       .enable();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This snippet will enable <code>smart-testing</code> extension in the background. It will also apply test selection criteria
+and execution mode (<code>selecting</code> meaning only tests which belong to categories defined in <code>executionOrder</code>).</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_applying_changes"><a class="anchor" href="#_applying_changes"></a>Applying changes</h6>
+<div class="paragraph">
+<p>We decided to apply changes to the selected code base by modifying sample repository directly.
+This is done by creating atomic commits directly rather than applying code changes in the tests themselves
+(e.g. by using <a href="https://github.com/forge/roaster">Forge Roaster</a>). This comes with several advantages:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ability to test those changes directly on the project</p>
+</li>
+<li>
+<p>Easier refactoring</p>
+</li>
+<li>
+<p>Ability to analyze execution when tests are failing by simply opening modified project rather than debugging test itself</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Creating atomic change, which will be later used for tests, consists of following steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Making commit with the change</p>
+</li>
+<li>
+<p>Tagging it with additional message</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This message is then used as a <code>changeDescription</code> in the project API, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">project.applyAsLocalChanges(<span class="string"><span class="delimiter">&quot;</span><span class="content">Single method body modification - sysout</span><span class="delimiter">&quot;</span></span>,
+    <span class="string"><span class="delimiter">&quot;</span><span class="content">Inlined variable in a method</span><span class="delimiter">&quot;</span></span>);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will look in the repository for a tag with message <code>Single method body modification - sysout</code> and apply as local change (no commits created).
+And the same for <code>Inlined variable in a method</code>.</p>
+</div>
+<div class="paragraph">
+<p>Creating such a tag on the commit is as easy as:</p>
+</div>
+<div class="paragraph">
+<p><code>$ git tag affected_01 -m "Single method body modification - sysout"</code></p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_defining_test_result_expectations"><a class="anchor" href="#_defining_test_result_expectations"></a>Defining test result expectations</h6>
+<div class="paragraph">
+<p>In order to verify if our tool works, we have to specify which tests are expected to be executed as well as their statuses.
+This is done as part of the commit, as at this point we know exactly what we want our tool to execute and what should be the status of our tests based on modifications we made.
+For example in <code>arquillian-core</code> we would like to test affected strategy, where we modify <code>ConfigurationRegistrar#loadConfiguration</code> by adding <code>System.out.println</code> to the method.
+This should result in finding two related tests <code>ConfigurationRegistrarTestCase</code> and <code>SyspropReplacementInArqXmlTestCase</code>.
+Both of them should be executed successfully.</p>
+</div>
+<div class="paragraph">
+<p>In order to define these expectations we create commit with the following message:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>affected: adds system.out to ConfigurationRegistrar#loadConfiguration <i class="conum" data-value="1"></i><b>(1)</b>
+
++ org.jboss.arquillian.config.impl.extension.ConfigurationRegistrarTestCase <i class="conum" data-value="2"></i><b>(2)</b>
++ org.jboss.arquillian.config.impl.extension.SyspropReplacementInArqXmlTestCase</pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The first line describes the change, so it’s up to you to provide meaningful information.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Next two lines define actual expectations.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For expectations, it’s the list of the executed tests (fully qualified names) prefixed with an expected status.
+In this case <code>+</code>, which indicates all test methods in the particular class should be executed successfully.
+See <code>org.arquillian.smart.testing.ftest.testbed.testresults.Status</code> for all prefixes.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_executing_test_optimization"><a class="anchor" href="#_executing_test_optimization"></a>Executing test optimization</h6>
+<div class="paragraph">
+<p>Once we configured the project and applied changes we can build it. This is what we want to really test after all.</p>
+</div>
+<div class="paragraph">
+<p>Under the hood it’s using <a href="https://github.com/shrinkwrap/resolver#embedded-maven">Embedded Maven</a>.
+In addition, after the build is finished, it returns actual test results so we can verify expected and actual test execution. It’s done this way:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>final TestResults actualTestResults = project.build().run();</pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_usage_of_git"><a class="anchor" href="#_usage_of_git"></a>Usage of Git</h6>
+<div class="paragraph">
+<p>Before the test class starts "project under test" is cloned and for each test method separated copy is created to execute all the changes and builds in isolation. Folders are named using the following convention:</p>
+</div>
+<div class="paragraph">
+<p><code>GIT_REPO_FOLDER + "<em>" + getClass().getSimpleName() + "</em>" + name.getMethodName()</code></p>
+</div>
+<div class="paragraph">
+<p>for example:</p>
+</div>
+<div class="paragraph">
+<p><code>smart-testing-dogfood-repo_HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest_should_only_execute_tests_related_to_multiple_commits_in_business_logic_when_affected_is_enabled/</code></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>6.1.2. Troubleshooting tests</h4>
+<div class="paragraph">
+<p>You can execute embedded build in Test Bed in the debug mode.
+This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
+</div>
+<div class="sect4">
+<h5 id="_built_in_dsl_debugging_features"><a class="anchor" href="#_built_in_dsl_debugging_features"></a>Built-in DSL debugging features</h5>
+<div class="paragraph">
+<p>You can use project configuration DSL for enabling debug mode directly in the test code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> TestResults actualTestResults = project
+    .build()
+    .options()
+        .withSystemProperties(<span class="string"><span class="delimiter">&quot;</span><span class="content">scm.range.head</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">scm.range.tail</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">HEAD~</span><span class="delimiter">&quot;</span></span>)
+        .withDebugOutput()
+        .withRemoteDebugging()
+        .withRemoteSurefireDebugging()
+    .configure()
+    .run();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Setting up any of the debugging modes would set an agent in suspend mode for both Maven and Surefire execution, thus giving you time to attach debuggers to both.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, this can be also achieved through system properties which you can set as part of your "Run Configuration" in the IDE or build command.
+Following system properties are available:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>test.bed.mvn.remote.debug</code></dt>
+<dd>
+<p>enables remote debugging of the embedded maven build with <code>suspend</code> set to <code>y</code> (so the build will wait until we attach remote debugger to the port) and port <code>8000</code> to listen).</p>
+</dd>
+<dt class="hdlist1"><code>test.bed.mvn.remote.debug.suspend</code></dt>
+<dd>
+<p><code>true</code> or <code>false</code> (both for maven and surefire)</p>
+</dd>
+<dt class="hdlist1"><code>test.bed.mvn.remote.debug.port</code></dt>
+<dd>
+<p>valid port used for remote debugging of maven execution</p>
+</dd>
+<dt class="hdlist1"><code>test.bed.mvn.surefire.remote.debug</code></dt>
+<dd>
+<p>enables <a href="http://maven.apache.org/surefire/maven-surefire-plugin/examples/debugging.html">remote debugging for surefire</a></p>
+</dd>
+<dt class="hdlist1"><code>test.bed.mvn.surefire.remote.debug.port</code></dt>
+<dd>
+<p>valid port used for remoting debugging of surefire execution</p>
+</dd>
+<dt class="hdlist1"><code>test.bed.mvn.debug.output</code></dt>
+<dd>
+<p><code>true</code> or <code>false</code> - sets <code>-X</code> flag for embedded maven build for more details build log.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Configuration precedence</div>
+<div class="paragraph">
+<p>If both system property and the programmatic option is used system property takes precedence.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_storing_project_under_test"><a class="anchor" href="#_storing_project_under_test"></a>Storing project under test</h5>
+<div class="paragraph">
+<p>Project Persistence feature is included in Test Bed to store repository used test&#8217;s embedded build. This lets you execute
+the same build outside of test execution for further analysis in case of failure.</p>
+</div>
+<div class="paragraph">
+<p>By default this feature is enabled to copy repository only in case of test failure.</p>
+</div>
+<div class="paragraph">
+<p>In order to copy repository for all tests irrespective of test result, explicitly set system property <code>test.bed.project.persist</code> to <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>Persisted project are located in <code>target/test-bed-executions/[current timestamp]/</code> with name followed by naming convention:</p>
+</div>
+<div class="paragraph">
+<p><code>getClass().getSimpleName() + "_" + name.getMethodName()</code></p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-13 22:22:45 CEST
+Last updated 2017-09-13 20:22:45 UTC
 </div>
 </div>
 </body>
