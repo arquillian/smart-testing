@@ -21,7 +21,6 @@ import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Category(NotThreadSafe.class)
 public class EmbeddedHttpGitServerTest {
 
     @Rule
@@ -132,7 +131,7 @@ public class EmbeddedHttpGitServerTest {
     public void should_fail_with_repository_not_found_when_trying_to_clone_non_existing_repo() throws Exception {
         // given
         gitServer = EmbeddedHttpGitServer.fromBundle("launchpad", "saas-launchpad.bundle")
-            .usingPort(5432)
+            .usingPort(6432)
             .create();
         gitServer.start();
 
@@ -140,7 +139,7 @@ public class EmbeddedHttpGitServerTest {
         expectedException.expectMessage("Git repository not found");
 
         // when
-        final GitCloner launchpadCloner = new GitCloner("http://localhost:5432/launchpadeeeee");
+        final GitCloner launchpadCloner = new GitCloner("http://localhost:6432/launchpadeeeee");
         final Repository launchpad = launchpadCloner.cloneRepositoryToTempFolder();
 
         // then
