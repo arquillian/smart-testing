@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
@@ -15,7 +16,8 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.*;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
+import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -71,6 +73,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             changeStorage.purgeAll();
+            if (isFailedStrategyUsed()) {
+                SurefireReportStorage.purgeReports(session);
+            }
         } else {
             logStrategiesNotDefined();
         }
@@ -88,7 +93,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> mavenProjectConfigurator.configureTestRunner(mavenProject.getModel()));
+        session.getAllProjects().forEach(mavenProject -> {
+            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            if (isFailedStrategyUsed()) {
+                SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+            }
+        });
+    }
+
+    private boolean isFailedStrategyUsed(){
+        return Arrays.asList(configuration.getStrategies()).contains("failed");
     }
 
     private void logStrategiesNotDefined() {
