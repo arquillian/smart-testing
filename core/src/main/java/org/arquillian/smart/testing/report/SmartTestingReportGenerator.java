@@ -12,13 +12,11 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
 
+import static org.arquillian.smart.testing.Configuration.DEFAULT_REPORT_FILE_NAME;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_DIR;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_NAME;
+
 public class SmartTestingReportGenerator {
-
-    public static final String DEFAULT_REPORT_FILE_NAME = "smart-testing-report.xml";
-    public static final String ENABLE_REPORT_PROPERTY = "smart.testing.report.enable";
-
-    static final String SMART_TESTING_REPORT_DIR = "smart.testing.report.dir";
-    static final String SMART_TESTING_REPORT_NAME = "smart.testing.report.name";
 
     private final Collection<TestSelection> testSelections;
     private final Configuration configuration;
@@ -36,8 +34,8 @@ public class SmartTestingReportGenerator {
 
     public void generateReport() {
         ExecutionReportMarshaller service =
-            new ExecutionReportMarshaller(baseDir, System.getProperty(SMART_TESTING_REPORT_DIR),
-                System.getProperty(SMART_TESTING_REPORT_NAME));
+            new ExecutionReportMarshaller(baseDir, System.getProperty(SMART_TESTING_REPORT_DIR, "target"),
+                System.getProperty(SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
         service.marshal(getSmartTestingExecution(configuration));
     }
 
@@ -80,4 +78,5 @@ public class SmartTestingReportGenerator {
             .filter(name -> name.startsWith("smart.testing"))
             .collect(Collectors.toMap(Function.identity(), properties::getProperty));
     }
+
 }

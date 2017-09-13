@@ -19,7 +19,7 @@ import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
+import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
 
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
