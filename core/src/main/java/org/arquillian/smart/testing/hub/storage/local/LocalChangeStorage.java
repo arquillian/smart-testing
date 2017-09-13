@@ -8,10 +8,13 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 
 public class LocalChangeStorage implements ChangeStorage {
+
+    private static final Logger LOGGER = Logger.getLogger();
 
     public static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
 
@@ -50,9 +53,11 @@ public class LocalChangeStorage implements ChangeStorage {
 
         if (smartTestingScmChangesOptional.isPresent()) {
 
-            try (Stream<String> changes = Files.lines(smartTestingScmChangesOptional.get())) {
+            final Path localScmChanges = smartTestingScmChangesOptional.get();
+            try (Stream<String> changes = Files.lines(localScmChanges)) {
                 return Optional.of(changes.map(Change::read).collect(Collectors.toList()));
             } catch (IOException e) {
+                LOGGER.warn("Unable to read changes from [%s]. Reason: %s", localScmChanges, e.getMessage());
                 e.printStackTrace();
             }
         }
