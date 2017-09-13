@@ -6,7 +6,8 @@ import java.nio.file.Paths;
 
 public class LocalStorage {
 
-    public static final String DIRECTORY_NAME = ".smart-testing";
+    public static final String SMART_TESTING_WORKING_DIRECTORY_NAME = ".smart-testing";
+    public static final String SMART_TESTING_TARGET_DIRECTORY_NAME = "smart-testing";
     public static final String EXECUTION_SUBDIRECTORY = "execution";
     public static final String REPORTING_SUBDIRECTORY = "reporting";
     private String rootDir;
@@ -20,15 +21,15 @@ public class LocalStorage {
     }
 
     public SubDirectoryEntryType execution() {
-        return new SubDirectoryEntryType(this, getPathTo(EXECUTION_SUBDIRECTORY));
+        return new SubDirectoryEntryType(getPathTo(EXECUTION_SUBDIRECTORY));
     }
 
     public SubDirectoryEntryType reporting() {
-        return new SubDirectoryEntryType(this, getPathTo(REPORTING_SUBDIRECTORY));
+        return new SubDirectoryEntryType(getPathTo(REPORTING_SUBDIRECTORY));
     }
 
     private Path getPathTo(String subdirectory) {
-        return Paths.get(rootDir, DIRECTORY_NAME, subdirectory);
+        return Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME, subdirectory);
     }
 
     public void purge(String targetDir) {
@@ -38,8 +39,8 @@ public class LocalStorage {
             if (targetDir != null){
                 target = new File(targetDir);
             }
-            FileUtils.copyDirectory(reporting, target.toPath().resolve("smart-testing"), true);
+            FileUtils.copyDirectory(reporting, target.toPath().resolve(SMART_TESTING_TARGET_DIRECTORY_NAME), true);
         }
-        FileUtils.deleteDirectory(Paths.get(rootDir, DIRECTORY_NAME), true);
+        FileUtils.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
     }
 }

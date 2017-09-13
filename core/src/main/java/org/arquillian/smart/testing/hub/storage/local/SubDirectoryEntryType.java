@@ -4,11 +4,9 @@ import java.nio.file.Path;
 
 public class SubDirectoryEntryType {
 
-    private LocalStorage localStorage;
     private final Path rootDir;
 
-    public SubDirectoryEntryType(LocalStorage localStorage, Path rootDir) {
-        this.localStorage = localStorage;
+    public SubDirectoryEntryType(Path rootDir) {
         this.rootDir = rootDir;
     }
 
