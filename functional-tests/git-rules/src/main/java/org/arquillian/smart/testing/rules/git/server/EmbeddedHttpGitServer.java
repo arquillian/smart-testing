@@ -41,16 +41,11 @@ public class EmbeddedHttpGitServer {
     private static final Logger LOGGER = Logger.getLogger(EmbeddedHttpGitServer.class.getName());
 
     private final int port;
-    /**
-     * If enabled and specified port is already used we try to find a free one.
-     */
-    private boolean useAvailablePort = false;
     private final Map<String, LazilyLoadedRepository> repositories = new HashMap<>();
 
     private Server server;
 
     EmbeddedHttpGitServer(Map<String, String> repositoryLocations, int port, boolean useAvailablePort) {
-        this.useAvailablePort = useAvailablePort;
         if (useAvailablePort) {
             this.port = getAvailableLocalPort();
         } else {

@@ -72,6 +72,9 @@ public class EmbeddedHttpGitServerBuilder {
         return this;
     }
 
+    /**
+     * If enabled it will find any free port to assign to the instance of the server
+     */
     public EmbeddedHttpGitServerBuilder usingAnyFreePort() {
         this.useAvailablePort = true;
         return this;

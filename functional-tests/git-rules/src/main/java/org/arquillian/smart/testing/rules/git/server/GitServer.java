@@ -72,6 +72,14 @@ public class GitServer extends ExternalResource {
             return this;
         }
 
+        /**
+         * If enabled it will find any free port to assign to the instance of the server
+         */
+        public Builder usingAnyFreePort() {
+            this.builder.usingAnyFreePort();
+            return this;
+        }
+
         public Builder fromBundle(String name, String bundleFile) {
             final EmbeddedHttpGitServerBuilder builder = EmbeddedHttpGitServer.fromBundle(name, bundleFile);
             this.builder.mergeLocations(builder);
@@ -124,11 +132,6 @@ public class GitServer extends ExternalResource {
 
         public GitServer create() {
             return new GitServer(builder.create());
-        }
-
-        public Builder usingAnyFreePort() {
-            this.builder.usingAnyFreePort();
-            return this;
         }
     }
 
