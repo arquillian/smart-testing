@@ -13,7 +13,7 @@ import org.arquillian.smart.testing.scm.Change;
 
 public class LocalChangeStorage implements ChangeStorage {
 
-    private static final String SMART_TESTING_SCM_CHANGES = "smart-testing-scm-changes";
+    private static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
 
     private final String currentDirectory;
 
