@@ -9,15 +9,15 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import org.arquillian.smart.testing.Logger;
 
-public class FileUtils {
+class FileUtils {
 
     private static final Logger logger = Logger.getLogger();
 
-    public static Path copyDirectory(Path src, Path dest, boolean catchException) {
+    static Path copyDirectory(Path src, Path dest, boolean catchException) {
         return copyDirectory(src, dest, file -> true, catchException);
     }
 
-    public static Path copyDirectory(Path src, Path dest, Predicate<File> fileFilter, boolean catchException) {
+    static Path copyDirectory(Path src, Path dest, Predicate<File> fileFilter, boolean catchException) {
         if (!dest.toFile().exists()) {
             try {
                 Files.createDirectories(dest);
@@ -40,7 +40,7 @@ public class FileUtils {
         return dest;
     }
 
-    public static Path copyFile(File src, Path destDir, boolean catchException) {
+    static Path copyFile(File src, Path destDir, boolean catchException) {
         Path destination = destDir.resolve(src.getName());
         try {
             return Files.copy(src.toPath(), destination);
@@ -52,7 +52,7 @@ public class FileUtils {
         return null;
     }
 
-    public static void deleteFile(Path path, boolean catchException) {
+    static void deleteFile(Path path, boolean catchException) {
         try {
             Files.delete(path);
         } catch (IOException e) {
@@ -62,7 +62,7 @@ public class FileUtils {
         }
     }
 
-    public static void deleteDirectory(Path directory, boolean catchException) {
+    static void deleteDirectory(Path directory, boolean catchException) {
         if (directory.toFile().exists()) {
             try {
                 Files
@@ -77,7 +77,7 @@ public class FileUtils {
         }
     }
 
-    public static void handleException(IOException e, String message, boolean catchException) {
+    private static void handleException(IOException e, String message, boolean catchException) {
         if (catchException) {
             logger.warn(message.concat("See the error message: " + e.getMessage()));
         } else {
