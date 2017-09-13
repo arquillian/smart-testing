@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.rules.git;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.rules.ExternalResource;
@@ -12,18 +11,14 @@ public class GitClone extends ExternalResource {
     private Repository repository;
 
     // tag::git_clone_custom_repo[]
-    public GitClone(String gitRepoUrl)
+    public GitClone(String repositoryUrl)
     // end::git_clone_custom_repo[]
     {
-        try {
-            this.gitCloner = new GitCloner(new URL(gitRepoUrl).toExternalForm());
-        } catch (MalformedURLException e) {
-            throw new IllegalStateException(e);
-        }
+        this.gitCloner = new GitCloner(repositoryUrl);
     }
 
     public GitClone(URL gitRepo) {
-        this.gitCloner = new GitCloner(gitRepo.toExternalForm());
+        this(gitRepo.toExternalForm());
     }
 
     protected void before() throws Throwable {
@@ -37,4 +32,5 @@ public class GitClone extends ExternalResource {
     public File getGitRepoFolder() {
         return repository.getDirectory().getParentFile();
     }
+
 }
