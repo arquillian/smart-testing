@@ -900,7 +900,7 @@ At this moment, this strategy does not work with Java 9.
 </div>
 <div class="paragraph">
 <p>This strategy uses the <em>JUnit</em> XML <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.
-All reports from previous local build are automatically copied by the maven extension to a temp directory <code>${project.directory}/.reports</code> and when the build is finished the directory is removed.</p>
+All reports from previous local build are automatically copied by the maven extension to a temp directory <code>${project.directory}/.smart-testing/execution/reports</code> and when the build is finished the directory is removed.</p>
 </div>
 </div>
 </div>
@@ -1429,6 +1429,8 @@ This section will be improved as we continue with the SPI design to let you hook
 
         <span class="comment">// then</span>
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_SCM_CHANGES);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }</code></pre>
 </div>
@@ -1702,7 +1704,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-13 11:50:38 UTC
+Last updated 2017-09-13 17:19:59 UTC
 </div>
 </div>
 </body>
