@@ -10,6 +10,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,7 +58,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
+        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
         softly.assertThat(reportsDir).exists();
 
         Arrays.stream(reportsDir.listFiles()).forEach(file -> {
@@ -74,10 +75,10 @@ public class SurefireReportStorageTest {
         MavenProject mavenProject = mock(MavenProject.class);
         when(mavenProject.getModel()).thenReturn(project);
         when(mavenSession.getAllProjects()).thenReturn(singletonList(mavenProject));
-        File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
+        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
 
         // when
-        SurefireReportStorage.purgeReports(mavenSession);
+        new LocalStorage(projectDir).purge(null);
 
         // then
         softly.assertThat(reportsDir).doesNotExist();
@@ -92,7 +93,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
+        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
         softly.assertThat(reportsDir).doesNotExist();
     }
 

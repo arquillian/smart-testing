@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
-import org.arquillian.smart.testing.hub.storage.LocalChangeStorage;
+import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -84,14 +86,15 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
                 ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
         }
 
-        if (configuration.areStrategiesDefined()) {
-            changeStorage.purgeAll();
-            if (isFailedStrategyUsed()) {
-                SurefireReportStorage.purgeReports(session);
-            }
-        } else {
+        if (!configuration.areStrategiesDefined()) {
             logStrategiesNotDefined();
         }
+
+        session.getAllProjects().forEach(mavenProject -> {
+            Model model = mavenProject.getModel();
+            String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
+            new LocalStorage(model.getProjectDirectory()).purge(target);
+        });
     }
 
     private void calculateChanges() {

@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestResult;
 import org.arquillian.smart.testing.spi.TestResultParser;
@@ -18,11 +18,16 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class InProjectTestReportLoader implements TestReportLoader {
 
-    private String tempReportDir = TEMP_REPORT_DIR;
     private final JavaSPILoader javaSPILoader;
+    private String rootDirectory;
 
     InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
+        this(javaSPILoader, ".");
+    }
+
+    InProjectTestReportLoader(JavaSPILoader javaSPILoader, String rootDirectory) {
         this.javaSPILoader = javaSPILoader;
+        this.rootDirectory = rootDirectory;
     }
 
     @Override
@@ -30,7 +35,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
         final Set<String> testResults = new HashSet<>();
 
-        final Path reportDir = Paths.get(".", tempReportDir);
+        final Path reportDir = new LocalStorage(rootDirectory).execution().directory(TEMP_REPORT_DIR).getPath();
 
         if (Files.exists(reportDir)) {
 
@@ -64,9 +69,5 @@ public class InProjectTestReportLoader implements TestReportLoader {
         }
 
         return testResults;
-    }
-
-    void setTempReportDir(String tempReportDir) {
-        this.tempReportDir = tempReportDir;
     }
 }
