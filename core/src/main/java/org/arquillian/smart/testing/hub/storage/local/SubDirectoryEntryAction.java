@@ -20,6 +20,7 @@ public class SubDirectoryEntryAction {
             if (isDirectory) {
                 return Files.createDirectories(path);
             } else {
+                Files.createDirectories(path.getParent());
                 return Files.createFile(path);
             }
         }

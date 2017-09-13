@@ -6,9 +6,9 @@ import java.nio.file.Paths;
 
 public class LocalStorage {
 
-    private static final String DIRECTORY_NAME = ".smart-testing";
-    private static final String EXECUTION_SUBDIRECTORY = "execution";
-    private static final String REPORTING_SUBDIRECTORY = "reporting";
+    public static final String DIRECTORY_NAME = ".smart-testing";
+    public static final String EXECUTION_SUBDIRECTORY = "execution";
+    public static final String REPORTING_SUBDIRECTORY = "reporting";
     private String rootDir;
 
     public LocalStorage(String rootDir) {

@@ -122,7 +122,7 @@ public class ProjectBuilder {
     private TestResults accumulatedTestResults() {
         try {
             final List<TestResult> collect = Files.walk(root)
-                .filter(path -> !path.toFile().getAbsolutePath().contains(TEMP_REPORT_DIR) && path.getFileName()
+                .filter(path -> !path.toFile().getAbsolutePath().contains(File.separator + TEMP_REPORT_DIR) && path.getFileName()
                     .toString()
                     .startsWith(TEST_REPORT_PREFIX))
                 .map(path -> {

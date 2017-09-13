@@ -29,8 +29,8 @@ public class LocalChangeStorage implements ChangeStorage {
 
     @Override
     public void store(Collection<Change> changes) {
-        StringBuffer fileContent = new StringBuffer();
-        changes.forEach(change -> fileContent.append(change.write()).append("\n"));
+        StringBuilder fileContent = new StringBuilder();
+        changes.forEach(change -> fileContent.append(change.write()).append(System.lineSeparator()));
 
         SubDirectoryFileAction scmChangesFile =
             new LocalStorage(currentDirectory)
