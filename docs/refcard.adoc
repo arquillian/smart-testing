@@ -86,9 +86,9 @@ a|`false`
 
 a|`smart.testing.report.dir`
 |directory where generated reports should be stored
-a|`HEAD~0`
+a|`target` of the current module being built
 
 a|`smart.testing.report.name`
 |the file name of the generated report
-a|`HEAD~0`
+a|`smart-testing-report.xml`
 
