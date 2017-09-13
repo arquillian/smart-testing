@@ -21,7 +21,7 @@ wait some time until you get the failure.
 are new or because failed previously) are going to be executed first.
 
 
-=== Technical Details
+=== Integrations
 
 Currently Smart Testing supports Maven through Maven Extension mechanism and works together with `maven-surefire-plugin`
 and `maven-failsafe-plugin`.
