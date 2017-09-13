@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
@@ -19,7 +18,7 @@ import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetect
 
 public class AffectedTestsDetector implements TestExecutionPlanner {
 
-    private static final Logger logger = Logger.getLogger(AffectedTestsDetector.class);
+    private static final Logger logger = Logger.getLogger();
 
     // TODO TestClassDetector is something that can be moved to extension
     private final TestClassDetector testClassDetector;
@@ -64,8 +63,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
                 return changeResolver.diff();
             });
 
-        logger.log(Level.FINER, "Time To Build Affected Dependencies Graph %d ms",
-            (System.currentTimeMillis() - beforeDetection));
+        logger.debug("Time To Build Affected Dependencies Graph %d ms", (System.currentTimeMillis() - beforeDetection));
 
         final Set<File> mainClasses = files.stream()
             .map(Change::getLocation)
@@ -80,7 +78,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
             .map(s -> new TestSelection(s, "affected"))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        logger.log(Level.FINER, "Time To Find Affected Tests %d ms", (System.currentTimeMillis() - beforeFind));
+        logger.debug("Time To Find Affected Tests %d ms", (System.currentTimeMillis() - beforeFind));
 
         return affected;
     }

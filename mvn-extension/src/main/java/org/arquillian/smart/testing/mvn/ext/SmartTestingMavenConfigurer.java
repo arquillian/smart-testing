@@ -25,7 +25,7 @@ import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpeci
     hint = "smart-testing")
 class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
-    private static final Logger logger = Logger.getLogger(SmartTestingMavenConfigurer.class);
+    private static final Logger logger = Logger.getLogger();
 
     private final ChangeStorage changeStorage = new LocalChangeStorage(".");
 

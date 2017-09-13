@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 import org.arquillian.smart.testing.Logger;
 
@@ -24,7 +23,7 @@ public class LoaderVersionExtractor {
         new MavenLibrary("org.apache.maven.surefire", "surefire-api");
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
-    private static final Logger logger = Logger.getLogger(LoaderVersionExtractor.class);
+    private static final Logger logger = Logger.getLogger();
     private static final Map<ClassLoader, Map<MavenLibrary, String>> loaderWithLibraryVersions = new HashMap<>();
     private static final List<MavenLibrary> initLibraries = new ArrayList<>();
 
@@ -95,9 +94,7 @@ public class LoaderVersionExtractor {
                 });
             }
         } catch (Exception e) {
-            logger.log(Level.WARNING,
-                "Exception {0} occurred while resolving manifest files",
-                e.getMessage());
+            logger.warn("Exception {0} occurred while resolving manifest files", e.getMessage());
         }
 
         return implTitleWithVersion;

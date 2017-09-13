@@ -12,7 +12,7 @@ import org.arquillian.smart.testing.Logger;
 
 class ModifiedPomExporter {
 
-    static Logger logger = Logger.getLogger(ModifiedPomExporter.class);
+    private static Logger logger = Logger.getLogger();
 
     private static String SMART_TESTING_POM_FILE = "smart-testing-pom.xml";
 
@@ -25,7 +25,7 @@ class ModifiedPomExporter {
         }
     }
 
-    static void writeModifiedPomToTarget(StringWriter modifiedPom, File project) throws IOException {
+    private static void writeModifiedPomToTarget(StringWriter modifiedPom, File project) throws IOException {
         Path path = Paths.get(project.toPath() + File.separator + "target", "smart-testing");
         if (!Files.exists(path)) {
             Files.createDirectories(path);

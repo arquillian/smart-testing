@@ -23,7 +23,7 @@ import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.EN
 
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
-    private static final Logger logger = Logger.getLogger(TestStrategyApplierImpl.class);
+    private static final Logger logger = Logger.getLogger();
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final File projectDir;
     private final Configuration configuration;
