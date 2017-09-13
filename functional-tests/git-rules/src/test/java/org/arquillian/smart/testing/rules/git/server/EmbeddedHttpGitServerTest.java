@@ -21,6 +21,7 @@ import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class EmbeddedHttpGitServerTest {
 
     @Rule
