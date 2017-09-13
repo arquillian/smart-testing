@@ -24,8 +24,8 @@ public class TestBed implements TestRule {
     private static final Logger LOGGER = Logger.getLogger();
 
     private final GitClone gitClone;
-    private Project project;
 
+    private Project project;
     private String targetRepoPerTestFolder;
 
     public TestBed(GitClone gitClone) {
@@ -39,40 +39,6 @@ public class TestBed implements TestRule {
     @Override
     public Statement apply(Statement statement, Description description) {
         return this.statement(statement, description);
-    }
-
-    private void succeeded(Description description) {
-        if (isPersistFolderEnabled()) {
-            copyTmpProjectToTarget();
-        }
-    }
-
-    private void failed(Throwable e, Description description) {
-        copyTmpProjectToTarget();
-    }
-
-    private void copyTmpProjectToTarget() {
-        String path = "target" + File.separator + "test-bed-executions" + File.separator + Instant.now().toEpochMilli();
-        final File projectDir = new File(path);
-        if (!projectDir.exists()) {
-            projectDir.mkdirs();
-        }
-        if (targetRepoPerTestFolder != null) {
-            final Path source = Paths.get(targetRepoPerTestFolder);
-            final Path target =
-                Paths.get(path + targetRepoPerTestFolder.substring(targetRepoPerTestFolder.lastIndexOf("/")));
-            try {
-                final List<Path> sources = Files.walk(source).collect(toList());
-                final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)
-                    .collect(toList());
-                for (int i = 0; i < sources.size(); i++) {
-                    Files.copy(sources.get(i), targets.get(i));
-                }
-            } catch (IOException e1) {
-                throw new RuntimeException(e1);
-            }
-            LOGGER.info("Copied test repository to: " + target);
-        }
     }
 
     private Statement statement(final Statement base, final Description description) {
@@ -107,30 +73,10 @@ public class TestBed implements TestRule {
         this.project.close();
     }
 
-    private String targetRepoPerTestFolder(Description description) {
-        return gitClone.getGitRepoFolder()
-            + "_"
-            + description.getTestClass().getSimpleName()
-            + "_"
-            + description.getMethodName();
-    }
-
-    private Path createPerTestRepository() throws IOException {
-        final Path source = Paths.get(this.gitClone.getGitRepoFolder().toURI());
-        final Path target = Paths.get(targetRepoPerTestFolder);
-        final List<Path> sources = Files.walk(source).collect(toList());
-        final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)
-            .collect(toList());
-        for (int i = 0; i < sources.size(); i++) {
-            Files.copy(sources.get(i), targets.get(i));
+    private void succeeded(Description description) throws IOException {
+        if (isPersistFolderEnabled()) {
+            copyTmpProjectToTarget();
         }
-        LOGGER.info("Copied test repository to: " + target);
-        return target;
-    }
-
-    private void initializeTestProject() throws IOException {
-        final Path target = createPerTestRepository();
-        this.project = new Project(target);
     }
 
     private void succeededQuietly(Description description, List<Throwable> errors) {
@@ -141,12 +87,60 @@ public class TestBed implements TestRule {
         }
     }
 
-    private void failedQuietly(Throwable e, Description description, List<Throwable> errors) {
+    private void failed(Throwable e, Description description) throws IOException {
+        copyTmpProjectToTarget();
+    }
+
+    private void failedQuietly(Throwable throwable, Description description, List<Throwable> errors) {
         try {
-            failed(e, description);
-        } catch (Throwable e1) {
-            errors.add(e1);
+            failed(throwable, description);
+        } catch (Throwable e) {
+            errors.add(e);
         }
+    }
+
+    private String targetRepoPerTestFolder(Description description) {
+        return gitClone.getGitRepoFolder()
+            + "_"
+            + description.getTestClass().getSimpleName()
+            + "_"
+            + description.getMethodName();
+    }
+
+    private void copyTmpProjectToTarget() throws IOException {
+        String path = "target" + File.separator + "test-bed-executions" + File.separator + Instant.now().toEpochMilli();
+        final File projectDir = new File(path);
+        if (!projectDir.exists()) {
+            projectDir.mkdirs();
+        }
+        if (targetRepoPerTestFolder != null) {
+            final Path source = Paths.get(targetRepoPerTestFolder);
+            final Path target = Paths.get(path + targetRepoPerTestFolder.substring(targetRepoPerTestFolder.lastIndexOf("/")));
+            copyDirectory(source, target);
+            LOGGER.info("Copied test repository to: " + target);
+        }
+    }
+
+    private Path createPerTestRepository() throws IOException {
+        final Path source = Paths.get(gitClone.getGitRepoFolder().toURI());
+        final Path target = Paths.get(targetRepoPerTestFolder);
+        copyDirectory(source, target);
+        LOGGER.info("Copied test repository to: " + target);
+        return target;
+    }
+
+    private void copyDirectory(Path source, Path target) throws IOException {
+        final List<Path> sources = Files.walk(source).collect(toList());
+        final List<Path> targets = sources.stream().map(source::relativize).map(target::resolve)
+            .collect(toList());
+        for (int i = 0; i < sources.size(); i++) {
+            Files.copy(sources.get(i), targets.get(i));
+        }
+    }
+
+    private void initializeTestProject() throws IOException {
+        final Path target = createPerTestRepository();
+        this.project = new Project(target);
     }
 
     private boolean isPersistFolderEnabled() {
