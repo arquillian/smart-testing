@@ -14,8 +14,8 @@ import org.junit.experimental.categories.Category;
 import static java.util.Arrays.asList;
 import static org.arquillian.smart.testing.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.Configuration.SMART_TESTING_MODE;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.SMART_TESTING_REPORT_DIR;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.SMART_TESTING_REPORT_NAME;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_DIR;
+import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)

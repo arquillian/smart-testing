@@ -32,7 +32,7 @@ public class GitChangeResolver implements ChangeResolver {
 
     private static final String ENSURE_TREE = "^{tree}";
 
-    private static final Logger logger = Logger.getLogger(GitChangeResolver.class);
+    private static final Logger logger = Logger.getLogger();
 
     private final String previous;
     private final String head;

@@ -1,27 +1,25 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.io.File;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
-import org.arquillian.smart.testing.rules.git.GitClone;
-import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
-import org.assertj.core.api.FileAssert;
+import org.arquillian.smart.testing.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.assertj.core.api.JUnitSoftAssertions;
-import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
+import static org.arquillian.smart.testing.Configuration.DEFAULT_REPORT_FILE_NAME;
+import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
+import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.DEFAULT_REPORT_FILE_NAME;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
 
 public class SurefireForksConfigurationTest {
 
@@ -89,36 +87,8 @@ public class SurefireForksConfigurationTest {
                 .withSystemProperties("smart.testing.debug", "true") // This will only be propagated to surefire for "not_reusing_forks" option
                 .configure()
             .run();
-
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThatAllBuiltSubmodulesHaveReportsIncluded(projectBuilder.getBuiltProject());
-    }
-
-    private void assertThatAllBuiltSubmodulesHaveReportsIncluded(BuiltProject module) {
-        module.getModules().forEach(this::assertThatReportFileIsIncludedIn);
-    }
-
-    private void assertThatReportFileIsIncludedIn(BuiltProject subModule) {
-        final File targetDirectory = subModule.getTargetDirectory();
-        final FileAssert fileAssert = softly.assertThat(new File(targetDirectory, DEFAULT_REPORT_FILE_NAME));
-        if (isJar(subModule)) {
-            if (testsWereExecuted(targetDirectory)) {
-                fileAssert.exists();
-            } else {
-                fileAssert.doesNotExist();
-            }
-        } else {
-            assertThatAllBuiltSubmodulesHaveReportsIncluded(subModule);
-            fileAssert.doesNotExist();
-        }
-    }
-
-    private boolean isJar(BuiltProject subModule) {
-        return subModule.getModel().getPackaging().equals("jar");
-    }
-
-    private boolean testsWereExecuted(File target) {
-        return new File(target, "test-classes").exists();
+        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), DEFAULT_REPORT_FILE_NAME);
     }
 }

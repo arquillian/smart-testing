@@ -12,17 +12,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitServerRuleTest {
 
     @Rule
-    public final GitServer gitServer = GitServer.fromBundle("repo.bundle").usingPort(9876).create();
+    public final GitServer gitServer = GitServer.fromBundle("repo.bundle")
+        .fromBundle("launchpad", "saas-launchpad.bundle")
+        .usingAnyFreePort() // this way we can run this test in parallel
+        .create();
 
-    private final GitCloner gitCloner = new GitCloner("http://localhost:9876/any-name");
+    private GitCloner gitCloner;
 
     @Test
     public void should_clone_repository_using_http_call_and_custom_port_through_rule() throws Exception {
         // when
+        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/repo.bundle");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then
         assertThat(new File(repository.getDirectory().getParent(), "Jenkinsfile")).exists();
+    }
+
+    @Test
+    public void should_clone_second_repository_using_http_call_and_custom_port_through_rule() throws Exception {
+        // when
+        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/launchpad");
+        final Repository repository = gitCloner.cloneRepositoryToTempFolder();
+
+        // then
+        assertThat(new File(repository.getDirectory().getParent(), "config.yaml")).exists();
     }
 
     @After

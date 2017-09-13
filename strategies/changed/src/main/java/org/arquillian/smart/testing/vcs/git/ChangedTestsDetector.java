@@ -16,7 +16,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 public class ChangedTestsDetector implements TestExecutionPlanner {
 
-    private static final Logger logger = Logger.getLogger(ChangedTestsDetector.class);
+    private static final Logger logger = Logger.getLogger();
 
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;

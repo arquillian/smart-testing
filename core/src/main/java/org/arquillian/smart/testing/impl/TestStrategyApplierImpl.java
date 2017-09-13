@@ -19,11 +19,11 @@ import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.ENABLE_REPORT_PROPERTY;
+import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
 
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
-    private static final Logger logger = Logger.getLogger(TestStrategyApplierImpl.class);
+    private static final Logger logger = Logger.getLogger();
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final File projectDir;
     private final Configuration configuration;
@@ -74,8 +74,13 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
         }
         logger.info("Applied strategies: %s", strategies);
         logger.info("Applied usage: [%s]", configuration.getMode().getName());
-
         final Collection<TestSelection> testSelections = filterMergeAndOrderTestSelection(selectedTests, strategies);
+
+        if (testSelections.isEmpty()) {
+            logger.debug("Applied test selections: %s", "No tests selected as per the strategy chosen.");
+        } else {
+            logger.debug("Applied test selections: %s", testSelections.toString());
+        }
 
         if (isReportEnabled()) {
             final SmartTestingReportGenerator

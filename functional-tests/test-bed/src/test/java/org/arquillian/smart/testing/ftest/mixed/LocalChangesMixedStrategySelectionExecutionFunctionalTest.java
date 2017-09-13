@@ -1,11 +1,12 @@
 package org.arquillian.smart.testing.ftest.mixed;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.ftest.FileVerifier;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
-import org.arquillian.smart.testing.rules.git.GitClone;
-import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepo
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
+import static org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage.SMART_TESTING_SCM_CHANGES;
+import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::documentation[]
@@ -44,6 +47,8 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_SCM_CHANGES);
+        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }
 // end::documentation[]

@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
@@ -32,7 +33,7 @@ public class ClassDependenciesGraphTest {
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
-        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+        classDependenciesGraph.buildTestDependencyGraph(singletonList(new File(testLocation)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();

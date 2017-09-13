@@ -11,8 +11,8 @@ public class InProjectTestReportLoaderTest {
     @Test
     public void should_return_failing_test_classes() {
         // given
-        final InProjectTestReportLoader surefireInProjectTestReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
-        surefireInProjectTestReportLoader.setTempReportDir("src/test/resources");
+        final InProjectTestReportLoader surefireInProjectTestReportLoader =
+            new InProjectTestReportLoader(new JavaSPILoader(), "src/test/resources");
 
         // when
         final Set<String> testClassesWithFailingCases = surefireInProjectTestReportLoader.loadTestResults();

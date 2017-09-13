@@ -108,11 +108,8 @@ WARNING: At this moment, this strategy does not work with Java 9.
 
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
 
-This strategy uses the _JUnit_ XML _de-facto_ https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
+This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
+All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/.smart-testing/execution/reports` and when the build is finished the directory is removed.
 
-Currently you need to copy (either manually or in build script) the test reports from output directory `${basedir}/target/surefire-reports` to `${basedir}/.reports` directory.
-Failed strategy reads from `.reports` directory the test report from previous run.
-
-Other repositories will be added in next releases but for now this simple way is provided.
 
 

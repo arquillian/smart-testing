@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.ftest.failed;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.ftest.FileVerifier;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.rules.git.GitClone;
@@ -10,10 +11,10 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.failed.TestReportHandler.copySurefireReports;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
+import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
@@ -43,8 +44,6 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
                 .inMode(SELECTING)
             .enable();
 
-        copySurefireReports(project);
-
         final Collection<TestResult> expectedTestResults =
             project.applyAsLocalChanges("fix: Introduces error by changing return value");
 
@@ -54,5 +53,6 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        FileVerifier.assertThatFileIsNotPresent(project, TEMP_REPORT_DIR);
     }
 }

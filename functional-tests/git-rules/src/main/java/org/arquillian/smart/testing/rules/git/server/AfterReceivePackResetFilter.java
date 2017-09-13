@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.rules.git.server;
 
 import java.io.IOException;
+import java.util.Collection;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -9,7 +10,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
 
 import static org.eclipse.jgit.api.ResetCommand.ResetType.HARD;
 
@@ -19,10 +19,10 @@ import static org.eclipse.jgit.api.ResetCommand.ResetType.HARD;
  */
 class AfterReceivePackResetFilter implements Filter {
 
-    private final Repository repository;
+    private final Collection<LazilyLoadedRepository> repositories;
 
-    AfterReceivePackResetFilter(Repository repository) {
-        this.repository = repository;
+    AfterReceivePackResetFilter(Collection<LazilyLoadedRepository> repositories) {
+        this.repositories = repositories;
     }
 
     @Override
@@ -35,7 +35,9 @@ class AfterReceivePackResetFilter implements Filter {
         throws IOException, ServletException {
         chain.doFilter(request, response);
         try {
-            Git.wrap(repository).reset().setMode(HARD).call();
+            for (final LazilyLoadedRepository repository : repositories) {
+                Git.wrap(repository.get()).reset().setMode(HARD).call();
+            }
         } catch (GitAPIException e) {
             throw new ServletException(e);
         }
