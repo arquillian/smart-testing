@@ -182,6 +182,7 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <pushChanges>false</pushChanges>
           <localCheckout>true</localCheckout>
+          <preparationGoals>clean install</preparationGoals>
           <releaseProfiles>skip-tests-while-performing-release</releaseProfiles>
         </configuration>
       </plugin>
