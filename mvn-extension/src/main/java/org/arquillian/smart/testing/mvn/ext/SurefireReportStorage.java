@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Optional;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
@@ -40,13 +41,14 @@ class SurefireReportStorage {
             try {
                 Files.createDirectory(reportsDir.toPath());
             } catch (IOException e) {
-                logger.error("There occurred an error when the directory %s was being created: %s", reportsDir,
+                logger.error("An error occurred when trying to create the directory [%s]: %s", reportsDir,
                     e.getMessage());
                 return;
             }
         }
 
-        Arrays.asList(surefireReportsDir.listFiles()).stream()
+        final File[] files = Optional.ofNullable(surefireReportsDir.listFiles()).orElse(new File[0]);
+        Arrays.stream(files)
             .filter(file -> file.isFile() && file.getName().endsWith(".xml"))
             .forEach(file -> copyReportFile(file, reportsDir));
     }
@@ -56,7 +58,7 @@ class SurefireReportStorage {
         try {
             Files.copy(src.toPath(), destination.toPath());
         } catch (IOException e) {
-            logger.error("There occurred an error when the file %s was being copied to %s. See the error message: %s",
+            logger.error("An error occurred when trying to copy file [%s] to the directory [%s]: %s",
                 src, destination, e.getMessage());
             e.printStackTrace();
         }
@@ -65,7 +67,7 @@ class SurefireReportStorage {
     static void purgeReports(MavenSession session) {
         session.getAllProjects().forEach(mavenProject -> {
             File reportsDir = new File(mavenProject.getModel().getProjectDirectory(), TEMP_REPORT_DIR);
-            logger.debug("Deleting .reports directory at location %s", reportsDir);
+            logger.debug("Deleting reports directory at the location %s", reportsDir);
 
             if (reportsDir.exists()) {
                 try {
@@ -74,7 +76,7 @@ class SurefireReportStorage {
                         .sorted(Comparator.reverseOrder())
                         .forEach(SurefireReportStorage::deleteFile);
                 } catch (IOException e) {
-                    logger.error("There occurred an error when the directory %s was being removed: %s", reportsDir,
+                    logger.error("An error occurred when trying to delete the directory [%s]: %s", reportsDir,
                         e.getMessage());
                 }
             }
@@ -85,7 +87,7 @@ class SurefireReportStorage {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            logger.error("There occurred an error when the file %s was being removed: %s", path,
+            logger.error("An error occurred when trying to remove the file [%s]: %s", path,
                 e.getMessage());
         }
     }
