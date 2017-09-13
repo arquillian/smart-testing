@@ -109,13 +109,12 @@ public class EmbeddedHttpGitServerTest {
         // given
         gitServer = EmbeddedHttpGitServer.fromBundle("das-repo","repo.bundle")
                                          .fromBundle("launchpad", "saas-launchpad.bundle")
-                                         .usingPort(5432)
+                                         .usingPort(5433)
                                          .create();
-
-
         gitServer.start();
-        final GitCloner dasRepoCloner = new GitCloner("http://localhost:5432/das-repo");
-        final GitCloner launchpadCloner = new GitCloner("http://localhost:5432/launchpad");
+
+        final GitCloner dasRepoCloner = new GitCloner("http://localhost:5433/das-repo");
+        final GitCloner launchpadCloner = new GitCloner("http://localhost:5433/launchpad");
 
         // when
         final Repository dasRepo = dasRepoCloner.cloneRepositoryToTempFolder();
