@@ -98,7 +98,7 @@ class MavenProjectConfigurator {
     }
 
     private void failBecauseOfPluginVersionMismatch(Model model) {
-        logger.severe(
+        logger.error(
             "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
             ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
         logCurrentPlugins(model);
@@ -120,7 +120,7 @@ class MavenProjectConfigurator {
         model.getBuild().getPlugins()
             .stream()
             .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
-            .forEach(plugin -> logger.severe("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
+            .forEach(plugin -> logger.error("Current applicable plugin: %s:%s:%s", plugin.getGroupId(),
                 plugin.getArtifactId(), plugin.getVersion()));
     }
 }

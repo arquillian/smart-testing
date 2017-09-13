@@ -15,7 +15,7 @@ public class Logger {
 
     /**
      * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "INFO: Smart-Testing - "
+     * "[INFO] [Smart Testing Extension]"
      *
      * @param msg
      *     Message to print
@@ -28,7 +28,7 @@ public class Logger {
 
     /**
      * Will format the given message with the given arguments and prints it on error output with the prefix:
-     * "WARN: Smart-Testing - "
+     * "[WARN] [Smart Testing Extension]"
      *
      * @param msg
      *     Message to print
@@ -41,7 +41,7 @@ public class Logger {
 
     /**
      * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "DEBUG: Smart-Testing - ", if debug mode is enabled.
+     * "[DEBUG] [Smart Testing Extension]", if debug mode is enabled.
      *
      * @param msg
      *     The string message (or a key in the message catalog)
@@ -56,15 +56,15 @@ public class Logger {
 
     /**
      * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "SEVERE: Smart-Testing - ", if debug mode is enabled.
+     * "[ERROR] [Smart Testing Extension]", if debug mode is enabled.
      *
      * @param msg
      *     The string message (or a key in the message catalog)
      * @param args
      *     arguments to the message
      */
-    public void severe(String msg, Object... args) {
-        System.err.println(getFormattedMsg("SEVERE", msg, args));
+    public void error(String msg, Object... args) {
+        System.err.println(getFormattedMsg("ERROR", msg, args));
     }
 
     public Boolean isDebugLogLevelEnabled() {

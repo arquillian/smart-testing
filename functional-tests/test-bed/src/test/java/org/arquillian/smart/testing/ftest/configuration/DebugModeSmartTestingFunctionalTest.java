@@ -22,6 +22,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
+    public static final String DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
@@ -50,7 +51,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
+        assertThat(projectMavenLog).contains(DEBUG_LOGS);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 
@@ -79,7 +80,7 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains("DEBUG: Smart-Testing");
+        assertThat(projectMavenLog).contains(DEBUG_LOGS);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 }

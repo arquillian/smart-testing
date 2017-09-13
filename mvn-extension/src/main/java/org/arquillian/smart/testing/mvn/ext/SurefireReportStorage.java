@@ -16,7 +16,7 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 class SurefireReportStorage {
 
     static final String SUREFIRE_REPORTS_DIR_NAME = "surefire-reports";
-    private static final Logger logger = Logger.getLogger(SurefireReportStorage.class);
+    private static final Logger logger = Logger.getLogger();
 
     static void copySurefireReports(Model model) {
         Build build = model.getBuild();
@@ -34,13 +34,13 @@ class SurefireReportStorage {
 
     private static void copyReportsDirectory(Model model, File surefireReportsDir) {
         File reportsDir = new File(model.getProjectDirectory(), TEMP_REPORT_DIR);
-        logger.fine("Copying surefire report directory from [%s] to [%s]", surefireReportsDir, reportsDir);
+        logger.debug("Copying surefire report directory from [%s] to [%s]", surefireReportsDir, reportsDir);
 
         if (!reportsDir.exists()) {
             try {
                 Files.createDirectory(reportsDir.toPath());
             } catch (IOException e) {
-                logger.severe("There occurred an error when the directory %s was being created: %s", reportsDir,
+                logger.error("There occurred an error when the directory %s was being created: %s", reportsDir,
                     e.getMessage());
                 return;
             }
@@ -56,7 +56,7 @@ class SurefireReportStorage {
         try {
             Files.copy(src.toPath(), destination.toPath());
         } catch (IOException e) {
-            logger.severe("There occurred an error when the file %s was being copied to %s. See the error message: %s",
+            logger.error("There occurred an error when the file %s was being copied to %s. See the error message: %s",
                 src, destination, e.getMessage());
             e.printStackTrace();
         }
@@ -65,7 +65,7 @@ class SurefireReportStorage {
     static void purgeReports(MavenSession session) {
         session.getAllProjects().forEach(mavenProject -> {
             File reportsDir = new File(mavenProject.getModel().getProjectDirectory(), TEMP_REPORT_DIR);
-            logger.fine("Deleting .reports directory at location %s", reportsDir);
+            logger.debug("Deleting .reports directory at location %s", reportsDir);
 
             if (reportsDir.exists()) {
                 try {
@@ -74,7 +74,7 @@ class SurefireReportStorage {
                         .sorted(Comparator.reverseOrder())
                         .forEach(SurefireReportStorage::deleteFile);
                 } catch (IOException e) {
-                    logger.severe("There occurred an error when the directory %s was being removed: %s", reportsDir,
+                    logger.error("There occurred an error when the directory %s was being removed: %s", reportsDir,
                         e.getMessage());
                 }
             }
@@ -85,7 +85,7 @@ class SurefireReportStorage {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            logger.severe("There occurred an error when the file %s was being removed: %s", path,
+            logger.error("There occurred an error when the file %s was being removed: %s", path,
                 e.getMessage());
         }
     }

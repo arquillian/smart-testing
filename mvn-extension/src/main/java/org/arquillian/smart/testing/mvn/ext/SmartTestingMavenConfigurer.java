@@ -105,6 +105,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
+        logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
