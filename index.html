@@ -903,14 +903,7 @@ At this moment, this strategy does not work with Java 9.
 <p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>).</p>
 </div>
 <div class="paragraph">
-<p>This strategy uses the <em>JUnit</em> XML <em>de-facto</em> <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.</p>
-</div>
-<div class="paragraph">
-<p>Currently you need to copy (either manually or in build script) the test reports from output directory <code>${basedir}/target/surefire-reports</code> to <code>${basedir}/.reports</code> directory.
-Failed strategy reads from <code>.reports</code> directory the test report from previous run.</p>
-</div>
-<div class="paragraph">
-<p>Other repositories will be added in next releases but for now this simple way is provided.</p>
+<p>This strategy uses the <em>JUnit</em> XML <em>de-facto</em> <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions. All reports are automatically copied by the maven extension to a temp directory <code>${project.directory}/.reports</code> and when the build is finished the directory is removed.</p>
 </div>
 </div>
 </div>
@@ -1646,7 +1639,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-12 08:23:19 UTC
+Last updated 2017-09-13 09:18:41 UTC
 </div>
 </div>
 </body>
