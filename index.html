@@ -534,9 +534,10 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_examples">3.1. Examples</a></li>
 <li><a href="#_disabling_smart_testing">3.2. Disabling Smart Testing</a></li>
 <li><a href="#_plugin_selection">3.3. Plugin Selection</a></li>
-<li><a href="#_specifying_concrete_set_of_test_classes">3.4. Specifying Concrete Set of Test Classes</a></li>
-<li><a href="#_skipping_tests">3.5. Skipping Tests</a></li>
-<li><a href="#_running_examples">3.6. Running Examples</a></li>
+<li><a href="#_debug_mode">3.4. Debug Mode</a></li>
+<li><a href="#_specifying_concrete_set_of_test_classes">3.5. Specifying Concrete Set of Test Classes</a></li>
+<li><a href="#_skipping_tests">3.6. Skipping Tests</a></li>
+<li><a href="#_running_examples">3.7. Running Examples</a></li>
 </ul>
 </li>
 <li><a href="#_reports">4. Reports</a>
@@ -551,11 +552,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_installation">5.1. Installation</a></li>
 <li><a href="#_configuration_2">5.2. Configuration</a></li>
 <li><a href="#_strategies_2">5.3. Strategies</a></li>
-</ul>
-</li>
-<li><a href="#_developing">6. Developing</a>
-<ul class="sectlevel2">
-<li><a href="#_test_bed">6.1. Test Bed</a></li>
+<li><a href="#_getting_insights_of_the_execution">5.4. Getting insights of the execution</a></li>
 </ul>
 </li>
 </ul>
@@ -957,8 +954,8 @@ Let&#8217;s see some examples:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>INFO: Smart-Testing - Applied strategies: [new, affected]
-INFO: Smart-Testing - Applied usage: [selecting]</pre>
+<pre>[INFO] [Smart Testing Extension] Applied strategies: [new, affected]
+[INFO] [Smart Testing Extension] Applied usage: [selecting]</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -988,13 +985,26 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>3.4. Specifying Concrete Set of Test Classes</h3>
+<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>3.4. Debug Mode</h3>
+<div class="paragraph">
+<p>In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
+setting the system property <code>smart.testing.debug</code> or by setting the mvn debug output <code>(-X)</code> flag to have the entire build execution
+in the debug mode (available out of the box in Maven).</p>
+</div>
+<div class="paragraph">
+<p>Debug logs provide information related to smart testing execution, system properties set by the user,
+test selection information. In addition for each and every module we store modified <code>pom.xml</code> at <code>target/smart-testing</code>
+as <code>smart-testing-effective-pom.xml</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>3.5. Specifying Concrete Set of Test Classes</h3>
 <div class="paragraph">
 <p>During development, you may want to run a single test class or a set of concrete test classes.
 You can do this by setting the maven <code>test</code> property to specific test class(es).</p>
 </div>
 <div class="sect3">
-<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>3.4.1. To Run a Single Test</h4>
+<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>3.5.1. To Run a Single Test</h4>
 <div class="paragraph">
 <p><code>$ mvn test -Dtest=SampleTest</code></p>
 </div>
@@ -1012,7 +1022,7 @@ This configuration disables smart testing and executes only the specified sample
 </div>
 </div>
 <div class="sect3">
-<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>3.4.2. To Run Multiple Test Classes</h4>
+<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>3.5.2. To Run Multiple Test Classes</h4>
 <div class="paragraph">
 <p>You can also choose to run only a concrete set of multiple test classes.</p>
 </div>
@@ -1050,7 +1060,7 @@ However, if none fulfil the strategy criteria, no tests would be executed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>3.5. Skipping Tests</h3>
+<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>3.6. Skipping Tests</h3>
 <div class="paragraph">
 <p>To skip executing the tests for a particular project, Smart Testing aligns with
 <a href="http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html">Maven Surefire/Failsafe
@@ -1058,13 +1068,13 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.6. Running Examples</h3>
+<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.7. Running Examples</h3>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.6.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
 </div>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.6.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
 </div>
 </div>
@@ -1180,8 +1190,8 @@ should be set to the desired alternative location.</p>
 <tr>
 <th class="tableblock halign-left valign-top">Property</th>
 <th class="tableblock halign-left valign-top">Description</th>
-<th class="tableblock halign-left valign-top">Possible Values</th>
 <th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Possible Values</th>
 </tr>
 </thead>
 <tbody>
@@ -1191,10 +1201,10 @@ should be set to the desired alternative location.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set running mode</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>ordering</code>, <code>selecting</code></p>
+<p><code>selecting</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>selecting</code></p>
+<p><code>ordering</code>, <code>selecting</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1202,10 +1212,10 @@ should be set to the desired alternative location.</p>
 <p><code>smart.testing</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set strategies in CSV</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code></p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
@@ -1213,10 +1223,10 @@ should be set to the desired alternative location.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Disable Smart Testing</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>true</code>, <code>false</code></p>
+<p><code>false</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>false</code></p>
+<p><code>true</code>, <code>false</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1225,10 +1235,10 @@ should be set to the desired alternative location.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set plugin to apply Smart Testing in CSV</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>surefire</code>, <code>failsafe</code></p>
+<p><code>surefire, failsafe</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>surefire, failsafe</code></p>
+<p><code>surefire</code>, <code>failsafe</code></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1248,7 +1258,7 @@ should be set to the desired alternative location.</p>
 <th class="tableblock halign-left valign-top">Property</th>
 <th class="tableblock halign-left valign-top">Description</th>
 <th class="tableblock halign-left valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Strategies</th>
+<th class="tableblock halign-left valign-top">Applicable Strategies</th>
 </tr>
 </thead>
 <tbody>
@@ -1321,10 +1331,34 @@ should be set to the desired alternative location.</p>
 </tbody>
 </table>
 </div>
-</div>
+<div class="sect2">
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>5.4. Getting insights of the execution</h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Property</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.debug</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>enables the debug mode by either (alternatively you can use Maven debug output <code>(-X)</code> flag)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
 </div>
 <div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>6. Developing</h2>
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>1. Developing</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -1339,7 +1373,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </table>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>6.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>1.1. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -1391,7 +1425,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>6.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>1.1.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -1539,7 +1573,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>6.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>1.1.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -1635,11 +1669,17 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 </div>
 </div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-13 09:18:41 UTC
+Last updated 2017-09-13 11:01:44 UTC
 </div>
 </div>
 </body>
