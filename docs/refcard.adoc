@@ -92,3 +92,4 @@ a|`smart.testing.report.name`
 |the file name of the generated report
 a|`smart-testing-report.xml`
 
+|===
