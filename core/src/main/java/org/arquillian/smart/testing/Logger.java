@@ -5,21 +5,12 @@ import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
 
 public class Logger {
 
-    private static Logger logger = null;
-
     private static final String PREFIX = "%s: Smart-Testing - ";
 
     private boolean mavenDebugLogLevel = false;
 
-    private Logger() {
-
-    }
-
     public static Logger getLogger() {
-        if (logger == null) {
-            logger = new Logger();
-        }
-        return logger;
+        return new Logger();
     }
 
     /**
