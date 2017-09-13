@@ -39,8 +39,8 @@ public class LocalStorage {
             if (targetDir != null){
                 target = new File(targetDir);
             }
-            FileUtils.copyDirectory(reporting, target.toPath().resolve(SMART_TESTING_TARGET_DIRECTORY_NAME), true);
+            FileSystemOperations.copyDirectory(reporting, target.toPath().resolve(SMART_TESTING_TARGET_DIRECTORY_NAME), true);
         }
-        FileUtils.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
+        FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
     }
 }

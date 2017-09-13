@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import org.arquillian.smart.testing.Logger;
 
-class FileUtils {
+class FileSystemOperations {
 
     private static final Logger logger = Logger.getLogger();
 

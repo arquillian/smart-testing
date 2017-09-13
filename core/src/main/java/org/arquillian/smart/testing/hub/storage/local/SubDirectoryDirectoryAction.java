@@ -14,7 +14,7 @@ public class SubDirectoryDirectoryAction extends SubDirectoryEntryAction {
     }
 
     public void create(Path directoryToCopy, Predicate<File> fileFilter, boolean catchFileCopyException) {
-        FileUtils.copyDirectory(directoryToCopy, path, fileFilter, catchFileCopyException);
+        FileSystemOperations.copyDirectory(directoryToCopy, path, fileFilter, catchFileCopyException);
     }
 
 
