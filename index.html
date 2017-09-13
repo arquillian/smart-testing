@@ -518,7 +518,7 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel1">
 <li><a href="#_what_is_this">1. What is this?</a>
 <ul class="sectlevel2">
-<li><a href="#_technical_details">1.1. Technical Details</a></li>
+<li><a href="#_integrations">1.1. Integrations</a></li>
 <li><a href="#_minimum_requirements">1.2. Minimum requirements</a></li>
 <li><a href="#_maven_extension">1.3. Maven Extension</a></li>
 </ul>
@@ -543,14 +543,13 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_reports">4. Reports</a>
 <ul class="sectlevel2">
 <li><a href="#_build_artifacts">4.1. Build Artifacts</a></li>
-<li><a href="#_how_to_configure">4.2. How to Configure?</a></li>
-<li><a href="#_sample_report">4.3. Sample Report</a></li>
+<li><a href="#_configuration_2">4.2. Configuration</a></li>
 </ul>
 </li>
 <li><a href="#_reference_card">5. Reference Card</a>
 <ul class="sectlevel2">
 <li><a href="#_installation">5.1. Installation</a></li>
-<li><a href="#_configuration_2">5.2. Configuration</a></li>
+<li><a href="#_configuration_3">5.2. Configuration</a></li>
 <li><a href="#_strategies_2">5.3. Strategies</a></li>
 <li><a href="#_getting_insights_of_the_execution">5.4. Getting insights of the execution</a></li>
 </ul>
@@ -615,7 +614,7 @@ wait some time until you get the failure.</p>
 are new or because failed previously) are going to be executed first.</p>
 </div>
 <div class="sect2">
-<h3 id="_technical_details"><a class="anchor" href="#_technical_details"></a>1.1. Technical Details</h3>
+<h3 id="_integrations"><a class="anchor" href="#_integrations"></a>1.1. Integrations</h3>
 <div class="paragraph">
 <p>Currently Smart Testing supports Maven through Maven Extension mechanism and works together with <code>maven-surefire-plugin</code>
 and <code>maven-failsafe-plugin</code>.</p>
@@ -900,7 +899,8 @@ At this moment, this strategy does not work with Java 9.
 <p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>).</p>
 </div>
 <div class="paragraph">
-<p>This strategy uses the <em>JUnit</em> XML <em>de-facto</em> <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions. All reports are automatically copied by the maven extension to a temp directory <code>${project.directory}/.reports</code> and when the build is finished the directory is removed.</p>
+<p>This strategy uses the <em>JUnit</em> XML <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.
+All reports from previous local build are automatically copied by the maven extension to a temp directory <code>${project.directory}/.reports</code> and when the build is finished the directory is removed.</p>
 </div>
 </div>
 </div>
@@ -1086,45 +1086,25 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 <div class="sect2">
 <h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>4.1. Build Artifacts</h3>
 <div class="paragraph">
-<p>After running build with <code>Smart testing</code> Maven extension installed, It&#8217;s quite cumbersome to look entire logs
-to identify which tests are selected to run? How tests are ordered? The selected tests are belongs to which strategy? What are properties
-used to configure smart testing?</p>
+<p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
+most efficient way to get a quick answer to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>How tests are ordered?</p>
+</li>
+<li>
+<p>To which strategy they belong?</p>
+</li>
+<li>
+<p>What was the configuration used?</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>To overcome this <code>Smart testing</code> is providing report in <code>XML</code> format.</p>
+<p><code>Smart Testing</code> provides concise report in the <code>XML</code> format with all this information at hand.</p>
 </div>
-<div class="paragraph">
-<p><code>Smart testing</code> report will give you details about usageMode, different strategies configured to run
-tests, all other properties related to smart testing, Test Selection with different strategies etc.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_how_to_configure"><a class="anchor" href="#_how_to_configure"></a>4.2. How to Configure?</h3>
-<div class="paragraph">
-<p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.</p>
-</div>
-<div class="paragraph">
-<p>You will get generated reports in <code>target/smart-testing-report.xml</code> by default.</p>
-</div>
-<div class="paragraph">
-<p>To change the location of the generated output report, following properties
-should be set to the desired alternative location.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>smart.testing.report.dir</code></dt>
-<dd>
-<p>To configure dir location to put generated reports.</p>
-</dd>
-<dt class="hdlist1"><code>smart.testing.report.name</code></dt>
-<dd>
-<p>To configure the file name of the generated report.</p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_sample_report"><a class="anchor" href="#_sample_report"></a>4.3. Sample Report</h3>
 <div class="paragraph">
 <p>Here’s how the sample report looks like:</p>
 </div>
@@ -1156,6 +1136,31 @@ should be set to the desired alternative location.</p>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>4.2. Configuration</h3>
+<div class="paragraph">
+<p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.</p>
+</div>
+<div class="paragraph">
+<p>You will get generated reports in <code>target/smart-testing-report.xml</code> by default.</p>
+</div>
+<div class="paragraph">
+<p>To change the location of the generated output report, following properties
+should be set to the desired alternative location.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>smart.testing.report.dir</code></dt>
+<dd>
+<p>To configure directory where generated reports should be stored.</p>
+</dd>
+<dt class="hdlist1"><code>smart.testing.report.name</code></dt>
+<dd>
+<p>To configure the file name of the generated report.</p>
+</dd>
+</dl>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1178,7 +1183,7 @@ should be set to the desired alternative location.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>5.2. Configuration</h3>
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>5.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1352,10 +1357,28 @@ should be set to the desired alternative location.</p>
 <p><code>smart.testing.debug</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>enables the debug mode by either (alternatively you can use Maven debug output <code>(-X)</code> flag)</p>
+<p>enables the debug mode (alternatively you can use Maven debug output <code>(-X)</code> flag)</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>false</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.report.dir</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">directory where generated reports should be stored</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>target</code> of the current module being built</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.report.name</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">the file name of the generated report</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart-testing-report.xml</code></p>
 </div>
 <div class="sect1">
 <h2 id="_developing"><a class="anchor" href="#_developing"></a>1. Developing</h2>
@@ -1679,7 +1702,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-13 11:01:44 UTC
+Last updated 2017-09-13 11:50:38 UTC
 </div>
 </div>
 </body>
