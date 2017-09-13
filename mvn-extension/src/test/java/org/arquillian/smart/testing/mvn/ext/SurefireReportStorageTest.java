@@ -16,9 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static java.util.Collections.singletonList;
 import static org.arquillian.smart.testing.mvn.ext.SurefireReportStorage.SUREFIRE_REPORTS_DIR_NAME;
+import static org.arquillian.smart.testing.mvn.ext.SurefireReportStorage.copySurefireReports;
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -53,7 +54,7 @@ public class SurefireReportStorageTest {
         Map<String, File> expectedReports = feedWithReports(surefireReportsDir);
 
         // when
-        SurefireReportStorage.copySurefireReports(project);
+        copySurefireReports(project);
 
         // then
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
@@ -68,11 +69,11 @@ public class SurefireReportStorageTest {
     @Test
     public void should_purge_reports_directory() throws IOException {
         // given
-        SurefireReportStorage.copySurefireReports(project);
+        copySurefireReports(project);
         MavenSession mavenSession = mock(MavenSession.class);
         MavenProject mavenProject = mock(MavenProject.class);
         when(mavenProject.getModel()).thenReturn(project);
-        when(mavenSession.getAllProjects()).thenReturn(Arrays.asList(new MavenProject[] {mavenProject}));
+        when(mavenSession.getAllProjects()).thenReturn(singletonList(mavenProject));
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);
 
         // when
@@ -88,7 +89,7 @@ public class SurefireReportStorageTest {
         surefireReportsDir.delete();
 
         // when
-        new SurefireReportStorage().copySurefireReports(project);
+        copySurefireReports(project);
 
         // then
         File reportsDir = new File(projectDir, TEMP_REPORT_DIR);

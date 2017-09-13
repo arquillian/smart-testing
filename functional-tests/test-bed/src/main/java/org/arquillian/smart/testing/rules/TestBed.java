@@ -21,12 +21,12 @@ import static java.util.stream.Collectors.toList;
 
 public class TestBed implements TestRule {
 
+    private static final Logger LOGGER = Logger.getLogger();
+
     private final GitClone gitClone;
     private Project project;
 
     private String targetRepoPerTestFolder;
-
-    public static final Logger LOGGER = Logger.getLogger();
 
     public TestBed(GitClone gitClone) {
         this.gitClone = gitClone;

@@ -12,9 +12,9 @@ import org.arquillian.smart.testing.Logger;
 
 class ModifiedPomExporter {
 
-    private static Logger logger = Logger.getLogger();
+    private static final String SMART_TESTING_POM_FILE = "smart-testing-effective-pom.xml";
 
-    private static String SMART_TESTING_POM_FILE = "smart-testing-effective-pom.xml";
+    private static Logger logger = Logger.getLogger();
 
     static void exportModifiedPom(Model model) {
         try (StringWriter pomOut = new StringWriter()) {

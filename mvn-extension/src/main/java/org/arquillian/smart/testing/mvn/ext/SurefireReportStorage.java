@@ -46,7 +46,7 @@ class SurefireReportStorage {
             }
         }
 
-        Arrays.stream(surefireReportsDir.listFiles())
+        Arrays.asList(surefireReportsDir.listFiles()).stream()
             .filter(file -> file.isFile() && file.getName().endsWith(".xml"))
             .forEach(file -> copyReportFile(file, reportsDir));
     }
