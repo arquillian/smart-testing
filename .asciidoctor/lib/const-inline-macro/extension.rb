@@ -6,11 +6,11 @@ include ::Asciidoctor
 #
 # Usage
 #
-#   const::src/main/java/org/superbiz/Color.java[name="DEFAULT_COLOR"]
+#   const:src/main/java/org/superbiz/Color.java[name="DEFAULT_COLOR"]
 #   public static final String DEFAULT_COLOR = "blue";
 #
-#   const::src/main/java/org/superbiz/Color.java[tag="DEFAULT_COLOR"]
-#   // const::DEFAULT_COLOR[]
+#   const:src/main/java/org/superbiz/Color.java[tag="DEFAULT_COLOR"]
+#   // const:DEFAULT_COLOR[]
 #   public static final STRING MY_DEFAULT_COLOR = "blue";
 #
 class ConstBlockMacro < Extensions::InlineMacroProcessor

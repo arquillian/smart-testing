@@ -8,9 +8,11 @@ to run first the important tests and then the rest. This is know as `ordering` m
 `ordering`:: `ordering` mode as its name suggests orders the test execution plan so important tests are executed first
 and then the rest.
 
-`selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests. This is the default mode.
+`selecting`:: `selecting` mode just selects the important tests and execute them, skipping the rest of the tests.
 
-In order to define the mode use `smart.testing.mode` Java system property with either one.
+The `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_MODE"]` is the **default** mode.
+
+In order to define the mode use `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]` Java system property with either one.
 
 === Strategies
 
@@ -20,7 +22,7 @@ But how do we know which tests are important and which ones not?
 There are several strategies that you can choose from which determine what are the *important* tests.
 Currently we have following strategies in place: `new`, `changed`, `affected` and `failed`.
 
-To set them you need to set Java system property `smart.testing` to one or more strategies in comma-separated value form.
+To set them you need to set Java system property `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]` to one or more strategies in comma-separated value form.
 
 Subsequent sections dive deeper into each and every one of them.
 
@@ -34,16 +36,16 @@ are marked as important ones.
 
 This strategy can be configured in several ways through Java system properties:
 
-* `scm.range.head` and `scm.range.tail` are used to set the range of commits you want to inspect for new tests.
+* `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` are used to set the range of commits you want to inspect for new tests.
 The values can be commit ids or using `HEAD` notation.
-For example: `-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~`
+For example: `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=HEAD~`
 By default if not specified, default value is `HEAD`.
-* `scm.last.changes` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dscm.last.changes=3` will be equivalent as `-Dscm.range.head=HEAD -Dscm.range.tail=HEAD~~`.
+* `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` can be used to set the number of commits from `HEAD` that you want to inspect.
+For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=HEAD~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
-`$ mvn clean verify -Dsmart.testing=new, affected -Dscm.range.head=GIT_COMMIT -Dscm.range.tail=GIT_PREVIOUS_COMMIT`
+`$ mvn clean verify -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]=new, affected -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=GIT_COMMIT -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=GIT_PREVIOUS_COMMIT`
 
 Currently not committed changes (those that are _added_ and _untracked_) are considered as important tests as well.
 This effectively means that if you don't specify any commit range, only these information is considered.
@@ -55,7 +57,7 @@ instead of *new* ones.
 
 In this strategy not committed changes (those that are _modified_ or _changed_) are considered as important tests as well.
 
-TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=new, changed`.
+TIP: Usually `new` and `changed` strategies are used together `-Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]=new, changed`.
 
 ==== Affected
 
@@ -63,7 +65,7 @@ TIP: Usually `new` and `changed` strategies are used together `-Dsmart.testing=n
 This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class
 between commits range and local changes as well.
 
-TIP: `scm.range.head`, `scm.range.tail` and `scm.last.changes` Java system properties are valid as well.
+TIP: `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]`, `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` Java system properties are valid as well.
 
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
 If the test exercises a business class that has been modified, we treat it as *important*  so it will be executed earlier in the test plan.
@@ -83,11 +85,11 @@ Or maybe just *include* imports from your business code, for example all imports
 
 *Affected* provides two ways to provide _inclusions_ and _exclusions_:
 
-inclusions/exclusions system proeprty:: you can set inclusions and/or exclusions by using `smart.testing.affected.inclusions`/`smart.testing.affected.exclusions` which accepts comma-separated values.
-For example: `-Dsmart.testing.affected.inclusions=org.mysuperbiz.*`.
+inclusions/exclusions system proeprty:: you can set inclusions and/or exclusions by using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`/`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]` which accepts comma-separated values.
+For example: `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]=org.mysuperbiz.*`.
 
-config properties file:: you can create a properties file containing inclusions and/or exclusions and set its location using `smart.testing.affected.config` system property.
-For example `-Dsmart.testing.affected.config=affected-configuration.properties`
+config properties file:: you can create a properties file containing inclusions and/or exclusions and set its location using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]` system property.
+For example `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]=affected-configuration.properties`
 
 .affected-configuration.properties
 ----
@@ -109,7 +111,7 @@ WARNING: At this moment, this strategy does not work with Java 9.
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
 
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
-All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/.smart-testing/execution/reports` and when the build is finished the directory is removed.
+All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="EXECUTION_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="REPORTING_SUBDIRECTORY"]` and when the build is finished the directory is removed.
 
 
 
