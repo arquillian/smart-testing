@@ -53,7 +53,7 @@ public class DependencyResolver {
     private Dependency smartTestingProviderDependency() {
         final Dependency smartTestingSurefireProvider = new Dependency();
         smartTestingSurefireProvider.setGroupId("org.arquillian.smart.testing");
-        smartTestingSurefireProvider.setArtifactId("smart-testing-surefire-provider");
+        smartTestingSurefireProvider.setArtifactId("surefire-provider");
         smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
         smartTestingSurefireProvider.setScope("runtime");
         return smartTestingSurefireProvider;

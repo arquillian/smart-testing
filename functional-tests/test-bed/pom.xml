@@ -22,7 +22,7 @@
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-core</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -33,7 +33,7 @@
     <dependency>
       <!-- Maven Extension JAR is added because we need to get version from extension_version file in case tester does not specify any version-->
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-maven-lifecycle-extension</artifactId>
+      <artifactId>maven-lifecycle-extension</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
