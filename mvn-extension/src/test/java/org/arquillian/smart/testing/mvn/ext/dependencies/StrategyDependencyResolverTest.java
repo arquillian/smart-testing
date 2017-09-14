@@ -29,10 +29,10 @@ public class StrategyDependencyResolverTest {
         assertThat(dependencies.values()).hasSize(4)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
-            .contains("org.arquillian.smart.testing:smart-testing-strategy-changed:" + ExtensionVersion.version().toString(),
-                      "org.arquillian.smart.testing:smart-testing-strategy-failed:" + ExtensionVersion.version().toString(),
-                      "org.arquillian.smart.testing:smart-testing-strategy-changed:" + ExtensionVersion.version().toString(),
-                      "org.arquillian.smart.testing:smart-testing-strategy-affected:" + ExtensionVersion.version().toString());
+            .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                      "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
+                      "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                      "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class StrategyDependencyResolverTest {
         throws Exception {
         // given
         System.setProperty("smart.testing.strategy.new",
-            "org.arquillian.smart.testing:smart-testing-strategy-changed:0.0.5-SNAPSHOT");
+            "org.arquillian.smart.testing:strategy-changed:0.0.5-SNAPSHOT");
 
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
 
@@ -50,7 +50,7 @@ public class StrategyDependencyResolverTest {
         // then
         assertThat(dependencies)
             .hasEntrySatisfying("new",
-            dependency -> "org.arquillian.smart.testing:smart-testing-strategy-changed:0.0.5-SNAPSHOT".equals(
+            dependency -> "org.arquillian.smart.testing:strategy-changed:0.0.5-SNAPSHOT".equals(
                 dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
         );
     }
@@ -69,10 +69,10 @@ public class StrategyDependencyResolverTest {
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains(
-                "org.arquillian.smart.testing:smart-testing-strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:smart-testing-strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:smart-testing-strategy-affected:0.0.12-SNAPSHOT",
-                "org.arquillian.smart.testing:smart-testing-strategy-failed:0.0.13-SNAPSHOT");
+                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
+                "org.arquillian.smart.testing:strategy-affected:0.0.12-SNAPSHOT",
+                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class StrategyDependencyResolverTest {
             get("src/test/resources", "strategies-test.properties"));
 
         System.setProperty("smart.testing.strategy.affected",
-            "org.arquillian.smart.testing:smart-testing-strategy-affected:0.0.2-SNAPSHOT");
+            "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT");
 
         // when
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
@@ -93,9 +93,9 @@ public class StrategyDependencyResolverTest {
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains(
-                "org.arquillian.smart.testing:smart-testing-strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:smart-testing-strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:smart-testing-strategy-affected:0.0.2-SNAPSHOT",
-                "org.arquillian.smart.testing:smart-testing-strategy-failed:0.0.13-SNAPSHOT");
+                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
+                "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT",
+                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
     }
 }

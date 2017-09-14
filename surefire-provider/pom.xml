@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>smart-testing-surefire-provider</artifactId>
+  <artifactId>surefire-provider</artifactId>
 
   <dependencyManagement>
     <dependencies>
@@ -26,7 +26,7 @@
   <dependencies>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-core</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

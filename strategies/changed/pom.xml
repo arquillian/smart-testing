@@ -10,12 +10,12 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>smart-testing-strategy-changed</artifactId>
+  <artifactId>strategy-changed</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-core</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
 

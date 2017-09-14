@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>smart-testing-maven-lifecycle-extension</artifactId>
+  <artifactId>maven-lifecycle-extension</artifactId>
 
   <properties>
     <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
@@ -24,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-core</artifactId>
+      <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -37,19 +37,19 @@
     -->
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-affected</artifactId>
+      <artifactId>strategy-affected</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-changed</artifactId>
+      <artifactId>strategy-changed</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>smart-testing-strategy-failed</artifactId>
+      <artifactId>strategy-failed</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

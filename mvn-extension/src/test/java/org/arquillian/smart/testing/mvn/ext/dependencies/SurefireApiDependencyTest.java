@@ -59,7 +59,7 @@ public class SurefireApiDependencyTest {
     private Model prepareModelWithSurefirePlugin(String version) {
         System.setProperty("smart.testing", "new");
         System.setProperty("smart.testing.strategy.new",
-            "org.arquillian.smart.testing:smart-testing-strategy-changed:0.0.5-SNAPSHOT");
+            "org.arquillian.smart.testing:strategy-changed:0.0.5-SNAPSHOT");
 
         Model model = new Model();
         Plugin surefirePlugin = new Plugin();
