@@ -14,7 +14,7 @@
   <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Smart testing</name>
+  <name>Smart Testing</name>
   <description>Smart testing is a tool that knows which tests you want to run</description>
 
   <licenses>
