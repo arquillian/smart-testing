@@ -26,7 +26,7 @@ class ConstBlockMacro < Extensions::InlineMacroProcessor
       const_name = attrs['name']
 
       File.open(data_path).each do |line|
-        if (line[const_name])
+        if (line =~ /\s#{const_name}(\s|=)/)
           # Gets content between double quotes
           const_value = line.scan(/"([^"]*)"/)
           break;
@@ -42,7 +42,7 @@ class ConstBlockMacro < Extensions::InlineMacroProcessor
             const_value = line.scan(/"([^"]*)"/)
             break;
           end
-          if (line[const_tag])
+          if (line =~ /\s#{const_tag}\s/)
             found_tag = true
           end
         end

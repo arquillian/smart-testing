@@ -49,7 +49,7 @@ a|`new`, `changed`, `affected`
 
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]`
 |Set last commit id for inspecting changes
-a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD"]`
 a|`new`, `changed`, `affected`
 
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]`
@@ -60,17 +60,17 @@ a|`new`, `changed`, `affected`
 a|`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`
 |Set classes to be included for scanning
 a|
-a|
+a|`affected`
 
 a|`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]`
 |Set classes to be excluded for scanning
 a|
-a|
+a|`affected`
 
 a|`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]`
 |Set location of affected configuration file
 a|
-a|
+a|`affected`
 
 |===
 

@@ -8,19 +8,19 @@ or `maven-failsafe-plugin`.
 To configure it you only need to pass from CLI the Java system properties.
 Let's see some examples:
 
+Remember that the default **mode** is `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_MODE"]`.
+
 *You want to run only tests that you've just added or modified locally*
 
-`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=selecting -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
+`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
 `$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
 
-TIP: `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]` is not mandatory because `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_MODE"]` is the **default** mode.
-
 *You want to run only tests that validates new or modified business classes locally*
 
-`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=selecting -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="affected"`
+`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="affected"`
 
 When you are running Smart Testing, you'll see following logs in the console, showing your current configuration:
 

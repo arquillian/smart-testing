@@ -36,12 +36,12 @@ are marked as important ones.
 
 This strategy can be configured in several ways through Java system properties:
 
-* `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` are used to set the range of commits you want to inspect for new tests.
-The values can be commit ids or using `HEAD` notation.
-For example: `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=HEAD~`
+* `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]` are used to set the range of commits you want to inspect for new tests.
+The values can be commit ids or using `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD"]` notation.
+For example: `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=HEAD~`
 By default if not specified, default value is `HEAD`.
 * `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=HEAD~~`.
+For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=HEAD~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
@@ -111,7 +111,7 @@ WARNING: At this moment, this strategy does not work with Java 9.
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
 
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
-All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="EXECUTION_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="REPORTING_SUBDIRECTORY"]` and when the build is finished the directory is removed.
+All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="EXECUTION_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/spi/TestResult.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
 
 
 
