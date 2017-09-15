@@ -35,7 +35,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
         final Set<String> testResults = new HashSet<>();
 
-        final Path reportDir = new LocalStorage(rootDirectory).execution().directory(TEMP_REPORT_DIR).getPath();
+        final Path reportDir = new LocalStorage(rootDirectory).duringExecution().temporary().directory(TEMP_REPORT_DIR).getPath();
 
         if (Files.exists(reportDir)) {
 

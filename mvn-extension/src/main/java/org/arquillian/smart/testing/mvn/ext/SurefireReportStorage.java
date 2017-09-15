@@ -5,7 +5,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.arquillian.smart.testing.hub.storage.local.SubDirectoryDirectoryAction;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageDirectoryAction;
 
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
@@ -29,9 +29,10 @@ class SurefireReportStorage {
     }
 
     private static void copyReportsDirectory(Model model, File surefireReportsDir) {
-        SubDirectoryDirectoryAction reportsDirectory =
+        LocalStorageDirectoryAction reportsDirectory =
             new LocalStorage(model.getProjectDirectory())
-                .execution()
+                .duringExecution()
+                .temporary()
                 .directory(TEMP_REPORT_DIR);
         logger.debug("Copying surefire report directory from [%s] to [%s]", surefireReportsDir,
             reportsDirectory.getPath());

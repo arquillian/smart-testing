@@ -136,7 +136,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         session.getAllProjects().forEach(mavenProject -> {
             Model model = mavenProject.getModel();
             String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
-            new LocalStorage(model.getProjectDirectory()).purge(target);
+            new LocalStorage(model.getProjectDirectory()).duringExecution().purge(target);
         });
     }
 }

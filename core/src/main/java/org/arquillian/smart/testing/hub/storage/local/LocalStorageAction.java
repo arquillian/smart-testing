@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class SubDirectoryEntryAction {
+public class LocalStorageAction {
 
     private final Path path;
     private final boolean isDirectory;
 
-    public SubDirectoryEntryAction(Path path, boolean isDirectory) {
+    LocalStorageAction(Path path, boolean isDirectory) {
         this.path = path;
         this.isDirectory = isDirectory;
     }

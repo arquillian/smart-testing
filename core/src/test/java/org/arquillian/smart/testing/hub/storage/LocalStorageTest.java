@@ -16,15 +16,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.EXECUTION_SUBDIRECTORY;
-import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.REPORTING_SUBDIRECTORY;
-import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
-import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
+import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
+import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
+import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
+import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.TEMPORARY_SUBDIRECTORY;
 
 public class LocalStorageTest {
 
     @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
     public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
@@ -37,20 +37,20 @@ public class LocalStorageTest {
     }
 
     @Test
-    public void should_create_smart_testing_execution_directory() throws IOException {
+    public void should_create_smart_testing_temporary_directory_in_basedir() throws IOException {
         // when
-        localStorage.execution().directory("directory").create();
+        localStorage.duringExecution().temporary().directory("directory").create();
 
         // then
-        softly.assertThat(getSmartTestingSubdirectory(EXECUTION_SUBDIRECTORY, "directory"))
+        softly.assertThat(getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "directory"))
             .exists()
             .isDirectory();
     }
 
     @Test
-    public void should_create_smart_testing_reporting_directory() throws IOException {
+    public void should_create_smart_testing_reporting_directory_in_basedir() throws IOException {
         // when
-        localStorage.reporting().directory("directory").create();
+        localStorage.duringExecution().toReporting().directory("directory").create();
 
         // then
         softly.assertThat(getSmartTestingSubdirectory(REPORTING_SUBDIRECTORY, "directory"))
@@ -59,20 +59,20 @@ public class LocalStorageTest {
     }
 
     @Test
-    public void should_create_smart_testing_execution_file() throws IOException {
+    public void should_create_smart_testing_temporary_file_in_basedir() throws IOException {
         // when
-        localStorage.execution().file("file").create();
+        localStorage.duringExecution().temporary().file("file").create();
 
         // then
-        softly.assertThat(getSmartTestingSubdirectory(EXECUTION_SUBDIRECTORY, "file"))
+        softly.assertThat(getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "file"))
             .exists()
             .isRegularFile();
     }
 
     @Test
-    public void should_create_smart_testing_reporting_file() throws IOException {
+    public void should_create_smart_testing_reporting_file_in_basedir() throws IOException {
         // when
-        localStorage.reporting().file("file").create();
+        localStorage.duringExecution().toReporting().file("file").create();
 
         // then
         softly.assertThat(getSmartTestingSubdirectory(REPORTING_SUBDIRECTORY, "file"))
@@ -83,7 +83,7 @@ public class LocalStorageTest {
     @Test
     public void should_create_file_with_content() throws IOException {
         // when
-        localStorage.reporting().file("file").create("content".getBytes());
+        localStorage.duringExecution().toReporting().file("file").create("content".getBytes());
 
         // then
         softly.assertThat(getSmartTestingSubdirectory(REPORTING_SUBDIRECTORY, "file"))
@@ -97,10 +97,10 @@ public class LocalStorageTest {
         feedDummyDirectory(toCopy);
 
         // when
-        localStorage.execution().directory("copied").create(toCopy, f -> true, false);
+        localStorage.duringExecution().temporary().directory("copied").create(toCopy, f -> true, false);
 
         // then
-        Path copied = getSmartTestingSubdirectory(EXECUTION_SUBDIRECTORY, "copied");
+        Path copied = getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "copied");
         assertThatDirectoriesHaveSameContent(copied, toCopy);
     }
 
@@ -109,12 +109,12 @@ public class LocalStorageTest {
         // given
         Path toCopy = folder.newFolder().toPath();
         feedDummyDirectory(toCopy);
-        localStorage.execution().directory("exec-copy").create(toCopy, f -> true, false);
-        localStorage.reporting().directory("report-copy").create(toCopy, f -> true, false);
+        localStorage.duringExecution().temporary().directory("exec-copy").create(toCopy, f -> true, false);
+        localStorage.duringExecution().toReporting().directory("report-copy").create(toCopy, f -> true, false);
         File target = folder.newFolder();
 
         // when
-        localStorage.purge(target.getAbsolutePath());
+        localStorage.duringExecution().purge(target.getAbsolutePath());
 
         // then
         Path stDirectory = Paths.get(folder.getRoot().getAbsolutePath(), SMART_TESTING_WORKING_DIRECTORY_NAME);
@@ -129,10 +129,59 @@ public class LocalStorageTest {
         File stTargetDir = new File(target, SMART_TESTING_TARGET_DIRECTORY_NAME);
         softly.assertThat(target.listFiles()).hasSize(1).contains(stTargetDir);
 
-        File reportCopy = new File(stTargetDir, "report-copy");
-        softly.assertThat(stTargetDir.listFiles()).hasSize(1).contains(reportCopy);
+        File reportingTargetDir = new File(stTargetDir, REPORTING_SUBDIRECTORY);
+        softly.assertThat(stTargetDir.listFiles()).hasSize(1).contains(reportingTargetDir);
+
+        File reportCopy = new File(reportingTargetDir, "report-copy");
+        softly.assertThat(reportingTargetDir.listFiles()).hasSize(1).contains(reportCopy);
 
         assertThatDirectoriesHaveSameContent(reportCopy.toPath(), toCopy);
+    }
+
+    @Test
+    public void should_create_smart_testing_reporting_directory_in_target() throws IOException {
+        // when
+        localStorage.afterExecution().toReporting().directory("directory").create();
+
+        // then
+        softly.assertThat(getSmartTestingSubdirectoryInTarget(REPORTING_SUBDIRECTORY, "directory"))
+            .exists()
+            .isDirectory();
+    }
+
+    @Test
+    public void should_create_smart_testing_reporting_file_in_target() throws IOException {
+        // when
+        localStorage.afterExecution().toReporting().file("file").create();
+
+        // then
+        softly.assertThat(getSmartTestingSubdirectoryInTarget(REPORTING_SUBDIRECTORY, "file"))
+            .exists()
+            .isRegularFile();
+    }
+
+    @Test
+    public void when_purge_is_called_then_existing_target_reporting_dir_is_merged_with_basedir_one() throws IOException {
+        // given
+        Path duringDir = folder.newFolder().toPath();
+        feedDummyDirectory(duringDir, "during");
+        Path afterDir = folder.newFolder().toPath();
+        feedDummyDirectory(duringDir, "after");
+        localStorage.duringExecution().toReporting().directory("during-dir").create(duringDir, f -> true, false);
+        localStorage.duringExecution().toReporting().directory("after-dir").create(afterDir, f -> true, false);
+        File target = folder.newFolder();
+
+        // when
+        localStorage.duringExecution().purge(target.getAbsolutePath());
+
+        // then
+        File reportingTargetDir =
+            new File(target + File.separator + SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
+        File duringTargetDir = new File(reportingTargetDir, "during-dir");
+        File afterTargetDir = new File(reportingTargetDir, "after-dir");
+        softly.assertThat(reportingTargetDir.listFiles()).hasSize(2).contains(duringTargetDir, afterTargetDir);
+        assertThatDirectoriesHaveSameContent(duringTargetDir.toPath(), duringDir);
+        assertThatDirectoriesHaveSameContent(afterTargetDir.toPath(), afterDir);
     }
 
     private void assertThatDirectoriesHaveSameContent(Path actualDir, Path expectedDir) {
@@ -151,9 +200,13 @@ public class LocalStorageTest {
     }
 
     private void feedDummyDirectory(Path dirRoot) throws IOException {
-        IntStream.range(1, 10).forEach(i -> createDummyFile(dirRoot, "file" + i));
+        feedDummyDirectory(dirRoot, "file");
+    }
+
+    private void feedDummyDirectory(Path dirRoot, String prefixFileName) throws IOException {
+        IntStream.range(1, 10).forEach(i -> createDummyFile(dirRoot, prefixFileName + i));
         Path subdirectory = Files.createDirectories(dirRoot.resolve(dirRoot.getFileName() + "subdirectory"));
-        IntStream.range(1, 10).forEach(i -> createDummyFile(subdirectory, "file" + i));
+        IntStream.range(1, 10).forEach(i -> createDummyFile(subdirectory, prefixFileName + i));
     }
 
     private Path createDummyFile(Path directory, String fileName) {
@@ -168,6 +221,11 @@ public class LocalStorageTest {
 
     private Path getSmartTestingSubdirectory(String subdirectory, String fileName) {
         return Paths.get(folder.getRoot().getAbsolutePath(), SMART_TESTING_WORKING_DIRECTORY_NAME, subdirectory,
+            fileName);
+    }
+
+    private Path getSmartTestingSubdirectoryInTarget(String subdirectory, String fileName) {
+        return Paths.get(folder.getRoot().getAbsolutePath(), "target", SMART_TESTING_TARGET_DIRECTORY_NAME, subdirectory,
             fileName);
     }
 }

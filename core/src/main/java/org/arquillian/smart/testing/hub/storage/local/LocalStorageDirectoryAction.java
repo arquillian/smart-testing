@@ -4,11 +4,11 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
-public class SubDirectoryDirectoryAction extends SubDirectoryEntryAction {
+public class LocalStorageDirectoryAction extends LocalStorageAction {
 
     private final Path path;
 
-    public SubDirectoryDirectoryAction(Path path, boolean isDirectory) {
+    LocalStorageDirectoryAction(Path path, boolean isDirectory) {
         super(path, isDirectory);
         this.path = path;
     }

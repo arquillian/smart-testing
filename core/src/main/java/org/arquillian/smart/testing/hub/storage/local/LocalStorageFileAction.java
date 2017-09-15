@@ -5,11 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 
-public class SubDirectoryFileAction extends SubDirectoryEntryAction {
+public class LocalStorageFileAction extends LocalStorageAction {
 
     private final Path path;
 
-    public SubDirectoryFileAction(Path path, boolean isDirectory) {
+    LocalStorageFileAction(Path path, boolean isDirectory) {
         super(path, isDirectory);
         this.path = path;
     }

@@ -35,9 +35,10 @@ public class LocalChangeStorage implements ChangeStorage {
         StringBuilder fileContent = new StringBuilder();
         changes.forEach(change -> fileContent.append(change.write()).append(System.lineSeparator()));
 
-        SubDirectoryFileAction scmChangesFile =
+        LocalStorageFileAction scmChangesFile =
             new LocalStorage(currentDirectory)
-                .execution()
+                .duringExecution()
+                .temporary()
                 .file(SMART_TESTING_SCM_CHANGES);
         try {
             scmChangesFile.create(fileContent.toString().getBytes());
@@ -70,7 +71,7 @@ public class LocalChangeStorage implements ChangeStorage {
             return Optional.empty();
         }
 
-        File currentFile = new LocalStorage(directory).execution().file(fileName).getFile();
+        File currentFile = new LocalStorage(directory).duringExecution().temporary().file(fileName).getFile();
         if (currentFile.exists()) {
             return Optional.of(currentFile.toPath());
         }
