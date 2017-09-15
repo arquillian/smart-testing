@@ -554,6 +554,11 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_getting_insights_of_the_execution">5.4. Getting insights of the execution</a></li>
 </ul>
 </li>
+<li><a href="#_developing">6. Developing</a>
+<ul class="sectlevel2">
+<li><a href="#_test_bed">6.1. Test Bed</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -696,9 +701,12 @@ and then the rest.</p>
 </dd>
 <dt class="hdlist1"><code>selecting</code></dt>
 <dd>
-<p><code>selecting</code> mode just selects the important tests and execute them, skipping the rest of the tests. This is the default mode.</p>
+<p><code>selecting</code> mode just selects the important tests and execute them, skipping the rest of the tests.</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>The <code>selecting</code> is the <strong>default</strong> mode.</p>
 </div>
 <div class="paragraph">
 <p>In order to define the mode use <code>smart.testing.mode</code> Java system property with either one.</p>
@@ -920,10 +928,13 @@ or <code>maven-failsafe-plugin</code>.</p>
 Let&#8217;s see some examples:</p>
 </div>
 <div class="paragraph">
+<p>Remember that the default <strong>mode</strong> is <code>selecting</code>.</p>
+</div>
+<div class="paragraph">
 <p><strong>You want to run only tests that you&#8217;ve just added or modified locally</strong></p>
 </div>
 <div class="paragraph">
-<p><code>$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed"</code></p>
+<p><code>$ mvn clean test -Dsmart.testing="new, changed"</code></p>
 </div>
 <div class="paragraph">
 <p><strong>You want to run all tests but given priority to the latest tests added or modified</strong></p>
@@ -931,23 +942,11 @@ Let&#8217;s see some examples:</p>
 <div class="paragraph">
 <p><code>$ mvn clean test -Dsmart.testing.mode=ordering -Dscm.last.changes=1 -Dsmart.testing="new, changed"</code></p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<code>smart.testing.mode</code> is not mandatory in case of <code>ordering</code> because it is the <strong>default</strong> mode.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p><strong>You want to run only tests that validates new or modified business classes locally</strong></p>
 </div>
 <div class="paragraph">
-<p><code>$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="affected"</code></p>
+<p><code>$ mvn clean test -Dsmart.testing="affected"</code></p>
 </div>
 <div class="paragraph">
 <p>When you are running Smart Testing, you&#8217;ll see following logs in the console, showing your current configuration:</p>
@@ -1379,9 +1378,15 @@ should be set to the desired alternative location.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">the file name of the generated report</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>smart-testing-report.xml</code></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>1. Developing</h2>
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>6. Developing</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -1396,7 +1401,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </table>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>1.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>6.1. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -1443,14 +1448,14 @@ This section will be improved as we continue with the SPI design to let you hook
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> GitClone(<span class="predefined-type">String</span> gitRepoUrl)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> GitClone(<span class="predefined-type">String</span> repositoryUrl)</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>1.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>6.1.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -1598,7 +1603,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>1.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>6.1.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -1694,17 +1699,11 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 </div>
 </div>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-13 17:19:59 UTC
+Last updated 2017-09-15 11:09:32 UTC
 </div>
 </div>
 </body>
