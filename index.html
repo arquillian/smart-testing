@@ -520,43 +520,47 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#_integrations">1.1. Integrations</a></li>
 <li><a href="#_minimum_requirements">1.2. Minimum requirements</a></li>
-<li><a href="#_maven_extension">1.3. Maven Extension</a></li>
 </ul>
 </li>
-<li><a href="#_configuration">2. Configuration</a>
+<li><a href="#_installation">2. Installation</a>
 <ul class="sectlevel2">
-<li><a href="#_modes">2.1. Modes</a></li>
-<li><a href="#_strategies">2.2. Strategies</a></li>
+<li><a href="#_maven_extension">2.1. Maven Extension</a></li>
 </ul>
 </li>
-<li><a href="#_usage">3. Usage</a>
+<li><a href="#_configuration">3. Configuration</a>
 <ul class="sectlevel2">
-<li><a href="#_examples">3.1. Examples</a></li>
-<li><a href="#_disabling_smart_testing">3.2. Disabling Smart Testing</a></li>
-<li><a href="#_plugin_selection">3.3. Plugin Selection</a></li>
-<li><a href="#_debug_mode">3.4. Debug Mode</a></li>
-<li><a href="#_specifying_concrete_set_of_test_classes">3.5. Specifying Concrete Set of Test Classes</a></li>
-<li><a href="#_skipping_tests">3.6. Skipping Tests</a></li>
-<li><a href="#_running_examples">3.7. Running Examples</a></li>
+<li><a href="#_modes">3.1. Modes</a></li>
+<li><a href="#_strategies">3.2. Strategies</a></li>
 </ul>
 </li>
-<li><a href="#_reports">4. Reports</a>
+<li><a href="#_usage">4. Usage</a>
 <ul class="sectlevel2">
-<li><a href="#_build_artifacts">4.1. Build Artifacts</a></li>
-<li><a href="#_configuration_2">4.2. Configuration</a></li>
+<li><a href="#_examples">4.1. Examples</a></li>
+<li><a href="#_disabling_smart_testing">4.2. Disabling Smart Testing</a></li>
+<li><a href="#_plugin_selection">4.3. Plugin Selection</a></li>
+<li><a href="#_debug_mode">4.4. Debug Mode</a></li>
+<li><a href="#_specifying_concrete_set_of_test_classes">4.5. Specifying Concrete Set of Test Classes</a></li>
+<li><a href="#_skipping_tests">4.6. Skipping Tests</a></li>
+<li><a href="#_running_examples">4.7. Running Examples</a></li>
 </ul>
 </li>
-<li><a href="#_reference_card">5. Reference Card</a>
+<li><a href="#_reports">5. Reports</a>
 <ul class="sectlevel2">
-<li><a href="#_installation">5.1. Installation</a></li>
-<li><a href="#_configuration_3">5.2. Configuration</a></li>
-<li><a href="#_strategies_2">5.3. Strategies</a></li>
-<li><a href="#_getting_insights_of_the_execution">5.4. Getting insights of the execution</a></li>
+<li><a href="#_build_artifacts">5.1. Build Artifacts</a></li>
+<li><a href="#_configuration_2">5.2. Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_developing">6. Developing</a>
+<li><a href="#_reference_card">6. Reference Card</a>
 <ul class="sectlevel2">
-<li><a href="#_test_bed">6.1. Test Bed</a></li>
+<li><a href="#_installation_2">6.1. Installation</a></li>
+<li><a href="#_configuration_3">6.2. Configuration</a></li>
+<li><a href="#_strategies_2">6.3. Strategies</a></li>
+<li><a href="#_getting_insights_of_the_execution">6.4. Getting insights of the execution</a></li>
+</ul>
+</li>
+<li><a href="#_developing">7. Developing</a>
+<ul class="sectlevel2">
+<li><a href="#_test_bed">7.1. Test Bed</a></li>
 </ul>
 </li>
 </ul>
@@ -641,25 +645,29 @@ use at least <code>3.3.X</code> version to avoid any extension API problems.</p>
 <dt class="hdlist1">Surefire/Failsafe</dt>
 <dd>
 <p>Minimum version required is <code>2.19.1</code> or above. It is important to make sure that you have it defined
-in your <code>pom.xml</code>, as Maven comes with the default version which might not be compatible with our extension.
-== Installation</p>
+in your <code>pom.xml</code>, as Maven comes with the default version which might not be compatible with our extension.</p>
 </dd>
 </dl>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation"><a class="anchor" href="#_installation"></a>2. Installation</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="_maven_extension"><a class="anchor" href="#_maven_extension"></a>1.3. Maven Extension</h3>
+<h3 id="_maven_extension"><a class="anchor" href="#_maven_extension"></a>2.1. Maven Extension</h3>
 <div class="paragraph">
 <p><strong>Smart Testing</strong> is a Maven extension, so needs to be installed as is.</p>
 </div>
 <div class="sect3">
-<h4 id="_maven_3_1_x"><a class="anchor" href="#_maven_3_1_x"></a>1.3.1. Maven &gt;= 3.1.X</h4>
+<h4 id="_maven_3_1_x"><a class="anchor" href="#_maven_3_1_x"></a>2.1.1. Maven &gt;= 3.1.X</h4>
 <div class="paragraph">
 <p>Get Smart Testing <em>shaded</em> copy from <a href="https://bintray.com/arquillian/Arquillian/smart-testing">Bintray</a> and copy it to <code>M2_HOME/lib/ext</code></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_maven_3_3_x"><a class="anchor" href="#_maven_3_3_x"></a>1.3.2. Maven &gt;= 3.3.X</h4>
+<h4 id="_maven_3_3_x"><a class="anchor" href="#_maven_3_3_x"></a>2.1.2. Maven &gt;= 3.3.X</h4>
 <div class="paragraph">
 <p>You can still use the process described at <a href="#_maven_3_1_x">Maven &gt;= 3.1.X</a> or use the new <em>core extension configuration mechanism</em> by
 creating folder called <code>.mvn</code> in the root of your project and create inside it an <code>extensions.xml</code> file
@@ -684,10 +692,10 @@ which registers the smart testing extension:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>2. Configuration</h2>
+<h2 id="_configuration"><a class="anchor" href="#_configuration"></a>3. Configuration</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_modes"><a class="anchor" href="#_modes"></a>2.1. Modes</h3>
+<h3 id="_modes"><a class="anchor" href="#_modes"></a>3.1. Modes</h3>
 <div class="paragraph">
 <p>So far in <a href="#_what_is_this">What is this?</a> section we explained that <strong>Smart testing</strong> changes the order of test execution plan
 to run first the important tests and then the rest. This is know as <code>ordering</code> mode, but that&#8217;s not the only one.</p>
@@ -713,7 +721,7 @@ and then the rest.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_strategies"><a class="anchor" href="#_strategies"></a>2.2. Strategies</h3>
+<h3 id="_strategies"><a class="anchor" href="#_strategies"></a>3.2. Strategies</h3>
 <div class="paragraph">
 <p>Until now, you&#8217;ve read that smart testing is changing test execution plan running or only including important tests.
 But how do we know which tests are important and which ones not?</p>
@@ -729,7 +737,7 @@ Currently we have following strategies in place: <code>new</code>, <code>changed
 <p>Subsequent sections dive deeper into each and every one of them.</p>
 </div>
 <div class="sect3">
-<h4 id="_new"><a class="anchor" href="#_new"></a>2.2.1. New</h4>
+<h4 id="_new"><a class="anchor" href="#_new"></a>3.2.1. New</h4>
 <div class="paragraph">
 <p><code>New</code> strategy uses <em>SCM</em> information (currently only <em>Git</em> is supported) to detect <strong>new</strong> tests and treat them as <strong>important</strong>
 tests to run them first (<em>ordering</em>) or filtered (<em>selecting</em>).</p>
@@ -775,7 +783,7 @@ This effectively means that if you don&#8217;t specify any commit range, only th
 </div>
 </div>
 <div class="sect3">
-<h4 id="_changed"><a class="anchor" href="#_changed"></a>2.2.2. Changed</h4>
+<h4 id="_changed"><a class="anchor" href="#_changed"></a>3.2.2. Changed</h4>
 <div class="paragraph">
 <p><code>Changed</code> strategy is like <a href="#_new">New</a> strategy, but it uses only tests that are <strong>modified</strong> (they were already committed in the past)
 instead of <strong>new</strong> ones.</p>
@@ -797,7 +805,7 @@ Usually <code>new</code> and <code>changed</code> strategies are used together <
 </div>
 </div>
 <div class="sect3">
-<h4 id="_affected"><a class="anchor" href="#_affected"></a>2.2.3. Affected</h4>
+<h4 id="_affected"><a class="anchor" href="#_affected"></a>3.2.3. Affected</h4>
 <div class="paragraph">
 <p><code>Affected</code> strategy uses a different approach to choose what are the <strong>important</strong> tests to run first (<em>ordering</em>) or filtered (<em>selecting</em>).
 This strategy also relies on <em>SCM</em> information but in this case it retrieves any <strong>new</strong> or <strong>modified</strong> business class
@@ -902,7 +910,7 @@ At this moment, this strategy does not work with Java 9.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_failed"><a class="anchor" href="#_failed"></a>2.2.4. Failed</h4>
+<h4 id="_failed"><a class="anchor" href="#_failed"></a>3.2.4. Failed</h4>
 <div class="paragraph">
 <p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>).</p>
 </div>
@@ -915,10 +923,10 @@ All reports from previous local build are automatically copied by the maven exte
 </div>
 </div>
 <div class="sect1">
-<h2 id="_usage"><a class="anchor" href="#_usage"></a>3. Usage</h2>
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>4. Usage</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_examples"><a class="anchor" href="#_examples"></a>3.1. Examples</h3>
+<h3 id="_examples"><a class="anchor" href="#_examples"></a>4.1. Examples</h3>
 <div class="paragraph">
 <p>After <a href="#_installation">installing</a> <strong>Smart Testing Maven Extension</strong> you can use any goal you use with <code>maven-surefire-plugin</code>
 or <code>maven-failsafe-plugin</code>.</p>
@@ -962,7 +970,7 @@ Let&#8217;s see some examples:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_disabling_smart_testing"><a class="anchor" href="#_disabling_smart_testing"></a>3.2. Disabling Smart Testing</h3>
+<h3 id="_disabling_smart_testing"><a class="anchor" href="#_disabling_smart_testing"></a>4.2. Disabling Smart Testing</h3>
 <div class="paragraph">
 <p>Sometimes you might want to disable smart testing extension without removing it.</p>
 </div>
@@ -972,7 +980,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_plugin_selection"><a class="anchor" href="#_plugin_selection"></a>3.3. Plugin Selection</h3>
+<h3 id="_plugin_selection"><a class="anchor" href="#_plugin_selection"></a>4.3. Plugin Selection</h3>
 <div class="paragraph">
 <p><strong>Smart testing</strong> extension hooks into <code>surefire</code> and <code>failsafe</code> lifecycle to provide the order/selection of tests to execute.</p>
 </div>
@@ -984,7 +992,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>3.4. Debug Mode</h3>
+<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>4.4. Debug Mode</h3>
 <div class="paragraph">
 <p>In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
 setting the system property <code>smart.testing.debug</code> or by setting the mvn debug output <code>(-X)</code> flag to have the entire build execution
@@ -997,13 +1005,13 @@ as <code>smart-testing-effective-pom.xml</code></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>3.5. Specifying Concrete Set of Test Classes</h3>
+<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>4.5. Specifying Concrete Set of Test Classes</h3>
 <div class="paragraph">
 <p>During development, you may want to run a single test class or a set of concrete test classes.
 You can do this by setting the maven <code>test</code> property to specific test class(es).</p>
 </div>
 <div class="sect3">
-<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>3.5.1. To Run a Single Test</h4>
+<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>4.5.1. To Run a Single Test</h4>
 <div class="paragraph">
 <p><code>$ mvn test -Dtest=SampleTest</code></p>
 </div>
@@ -1021,7 +1029,7 @@ This configuration disables smart testing and executes only the specified sample
 </div>
 </div>
 <div class="sect3">
-<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>3.5.2. To Run Multiple Test Classes</h4>
+<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>4.5.2. To Run Multiple Test Classes</h4>
 <div class="paragraph">
 <p>You can also choose to run only a concrete set of multiple test classes.</p>
 </div>
@@ -1059,7 +1067,7 @@ However, if none fulfil the strategy criteria, no tests would be executed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>3.6. Skipping Tests</h3>
+<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>4.6. Skipping Tests</h3>
 <div class="paragraph">
 <p>To skip executing the tests for a particular project, Smart Testing aligns with
 <a href="http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html">Maven Surefire/Failsafe
@@ -1067,23 +1075,23 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>3.7. Running Examples</h3>
+<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>4.7. Running Examples</h3>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>3.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>4.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
 </div>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>3.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>4.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reports"><a class="anchor" href="#_reports"></a>4. Reports</h2>
+<h2 id="_reports"><a class="anchor" href="#_reports"></a>5. Reports</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>4.1. Build Artifacts</h3>
+<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>5.1. Build Artifacts</h3>
 <div class="paragraph">
 <p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
 most efficient way to get a quick answer to:</p>
@@ -1136,7 +1144,7 @@ most efficient way to get a quick answer to:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>4.2. Configuration</h3>
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>5.2. Configuration</h3>
 <div class="paragraph">
 <p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.</p>
 </div>
@@ -1163,10 +1171,10 @@ should be set to the desired alternative location.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>5. Reference Card</h2>
+<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>6. Reference Card</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_installation"><a class="anchor" href="#_installation"></a>5.1. Installation</h3>
+<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>6.1. Installation</h3>
 <div class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
@@ -1182,7 +1190,7 @@ should be set to the desired alternative location.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>5.2. Configuration</h3>
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>6.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1249,7 +1257,7 @@ should be set to the desired alternative location.</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>5.3. Strategies</h3>
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>6.3. Strategies</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1336,7 +1344,7 @@ should be set to the desired alternative location.</p>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>5.4. Getting insights of the execution</h3>
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>6.4. Getting insights of the execution</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 20%;">
@@ -1386,7 +1394,7 @@ should be set to the desired alternative location.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>6. Developing</h2>
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>7. Developing</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -1401,7 +1409,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </table>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>6.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>7.1. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -1455,7 +1463,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>6.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>7.1.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -1603,7 +1611,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>6.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>7.1.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -1703,7 +1711,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-15 11:09:32 UTC
+Last updated 2017-09-15 16:37:59 UTC
 </div>
 </div>
 </body>
