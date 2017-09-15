@@ -58,7 +58,7 @@ class ClipboardAssetsDocinfoProcessor < Extensions::DocinfoProcessor
         console.log(e);
       });
       clipboard.on('error', function(e) {
-        console.log(e);
+        console.error(e);
       });
     )
 
