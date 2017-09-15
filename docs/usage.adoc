@@ -12,15 +12,18 @@ Remember that the default **mode** is `const:core/src/main/java/org/arquillian/s
 
 *You want to run only tests that you've just added or modified locally*
 
-`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
+[[selectingChanged]]
+`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"` `mvn clean test -Dsmart.testing="new, changed"`  copyToClipboard:selectingChanged[]
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
-`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
+[[orderingChanged]]
+`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`  copyToClipboard:orderingChanged[]
 
 *You want to run only tests that validates new or modified business classes locally*
 
-`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="affected"`
+[[selectingAffected]]
+`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="affected"`  copyToClipboard:selectingAffected[]
 
 When you are running Smart Testing, you'll see following logs in the console, showing your current configuration:
 
@@ -63,7 +66,8 @@ You can do this by setting the maven `test` property to specific test class(es).
 
 ==== To Run a Single Test
 
-`$ mvn test -Dtest=SampleTest`
+[[singleTest]]
+`mvn test -Dtest=SampleTest`  copyToClipboard:singleTest[]
 
 NOTE: This configuration disables smart testing and executes only the specified sample test.
 
@@ -71,7 +75,8 @@ NOTE: This configuration disables smart testing and executes only the specified 
 
 You can also choose to run only a concrete set of multiple test classes.
 
-`$ mvn test -Dtest=SampleOneTest, SampleTwoTest`
+[[multipleTests]]
+`mvn test -Dtest=SampleOneTest, SampleTwoTest`  copyToClipboard:multipleTests[]
 
 NOTE: When multiple specific tests are set without any pattern, smart testing is disabled just like the case 
 for single test.
@@ -80,7 +85,8 @@ You can further choose to execute multiple test classes in combination with smar
 `selecting`>> and <<configuration#_modes,`ordering`>> mode by using patterns as 
 http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html[supported by Maven].
 
-`$ mvn test -Dtest=Sample*Test`
+[[starMultipleTests]]
+`mvn test -Dtest=Sample*Test`  copyToClipboard:starMultipleTests[]
 
 When used with `ordering` mode, the specified tests are executed in the order defined by the smart testing
 strategy used. If none is applicable to the strategy, they are executed in order defined by Surefire.
