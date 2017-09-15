@@ -7,7 +7,6 @@ jdk:
 before_install:
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - '[ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "[gen docs]" | wc -l) -gt 0 ] && FORCE_DOC_GEN=0 || FORCE_DOC_GEN=1'
-  - '[ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "[skip build]" | wc -l) -gt 0 ] && SKIP_BUILD=0 || SKIP_BUILD=1'
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
   - '[ $BRANCH == "master" ] && [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
@@ -29,9 +28,7 @@ env:
   - TEST_BED_M2_HOME=/home/travis/.arquillian/mvn/apache-maven-3.3.9
 
 script:
-  - 'if [ $SKIP_BUILD == 1 ]; then
-       ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"; 
-     fi'
+  - ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"
   - 'if [ $FORCE_DOC_GEN == 0 ] || [ $GENERATE_DOC == 0 ]; then
         docker run -v $TRAVIS_BUILD_DIR:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor -r /docs/.asciidoctor/lib/const-inline-macro.rb /docs/README.adoc -a generated-doc=true -a asciidoctor-source=/docs/docs -o /docs/gh-pages/index.html;
      fi'
