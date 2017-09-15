@@ -55,10 +55,10 @@ class ClipboardAssetsDocinfoProcessor < Extensions::DocinfoProcessor
     clipboard = %(
       var clipboard = new Clipboard('.cpybtn');
       clipboard.on('success', function(e) {
-        console.log(e);
+        console.log('Copy To Clipboard ' + e.text);
       });
       clipboard.on('error', function(e) {
-        console.error(e);
+        console.error('Copy To Clipboard ' + e.action);
       });
     )
 
