@@ -8,19 +8,19 @@ or `maven-failsafe-plugin`.
 To configure it you only need to pass from CLI the Java system properties.
 Let's see some examples:
 
+Remember that the default **mode** is `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_MODE"]`.
+
 *You want to run only tests that you've just added or modified locally*
 
-`$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="new, changed"`
+`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
-`$ mvn clean test -Dsmart.testing.mode=ordering -Dscm.last.changes=1 -Dsmart.testing="new, changed"`
-
-TIP: `smart.testing.mode` is not mandatory in case of `ordering` because it is the **default** mode.
+`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, changed"`
 
 *You want to run only tests that validates new or modified business classes locally*
 
-`$ mvn clean test -Dsmart.testing.mode=selecting -Dsmart.testing="affected"`
+`$ mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="affected"`
 
 When you are running Smart Testing, you'll see following logs in the console, showing your current configuration:
 
@@ -35,7 +35,7 @@ This can be used as feedback to check that the extension has been installed corr
 
 Sometimes you might want to disable smart testing extension without removing it.
 
-To do it you just need to set `smart.testing.disable` Java system property to `true` and then tests will
+To do it you just need to set `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_DISABLE"]` Java system property to `true` and then tests will
 run with standard `surefire` / `failsafe` plugins.
 
 === Plugin Selection
@@ -44,12 +44,12 @@ run with standard `surefire` / `failsafe` plugins.
 
 If you only want to use smart testing on `surefire` or `failsafe` plugin definition.
 
-To do it you just need to set `smart.testing.apply.to` with either `surefire` or `failsafe` to just enable in one of them.
+To do it you just need to set `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_APPLY_TO"]` with either `surefire` or `failsafe` to just enable in one of them.
 
 === Debug Mode
 
 In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
-setting the system property `smart.testing.debug` or by setting the mvn debug output `(-X)` flag to have the entire build execution
+setting the system property `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_DEBUG"]` or by setting the mvn debug output `(-X)` flag to have the entire build execution
 in the debug mode (available out of the box in Maven).
 
 Debug logs provide information related to smart testing execution, system properties set by the user,

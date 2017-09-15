@@ -20,13 +20,13 @@ include::../core/src/test/resources/sample-report.xml[]
 
 === Configuration
 
-By default this feature is disabled. You can enable it by setting property `smart.testing.report.enable` to `true`.
+By default this feature is disabled. You can enable it by setting property `const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="ENABLE_REPORT_PROPERTY"]` to `true`.
 
 You will get generated reports in `target/smart-testing-report.xml` by default.
 
 To change the location of the generated output report, following properties
 should be set to the desired alternative location.
 
-`smart.testing.report.dir`:: To configure directory where generated reports should be stored.
-`smart.testing.report.name`:: To configure the file name of the generated report.
+`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_REPORT_DIR"]`:: To configure directory where generated reports should be stored.
+`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_REPORT_NAME"]`:: To configure the file name of the generated report.
 
