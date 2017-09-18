@@ -11,9 +11,9 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.logger.Log;
 
-class ModifiedPomExporter {
+public class ModifiedPomExporter {
 
-    private static final String SMART_TESTING_POM_FILE = "smart-testing-effective-pom.xml";
+    public static final String SMART_TESTING_POM_FILE = "smart-testing-effective-pom.xml";
 
     private static Logger logger = Log.getLogger();
 

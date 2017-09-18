@@ -13,7 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
-import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
+import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
@@ -92,7 +92,7 @@ public class SurefireForksConfigurationTest {
         assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
         assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), REPORT_FILE_NAME);
+        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact(REPORT_FILE_NAME);
     }
 }
 

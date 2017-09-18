@@ -10,12 +10,13 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DEBUG;
-import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_TAIL;
+import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
+import static org.arquillian.smart.testing.mvn.ext.ModifiedPomExporter.SMART_TESTING_POM_FILE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DebugModeSmartTestingFunctionalTest {
@@ -55,7 +56,7 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
-        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
+        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact("smart-testing/" + SMART_TESTING_POM_FILE);
     }
 
     @Test
@@ -86,6 +87,6 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(MAVEN_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
-        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
+        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact("smart-testing/" + SMART_TESTING_POM_FILE);
     }
 }
