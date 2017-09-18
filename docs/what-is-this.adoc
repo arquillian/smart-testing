@@ -28,7 +28,9 @@ and `maven-failsafe-plugin`.
 
 === Minimum requirements
 
-Java:: Requires Java 8. In case of using <<Affected>> strategy, Java 9 is not supported yet.
+Java:: Requires Java 8.
+
+IMPORTANT: Currently we don't support Java 9 for <<Affected>> strategy.
 
 Maven:: Tested with Maven `3.3.9` and `3.5.0` but any version above `3.1.X` should work. Our recommendation is that you
 use at least `3.3.X` version to avoid any extension API problems.
