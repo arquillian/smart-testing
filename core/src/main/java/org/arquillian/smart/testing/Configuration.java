@@ -5,9 +5,6 @@ public class Configuration {
     public static final String DEFAULT_MODE = "selecting";
     public static final String DEFAULT_STRATEGIES = "";
     public static final String ENABLE_REPORT_PROPERTY = "smart.testing.report.enable";
-    public static final String DEFAULT_REPORT_FILE_NAME = "smart-testing-report.xml";
-    public static final String SMART_TESTING_REPORT_DIR = "smart.testing.report.dir";
-    public static final String SMART_TESTING_REPORT_NAME = "smart.testing.report.name";
 
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";

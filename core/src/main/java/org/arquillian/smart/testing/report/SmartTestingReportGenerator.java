@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.report;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -9,18 +10,16 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
-
-import static org.arquillian.smart.testing.Configuration.DEFAULT_REPORT_FILE_NAME;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_DIR;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_NAME;
 
 public class SmartTestingReportGenerator {
 
     private final Collection<TestSelection> testSelections;
     private final Configuration configuration;
     private final String baseDir;
+    public static final String REPORT_FILE_NAME = "report.xml";
 
     public SmartTestingReportGenerator(Collection<TestSelection> testSelections, Configuration configuration, File baseDir) {
         this(testSelections, configuration, baseDir.getAbsolutePath());
@@ -33,10 +32,7 @@ public class SmartTestingReportGenerator {
     }
 
     public void generateReport() {
-        ExecutionReportMarshaller service =
-            new ExecutionReportMarshaller(baseDir, System.getProperty(SMART_TESTING_REPORT_DIR, "target"),
-                System.getProperty(SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
-        service.marshal(getSmartTestingExecution(configuration));
+        ExecutionReportMarshaller.marshal(getReportFile(baseDir), getSmartTestingExecution(configuration));
     }
 
     private List<TestConfiguration> getTestConfigurations() {
@@ -79,4 +75,16 @@ public class SmartTestingReportGenerator {
             .collect(Collectors.toMap(Function.identity(), properties::getProperty));
     }
 
+    private static File getReportFile(String baseDir) {
+        try {
+            return new LocalStorage(baseDir)
+                .afterExecution()
+                .toReporting()
+                .file(REPORT_FILE_NAME)
+                .create()
+                .toFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

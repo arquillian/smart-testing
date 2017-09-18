@@ -12,13 +12,13 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.Configuration.DEFAULT_REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
-import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
+import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 
 public class SurefireForksConfigurationTest {
 
@@ -83,6 +83,6 @@ public class SurefireForksConfigurationTest {
             .run();
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), DEFAULT_REPORT_FILE_NAME);
+        assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), REPORT_FILE_NAME);
     }
 }
