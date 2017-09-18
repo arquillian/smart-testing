@@ -35,3 +35,4 @@ use at least `3.3.X` version to avoid any extension API problems.
 
 Surefire/Failsafe:: Minimum version required is `2.19.1` or above. It is important to make sure that you have it defined
 in your `pom.xml`, as Maven comes with the default version which might not be compatible with our extension.
+

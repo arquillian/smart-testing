@@ -19,8 +19,8 @@ timing.properties
 # TestNG
 test-output/
 
-# JBoss AS
-transaction.log
+# Logs
+*.log
 
 # Floobits
 .floo
