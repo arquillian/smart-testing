@@ -16,7 +16,7 @@ import static java.util.Arrays.stream;
 
 public class BuildConfigurator {
 
-    public static final int RANDOM_PORT = 0;
+    private static final int RANDOM_PORT = 0;
 
     private static final String MVN_DEBUG_AGENT = "-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=%s,address=%s";
     private static final String SUREFIRE_DEBUG_SETTINGS = " -Xnoagent -Djava.compiler=NONE";
@@ -127,12 +127,11 @@ public class BuildConfigurator {
     }
 
     public BuildConfigurator logBuildOutput() {
-        return logBuildOutput(false);
+        return logBuildOutput(true);
     }
 
-    private BuildConfigurator logBuildOutput(boolean debug) {
-        withDebugOutput(debug);
-        return quiet(false);
+    public BuildConfigurator logBuildOutput(boolean log) {
+        return quiet(!log);
     }
 
     private BuildConfigurator withDebugOutput(boolean debug) {
@@ -199,7 +198,7 @@ public class BuildConfigurator {
     }
 
     boolean disableQuietWhenAnyDebugModeEnabled() {
-        return !isMavenDebugOutputEnabled() && !isSurefireRemoteDebuggingEnabled() && !isRemoteDebugEnabled();
+        return !isSurefireRemoteDebuggingEnabled() && !isRemoteDebugEnabled();
     }
 
     boolean isMavenDebugOutputEnabled() {
