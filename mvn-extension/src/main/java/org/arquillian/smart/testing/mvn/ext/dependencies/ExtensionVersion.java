@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.mvn.ext.dependencies;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 
 public class ExtensionVersion {
 

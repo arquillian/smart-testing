@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.impl.ConfiguredSmartTestingImpl;
 

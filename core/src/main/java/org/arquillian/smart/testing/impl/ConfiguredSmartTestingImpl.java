@@ -2,7 +2,7 @@ package org.arquillian.smart.testing.impl;
 
 import java.io.File;
 import java.util.Set;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.ConfiguredSmartTesting;
 import org.arquillian.smart.testing.api.TestStrategyApplier;

@@ -1,0 +1,11 @@
+mode: ordering
+strategies: new, changed, affected
+applyTo: surefire
+debug: true
+disable: false
+report:
+    enable: true
+    dir: target
+    name: smart-testing-report.xml
+scm:
+    lastChanges: 3

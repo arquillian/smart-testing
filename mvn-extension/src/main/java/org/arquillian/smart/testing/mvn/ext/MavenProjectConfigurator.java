@@ -5,7 +5,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;

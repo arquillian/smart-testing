@@ -7,14 +7,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.ReportConfiguration;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
-
-import static org.arquillian.smart.testing.Configuration.DEFAULT_REPORT_FILE_NAME;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_DIR;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_NAME;
 
 public class SmartTestingReportGenerator {
 
@@ -33,10 +30,11 @@ public class SmartTestingReportGenerator {
     }
 
     public void generateReport() {
+        final ReportConfiguration reportConfig = configuration.getReportConfiguration();
         ExecutionReportMarshaller service =
-            new ExecutionReportMarshaller(baseDir, System.getProperty(SMART_TESTING_REPORT_DIR, "target"),
-                System.getProperty(SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
-        service.marshal(getSmartTestingExecution(configuration));
+            new ExecutionReportMarshaller(baseDir, reportConfig.getDir(),
+                reportConfig.getName());
+        service.marshal(getSmartTestingExecution(this.configuration));
     }
 
     private List<TestConfiguration> getTestConfigurations() {

@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.report;
 
 import java.io.File;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
 import org.junit.Test;
 

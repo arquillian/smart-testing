@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.ClassNameExtractorTest;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.FilesCodecTest;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.TestSelectionTest;

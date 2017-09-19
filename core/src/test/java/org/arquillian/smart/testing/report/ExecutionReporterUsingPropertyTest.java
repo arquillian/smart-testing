@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.report;
 import java.io.File;
 import java.util.Properties;
 import net.jcip.annotations.NotThreadSafe;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,10 +12,10 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
 import static java.util.Arrays.asList;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_MODE;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_DIR;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_REPORT_NAME;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_DIR;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
