@@ -25,7 +25,7 @@ ifndef::generated-doc[]
 To read complete documentation head over to http://arquillian.org/smart-testing/
 
 You can also generate it locally. All you need to have in place is [docker](https://docs.docker.com/engine/installation/).
-Simply execute `$ ./.asciidoctor/generate.sh` and you are set.
+Simply execute `$ ./.asciidoctor/generate.sh` and you are set. You fill find generated documentation in `gh-pages` folder.
 
 endif::generated-doc[]
 
