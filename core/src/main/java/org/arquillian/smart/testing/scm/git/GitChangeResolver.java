@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +17,10 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
+import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
@@ -88,6 +91,27 @@ public class GitChangeResolver implements ChangeResolver {
         return true;
     }
 
+    private Set<Change> retrieveCommitsChanges() {
+        final Repository repository = git.getRepository();
+        try (ObjectReader reader = repository.newObjectReader()) {
+            final ObjectId oldHead = repository.resolve(previous + ENSURE_TREE);
+            final ObjectId newHead = repository.resolve(head + ENSURE_TREE);
+
+            final CanonicalTreeParser oldTree = new CanonicalTreeParser();
+            oldTree.reset(reader, oldHead);
+            final CanonicalTreeParser newTree = new CanonicalTreeParser();
+            newTree.reset(reader, newHead);
+
+            final List<DiffEntry> commitDiffs = git.diff()
+                    .setNewTree(newTree)
+                    .setOldTree(oldTree)
+                .call();
+            return transformToChangeSet(reduceToRenames(commitDiffs), repoRoot);
+        } catch (IOException | GitAPIException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private Set<Change> retrieveUncommittedChanges() {
         final Set<Change> allChanges = new HashSet<>();
 
@@ -121,24 +145,21 @@ public class GitChangeResolver implements ChangeResolver {
         return allChanges;
     }
 
-    private Set<Change> retrieveCommitsChanges() {
-        try (ObjectReader reader = git.getRepository().newObjectReader()) {
-            final ObjectId oldHead = git.getRepository().resolve(previous + ENSURE_TREE);
-            final ObjectId newHead = git.getRepository().resolve(head + ENSURE_TREE);
-
-            final CanonicalTreeParser oldTree = new CanonicalTreeParser();
-            oldTree.reset(reader, oldHead);
-            final CanonicalTreeParser newTree = new CanonicalTreeParser();
-            newTree.reset(reader, newHead);
-
-            final List<DiffEntry> commitDiffs = git.diff().setNewTree(newTree).setOldTree(oldTree).call();
-            return extract(commitDiffs, repoRoot);
-        } catch (IOException | GitAPIException e) {
-            throw new IllegalStateException(e);
-        }
+    /**
+     * By default jgit sees renames as ADDs and DELETEs. For finding renames we use {@link RenameDetector} which tracks changes
+     * and if they much similarity score (default 60%) treats them as renames
+     *
+     * @param commitDiffs diffs to analyze
+     * @return original list reduced by ADDs/DELETEs which are in fact RENAMEs
+     * @throws IOException
+     */
+    private List<DiffEntry> reduceToRenames(final Collection<DiffEntry> commitDiffs) throws IOException {
+        final RenameDetector renameDetector = new RenameDetector(git.getRepository());
+        renameDetector.addAll(commitDiffs);
+        return renameDetector.compute();
     }
 
-    private Set<Change> extract(List<DiffEntry> diffs, File repoRoot) {
+    private Set<Change> transformToChangeSet(List<DiffEntry> diffs, File repoRoot) {
         return diffs.stream()
             .map(diffEntry -> {
                 final Path classLocation = Paths.get(repoRoot.getAbsolutePath(), diffEntry.getNewPath());
