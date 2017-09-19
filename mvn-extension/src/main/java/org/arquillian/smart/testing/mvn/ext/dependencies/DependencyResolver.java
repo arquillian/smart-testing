@@ -27,6 +27,12 @@ public class DependencyResolver {
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
         for (final String strategy : strategies) {
+            if (!dependencies.containsKey(strategy)) {
+                throw new IllegalArgumentException(
+                    String.format("Unable to find strategy [%s].%n"
+                        + "Please refer to http://arquillian.org/smart-testing/#_strategies "
+                        + "for the list of available strategies.", strategy));
+            }
             final Dependency dependency = dependencies.get(strategy);
             model.addDependency(dependency);
         }
