@@ -11,17 +11,20 @@ import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
-import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
+import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
+import org.arquillian.smart.testing.mvn.ext.logger.MavenExtensionLoggerFactory;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 import static java.util.stream.StreamSupport.stream;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
@@ -33,7 +36,10 @@ import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpeci
     hint = "smart-testing")
 class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
-    private static final Logger logger = Logger.getLogger();
+    private Logger logger;
+
+    @Requirement
+    public org.codehaus.plexus.logging.Logger mavenLogger;
 
     private final ChangeStorage changeStorage = new LocalChangeStorage(".");
 
@@ -43,12 +49,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-
         configuration = Configuration.load();
 
-        if (session.getRequest().getLoggingLevel() == 0) {
-            logger.enableMavenDebugLogLevel(true);
-        }
+        Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
+        logger = Log.getLogger();
 
         logger.debug("Applied user properties: %s", session.getUserProperties());
 
@@ -101,7 +105,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        if (logger.isDebugLogLevelEnabled()) {
+        if (configuration.isDebug() || mavenLogger.isDebugEnabled()) {
             logger.debug("Version: %s", ExtensionVersion.version().toString());
             session.getAllProjects().forEach(mavenProject ->
                 ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));

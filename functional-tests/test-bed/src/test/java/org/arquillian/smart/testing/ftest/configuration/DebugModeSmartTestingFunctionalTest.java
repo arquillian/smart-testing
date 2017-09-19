@@ -22,7 +22,8 @@ public class DebugModeSmartTestingFunctionalTest {
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
-    public static final String DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
+    public static final String MAVEN_DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
+    public static final String DEFAULT_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
@@ -46,12 +47,14 @@ public class DebugModeSmartTestingFunctionalTest {
         final TestResults actualTestResults = projectBuilder
                 .options()
                     .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~", SMART_TESTING_DEBUG, "true")
+                    .logBuildOutput()
                 .configure()
             .run();
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains(DEBUG_LOGS);
+        assertThat(projectMavenLog).contains(DEFAULT_DEBUG_LOGS);
+        assertThat(projectMavenLog).contains("Applied user properties");
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 
@@ -81,7 +84,8 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains(DEBUG_LOGS);
+        assertThat(projectMavenLog).contains(MAVEN_DEBUG_LOGS);
+        assertThat(projectMavenLog).contains(DEFAULT_DEBUG_LOGS);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 }

@@ -6,10 +6,11 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
@@ -18,7 +19,8 @@ import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetect
 
 public class AffectedTestsDetector implements TestExecutionPlanner {
 
-    private static final Logger logger = Logger.getLogger();
+    private static final
+    Logger logger = Log.getLogger();
 
     // TODO TestClassDetector is something that can be moved to extension
     private final TestClassDetector testClassDetector;

@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+import org.apache.maven.surefire.cli.CommandLineOption;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -12,6 +13,8 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.logger.DefaultLoggerFactory;
+import org.arquillian.smart.testing.logger.Log;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 
@@ -29,6 +32,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
         this.surefireProvider = surefireProviderFactory.createInstance();
+        Log.setLoggerFactory(new DefaultLoggerFactory(isAnyDebugEnabled()));
     }
 
     SmartTestingSurefireProvider(ProviderParameters bootParams, SurefireProviderFactory surefireProviderFactory) {
@@ -36,6 +40,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
+        Log.setLoggerFactory(new DefaultLoggerFactory(isAnyDebugEnabled()));
     }
 
     public Iterable<Class<?>> getSuites() {
@@ -85,5 +90,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             return source;
         }
         return findFirstMatchingPom(source.getParentFile());
+    }
+
+    private boolean isAnyDebugEnabled(){
+        return bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG)
+            || Configuration.load().isDebug();
     }
 }

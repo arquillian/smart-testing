@@ -14,8 +14,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.logger.Log;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
@@ -29,7 +30,7 @@ public class ProjectBuilder {
 
     public static final String TEST_REPORT_PREFIX = "TEST-";
 
-    private static final Logger LOGGER = Logger.getLogger();
+    private static final Logger LOGGER = Log.getLogger();
 
     private final Path root;
     private final BuildConfigurator buildConfigurator;
