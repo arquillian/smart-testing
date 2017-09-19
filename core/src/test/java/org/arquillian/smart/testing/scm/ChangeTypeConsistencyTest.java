@@ -23,7 +23,7 @@ public class ChangeTypeConsistencyTest {
     }
 
     @Test
-    public void should_handle_all_jgit_types() throws Exception {
+    public void should_handle_all_jgit_change_types() throws Exception {
         assertThat(ChangeType.valueOf(diffEntryChangeType.name())).isNotNull();
     }
 

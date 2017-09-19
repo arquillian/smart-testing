@@ -16,6 +16,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.diff.RenameDetector;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -88,6 +89,26 @@ public class GitChangeResolver implements ChangeResolver {
         return true;
     }
 
+    private Set<Change> retrieveCommitsChanges() {
+        try (ObjectReader reader = git.getRepository().newObjectReader()) {
+            final ObjectId oldHead = git.getRepository().resolve(previous + ENSURE_TREE);
+            final ObjectId newHead = git.getRepository().resolve(head + ENSURE_TREE);
+
+            final CanonicalTreeParser oldTree = new CanonicalTreeParser();
+            oldTree.reset(reader, oldHead);
+            final CanonicalTreeParser newTree = new CanonicalTreeParser();
+            newTree.reset(reader, newHead);
+
+            final List<DiffEntry> commitDiffs = git.diff()
+                    .setNewTree(newTree)
+                    .setOldTree(oldTree)
+                .call();
+            return transformToChangeSet(findRenames(commitDiffs), repoRoot);
+        } catch (IOException | GitAPIException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
     private Set<Change> retrieveUncommittedChanges() {
         final Set<Change> allChanges = new HashSet<>();
 
@@ -121,24 +142,13 @@ public class GitChangeResolver implements ChangeResolver {
         return allChanges;
     }
 
-    private Set<Change> retrieveCommitsChanges() {
-        try (ObjectReader reader = git.getRepository().newObjectReader()) {
-            final ObjectId oldHead = git.getRepository().resolve(previous + ENSURE_TREE);
-            final ObjectId newHead = git.getRepository().resolve(head + ENSURE_TREE);
-
-            final CanonicalTreeParser oldTree = new CanonicalTreeParser();
-            oldTree.reset(reader, oldHead);
-            final CanonicalTreeParser newTree = new CanonicalTreeParser();
-            newTree.reset(reader, newHead);
-
-            final List<DiffEntry> commitDiffs = git.diff().setNewTree(newTree).setOldTree(oldTree).call();
-            return extract(commitDiffs, repoRoot);
-        } catch (IOException | GitAPIException e) {
-            throw new IllegalStateException(e);
-        }
+    private List<DiffEntry> findRenames(List<DiffEntry> commitDiffs) throws IOException {
+        final RenameDetector renameDetector = new RenameDetector(git.getRepository());
+        renameDetector.addAll(commitDiffs);
+        return renameDetector.compute();
     }
 
-    private Set<Change> extract(List<DiffEntry> diffs, File repoRoot) {
+    private Set<Change> transformToChangeSet(List<DiffEntry> diffs, File repoRoot) {
         return diffs.stream()
             .map(diffEntry -> {
                 final Path classLocation = Paths.get(repoRoot.getAbsolutePath(), diffEntry.getNewPath());
