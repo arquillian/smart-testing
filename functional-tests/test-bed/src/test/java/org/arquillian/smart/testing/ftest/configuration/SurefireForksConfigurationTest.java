@@ -18,9 +18,16 @@ import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepo
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
+<<<<<<< HEAD
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
+=======
+import static org.assertj.core.api.Assertions.assertThat;
+>>>>>>> feat(logger): Adds implementation for provider side logger.
 
 public class SurefireForksConfigurationTest {
+
+    private static final String MAVEN_LOGS = "[Smart Testing Extension]";
+    private static final String SUREFIRE_PROVIDER_LOGS = "Smart Testing Extension -";
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
@@ -81,7 +88,11 @@ public class SurefireForksConfigurationTest {
                 .withSystemProperties(SMART_TESTING_REPORT_ENABLE, "true")
             .configure()
             .run();
+
         // then
+        String projectMavenLog = project.getMavenLog();
+        assertThat(projectMavenLog).contains(MAVEN_LOGS);
+        assertThat(projectMavenLog).contains(SUREFIRE_PROVIDER_LOGS);
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), REPORT_FILE_NAME);
     }

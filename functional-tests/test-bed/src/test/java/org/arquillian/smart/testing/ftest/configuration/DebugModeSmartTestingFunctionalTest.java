@@ -20,10 +20,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DebugModeSmartTestingFunctionalTest {
 
+    private static final String MAVEN_DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
+    private static final String DEFAULT_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
+
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
-    public static final String MAVEN_DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
-    public static final String DEFAULT_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);

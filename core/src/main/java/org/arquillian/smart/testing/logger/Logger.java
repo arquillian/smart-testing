@@ -3,8 +3,7 @@ package org.arquillian.smart.testing.logger;
 public interface Logger {
 
     /**
-     * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "[INFO] [Smart Testing Extension]"
+     * Will format the given message with the given arguments and print it on standard output.
      *
      * @param msg
      *     Message to print
@@ -14,8 +13,7 @@ public interface Logger {
     void info(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and prints it on error output with the prefix:
-     * "[WARN] [Smart Testing Extension]"
+     * Will format the given message with the given arguments and print it on standard output.
      *
      * @param msg
      *     Message to print
@@ -25,8 +23,7 @@ public interface Logger {
     void warn(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "[DEBUG] [Smart Testing Extension]", if debug mode is enabled.
+     * Will format the given message with the given arguments and print it on standard output, if debug mode is enabled.
      *
      * @param msg
      *     The string message (or a key in the message catalog)
@@ -36,8 +33,7 @@ public interface Logger {
     void debug(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and prints it on standard output with the prefix:
-     * "[ERROR] [Smart Testing Extension]", if debug mode is enabled.
+     * Will format the given message with the given arguments and print it on standard output.
      *
      * @param msg
      *     The string message (or a key in the message catalog)
