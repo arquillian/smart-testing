@@ -55,6 +55,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
             calculateChanges();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
             logStrategiesNotDefined();
         }
@@ -90,11 +91,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             logStrategiesNotDefined();
         }
 
-        session.getAllProjects().forEach(mavenProject -> {
-            Model model = mavenProject.getModel();
-            String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
-            new LocalStorage(model.getProjectDirectory()).purge(target);
-        });
+        purgeLocalStorage(session);
     }
 
     private void calculateChanges() {
@@ -133,5 +130,13 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             skipExtensionInstallation = configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
         }
         return skipExtensionInstallation;
+    }
+
+    private void purgeLocalStorage(MavenSession session) {
+        session.getAllProjects().forEach(mavenProject -> {
+            Model model = mavenProject.getModel();
+            String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
+            new LocalStorage(model.getProjectDirectory()).purge(target);
+        });
     }
 }
