@@ -10,8 +10,6 @@
         <properties>
             <property name="smart.testing" value="new,changed"/>
             <property name="smart.testing.mode" value="selecting"/>
-            <property name="smart.testing.report.dir" value="target/smart-testing-report"/>
-            <property name="smart.testing.report.name" value="report"/>
         </properties>
     </executionConfiguration>
     <selection>
