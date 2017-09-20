@@ -1,15 +1,12 @@
 package org.arquillian.smart.testing.hub.storage.local;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+/**
+ * A staring point for an API that takes care of local storage
+ */
 public class LocalStorage {
 
-    public static final String SMART_TESTING_WORKING_DIRECTORY_NAME = ".smart-testing";
-    public static final String SMART_TESTING_TARGET_DIRECTORY_NAME = "smart-testing";
-    public static final String EXECUTION_SUBDIRECTORY = "execution";
-    public static final String REPORTING_SUBDIRECTORY = "reporting";
     private String rootDir;
 
     public LocalStorage(String rootDir) {
@@ -20,27 +17,55 @@ public class LocalStorage {
         this.rootDir = rootDir.getAbsolutePath();
     }
 
-    public SubDirectoryEntryType execution() {
-        return new SubDirectoryEntryType(getPathTo(EXECUTION_SUBDIRECTORY));
+    /**
+     * Creates an instance of {@link DuringExecutionLocalStorage} class that takes care of storing/managing files and
+     * directories used during the test execution. All the files and dirs will be stored in the main directory of the
+     * current project/module in {@link DuringExecutionLocalStorage#SMART_TESTING_WORKING_DIRECTORY_NAME} subdirectory.
+     * <ul>
+     * Use this method when you need to store something that:
+     * <li>is used only during the test execution</li>
+     * <li>should be also stored after the test execution (eg. reports) but you cannot store it in target directory right
+     * now (before the clean phase)</li>
+     * </ul>
+     *
+     * @return An instance of {@link DuringExecutionLocalStorage}
+     */
+    public DuringExecutionLocalStorage duringExecution() {
+        return new DuringExecutionLocalStorage(rootDir);
     }
 
-    public SubDirectoryEntryType reporting() {
-        return new SubDirectoryEntryType(getPathTo(REPORTING_SUBDIRECTORY));
+    /**
+     * Creates an instance of {@link AfterExecutionLocalStorage} class that takes care of storing/managing files and
+     * directories stored permanently after the test execution. All the files and dirs will be stored in the /target
+     * directory of the current project/module in {@link AfterExecutionLocalStorage#SMART_TESTING_TARGET_DIRECTORY_NAME}
+     * subdirectory.
+     * <p>
+     * Use this method when you need to store something that should be available also for the user when the build ends
+     * (eg. reports)
+     * </p>
+     *
+     * @return An instance of {@link AfterExecutionLocalStorage}
+     */
+    public AfterExecutionLocalStorage afterExecution() {
+        return new AfterExecutionLocalStorage(rootDir + File.separator + "target");
     }
 
-    private Path getPathTo(String subdirectory) {
-        return Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME, subdirectory);
-    }
-
-    public void purge(String targetDir) {
-        Path reporting = getPathTo(REPORTING_SUBDIRECTORY);
-        if (reporting.toFile().exists()) {
-            File target = new File(rootDir, "target");
-            if (targetDir != null){
-                target = new File(targetDir);
-            }
-            FileSystemOperations.copyDirectory(reporting, target.toPath().resolve(SMART_TESTING_TARGET_DIRECTORY_NAME), true);
+    /**
+     * Creates an instance of {@link AfterExecutionLocalStorage} class that takes care of storing/managing files and
+     * directories stored permanently after the test execution. All the files and dirs will be stored in the given {@code
+     * pathToCustomTarget} directory and its {@link AfterExecutionLocalStorage#SMART_TESTING_TARGET_DIRECTORY_NAME}
+     * subdirectory.
+     * <p>
+     * Use this method when you need to store something that should be available also for the user when the build ends
+     * (eg. reports)
+     * </p>
+     *
+     * @return An instance of {@link AfterExecutionLocalStorage}
+     */
+    public AfterExecutionLocalStorage afterExecution(String pathToCustomTarget) {
+        if (pathToCustomTarget == null){
+            return afterExecution();
         }
-        FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
+        return new AfterExecutionLocalStorage(pathToCustomTarget);
     }
 }

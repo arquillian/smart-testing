@@ -113,7 +113,7 @@ WARNING: At this moment, this strategy does not work with Java 9.
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
 
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
-All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/LocalStorage.java[name="EXECUTION_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/spi/TestResult.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
+All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="TEMPORARY_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/spi/TestResult.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
 
 
 

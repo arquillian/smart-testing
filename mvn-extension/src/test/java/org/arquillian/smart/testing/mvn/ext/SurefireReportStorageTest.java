@@ -58,7 +58,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
         softly.assertThat(reportsDir).exists();
 
         Arrays.stream(reportsDir.listFiles()).forEach(file -> {
@@ -75,10 +75,10 @@ public class SurefireReportStorageTest {
         MavenProject mavenProject = mock(MavenProject.class);
         when(mavenProject.getModel()).thenReturn(project);
         when(mavenSession.getAllProjects()).thenReturn(singletonList(mavenProject));
-        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
 
         // when
-        new LocalStorage(projectDir).purge(null);
+        new LocalStorage(projectDir).duringExecution().purge(null);
 
         // then
         softly.assertThat(reportsDir).doesNotExist();
@@ -93,7 +93,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new LocalStorage(projectDir).execution().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
         softly.assertThat(reportsDir).doesNotExist();
     }
 
