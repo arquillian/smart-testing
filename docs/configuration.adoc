@@ -99,6 +99,8 @@ exclusions=org.springframework.*, org.apache.commons.*
 
 IMPORTANT: Exclusions has precedence over inclusions.
 
+You can also disable transitivity by setting `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"] to `false`.
+
 ****
 
 IMPORTANT: This strategy is currently only applicable for _white box_ testing approach. At this point our approach is to

@@ -50,12 +50,14 @@ public class ClassDependenciesGraph {
     private final DirectedGraph<JavaElement, DefaultEdge> graph;
     private final Filter filter;
     private final TestVerifier testVerifier;
+    private final boolean enableTransitivity;
 
     ClassDependenciesGraph(TestVerifier testVerifier) {
         this.builder = new JavaClassBuilder();
         this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         this.filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
         this.testVerifier = testVerifier;
+        this.enableTransitivity = AffectedRunnerProperties.getSmartTestingAffectedTransitivity();
     }
 
     void buildTestDependencyGraph(Collection<File> testJavaFiles) {
@@ -102,7 +104,7 @@ public class ClassDependenciesGraph {
 
         for (String importz : imports) {
 
-            if (addImport(javaElementParentClass, importz) && filter.shouldBeIncluded(importz)) {
+            if (addImport(javaElementParentClass, importz) && filter.shouldBeIncluded(importz) && this.enableTransitivity) {
                 JavaClass javaClass = builder.getClassDescription(importz);
                 if (javaClass != null) {
                     updateJavaElementWithImportReferences(javaElementParentClass, javaClass.getImports());
