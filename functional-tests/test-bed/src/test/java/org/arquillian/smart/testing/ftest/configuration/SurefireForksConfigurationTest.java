@@ -11,6 +11,7 @@ import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 
 import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
@@ -30,6 +31,9 @@ public class SurefireForksConfigurationTest {
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public TestName name= new TestName();
 
     @Test
     public void test_with_reuse_forks_false() {
@@ -79,7 +83,9 @@ public class SurefireForksConfigurationTest {
             .options()
                 .withSystemProperties(systemPropertiesPairs)
                 .withSystemProperties(ENABLE_REPORT_PROPERTY, "true")
-            .configure()
+                .withSystemProperties("graph.name", name.getMethodName())
+                .withSystemProperties("smart.testing.debug", "true") // This will only be propagated to surefire for "not_reusing_forks" option
+                .configure()
             .run();
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

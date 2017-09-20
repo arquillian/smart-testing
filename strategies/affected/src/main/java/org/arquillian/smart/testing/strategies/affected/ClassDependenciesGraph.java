@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
@@ -76,6 +77,10 @@ public class ClassDependenciesGraph {
             if (javaClass != null) {
                 addToIndex(new JavaElement(javaClass), javaClass.getImports());
             }
+        }
+
+        if (Boolean.valueOf(System.getProperty("smart.testing.debug", "false"))) {
+            new GraphExporter().dumpGraph(this.graph, System.getProperty("graph.name", UUID.randomUUID().toString()));
         }
     }
 

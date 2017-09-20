@@ -78,8 +78,7 @@ class JavaAssistClassParser {
         return classPool;
     }
 
-    private URL[] getLoadedClasses()
-    {
+    private URL[] getLoadedClasses() {
         return ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
     }
 
