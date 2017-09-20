@@ -11,7 +11,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
+import static org.arquillian.smart.testing.ftest.customAssertions.ProjectReportAssert.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;

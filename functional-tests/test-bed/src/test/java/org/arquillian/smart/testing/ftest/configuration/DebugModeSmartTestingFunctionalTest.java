@@ -1,5 +1,7 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
+import java.io.File;
+import org.arquillian.smart.testing.ftest.customAssertions.CustomSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -15,7 +17,6 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_TAIL;
-import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
 import static org.arquillian.smart.testing.mvn.ext.ModifiedPomExporter.SMART_TESTING_POM_FILE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,6 +24,8 @@ public class DebugModeSmartTestingFunctionalTest {
 
     private static final String MAVEN_DEBUG_LOGS = "[DEBUG] Smart Testing Extension -";
     private static final String PROVIDER_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
+    private static final String EFFECTIVE_POM = "smart-testing" + File.separator + SMART_TESTING_POM_FILE;
+    private final CustomSoftAssertions softly = new CustomSoftAssertions();
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
@@ -56,7 +59,7 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
-        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact("smart-testing/" + SMART_TESTING_POM_FILE);
+        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 
     @Test
@@ -87,6 +90,6 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(MAVEN_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
-        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact("smart-testing/" + SMART_TESTING_POM_FILE);
+        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 }

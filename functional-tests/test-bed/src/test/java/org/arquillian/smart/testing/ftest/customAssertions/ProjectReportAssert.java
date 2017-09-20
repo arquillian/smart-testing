@@ -15,6 +15,10 @@ public class ProjectReportAssert extends AbstractAssert<ProjectReportAssert, Pro
         super(actual, ProjectReportAssert.class);
     }
 
+    public static ProjectReportAssert assertThat(Project project) {
+        return new ProjectReportAssert(project);
+    }
+
     public ProjectReportAssert doesNotContainFile(String fileName) throws IOException {
         List<Path> reports = Files
             .walk(actual.getRoot())

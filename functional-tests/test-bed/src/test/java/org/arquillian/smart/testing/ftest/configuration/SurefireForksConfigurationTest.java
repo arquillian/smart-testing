@@ -1,19 +1,18 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.ftest.customAssertions.CustomSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
-import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
-import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
@@ -23,11 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
+    private final CustomSoftAssertions softly = new CustomSoftAssertions();
+
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
-
-    @Rule
-    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
@@ -92,7 +90,8 @@ public class SurefireForksConfigurationTest {
         assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
         assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubmodulesContainBuildArtifact(REPORT_FILE_NAME);
+        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainReport(REPORT_FILE_NAME);
+        softly.assertAll();
     }
 }
 

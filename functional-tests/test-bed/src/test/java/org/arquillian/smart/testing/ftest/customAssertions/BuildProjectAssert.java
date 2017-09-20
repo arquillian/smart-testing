@@ -3,29 +3,39 @@ package org.arquillian.smart.testing.ftest.customAssertions;
 import java.io.File;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.FileAssert;
-import org.assertj.core.api.JUnitSoftAssertions;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
-import org.junit.Rule;
-
-import static org.arquillian.smart.testing.ftest.customAssertions.CustomAssertions.assertThat;
 
 public class BuildProjectAssert extends AbstractAssert<BuildProjectAssert, BuiltProject> {
-
-    @Rule
-    public static final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     BuildProjectAssert(BuiltProject actual) {
         super(actual, BuildProjectAssert.class);
     }
 
-    public BuildProjectAssert hasAllBuiltSubmodulesContainBuildArtifact(String directory) {
-        actual.getModules().forEach(subModule -> assertThat(subModule).hasFileIncludedIn(directory));
+    public static BuildProjectAssert assertThat(BuiltProject module) {
+        return new BuildProjectAssert(module);
+    }
+
+    public BuildProjectAssert hasAllBuiltSubModulesContainEffectivePom(String effectivePom) {
+        actual.getModules().forEach(subModule -> assertThat(subModule).containsEffectivePom(effectivePom));
         return this;
     }
 
-    private BuildProjectAssert hasFileIncludedIn(String directory) {
+    public BuildProjectAssert hasAllBuiltSubModulesContainReport(String report) {
+        actual.getModules().forEach(subModule -> assertThat(subModule).hasReportFile(report));
+        return this;
+    }
+
+    private BuildProjectAssert containsEffectivePom(String effectivePom) {
+        if (actual.getTargetDirectory().exists()) {
+            FileAssert fileAssert = new FileAssert(new File(actual.getTargetDirectory(), effectivePom));
+            fileAssert.exists();
+        }
+        return this;
+    }
+
+    private BuildProjectAssert hasReportFile(String report) {
         final File targetDirectory = actual.getTargetDirectory();
-        final FileAssert fileAssert = softly.assertThat(new File(targetDirectory, directory));
+        final FileAssert fileAssert = new FileAssert(new File(targetDirectory, report));
         if (isJar(actual)) {
             if (testsWereExecuted(targetDirectory)) {
                 fileAssert.exists();
@@ -33,10 +43,9 @@ public class BuildProjectAssert extends AbstractAssert<BuildProjectAssert, Built
                 fileAssert.doesNotExist();
             }
         } else {
-            hasAllBuiltSubmodulesContainBuildArtifact(directory);
+            hasAllBuiltSubModulesContainReport(report);
             fileAssert.doesNotExist();
         }
-
         return this;
     }
 
