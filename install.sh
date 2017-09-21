@@ -67,7 +67,7 @@ function install_extension() {
     EXTENSION="<extension><groupId>org.arquillian.smart.testing</groupId><artifactId>maven-lifecycle-extension</artifactId><version>${VERSION}</version></extension>"
 
     [ -d .mvn ] || mkdir .mvn
-    
+
     if [ ! -f .mvn/extensions.xml ]; then
         echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
             <extensions>
