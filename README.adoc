@@ -22,10 +22,46 @@ Let it be your local development or a CI server - what if you could know this as
 We created *Smart Testing* to give you the fastest possible feedback loop when it comes to executing your tests.
 
 ifndef::generated-doc[]
+
+[discrete]
+### Installation
+
+To quickly start using Smart Testing all you need to do is to execute following snippet:
+
+`curl -sSL https://git.io/vdv4j | bash`
+
+You can also add these flags:
+
+  * `-l|--latest` latest published artifact in Maven Central (that's the default)
+  * `-v|--version=` - specific version to install
+
+For example:
+
+`curl -sSL https://git.io/vdv4j | bash -s +++--+++ --latest`
+
+IMPORTANT: This script requires `xmllint`, so make sure you have it installed.
+
+[discrete]
+### Documentation
+
 To read complete documentation head over to http://arquillian.org/smart-testing/
 
-You can also generate it locally. All you need to have in place is [docker](https://docs.docker.com/engine/installation/).
-Simply execute `$ ./.asciidoctor/generate.sh` and you are set. You fill find generated documentation in `gh-pages` folder.
+You can also generate it locally. All you need to have in place is https://docs.docker.com/engine/installation/[Docker].
+Simply execute
+
+```
+$ ./.asciidoctor/generate.sh
+```
+and you are set. You will find generated documentation in the `gh-pages` folder.
+
+On Linux you can combine it with following command:
+
+```
+./.asciidoctor/generate.sh && xdg-open gh-pages/index.html &>/dev/null
+```
+
+This will generate the documentation and open it in the browser.
+
 
 endif::generated-doc[]
 
