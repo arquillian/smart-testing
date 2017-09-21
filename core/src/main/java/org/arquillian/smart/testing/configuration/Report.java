@@ -1,13 +1,14 @@
 package org.arquillian.smart.testing.configuration;
 
 public class Report {
-    public boolean isEnable() {
-        return enable;
-    }
 
     private boolean enable;
     private String dir;
     private String name;
+
+    public boolean isEnable() {
+        return enable;
+    }
 
     public void setEnable(boolean enable) {
         this.enable = enable;
@@ -58,6 +59,7 @@ public class Report {
             report.enable = this.enable;
             report.dir = this.dir;
             report.name = this.name;
+
             return report;
         }
     }

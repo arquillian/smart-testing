@@ -79,21 +79,19 @@ public class ProjectConfigurator {
         String currentVersion = resolveVersion();
         mavenExtensionRegisterer.addSmartTestingExtension(currentVersion);
             if (!createConfigFile) {
-                this.project.build()
-                    .options()
-                    .withSystemProperties(SMART_TESTING, strategies(), SMART_TESTING_MODE, getMode().getName(),
-                        SMART_TESTING_VERSION, currentVersion)
+                this.project.build().options()
+                        .withSystemProperties(SMART_TESTING, strategies(), SMART_TESTING_MODE, getMode().getName(), SMART_TESTING_VERSION, currentVersion)
                     .configure();
             } else {
                 if (configuration == null) {
                     this.configuration = Configuration.builder()
-                        .strategies(strategies().split("\\s*,\\s*"))
-                        .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
+                            .strategies(strategies().split("\\s*,\\s*"))
+                            .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
                         .build();
                 }
 
                 this.project.configureSmartTesting()
-                    .withConfiguration(configuration)
+                        .withConfiguration(configuration)
                     .createConfigFile();
             }
         return this.project;

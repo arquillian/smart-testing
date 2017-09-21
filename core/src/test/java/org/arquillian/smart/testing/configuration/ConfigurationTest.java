@@ -16,6 +16,7 @@ import org.yaml.snakeyaml.Yaml;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 public class ConfigurationTest {
@@ -25,7 +26,7 @@ public class ConfigurationTest {
         // given
         final Report report = Report.builder()
                 .enable(true)
-                .name("smart-testing-report.xml")
+                .name(REPORT_FILE_NAME)
                 .dir("target")
             .build();
 
@@ -56,7 +57,7 @@ public class ConfigurationTest {
         // given
         final Report report = Report.builder()
                 .enable(false)
-                .name("smart-testing-report.xml")
+                .name(REPORT_FILE_NAME)
                 .dir("target")
             .build();
 

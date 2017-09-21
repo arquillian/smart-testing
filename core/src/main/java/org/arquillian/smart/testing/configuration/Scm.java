@@ -6,13 +6,6 @@ public class Scm {
 
     private Range range;
 
-    Scm(Builder builder) {
-        this.range = builder.range;
-    }
-
-    Scm() {
-    }
-
     public Range getRange() {
         return range;
     }
@@ -42,7 +35,10 @@ public class Scm {
         }
 
         public Scm build() {
-            return new Scm(this);
+            final Scm scm = new Scm();
+            scm.range = this.range;
+
+            return scm;
         }
     }
 }

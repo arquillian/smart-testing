@@ -6,7 +6,7 @@ disable: false
 report:
     enable: true
     dir: target
-    name: smart-testing-report.xml
+    name: report.xml
 scm:
     range:
       head: HEAD

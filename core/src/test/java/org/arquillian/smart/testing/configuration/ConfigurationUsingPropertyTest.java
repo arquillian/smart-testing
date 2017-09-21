@@ -10,8 +10,8 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
-import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_DIR;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 @NotThreadSafe
@@ -28,7 +28,7 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = Report.builder()
                 .enable(true)
-                .name("smart-testing-report.xml")
+                .name(REPORT_FILE_NAME)
                 .dir("target")
             .build();
 
@@ -63,7 +63,7 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = Report.builder()
                 .enable(true)
-                .name("smart-testing-report.xml")
+                .name(REPORT_FILE_NAME)
                 .dir("target")
             .build();
 

@@ -5,14 +5,6 @@ public class Range {
     private String head;
     private String tail;
 
-    private Range(Builder builder) {
-        this.head = builder.head;
-        this.tail = builder.tail;
-    }
-
-    public Range() {
-    }
-
     public void setTail(String tail) {
         this.tail = tail;
     }
@@ -48,7 +40,11 @@ public class Range {
         }
 
         public Range build() {
-            return new Range(this);
+            final Range range = new Range();
+            range.head = this.head;
+            range.tail = this.tail;
+
+            return range;
         }
     }
 }

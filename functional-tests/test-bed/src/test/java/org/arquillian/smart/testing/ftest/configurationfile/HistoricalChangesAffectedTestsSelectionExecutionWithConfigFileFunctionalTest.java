@@ -36,10 +36,9 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
                 .scm(Scm.builder().range(Range.builder().head("HEAD").tail("HEAD~").build()).build())
             .build();
 
-        project
-            .configureSmartTesting()
+        project.configureSmartTesting()
                     .withConfiguration(configuration)
-                    .createConfigFile()
+                .createConfigFile()
             .enable();
 
         final Collection<TestResult> expectedTestResults = project
@@ -63,14 +62,12 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
                 .scm(Scm.builder().lastChanges("2").build())
             .build();
 
-        project
-            .configureSmartTesting()
-                .withConfiguration(configuration)
+        project.configureSmartTesting()
+                    .withConfiguration(configuration)
                 .createConfigFile()
             .enable();
 
-        final Collection<TestResult> expectedTestResults = project
-            .applyAsCommits("Single method body modification - sysout",
+        final Collection<TestResult> expectedTestResults = project.applyAsCommits("Single method body modification - sysout",
                 "Inlined variable in a method");
 
         // when

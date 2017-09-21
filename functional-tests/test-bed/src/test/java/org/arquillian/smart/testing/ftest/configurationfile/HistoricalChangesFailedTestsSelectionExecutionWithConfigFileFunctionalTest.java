@@ -32,8 +32,7 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
 
         project.applyAsCommits("Introduces error by changing return value");
 
-        project
-            .build()
+        project.build()
                 .options()
                     .ignoreBuildFailure()
                 .configure()
@@ -45,12 +44,10 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
                 .createConfigFile()
             .enable();
 
-        final Collection<TestResult> expectedTestResults = project
-            .applyAsCommits("fix: Introduces error by changing return value");
+        final Collection<TestResult> expectedTestResults = project.applyAsCommits("fix: Introduces error by changing return value");
 
         // when
-        final TestResults actualTestResults = project
-            .build()
+        final TestResults actualTestResults = project.build()
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .configure()

@@ -19,6 +19,7 @@ import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
@@ -32,9 +33,6 @@ public class Configuration {
     public static final String DEFAULT_MODE = "selecting";
     public static final String DEFAULT_STRATEGIES = "";
     public static final String SMART_TESTING_REPORT_ENABLE = "smart.testing.report.enable";
-    public static final String DEFAULT_REPORT_FILE_NAME = "smart-testing-report.xml";
-    public static final String SMART_TESTING_REPORT_DIR = "smart.testing.report.dir";
-    public static final String SMART_TESTING_REPORT_NAME = "smart.testing.report.name";
 
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
@@ -42,6 +40,7 @@ public class Configuration {
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
     public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
+
     public static final String SMART_TESTING_YML = "smart-testing.yml";
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
 
@@ -112,10 +111,10 @@ public class Configuration {
     }
 
     public static Configuration load() {
-        final Yaml yaml = new Yaml();
-        Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
         final File parent = Paths.get("").toAbsolutePath().toFile();
         final File[] files = parent.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
+
+        Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
 
         if (files != null) {
             if (files.length == 0) {
@@ -124,6 +123,7 @@ public class Configuration {
                         + "configuration for smart testing.");
             } else {
                 try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
+                    final Yaml yaml = new Yaml();
                     yamlConfiguration = (Map<String, Object>) yaml.load(io);
                 } catch (IOException e) {
                     throw new UncheckedIOException(e);
@@ -197,7 +197,6 @@ public class Configuration {
             .map(File::toPath)
             .findFirst()
             .get();
-
     }
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
@@ -219,8 +218,8 @@ public class Configuration {
 
         final Report report = new Report();
         report.setEnable(Boolean.valueOf(overWriteSystemProperty(reportConfig, "enable", SMART_TESTING_REPORT_ENABLE, "false")));
-        report.setDir(overWriteSystemProperty(reportConfig, "dir", SMART_TESTING_REPORT_DIR, "target"));
-        report.setName(overWriteSystemProperty(reportConfig, "name", SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
+        report.setDir("target");
+        report.setName(REPORT_FILE_NAME);
 
         configuration.report = report;
 
@@ -229,12 +228,10 @@ public class Configuration {
         final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, DEFAULT_LAST_COMMITS);
 
         final Map<String, Object> scmRange = scmConfig != null ? (Map<String, Object>) scmConfig.get("range") : null;
-
         final Range range = Range.builder()
                 .head(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD))
                 .tail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)))
             .build();
-
 
         configuration.scm = Scm.builder().range(range).build();
 
@@ -332,13 +329,13 @@ public class Configuration {
         public Configuration build() {
 
             final Configuration configuration = new Configuration();
-                configuration.strategies = this.strategies;
-                configuration.mode = this.mode;
-                configuration.applyTo = this.applyTo;
-                configuration.disable = this.disable;
-                configuration.debug = this.debug;
-                configuration.report = this.report;
-                configuration.scm = this.scm;
+            configuration.strategies = this.strategies;
+            configuration.mode = this.mode;
+            configuration.applyTo = this.applyTo;
+            configuration.disable = this.disable;
+            configuration.debug = this.debug;
+            configuration.report = this.report;
+            configuration.scm = this.scm;
 
             return configuration;
         }
