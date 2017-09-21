@@ -4,8 +4,8 @@
 
 Ok, just execute following snippet and you are all set:
 
-[[installing]]
-`curl -sSL https://git.io/v5jy6 | bash` copyToClipboard:installing[]
+[[installing-release]]
+`curl -sSL https://git.io/v5jy6 | bash` copyToClipboard:installing-release[]
 
 You can also add these flags:
 
@@ -15,7 +15,8 @@ You can also add these flags:
 
 For example:
 
-`curl -sSL https://git.io/v5jy6 | bash -s -- --latest`
+[[installing-latest]]
+`curl -sSL https://git.io/v5jy6 | bash -s +++--+++ --latest` copyToClipboard:installing-latest[]
 
 This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.
 
