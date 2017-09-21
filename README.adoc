@@ -9,6 +9,8 @@
 :sectnums:
 :icons: font
 :toc: left
+:data-uri:
+:imagesdir: docs/images
 
 image:https://travis-ci.org/arquillian/smart-testing.svg?branch=master["Build Status", link="https://travis-ci.org/arquillian/smart-testing"]
 
@@ -72,6 +74,7 @@ include::{asciidoctor-source}/installation.adoc[]
 include::{asciidoctor-source}/configuration.adoc[]
 include::{asciidoctor-source}/usage.adoc[]
 include::{asciidoctor-source}/reports.adoc[]
+include::{asciidoctor-source}/jenkins.adoc[]
 include::{asciidoctor-source}/refcard.adoc[]
 include::{asciidoctor-source}/developing.adoc[]
 

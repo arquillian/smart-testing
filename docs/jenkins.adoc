@@ -1,0 +1,77 @@
+== Jenkins
+
+So far you've seen how to use Smart Testing from developer perspective (running on local machine).
+But ultimately your software is going to be built on CI/CD server and saving time there means more resources for other projects.
+
+One of important things to take into consideration is that meanwhile on the developer's machine `selecting` mode might be the one used most frequently, in CI/CD environment you *should* consider executing the build in the `ordering` mode at some point (let it be regular build or a step in the pipeline). You can read more about modes at <<Modes>> section.
+
+In case of development machine, you'll probably want to build simply against the local changes, but in case of CI/CD environment, probably the changes you want to take into consideration are those between the commits you are going to run the build.
+
+Let's see how to configure Smart Testing in Jenkins.
+
+=== Jenkins Freestyle project
+
+Freestyle project is the most basic way of creating builds with Jenkins.
+
+To use Smart Testing in this kind of project, you only need to create a build step of kind `Execute Shell`/`Execute Windows batch command` running Maven with required Smart Testing configuration parameters.
+
+
+[source, subs="attributes, macros"]
+----
+mvn -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]="new, affected"
+    -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering
+    -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=${GIT_COMMIT}
+    -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=${GIT_PREVIOUS_COMMIT}
+    test
+----
+
+On the next figure you can see the step configuration.
+
+.Freestyle Execute Shell Configuration
+image::st-freestyle.png[]
+
+After setting this up you are ready to run the build.
+
+What you will notice in this case is that since the configured mode is `ordering`, all tests are going to be executed, but the ones marked as important by `new` and `affected` strategies are executed first.
+
+=== Jenkins Pipeline
+
+Jenkins Pipeline is a group of plugins which support implementing and integrating continuous delivery pipelines into Jenkins.
+
+The definition of a Jenkins Pipeline is typically written into a text file (called a `Jenkinsfile`) which in turn is checked into a project’s source control repository
+
+To run Smart Testing in Jenkins Pipeline you need to manually call `checkout scm` process to get access to `GIT_COMMIT` and `PREVIOUS_GIT_COMMIT` variables.
+
+This might not be a problem if you are using scripted pipeline but in case of using declarative pipeline, since the checkout process is done automatically. you have no access to `GIT_COMMIT` and `PREVIOUS_GIT_COMMIT` variables.
+
+So in next snippet you can see an example of how to use declarative pipeline with Smart Testing:
+
+[source, subs="macros"]
+.Jenkinsfile
+----
+pipeline {
+    options {
+        skipDefaultCheckout()
+    }
+    agent any
+    stages {
+        stage('Compile and Test') {
+            steps {
+                script {
+                    def scmVars = checkout scm
+                    sh "mvn -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]='new, affected' -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=${scmVars.GIT_COMMIT} -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=${scmVars.GIT_PREVIOUS_COMMIT} test"
+                }
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml'
+                }
+            }
+        }
+    }
+}
+----
+
+There are few important things you have to keep in mind when adjusting your `Jenkinsfile` if you are using declarative script approach.
+
+First of all you need to disable automatic checkout. Then you need to manually call checkout and store the result into  a variable. Finally you can call Maven, getting Git parameters from `scmVars`.
