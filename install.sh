@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 MAVEN_METADATA=$(curl -sL http://central.maven.org/maven2/org/arquillian/smart/testing/smart-testing-parent/maven-metadata.xml)
-LATEST=$(echo ${MAVEN_METADATA} | grep -oPm1 "(?<=<latest>)[^<]+")
+LATEST=$(echo ${MAVEN_METADATA} | grep '<latest>' | sed -e 's,.*<latest>\([^<]*\)</latest>.*,\1,g')
 
 VERSION=${LATEST}
 INSTALL_SPECIFIC_VERSION="0"
@@ -74,7 +74,7 @@ function install_extension() {
               ${EXTENSION}
             </extensions>" > .mvn/extensions.xml
     else
-        EXTENSION_REGISTERED=$(cat .mvn/extensions.xml | grep 'org.arquillian.smart.testing' -A 2 |  grep -oPm1 "(?<=<version>)[^<]+");
+        EXTENSION_REGISTERED=$(cat .mvn/extensions.xml | grep 'org.arquillian.smart.testing' -A 2 |  grep '<version>' | sed -e 's,.*<version>\([^<]*\)</version>.*,\1,g');
 
         if [ ! ${EXTENSION_REGISTERED} ]; then
             EXTENSION=$(echo ${EXTENSION} | sed -e "s#/#\\\/#g");
@@ -139,10 +139,15 @@ function ignore_smart_testing_artifacts() {
     fi
 }
 
+function command_exists {
+  # Sample usage "if command_exists foo; then echo it exists; fi"
+  type "$1" &> /dev/null
+}
+
 ## MAIN LOGIC
 
-command -v mvn >/dev/null 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
-command -v xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
+command_exists mvn 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
+command_exists xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
 
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 
