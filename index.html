@@ -524,7 +524,8 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_installation">2. Installation</a>
 <ul class="sectlevel2">
-<li><a href="#_maven_extension">2.1. Maven Extension</a></li>
+<li><a href="#_don_t_make_me_think">2.1. Don&#8217;t make me think</a></li>
+<li><a href="#_maven_extension">2.2. Maven Extension</a></li>
 </ul>
 </li>
 <li><a href="#_configuration">3. Configuration</a>
@@ -672,20 +673,71 @@ in your <code>pom.xml</code>, as Maven comes with the default version which migh
 <h2 id="_installation"><a class="anchor" href="#_installation"></a>2. Installation</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_maven_extension"><a class="anchor" href="#_maven_extension"></a>2.1. Maven Extension</h3>
+<h3 id="_don_t_make_me_think"><a class="anchor" href="#_don_t_make_me_think"></a>2.1. Don&#8217;t make me think</h3>
 <div class="paragraph">
-<p><strong>Smart Testing</strong> is a Maven extension, so needs to be installed as is.</p>
+<p>Ok, just execute following snippet and you are all set:</p>
+</div>
+<div id="installing-release" class="paragraph">
+<p><code>curl -sSL <a href="https://git.io/v5jy6" class="bare">https://git.io/v5jy6</a> | bash</code> 
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#installing-release">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
+</div>
+<div class="paragraph">
+<p>You can also add these flags:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-l|--latest</code> latest published artifact in Maven Central (that&#8217;s the default)</p>
+</li>
+<li>
+<p><code>-v|--version=</code> - specific version to install</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div id="installing-latest" class="paragraph">
+<p><code>curl -sSL <a href="https://git.io/v5jy6" class="bare">https://git.io/v5jy6</a> | bash -s -- --latest</code> 
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#installing-latest">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
+</div>
+<div class="paragraph">
+<p>This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This script requires <code>xmllint</code>, so make sure you have it installed.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maven_extension"><a class="anchor" href="#_maven_extension"></a>2.2. Maven Extension</h3>
+<div class="paragraph">
+<p><strong>Smart Testing</strong> is a Maven extension, so depending on the version of Maven you have to follow slightly different approach of installing it.</p>
 </div>
 <div class="sect3">
-<h4 id="_maven_3_1_x"><a class="anchor" href="#_maven_3_1_x"></a>2.1.1. Maven &gt;= 3.1.X</h4>
+<h4 id="_maven_above_3_1_x"><a class="anchor" href="#_maven_above_3_1_x"></a>2.2.1. Maven above 3.1.X</h4>
 <div class="paragraph">
-<p>Get Smart Testing <em>shaded</em> copy from <a href="https://bintray.com/arquillian/Arquillian/smart-testing">Bintray</a> and copy it to <code>M2_HOME/lib/ext</code></p>
+<p>Get Smart Testing Extension <em>shaded jar</em> from <a href="http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/">Maven Central</a> and copy it to <code>M2_HOME/lib/ext</code>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_maven_3_3_x"><a class="anchor" href="#_maven_3_3_x"></a>2.1.2. Maven &gt;= 3.3.X</h4>
+<h4 id="_maven_above_3_3_x"><a class="anchor" href="#_maven_above_3_3_x"></a>2.2.2. Maven above 3.3.X</h4>
 <div class="paragraph">
-<p>You can still use the process described at <a href="#_maven_3_1_x">Maven &gt;= 3.1.X</a> or use the new <em>core extension configuration mechanism</em> by
+<p>You can still use the process described at <a href="#Maven &gt;= 3.1.X">[Maven &gt;= 3.1.X]</a> or use the new <em>core extension configuration mechanism</em> by
 creating folder called <code>.mvn</code> in the root of your project and create inside it an <code>extensions.xml</code> file
 which registers the smart testing extension:</p>
 </div>
@@ -1728,7 +1780,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-21 11:20:09 UTC
+Last updated 2017-09-21 16:37:15 UTC
 </div>
 </div>
 <script>
