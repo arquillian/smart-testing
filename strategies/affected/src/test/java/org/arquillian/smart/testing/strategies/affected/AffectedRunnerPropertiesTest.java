@@ -12,9 +12,9 @@ public class AffectedRunnerPropertiesTest {
         final String csvLocation = AffectedRunnerProperties.class.getResource("/config.properties").getPath();
 
         // when
-        AffectedRunnerProperties.readFile(csvLocation);
-        final String smartTestingAffectedExclusions = AffectedRunnerProperties.resolve(null,
-            AffectedRunnerProperties.properties.getProperty(AffectedRunnerProperties.EXCLUSIONS));
+        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties(csvLocation);
+        final String smartTestingAffectedExclusions = affectedRunnerProperties.resolve(null,
+            affectedRunnerProperties.getProperty(AffectedRunnerProperties.EXCLUSIONS));
 
         // then
         assertThat(smartTestingAffectedExclusions).isEqualTo("a, b, c");
@@ -26,9 +26,10 @@ public class AffectedRunnerPropertiesTest {
         final String csvLocation = AffectedRunnerProperties.class.getResource("/config.properties").getPath();
 
         // when
-        AffectedRunnerProperties.readFile(csvLocation);
-        final String smartTestingAffectedInclusions = AffectedRunnerProperties.resolve(null,
-            AffectedRunnerProperties.properties.getProperty(AffectedRunnerProperties.INCLUSIONS));
+        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties(csvLocation);
+        affectedRunnerProperties.readFile(csvLocation);
+        final String smartTestingAffectedInclusions = affectedRunnerProperties.resolve(null,
+            affectedRunnerProperties.getProperty(AffectedRunnerProperties.INCLUSIONS));
 
         // then
         assertThat(smartTestingAffectedInclusions).isEqualTo("d, e");
