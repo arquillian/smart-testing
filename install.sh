@@ -128,6 +128,9 @@ function override_version() {
 
 ## MAIN LOGIC
 
+command -v mvn >/dev/null 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
+command -v xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
+
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 
 if [[ $MVN_VERSION =~ ^[3].[3-9].[0-9]$ ]]; then

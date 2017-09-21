@@ -20,6 +20,8 @@ For example:
 
 This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.
 
+IMPORTANT: This script requires `xmllint`, so make sure you have it installed.
+
 === Maven Extension
 
 *Smart Testing* is a Maven extension, so depending on the version of Maven you have to follow slightly different approach of installing it.
