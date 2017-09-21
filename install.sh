@@ -122,7 +122,7 @@ function override_version() {
 }
 
 function ignore_smart_testing_artifacts() {
-    cat .gitignore | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
+    cat .gitignore 2>&1  | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
     if [ ${EXISTS} == 0 ]; then
         read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
             case "$response" in
