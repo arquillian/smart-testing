@@ -52,7 +52,7 @@ done
 
 function install_shaded_library() {
     if [ -z "$M2_HOME" ]; then
-        echo "Please set M2_HOME"
+        echo "Please set M2_HOME pointing to your Maven installation."
         exit 1
     fi
     SHADED_JAR="maven-lifecycle-extension-${VERSION}-shaded.jar"
@@ -90,7 +90,7 @@ function install_extension() {
 
             if [ ${INSTALL_SPECIFIC_VERSION} -eq 1 ]; then
                 if [ "${EXTENSION_REGISTERED}" != "${VERSION}" ]; then
-                    echo -e " - overwritting with ${VERSION}."
+                    echo -e " - overwriting with ${VERSION}."
                     override_version $VERSION
                     echo -e "Updated Smart Testing Extension to ${VERSION}\c"
                 fi
@@ -126,6 +126,23 @@ function override_version() {
     mv .mvn/extensions-new.xml .mvn/extensions.xml
 }
 
+function ignore_smart_testing_artifacts() {
+    read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
+        case "$response" in
+            [nN][oO]|[nN])
+                ;;
+            *)
+                if [ ! -f .gitignore ]; then
+                    touch ./.gitignore
+                fi
+                cat .gitignore | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
+                if [ ${EXISTS} == 0 ]; then
+                    echo "# Smart Testing Exlusions\n.smart-testing" >> ./.gitignore
+                fi
+                ;;
+        esac
+}
+
 ## MAIN LOGIC
 
 command -v mvn >/dev/null 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
@@ -136,9 +153,11 @@ MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 if [[ $MVN_VERSION =~ ^[3].[3-9].[0-9]$ ]]; then
     echo "Installing extension in .mvn/extensions.xml"
     install_extension
+    ignore_smart_testing_artifacts
 elif [[ $MVN_VERSION =~ ^[3].[1-2].[0-9]$ ]]; then
     echo "Installing extension in M2_HOME/lib/ext"
     install_shaded_library
+    ignore_smart_testing_artifacts
 else
     echo "Version ${MVN_VERSION} is not supported.";
 fi
