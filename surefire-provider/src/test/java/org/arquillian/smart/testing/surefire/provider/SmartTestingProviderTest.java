@@ -58,8 +58,6 @@ public class SmartTestingProviderTest {
     @Test
     public void when_get_suites_is_called_then_same_list_of_classes_will_be_returned() {
         // given
-        dumpConfiguration();
-
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -73,7 +71,6 @@ public class SmartTestingProviderTest {
     @Test
     public void test_when_invoke_is_called_with_null() throws Exception {
         // given
-        dumpConfiguration();
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -115,22 +112,7 @@ public class SmartTestingProviderTest {
 
     @BeforeClass
     public static void dumpConfiguration() {
-        final LocalStorageFileAction configFile = new LocalStorage(Paths.get("").toFile())
-            .duringExecution()
-            .temporary()
-            .file(Configuration.SMART_TESTING_YML);
-        try {
-            configFile.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create " + configFile.getPath() + " file", e);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(configFile.getFile())) {
-            Yaml yaml = new Yaml();
-            yaml.dump(Configuration.load(), fileWriter);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store configuration in file " + configFile.getPath(), e);
-        }
+        Configuration.load().dump();
     }
 
     @AfterClass

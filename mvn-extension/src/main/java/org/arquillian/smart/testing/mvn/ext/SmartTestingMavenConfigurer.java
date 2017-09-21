@@ -1,10 +1,9 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -23,7 +22,6 @@ import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.codehaus.plexus.component.annotations.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import static java.util.stream.StreamSupport.stream;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
@@ -47,7 +45,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
-        storeConfiguration(session);
 
         if (session.getRequest().getLoggingLevel() == 0) {
             logger.enableMavenDebugLogLevel(true);
@@ -62,6 +59,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
+            storeConfiguration(session);
             calculateChanges();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
@@ -70,24 +68,8 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void storeConfiguration(MavenSession session) {
-        final LocalStorageFileAction configFile = new LocalStorage(Paths.get("").toFile())
-            .duringExecution()
-            .temporary()
-            .file(Configuration.SMART_TESTING_YML);
-        try {
-            configFile.create();
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot create " + configFile.getPath() + " file", e);
-        }
-
-        try (FileWriter fileWriter = new FileWriter(configFile.getFile())) {
-            Yaml yaml = new Yaml();
-            yaml.dump(configuration, fileWriter);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store configuration in file " + configFile.getPath(), e);
-        }
-
-        session.getAllProjects().forEach(mavenProject -> copyConfigurationFile(mavenProject.getModel(), configFile.getFile()));
+        final Path path = configuration.dump();
+        session.getAllProjects().forEach(mavenProject -> copyConfigurationFile(mavenProject.getModel(), path.toFile()));
     }
 
     private void copyConfigurationFile(Model model, File parentFile) {

@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -15,6 +16,7 @@ import java.util.Map;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.yaml.snakeyaml.Yaml;
 
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
@@ -145,6 +147,27 @@ public class Configuration {
             return yaml.loadAs(fileReader, Configuration.class);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load configuration from file " + configFile.getPath(), e);
+        }
+    }
+
+    public Path dump() {
+        final LocalStorageFileAction configFile = new LocalStorage(Paths.get("").toFile())
+            .duringExecution()
+            .temporary()
+            .file(Configuration.SMART_TESTING_YML);
+        try {
+            configFile.create();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create " + configFile.getPath() + " file", e);
+        }
+
+        try (FileWriter fileWriter = new FileWriter(configFile.getFile())) {
+            Yaml yaml = new Yaml();
+            yaml.dump(this, fileWriter);
+
+            return configFile.getPath();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store configuration in file " + configFile.getPath(), e);
         }
     }
 
