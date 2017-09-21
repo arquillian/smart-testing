@@ -18,11 +18,8 @@ import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepo
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
-<<<<<<< HEAD
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
-=======
 import static org.assertj.core.api.Assertions.assertThat;
->>>>>>> feat(logger): Adds implementation for provider side logger.
 
 public class SurefireForksConfigurationTest {
 
