@@ -122,20 +122,21 @@ function override_version() {
 }
 
 function ignore_smart_testing_artifacts() {
-    read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
-        case "$response" in
-            [nN][oO]|[nN])
-                ;;
-            *)
-                if [ ! -f .gitignore ]; then
-                    touch ./.gitignore
-                fi
-                cat .gitignore | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
-                if [ ${EXISTS} == 0 ]; then
-                    echo -e "\n# Smart Testing Exclusions\n.smart-testing/\n" >> ./.gitignore
-                fi
-                ;;
-        esac
+    cat .gitignore | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
+    if [ ${EXISTS} == 0 ]; then
+        read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
+            case "$response" in
+                [nN][oO]|[nN])
+                    ;;
+                *)
+                    if [ ! -f .gitignore ]; then
+                        touch ./.gitignore
+                    fi
+
+                        echo -e "\n# Smart Testing Exclusions\n.smart-testing/\n" >> ./.gitignore
+                    ;;
+            esac
+    fi
 }
 
 ## MAIN LOGIC
