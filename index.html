@@ -1172,8 +1172,6 @@ most efficient way to get a quick answer to:</p>
         <span class="tag">&lt;properties&gt;</span>
             <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">new,changed</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
             <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.mode</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">selecting</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.report.dir</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">target/smart-testing-report</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
-            <span class="tag">&lt;property</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">smart.testing.report.name</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">report</span><span class="delimiter">&quot;</span></span><span class="tag">/&gt;</span>
         <span class="tag">&lt;/properties&gt;</span>
     <span class="tag">&lt;/executionConfiguration&gt;</span>
     <span class="tag">&lt;selection&gt;</span>
@@ -1189,26 +1187,8 @@ most efficient way to get a quick answer to:</p>
 <div class="sect2">
 <h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>5.2. Configuration</h3>
 <div class="paragraph">
-<p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.</p>
-</div>
-<div class="paragraph">
-<p>You will get generated reports in <code>target/smart-testing-report.xml</code> by default.</p>
-</div>
-<div class="paragraph">
-<p>To change the location of the generated output report, following properties
-should be set to the desired alternative location.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>smart.testing.report.dir</code></dt>
-<dd>
-<p>To configure directory where generated reports should be stored.</p>
-</dd>
-<dt class="hdlist1"><code>smart.testing.report.name</code></dt>
-<dd>
-<p>To configure the file name of the generated report.</p>
-</dd>
-</dl>
+<p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.
+If you use the property, then you get the generated reports in <code>target/smart-testing/reporting</code> for every module separately.</p>
 </div>
 </div>
 </div>
@@ -1423,24 +1403,6 @@ should be set to the desired alternative location.</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>false</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart.testing.report.dir</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">directory where generated reports should be stored</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>target</code> of the current module being built</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart.testing.report.name</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the file name of the generated report</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart-testing-report.xml</code></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1766,7 +1728,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-20 15:39:02 UTC
+Last updated 2017-09-21 11:20:09 UTC
 </div>
 </div>
 <script>
