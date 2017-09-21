@@ -50,7 +50,8 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
 
     private TestStrategyApplier createApplier() {
         if (projectDir == null){
-            projectDir = new File(System.getProperty("basedir"));
+            String basedir = System.getProperty("basedir");
+            projectDir = new File(basedir != null ? basedir : ".");
         }
         if (testExecutionPlannerLoader == null) {
             testExecutionPlannerLoader =
