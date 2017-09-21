@@ -137,7 +137,7 @@ function ignore_smart_testing_artifacts() {
                 fi
                 cat .gitignore | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
                 if [ ${EXISTS} == 0 ]; then
-                    echo "# Smart Testing Exlusions\n.smart-testing" >> ./.gitignore
+                    echo "# Smart Testing Exclusions\n.smart-testing" >> ./.gitignore
                 fi
                 ;;
         esac
