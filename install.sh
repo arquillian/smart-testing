@@ -56,6 +56,7 @@ function install_shaded_library() {
         exit 1
     fi
     SHADED_JAR="maven-lifecycle-extension-${VERSION}-shaded.jar"
+    echo "Installing ${SHADED_JAR} into ${M2_HOME}/lib/ext"
     wget http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/${VERSION}/${SHADED_JAR}
     read -r -p "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] " response
     case "$response" in
@@ -83,13 +84,15 @@ function install_extension() {
         if [ ! ${EXTENSION_REGISTERED} ]; then
             EXTENSION=$(echo ${EXTENSION} | sed -e "s#/#\\\/#g");
             sed -i -E 's/(.*<extensions>)(.*)/\1\n'$EXTENSION'\2/g' .mvn/extensions.xml
+            echo "Installed Smart Testing Extension ${VERSION}"
         else
-            echo -e "Extension already registered with version ${EXTENSION_REGISTERED}\c"
+            echo -e "Smart Testing Extension already registered with version ${EXTENSION_REGISTERED}\c"
 
             if [ ${INSTALL_SPECIFIC_VERSION} -eq 1 ]; then
                 if [ "${EXTENSION_REGISTERED}" != "${VERSION}" ]; then
-                    echo -e " - overwritting with ${VERSION}\c"
+                    echo -e " - overwritting with ${VERSION}."
                     override_version $VERSION
+                    echo -e "Updated Smart Testing Extension to ${VERSION}\c"
                 fi
                 echo "."
             elif [ $EXTENSION_REGISTERED != $LATEST ]; then
@@ -97,6 +100,7 @@ function install_extension() {
                 case "$response" in
                     [yY][eE][sS]|[yY])
                           override_version ${LATEST}
+                          echo "Updated Smart Testing Extension to ${LATEST}"
                         ;;
                     *)
 
@@ -125,11 +129,12 @@ function override_version() {
 ## MAIN LOGIC
 
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
-echo $MVN_VERSION
 
 if [[ $MVN_VERSION =~ ^[3].[3-9].[0-9]$ ]]; then
+    echo "Installing extension in .mvn/extensions.xml"
     install_extension
 elif [[ $MVN_VERSION =~ ^[3].[1-2].[0-9]$ ]]; then
+    echo "Installing extension in M2_HOME/lib/ext"
     install_shaded_library
 else
     echo "Version ${MVN_VERSION} is not supported.";
