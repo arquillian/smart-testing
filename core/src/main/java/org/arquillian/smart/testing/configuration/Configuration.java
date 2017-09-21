@@ -227,13 +227,16 @@ public class Configuration {
         final Map<String, Object> scmConfig = (Map<String, Object>) yamlConfiguration.get("scm");
 
         final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, DEFAULT_LAST_COMMITS);
+
         final Map<String, Object> scmRange = scmConfig != null ? (Map<String, Object>) scmConfig.get("range") : null;
 
-        final Scm scm = new Scm();
-        scm.setHead(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD));
-        scm.setTail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)));
+        final Range range = Range.builder()
+                .head(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD))
+                .tail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)))
+            .build();
 
-        configuration.scm = scm;
+
+        configuration.scm = Scm.builder().range(range).build();
 
         return configuration;
     }

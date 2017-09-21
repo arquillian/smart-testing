@@ -4,5 +4,6 @@ debug: false
 disable: false
 mode: SELECTING
 report: {dir: target, name: smart-testing-report.xml}
-scm: {head: HEAD, tail: HEAD~0}
+scm:
+  range: {head: HEAD, tail: HEAD~0}
 strategies: [new]

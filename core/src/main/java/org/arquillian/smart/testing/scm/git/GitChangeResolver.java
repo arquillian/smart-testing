@@ -49,7 +49,7 @@ public class GitChangeResolver implements ChangeResolver {
     }
 
     public GitChangeResolver(File projectDir, Scm scm) {
-        this(projectDir, scm.getTail(), scm.getHead());
+        this(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
     }
 
     public GitChangeResolver(File dir, String previous, String head) {

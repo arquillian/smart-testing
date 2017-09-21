@@ -30,8 +30,8 @@ public class ScmRunnerPropertiesTest {
         final Scm scm = Configuration.load().getScm();
 
         // then
-        assertThat(scm.getTail()).isEqualTo("HEAD~3");
-        assertThat(scm.getHead()).isEqualTo("HEAD");
+        assertThat(scm.getRange().getTail()).isEqualTo("HEAD~3");
+        assertThat(scm.getRange().getHead()).isEqualTo("HEAD");
     }
 
     @Test
@@ -44,8 +44,8 @@ public class ScmRunnerPropertiesTest {
         final Scm scm = Configuration.load().getScm();
 
         // then
-        assertThat(scm.getTail()).isEqualTo("32bd752");
-        assertThat(scm.getHead()).isEqualTo("07b181b");
+        assertThat(scm.getRange().getTail()).isEqualTo("32bd752");
+        assertThat(scm.getRange().getHead()).isEqualTo("07b181b");
     }
 
     @Test
@@ -55,7 +55,7 @@ public class ScmRunnerPropertiesTest {
         final Scm scm = Configuration.load().getScm();
 
         // then
-        assertThat(scm.getTail()).isEqualTo("HEAD~0");
-        assertThat(scm.getHead()).isEqualTo(HEAD);
+        assertThat(scm.getRange().getTail()).isEqualTo("HEAD~0");
+        assertThat(scm.getRange().getHead()).isEqualTo(HEAD);
     }
 }

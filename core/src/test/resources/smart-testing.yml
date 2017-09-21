@@ -8,4 +8,6 @@ report:
     dir: target
     name: smart-testing-report.xml
 scm:
-    lastChanges: 3
+    range:
+      head: HEAD
+      tail: HEAD~3

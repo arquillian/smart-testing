@@ -29,7 +29,7 @@ public class Report {
         this.name = name;
     }
 
-    public static Report.Builder builder() {
+    public static Builder builder() {
         return new Report.Builder();
     }
 

@@ -3,54 +3,41 @@ package org.arquillian.smart.testing.configuration;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 public class Scm {
-    private String head;
-    private String tail;
+
+    private Range range;
 
     Scm(Builder builder) {
-        this.head = builder.head;
-        this.tail = builder.tail;
+        this.range = builder.range;
     }
 
     Scm() {
     }
 
-    public void setHead(String head) {
-        this.head = head;
+    public Range getRange() {
+        return range;
     }
 
-    public void setTail(String tail) {
-        this.tail = tail;
+    public void setRange(Range range) {
+        this.range = range;
     }
 
-    public String getHead() {
-        return head;
-    }
-
-    public String getTail() {
-        return tail;
-    }
-
-    public static Scm.Builder builder() {
+    public static Builder builder() {
         return new Scm.Builder();
     }
 
     public static class Builder {
-        private String head;
-        private String tail;
+        private Range range;
 
-        public Builder head(String head) {
-            this.head = head;
-            return this;
-        }
-
-        public Builder tail(String tail) {
-            this.tail = tail;
+        public Builder range(Range range) {
+            this.range = range;
             return this;
         }
 
         public Builder lastChanges(String n) {
-            this.head = HEAD;
-            this.tail = String.join("~", HEAD, n);
+            this.range = Range.builder()
+                            .head(HEAD)
+                            .tail(String.join("~", HEAD, n))
+                        .build();
             return this;
         }
 

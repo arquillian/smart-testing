@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,8 +30,7 @@ public class ConfigurationTest {
             .build();
 
         final Scm scm = Scm.builder()
-            .head(HEAD)
-            .tail(HEAD + "~3")
+                .range(Range.builder().head(HEAD).tail(HEAD + "~3").build())
             .build();
 
         final Configuration expectedConfiguration = Configuration.builder()
@@ -61,8 +61,7 @@ public class ConfigurationTest {
             .build();
 
         final Scm scm = Scm.builder()
-                .head(HEAD)
-                .tail(HEAD + "~0")
+                .range(Range.builder().head(HEAD).tail(HEAD + "~0").build())
             .build();
 
         final Configuration expectedConfiguration = Configuration.builder()

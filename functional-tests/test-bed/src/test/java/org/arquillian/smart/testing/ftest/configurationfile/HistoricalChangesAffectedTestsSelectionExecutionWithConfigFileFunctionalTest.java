@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.configurationfile;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.Range;
 import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -32,7 +33,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
         final Configuration configuration = Configuration.builder()
                 .mode(SELECTING)
                 .strategies(AFFECTED.getName())
-                .scm(Scm.builder().head("HEAD").tail("HEAD~").build())
+                .scm(Scm.builder().range(Range.builder().head("HEAD").tail("HEAD~").build()).build())
             .build();
 
         project
@@ -45,9 +46,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final TestResults actualTestResults = project.build().options().withRemoteDebugging().withRemoteSurefireDebugging()
-            .configure()
-            .run();
+        final TestResults actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

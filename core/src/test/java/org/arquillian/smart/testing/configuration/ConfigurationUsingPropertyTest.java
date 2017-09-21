@@ -11,6 +11,7 @@ import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_DIR;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 @NotThreadSafe
@@ -24,18 +25,15 @@ public class ConfigurationUsingPropertyTest {
         // given
         System.setProperty(SMART_TESTING, "changed");
         System.setProperty(SMART_TESTING_MODE, "selecting");
-        System.setProperty(SMART_TESTING_REPORT_DIR, "smart-testing");
-
 
         final Report report = Report.builder()
                 .enable(true)
                 .name("smart-testing-report.xml")
-                .dir("smart-testing")
+                .dir("target")
             .build();
 
         final Scm scm = Scm.builder()
-                .head(HEAD)
-                .tail(HEAD + "~3")
+                .range(Range.builder().head(HEAD).tail(HEAD + "~3").build())
             .build();
 
         final Configuration expectedConfiguration = Configuration.builder()
@@ -60,18 +58,17 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_with_defaults_and_with_specified_system_properties_if_config_file_is_not_given(){
         // given
         System.setProperty(SMART_TESTING, "changed");
-        System.setProperty(SMART_TESTING_REPORT_DIR, "smart-testing");
+        System.setProperty(SMART_TESTING_REPORT_ENABLE, "true");
 
 
         final Report report = Report.builder()
-            .enable(false)
+                .enable(true)
                 .name("smart-testing-report.xml")
-                .dir("smart-testing")
+                .dir("target")
             .build();
 
         final Scm scm = Scm.builder()
-                .head(HEAD)
-                .tail(HEAD + "~0")
+                .range(Range.builder().head(HEAD).tail(HEAD + "~0").build())
             .build();
 
         final Configuration expectedConfiguration = Configuration.builder()
