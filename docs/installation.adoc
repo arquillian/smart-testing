@@ -5,7 +5,7 @@
 Ok, just execute following snippet and you are all set:
 
 [[installing]]
-`curl -sS https://git.io/v5jMS | bash` copyToClipboard:installing[]
+`curl -sSL https://git.io/v5jy6 | bash` copyToClipboard:installing[]
 
 You can also add these flags:
 
@@ -15,7 +15,7 @@ You can also add these flags:
 
 For example:
 
-`curl -sS https://git.io/v5jMS | bash -- --latest`
+`curl -sSL https://git.io/v5jy6 | bash -s -- --latest`
 
 This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.
 
