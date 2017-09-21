@@ -55,9 +55,10 @@ public class ClassDependenciesGraph {
     ClassDependenciesGraph(TestVerifier testVerifier) {
         this.builder = new JavaClassBuilder();
         this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        this.filter = new Filter(AffectedRunnerProperties.getSmartTestingAffectedInclusions(), AffectedRunnerProperties.getSmartTestingAffectedExclusions());
+        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties();
+        this.filter = new Filter(affectedRunnerProperties.getSmartTestingAffectedInclusions(), affectedRunnerProperties.getSmartTestingAffectedExclusions());
         this.testVerifier = testVerifier;
-        this.enableTransitivity = AffectedRunnerProperties.getSmartTestingAffectedTransitivity();
+        this.enableTransitivity = affectedRunnerProperties.getSmartTestingAffectedTransitivity();
     }
 
     void buildTestDependencyGraph(Collection<File> testJavaFiles) {

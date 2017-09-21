@@ -19,14 +19,17 @@ class AffectedRunnerProperties {
     static final String INCLUSIONS = "inclusions";
     static final String EXCLUSIONS = "exclusions";
 
-    static final Properties properties = new Properties();
+    private final Properties properties = new Properties();
 
-    // To just read once the configuration file.
-    static {
+    AffectedRunnerProperties(){
         readFile(System.getProperty(SMART_TESTING_AFFECTED_CONFIG));
     }
 
-    static void readFile(String location) {
+    AffectedRunnerProperties(String csvLocation) {
+        readFile(csvLocation);
+    }
+
+    void readFile(String location) {
         if (location == null) {
             return;
         }
@@ -38,26 +41,26 @@ class AffectedRunnerProperties {
         }
     }
 
-    static boolean getSmartTestingAffectedTransitivity() {
+    boolean getSmartTestingAffectedTransitivity() {
         return Boolean.parseBoolean(System.getProperty(SMART_TESTING_AFFECTED_TRANSITIVITY,
             DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE));
     }
 
-    static String getSmartTestingAffectedExclusions() {
+    String getSmartTestingAffectedExclusions() {
         String exclusions = System.getProperty(SMART_TESTING_AFFECTED_EXCLUSIONS);
         String exclusionsFromFile = properties.getProperty(EXCLUSIONS);
 
         return resolve(exclusions, exclusionsFromFile);
     }
 
-    static String getSmartTestingAffectedInclusions() {
+    String getSmartTestingAffectedInclusions() {
         String inclusions = System.getProperty(SMART_TESTING_AFFECTED_INCLUSIONS);
         String inclusionsFromFile = properties.getProperty(INCLUSIONS);
 
         return resolve(inclusions, inclusionsFromFile);
     }
 
-    static String resolve(String expressions, String fileExpressions) {
+    String resolve(String expressions, String fileExpressions) {
         StringJoiner joiner = new StringJoiner(", ");
         if (expressions != null) {
             joiner.add(expressions);
@@ -68,6 +71,10 @@ class AffectedRunnerProperties {
         }
 
         return joiner.toString().trim();
+    }
+
+    String getProperty(String key){
+        return properties.getProperty(key);
     }
 
 }

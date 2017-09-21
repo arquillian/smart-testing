@@ -29,8 +29,15 @@ docker run -v ${WORKING_DIR}:/docs/ --name adoc-to-html rochdev/alpine-asciidoct
     -r /docs/.asciidoctor/lib/const-inline-macro.rb \
     -r /docs/.asciidoctor/lib/copy-to-clipboard-inline-macro.rb \
     -a generated-doc=true -a asciidoctor-source=/docs/docs \
-    /docs/README.adoc -o /docs/gh-pages/index.html;
+    /docs/README.adoc -o /docs/gh-pages/index.html --trace;
+
+docker ps -a | grep -q 'Exited (0)' && FAILED=0 || FAILED=1
 
 if [ ${DELETE} -eq 0 ]; then
     docker rm adoc-to-html;
+fi
+
+if [ ${FAILED} -eq 1 ]; then
+  echo "Failed generating the docs"
+  exit 1
 fi

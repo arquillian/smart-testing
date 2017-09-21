@@ -88,12 +88,4 @@ a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name
 a|enables the debug mode (alternatively you can use Maven debug output `(-X)` flag)
 a|`false`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_REPORT_DIR"]`
-|directory where generated reports should be stored
-a|`target` of the current module being built
-
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_REPORT_NAME"]`
-|the file name of the generated report
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_REPORT_FILE_NAME"]`
-
 |===

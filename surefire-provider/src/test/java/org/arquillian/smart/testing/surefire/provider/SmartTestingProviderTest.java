@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
-import org.apache.maven.surefire.report.ReporterConfiguration;
+import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.local.FileSystemOperations;
@@ -52,7 +52,10 @@ public class SmartTestingProviderTest {
 
         providerFactory = mock(SurefireProviderFactory.class);
         when(providerFactory.createInstance()).thenReturn(surefireProvider);
-        when(providerParameters.getReporterConfiguration()).thenReturn(new ReporterConfiguration(new File("surefire-provider/target"), false));
+
+        TestRequest testRequest = mock(TestRequest.class);
+        when(testRequest.getTestSourceDirectory()).thenReturn(new File("."));
+        when(providerParameters.getTestRequest()).thenReturn(testRequest);
     }
 
     @Test
