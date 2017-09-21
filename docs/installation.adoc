@@ -1,14 +1,33 @@
 == Installation
 
+=== Don't make me think
+
+Ok, just execute following snippet and you are all set:
+
+[[installing]]
+`curl -sS https://git.io/v5jMS | bash` copyToClipboard:installing[]
+
+You can also add these flags:
+
+  * `-l|--latest` latest published artifact in Maven Central
+  * `-r|--release` latest release (that's the default)
+  * `-v|--version=` - specific version to install
+
+For example:
+
+`curl -sS https://git.io/v5jMS | bash -- --latest`
+
+This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.
+
 === Maven Extension
 
-*Smart Testing* is a Maven extension, so needs to be installed as is.
+*Smart Testing* is a Maven extension, so depending on the version of Maven you have to follow slightly different approach of installing it.
 
-==== Maven >= 3.1.X
+==== Maven above 3.1.X
 
-Get Smart Testing _shaded_ copy from https://bintray.com/arquillian/Arquillian/smart-testing[Bintray] and copy it to `M2_HOME/lib/ext`
+Get Smart Testing Extension _shaded jar_ from http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/[Maven Central] and copy it to `M2_HOME/lib/ext`.
 
-==== Maven >= 3.3.X
+==== Maven above 3.3.X
 
 You can still use the process described at <<Maven >= 3.1.X>> or use the new _core extension configuration mechanism_ by
 creating folder called `.mvn` in the root of your project and create inside it an `extensions.xml` file
