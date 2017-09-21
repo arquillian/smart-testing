@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.configuration.ReportConfiguration;
+import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.Report;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
 
@@ -30,7 +30,7 @@ public class SmartTestingReportGenerator {
     }
 
     public void generateReport() {
-        final ReportConfiguration reportConfig = configuration.getReportConfiguration();
+        final Report reportConfig = configuration.getReport();
         ExecutionReportMarshaller service =
             new ExecutionReportMarshaller(baseDir, reportConfig.getDir(),
                 reportConfig.getName());

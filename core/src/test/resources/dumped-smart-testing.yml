@@ -3,6 +3,6 @@ applyTo: null
 debug: false
 disable: false
 mode: SELECTING
-reportConfiguration: {dir: target, name: smart-testing-report.xml}
-scmConfiguration: {head: HEAD, tail: HEAD~0}
+report: {dir: target, name: smart-testing-report.xml}
+scm: {head: HEAD, tail: HEAD~0}
 strategies: [new]

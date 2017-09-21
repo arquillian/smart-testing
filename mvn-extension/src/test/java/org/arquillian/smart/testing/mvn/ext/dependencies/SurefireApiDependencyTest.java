@@ -64,7 +64,7 @@ public class SurefireApiDependencyTest {
         Model model = new Model();
         Plugin surefirePlugin = new Plugin();
         surefirePlugin.setArtifactId(ApplicablePlugins.SUREFIRE.getArtifactId());
-        surefirePlugin.setVersion("2.20");
+        surefirePlugin.setVersion(version);
         Build build = new Build();
         build.addPlugin(surefirePlugin);
         model.setBuild(build);

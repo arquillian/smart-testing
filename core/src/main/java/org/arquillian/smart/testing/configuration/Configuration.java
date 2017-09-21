@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.RunMode;
@@ -37,6 +39,8 @@ public class Configuration {
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
     public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
+    public static final String SMART_TESTING_YML = "smart-testing.yml";
+    public static final String SMART_TESTING_YAML = "smart-testing.yaml";
 
     private String[] strategies = new String[0];
     private RunMode mode;
@@ -45,8 +49,8 @@ public class Configuration {
     private boolean disable;
     private boolean debug;
 
-    private ReportConfiguration reportConfiguration;
-    private ScmConfiguration scmConfiguration;
+    private Report report;
+    private Scm scm;
 
     public String[] getStrategies() {
         return strategies;
@@ -88,33 +92,32 @@ public class Configuration {
         this.debug = debug;
     }
 
-    public ReportConfiguration getReportConfiguration() {
-        return reportConfiguration;
+    public Report getReport() {
+        return report;
     }
 
-    public void setReportConfiguration(ReportConfiguration reportConfiguration) {
-        this.reportConfiguration = reportConfiguration;
+    public void setReport(Report report) {
+        this.report = report;
     }
 
-    public ScmConfiguration getScmConfiguration() {
-        return scmConfiguration;
+    public Scm getScm() {
+        return scm;
     }
 
-    public void setScmConfiguration(ScmConfiguration scmConfiguration) {
-        this.scmConfiguration = scmConfiguration;
+    public void setScm(Scm scm) {
+        this.scm = scm;
     }
 
     public static Configuration load() {
         final Yaml yaml = new Yaml();
         Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
-
-        File parent = new File(".");
-        final File[] files = parent.listFiles((dir, name) -> name.equals("smart-testing.yml") || name.equals("smart-testing.yaml"));
+        final File parent = Paths.get("").toAbsolutePath().toFile();
+        final File[] files = parent.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
         if (files != null) {
             if (files.length == 0) {
                 logger.info(
-                    "Config file `smart-testing.yaml` OR `smart-testing.yml` is not found. Using system properties to load "
+                    "Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YAML + "` is not found. Using system properties to load "
                         + "configuration for smart testing.");
             } else {
                 try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
@@ -129,7 +132,8 @@ public class Configuration {
     }
 
     public static Configuration loadPrecalculated() {
-        final File configFile = new LocalStorage(".").execution().file("smart-testing.yml").getFile();
+        final File parent = Paths.get("").toAbsolutePath().toFile();
+        final File configFile = new LocalStorage(parent).execution().file(SMART_TESTING_YML).getFile();
 
         return loadConfigurationFromFile(configFile);
     }
@@ -143,6 +147,17 @@ public class Configuration {
         }
     }
 
+    // testing
+    public static Configuration load(Path path) {
+        try (InputStream io = Files.newInputStream(path)) {
+            final Yaml yaml = new Yaml();
+            Map<String, Object> yamlConfiguration = (Map<String, Object>) yaml.load(io);
+            return parseConfiguration(yamlConfiguration);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
     private static Path getConfigurationFilePath(File[] files) {
         if(files.length == 1) {
             final File configFile = files[0];
@@ -150,11 +165,11 @@ public class Configuration {
             return configFile.toPath();
         }
 
-        logger.warn("Found multiple config files with supported names: smart-testing.yml, smart-testing.yaml");
-        logger.warn("Using configuration from smart-testing.yml");
+        logger.warn("Found multiple config files with supported names: " + SMART_TESTING_YAML + ", "  + SMART_TESTING_YML);
+        logger.warn("Using configuration from " + SMART_TESTING_YML);
 
         return Arrays.stream(files)
-            .filter(file -> file.getName().equals("smart-testing.yml"))
+            .filter(file -> file.getName().equals(SMART_TESTING_YML))
             .map(File::toPath)
             .findFirst()
             .get();
@@ -178,24 +193,23 @@ public class Configuration {
 
         final Map<String, Object> reportConfig = (Map<String, Object>) yamlConfiguration.get("report");
 
-        final ReportConfiguration reportConfiguration = new ReportConfiguration();
-        reportConfiguration.setEnable(Boolean.valueOf(overWriteSystemProperty(reportConfig, "enable", SMART_TESTING_REPORT_ENABLE, "false")));
-        reportConfiguration.setDir(overWriteSystemProperty(reportConfig, "dir", SMART_TESTING_REPORT_DIR, "target"));
-        reportConfiguration.setName(overWriteSystemProperty(reportConfig, "name", SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
+        final Report report = new Report();
+        report.setEnable(Boolean.valueOf(overWriteSystemProperty(reportConfig, "enable", SMART_TESTING_REPORT_ENABLE, "false")));
+        report.setDir(overWriteSystemProperty(reportConfig, "dir", SMART_TESTING_REPORT_DIR, "target"));
+        report.setName(overWriteSystemProperty(reportConfig, "name", SMART_TESTING_REPORT_NAME, DEFAULT_REPORT_FILE_NAME));
 
-        configuration.reportConfiguration = reportConfiguration;
+        configuration.report = report;
 
         final Map<String, Object> scmConfig = (Map<String, Object>) yamlConfiguration.get("scm");
 
         final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, "0");
         final Map<String, Object> scmRange = scmConfig != null ? (Map<String, Object>) scmConfig.get("range") : null;
 
-        final ScmConfiguration scmConfigurationConfiguration = new ScmConfiguration();
-        scmConfigurationConfiguration.setHead(overWriteSystemProperty(scmRange, "withHead", SCM_RANGE_HEAD, HEAD));
-        scmConfigurationConfiguration.setTail(overWriteSystemProperty(scmRange, "withTail",
-            SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)));
+        final Scm scm = new Scm();
+        scm.setHead(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD));
+        scm.setTail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)));
 
-        configuration.scmConfiguration = scmConfigurationConfiguration;
+        configuration.scm = scm;
 
         return configuration;
     }
@@ -204,7 +218,12 @@ public class Configuration {
         if (System.getProperty(propertyName) != null) {
             return System.getProperty(propertyName);
         } else if (yamlConfig != null && yamlConfig.get(key) != null) {
-            return String.valueOf(yamlConfig.get(key));
+            final Object value = yamlConfig.get(key);
+            if (value instanceof List) {
+                final List<String> list = (List<String>) value;
+                return String.join(",", list);
+            }
+            return String.valueOf(value);
         } else {
             return defaultValue;
         }
@@ -240,16 +259,21 @@ public class Configuration {
         private String applyTo;
         private boolean disable;
         private boolean debug;
-        private ReportConfiguration reportConfiguration;
-        private ScmConfiguration scmConfiguration;
+        private Report report;
+        private Scm scm;
 
-        public Builder strategies(String[] strategies) {
+        public Builder strategies(String... strategies) {
             this.strategies = strategies;
             return this;
         }
 
         public Builder mode(RunMode mode) {
             this.mode = mode;
+            return this;
+        }
+
+        public Builder mode(String mode) {
+            mode(RunMode.valueOf(mode.toUpperCase()));
             return this;
         }
 
@@ -268,13 +292,13 @@ public class Configuration {
             return this;
         }
 
-        public Builder reportConfiguration(ReportConfiguration reportConfiguration) {
-            this.reportConfiguration = reportConfiguration;
+        public Builder report(Report report) {
+            this.report = report;
             return this;
         }
 
-        public Builder scmConfiguration(ScmConfiguration scmConfiguration) {
-            this.scmConfiguration = scmConfiguration;
+        public Builder scm(Scm scm) {
+            this.scm = scm;
             return this;
         }
 
@@ -286,8 +310,8 @@ public class Configuration {
                 configuration.applyTo = this.applyTo;
                 configuration.disable = this.disable;
                 configuration.debug = this.debug;
-                configuration.reportConfiguration = this.reportConfiguration;
-                configuration.scmConfiguration = this.scmConfiguration;
+                configuration.report = this.report;
+                configuration.scm = this.scm;
 
             return configuration;
         }

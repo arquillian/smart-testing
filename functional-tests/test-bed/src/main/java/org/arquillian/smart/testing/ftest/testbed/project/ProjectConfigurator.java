@@ -1,14 +1,23 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.RunMode;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Mode;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.Property;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 public class ProjectConfigurator {
 
@@ -19,9 +28,11 @@ public class ProjectConfigurator {
     private Strategy[] strategies;
     private Mode mode;
     private String version;
+    private Configuration configuration;
 
     private final Project project;
     private final Path root;
+    private boolean createConfigFile;
 
     ProjectConfigurator(Project project, Path root) {
         this.project = project;
@@ -41,6 +52,17 @@ public class ProjectConfigurator {
         return this;
     }
 
+    public ProjectConfigurator withConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+        return this;
+    }
+
+    public ProjectConfigurator createConfigFile() {
+        this.createConfigFile = true;
+        createConfigurationFile();
+        return this;
+    }
+
     public ProjectConfigurator inMode(Mode mode) {
         this.mode = mode;
         return this;
@@ -52,17 +74,65 @@ public class ProjectConfigurator {
     }
 
     public Project enable() {
-
         final Path rootPom = Paths.get(root.toString(), "pom.xml");
         final MavenExtensionRegisterer mavenExtensionRegisterer = new MavenExtensionRegisterer(rootPom);
         String currentVersion = resolveVersion();
         mavenExtensionRegisterer.addSmartTestingExtension(currentVersion);
-        final String strategies = Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
-        this.project.build().options()
-            .withSystemProperties(SMART_TESTING, strategies, SMART_TESTING_MODE, getMode().getName(),
-                SMART_TESTING_VERSION, currentVersion)
-            .configure();
+            if (!createConfigFile) {
+                this.project.build()
+                    .options()
+                    .withSystemProperties(SMART_TESTING, strategies(), SMART_TESTING_MODE, getMode().getName(),
+                        SMART_TESTING_VERSION, currentVersion)
+                    .configure();
+            } else {
+                if (configuration == null) {
+                    this.configuration = Configuration.builder()
+                        .strategies(strategies().split("\\s*,\\s*"))
+                        .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
+                        .build();
+                }
+
+                this.project.configureSmartTesting()
+                    .withConfiguration(configuration)
+                    .createConfigFile();
+            }
         return this.project;
+    }
+
+    public String strategies() {
+       return Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
+    }
+
+    private void createConfigurationFile() {
+        final Path configFilePath = Paths.get(root.toString(), "smart-testing.yml");
+        dumpConfiguration(configFilePath);
+    }
+
+    private void dumpConfiguration(Path configFilePath) {
+        try (FileWriter fileWriter = new FileWriter(configFilePath.toFile())) {
+            DumperOptions options = new DumperOptions();
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+            Representer representer = new Representer() {
+                @Override
+                protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue,Tag customTag) {
+                    // if value of property is null, ignore it.
+                    if (propertyValue == null) {
+                        return null;
+                    }
+                    else {
+                        return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
+                    }
+                }
+            };
+
+            representer.addClassTag(Configuration.class, Tag.MAP);
+
+            Yaml yaml = new Yaml(representer, options);
+            yaml.dump(configuration, fileWriter);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to dump configuration in file " + configFilePath, e);
+        }
     }
 
     private String resolveVersion() {

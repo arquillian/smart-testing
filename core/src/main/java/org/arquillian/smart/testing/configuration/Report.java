@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.configuration;
 
-public class ReportConfiguration {
+public class Report {
     public boolean isEnable() {
         return enable;
     }
@@ -29,8 +29,8 @@ public class ReportConfiguration {
         this.name = name;
     }
 
-    public static ReportConfiguration.Builder builder() {
-        return new ReportConfiguration.Builder();
+    public static Report.Builder builder() {
+        return new Report.Builder();
     }
 
     public static class Builder {
@@ -53,12 +53,12 @@ public class ReportConfiguration {
             return this;
         }
 
-        public ReportConfiguration build() {
-            final ReportConfiguration reportConfiguration = new ReportConfiguration();
-            reportConfiguration.enable = this.enable;
-            reportConfiguration.dir = this.dir;
-            reportConfiguration.name = this.name;
-            return reportConfiguration;
+        public Report build() {
+            final Report report = new Report();
+            report.enable = this.enable;
+            report.dir = this.dir;
+            report.name = this.name;
+            return report;
         }
     }
 }

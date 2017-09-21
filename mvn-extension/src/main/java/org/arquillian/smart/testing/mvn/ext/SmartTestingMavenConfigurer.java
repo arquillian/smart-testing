@@ -1,7 +1,9 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -44,7 +46,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
 
         configuration = Configuration.load();
-        storeConfiguration();
+        storeConfiguration(session);
 
         if (session.getRequest().getLoggingLevel() == 0) {
             logger.enableMavenDebugLogLevel(true);
@@ -65,10 +67,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
-    private void storeConfiguration() {
+    private void storeConfiguration(MavenSession session) {
         SubDirectoryFileAction configFile = new LocalStorage(".")
                 .execution()
-                .file("smart-testing.yml");
+                .file(Configuration.SMART_TESTING_YML);
         try {
             configFile.create();
         } catch (IOException e) {
@@ -80,6 +82,22 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             yaml.dump(configuration, fileWriter);
         } catch (IOException e) {
             throw new RuntimeException("Failed to store configuration in file " + configFile.getPath(), e);
+        }
+
+        session.getAllProjects().forEach(mavenProject -> copyConfigurationFile(mavenProject.getModel(), configFile.getFile()));
+    }
+
+    private void copyConfigurationFile(Model model, File parentFile) {
+        final SubDirectoryFileAction subDirectoryFileAction = new LocalStorage(model.getProjectDirectory())
+            .execution()
+            .file(Configuration.SMART_TESTING_YML);
+        logger.debug("Copying " + Configuration.SMART_TESTING_YML + " from [%s] to [%s]", parentFile.getPath(),
+            subDirectoryFileAction.getPath());
+
+        try {
+            subDirectoryFileAction.create(Files.readAllBytes(parentFile.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

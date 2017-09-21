@@ -1,15 +1,16 @@
 package org.arquillian.smart.testing.impl;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.ClassNameExtractorTest;
-import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.FilesCodecTest;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.TestSelectionTest;
 import org.arquillian.smart.testing.api.SmartTesting;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
@@ -40,7 +41,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
+        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
+            .in(getBaseDir(getClass()))
             .applyOnClasses(testsToRun);
 
         // then
@@ -63,7 +65,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
+        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
+            .in(getBaseDir(getClass()))
             .applyOnClasses(testsToRun);
 
         // then
@@ -86,7 +89,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
+        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
+            .in(getBaseDir(getClass()))
             .applyOnClasses(testsToRun);
 
         // then
@@ -110,7 +114,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
+        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
+            .in(getBaseDir(getClass()))
             .applyOnClasses(testsToRun);
 
         // then
@@ -134,5 +139,10 @@ public class TestStrategyApplierUsingPropertyTest {
 
     private Set<Class<?>> createTestsToRun(Class... testClasses) {
         return new LinkedHashSet<>(Arrays.<Class<?>>asList(testClasses));
+    }
+
+    private String getBaseDir(Class<?> aClass) {
+        final String path = aClass.getResource("/smart-testing.yml").getPath();
+        return path.substring(0, path.indexOf(File.separator + "target"));
     }
 }

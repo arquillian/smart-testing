@@ -1,15 +1,17 @@
 package org.arquillian.smart.testing.configuration;
 
-public class ScmConfiguration {
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
+
+public class Scm {
     private String head;
     private String tail;
 
-    ScmConfiguration(Builder builder) {
+    Scm(Builder builder) {
         this.head = builder.head;
         this.tail = builder.tail;
     }
 
-    ScmConfiguration() {
+    Scm() {
     }
 
     public void setHead(String head) {
@@ -28,10 +30,9 @@ public class ScmConfiguration {
         return tail;
     }
 
-    public static ScmConfiguration.Builder builder() {
-        return new ScmConfiguration.Builder();
+    public static Scm.Builder builder() {
+        return new Scm.Builder();
     }
-
 
     public static class Builder {
         private String head;
@@ -47,8 +48,14 @@ public class ScmConfiguration {
             return this;
         }
 
-        public ScmConfiguration build() {
-            return new ScmConfiguration(this);
+        public Builder lastChanges(String n) {
+            this.head = HEAD;
+            this.tail = String.join("~", HEAD, n);
+            return this;
+        }
+
+        public Scm build() {
+            return new Scm(this);
         }
     }
 }

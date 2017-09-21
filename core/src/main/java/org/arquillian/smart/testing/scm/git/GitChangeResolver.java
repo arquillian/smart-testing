@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.configuration.ScmConfiguration;
+import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -38,16 +38,15 @@ public class GitChangeResolver implements ChangeResolver {
     private final Git git;
 
     public GitChangeResolver() {
-        this(Paths.get("").toAbsolutePath().toFile(), Configuration.load().getScmConfiguration());
+        this(Paths.get("").toAbsolutePath().toFile(), Configuration.loadPrecalculated().getScm());
     }
 
     public GitChangeResolver(File projectDir) {
-        this(projectDir, Configuration.load().getScmConfiguration());
+        this(projectDir, Configuration.loadPrecalculated().getScm());
     }
 
-    public GitChangeResolver(File projectDir, ScmConfiguration scmConfiguration) {
-        this(projectDir, scmConfiguration.getHead(),
-            scmConfiguration.getTail());
+    public GitChangeResolver(File projectDir, Scm scm) {
+        this(projectDir, scm.getTail(), scm.getHead());
     }
 
     public GitChangeResolver(File dir, String previous, String head) {
