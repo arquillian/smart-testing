@@ -15,8 +15,8 @@ import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepo
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
+import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage.SMART_TESTING_SCM_CHANGES;
-import static org.arquillian.smart.testing.hub.storage.local.LocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::documentation[]

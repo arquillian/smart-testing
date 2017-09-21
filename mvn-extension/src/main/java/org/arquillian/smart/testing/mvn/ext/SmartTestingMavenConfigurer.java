@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.arquillian.smart.testing.hub.storage.local.SubDirectoryFileAction;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -62,15 +63,17 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
             calculateChanges();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
             logStrategiesNotDefined();
         }
     }
 
     private void storeConfiguration(MavenSession session) {
-        SubDirectoryFileAction configFile = new LocalStorage(".")
-                .execution()
-                .file(Configuration.SMART_TESTING_YML);
+        final LocalStorageFileAction configFile = new LocalStorage(Paths.get("").toFile())
+            .duringExecution()
+            .temporary()
+            .file(Configuration.SMART_TESTING_YML);
         try {
             configFile.create();
         } catch (IOException e) {
@@ -88,14 +91,15 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void copyConfigurationFile(Model model, File parentFile) {
-        final SubDirectoryFileAction subDirectoryFileAction = new LocalStorage(model.getProjectDirectory())
-            .execution()
+        final LocalStorageFileAction configFile = new LocalStorage(model.getProjectDirectory())
+            .duringExecution()
+            .temporary()
             .file(Configuration.SMART_TESTING_YML);
         logger.debug("Copying " + Configuration.SMART_TESTING_YML + " from [%s] to [%s]", parentFile.getPath(),
-            subDirectoryFileAction.getPath());
+            configFile.getPath());
 
         try {
-            subDirectoryFileAction.create(Files.readAllBytes(parentFile.toPath()));
+            configFile.create(Files.readAllBytes(parentFile.toPath()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,11 +135,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             logStrategiesNotDefined();
         }
 
-        session.getAllProjects().forEach(mavenProject -> {
-            Model model = mavenProject.getModel();
-            String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
-            new LocalStorage(model.getProjectDirectory()).purge(target);
-        });
+        purgeLocalStorage(session);
     }
 
     private void calculateChanges() {
@@ -174,5 +174,13 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             skipExtensionInstallation = configuration.isDisable() || isSkipTestExecutionSet() || isSpecificTestClassSet();
         }
         return skipExtensionInstallation;
+    }
+
+    private void purgeLocalStorage(MavenSession session) {
+        session.getAllProjects().forEach(mavenProject -> {
+            Model model = mavenProject.getModel();
+            String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
+            new LocalStorage(model.getProjectDirectory()).duringExecution().purge(target);
+        });
     }
 }

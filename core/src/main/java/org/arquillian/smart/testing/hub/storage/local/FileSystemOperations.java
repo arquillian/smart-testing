@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import org.arquillian.smart.testing.Logger;
 
-class FileSystemOperations {
+public class FileSystemOperations {
 
     private static final Logger logger = Logger.getLogger();
 
@@ -62,7 +62,7 @@ class FileSystemOperations {
         }
     }
 
-    static void deleteDirectory(Path directory, boolean catchException) {
+    public static void deleteDirectory(Path directory, boolean catchException) {
         if (directory.toFile().exists()) {
             try {
                 Files

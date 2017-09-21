@@ -15,7 +15,7 @@
   <packaging>pom</packaging>
 
   <name>Smart Testing</name>
-  <description>Smart testing is a tool that knows which tests you want to run</description>
+  <description>Smart Testing is a tool that knows which tests you want to run</description>
 
   <licenses>
     <license>

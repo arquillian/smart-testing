@@ -17,6 +17,7 @@ import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
@@ -133,7 +134,7 @@ public class Configuration {
 
     public static Configuration loadPrecalculated() {
         final File parent = Paths.get("").toAbsolutePath().toFile();
-        final File configFile = new LocalStorage(parent).execution().file(SMART_TESTING_YML).getFile();
+        final File configFile = new LocalStorage(parent).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
 
         return loadConfigurationFromFile(configFile);
     }
@@ -176,7 +177,7 @@ public class Configuration {
 
     }
 
-    static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
+    private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
         final Configuration configuration = new Configuration();
 
         configuration.mode = RunMode.valueOf(overWriteSystemProperty(yamlConfiguration, "mode", SMART_TESTING_MODE, DEFAULT_MODE).toUpperCase());
@@ -202,7 +203,7 @@ public class Configuration {
 
         final Map<String, Object> scmConfig = (Map<String, Object>) yamlConfiguration.get("scm");
 
-        final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, "0");
+        final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, DEFAULT_LAST_COMMITS);
         final Map<String, Object> scmRange = scmConfig != null ? (Map<String, Object>) scmConfig.get("range") : null;
 
         final Scm scm = new Scm();

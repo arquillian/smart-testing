@@ -32,6 +32,10 @@ public class Project implements AutoCloseable {
         return projectBuilder.getMavenLog();
     }
 
+    public boolean failed() {
+        return projectBuilder.getBuiltProject().getMavenBuildExitCode() != 0;
+    }
+
     public ProjectConfigurator configureSmartTesting() {
         return new ProjectConfigurator(this, root);
     }

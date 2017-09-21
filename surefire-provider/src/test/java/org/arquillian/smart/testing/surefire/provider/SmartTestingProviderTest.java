@@ -1,6 +1,10 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,11 +15,19 @@ import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterConfiguration;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.hub.storage.local.FileSystemOperations;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.yaml.snakeyaml.Yaml;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -46,6 +58,8 @@ public class SmartTestingProviderTest {
     @Test
     public void when_get_suites_is_called_then_same_list_of_classes_will_be_returned() {
         // given
+        dumpConfiguration();
+
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -59,6 +73,7 @@ public class SmartTestingProviderTest {
     @Test
     public void test_when_invoke_is_called_with_null() throws Exception {
         // given
+        dumpConfiguration();
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -96,6 +111,32 @@ public class SmartTestingProviderTest {
         verify(surefireProvider, times(0)).getSuites();
         verify(surefireProvider, times(1)).invoke(argThat((ArgumentMatcher<Iterable<Class>>)
             iterable -> iterableContains(iterable, expectedClassesToRun)));
+    }
+
+    @BeforeClass
+    public static void dumpConfiguration() {
+        final LocalStorageFileAction configFile = new LocalStorage(Paths.get("").toFile())
+            .duringExecution()
+            .temporary()
+            .file(Configuration.SMART_TESTING_YML);
+        try {
+            configFile.create();
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot create " + configFile.getPath() + " file", e);
+        }
+
+        try (FileWriter fileWriter = new FileWriter(configFile.getFile())) {
+            Yaml yaml = new Yaml();
+            yaml.dump(Configuration.load(), fileWriter);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store configuration in file " + configFile.getPath(), e);
+        }
+    }
+
+    @AfterClass
+    public static void purgeConfiguration() {
+        final Path tempDirPath = Paths.get(Paths.get("").toAbsolutePath().toString(), SMART_TESTING_WORKING_DIRECTORY_NAME);
+        FileSystemOperations.deleteDirectory(tempDirPath, true);
     }
 
     private boolean iterableContains(Iterable<Class> iterable, Set expectedClasses) {

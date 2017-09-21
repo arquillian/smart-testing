@@ -141,6 +141,30 @@ public class ClassDependenciesGraphTest {
     }
 
     @Test
+    public void should_not_detect_all_changes_transitive_if_transitivity_is_disabled() {
+        // given
+        System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_TRANSITIVITY, "false");
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
+
+        final String testLocation = ATest.class.getResource("ATest.class").getPath();
+        final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
+        final String testLocation3 = CTest.class.getResource("CTest.class").getPath();
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation), new File(testLocation2),
+            new File(testLocation3)));
+
+        // when
+        Set<File> mainObjectsChanged = new HashSet<>();
+        mainObjectsChanged.add(new File(D.class.getResource("D.class").getPath()));
+
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
+
+        // then
+        assertThat(testsDependingOn)
+            .isEmpty();
+    }
+
+    @Test
     public void should_exclude_imports_if_property_set() {
         // given
         System.setProperty(AffectedRunnerProperties.SMART_TESTING_AFFECTED_EXCLUSIONS, "org.arquillian.smart.testing.strategies.affected.fakeproject.main.B");

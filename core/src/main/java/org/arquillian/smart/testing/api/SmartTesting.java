@@ -23,7 +23,7 @@ public class SmartTesting {
      * @return An instance of {@link ConfiguredSmartTesting} class
      */
     public static ConfiguredSmartTesting with(TestVerifier testVerifier) {
-        return with(testVerifier, Configuration.load());
+        return with(testVerifier, Configuration.loadPrecalculated());
     }
 
     /**

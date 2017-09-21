@@ -71,10 +71,11 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
-        final TestResults actualTestResults = projectBuilder
+        projectBuilder
                 .options()
                     .withDebugOutput()
                     .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~")
+                    .logBuildOutput(false)
                 .configure()
             .run();
 

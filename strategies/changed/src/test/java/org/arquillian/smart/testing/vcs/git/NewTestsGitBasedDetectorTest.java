@@ -26,6 +26,7 @@ public class NewTestsGitBasedDetectorTest {
 
     @Before
     public void unpack_repo() {
+        // see repo.log for current commit list
         final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
         unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
     }

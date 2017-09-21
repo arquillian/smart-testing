@@ -26,6 +26,7 @@ public class ChangedTestsDetectorTest {
 
     @Before
     public void unpack_repo() {
+        // see repo.log for current commit list
         final URL repoBundle = Thread.currentThread().getContextClassLoader().getResource("repo.bundle");
         unpackRepository(gitFolder.getRoot().getAbsolutePath(), repoBundle.getFile());
     }
@@ -40,9 +41,26 @@ public class ChangedTestsDetectorTest {
         // when
         final Iterable<TestSelection> changedTests = changedTestsDetector.getTests();
 
-        // 
+        // then
         assertThat(changedTests).extracting(TestSelection::getClassName)
             .containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest");
+    }
+
+    @Test
+    public void should_find_all_renamed_tests_in_the_range_of_commits() throws Exception {
+        // given
+        // 76b6069 renames test introduced in b4a8a3 - org.arquillian.smart.testing.vcs.git.EvenMoreDummyFilesDetectorTest
+        // 6b4a8a3 introduces new test - org.arquillian.smart.testing.vcs.git.DummyFilesDetectorTest
+        final ChangedTestsDetector changedTestsDetector =
+            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "6b4a8a3", "76b6069"), new NoopStorage(),
+                className -> className.endsWith("Test"));
+
+        // when
+        final Iterable<TestSelection> changedTests = changedTestsDetector.getTests();
+
+        // then
+        assertThat(changedTests).extracting(TestSelection::getClassName)
+            .containsOnly("org.arquillian.smart.testing.vcs.git.EvenMoreDummyFilesDetectorTest");
     }
 
     @Test

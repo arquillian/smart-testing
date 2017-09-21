@@ -1,16 +1,20 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 
 public class DependencyResolver {
 
+    private static Logger LOGGER = Logger.getLogger();
     private final Configuration configuration;
+    private final StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
 
     public DependencyResolver(Configuration configuration) {
         this.configuration = configuration;
@@ -26,9 +30,20 @@ public class DependencyResolver {
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-        for (final String strategy : strategies) {
-            final Dependency dependency = dependencies.get(strategy);
-            model.addDependency(dependency);
+        final Map<String, String> strategyMismatch = new HashMap<>();
+        for (final String definedStrategy : strategies) {
+            if (!dependencies.containsKey(definedStrategy)) {
+                final String closestMatch = stringSimilarityCalculator.findClosestMatch(definedStrategy, dependencies.keySet());
+                strategyMismatch.put(definedStrategy, closestMatch);
+            } else {
+                final Dependency dependency = dependencies.get(definedStrategy);
+                model.addDependency(dependency);
+            }
+        }
+        strategyMismatch.forEach((selection, match) -> LOGGER.error("Unable to find strategy [%s]. Did you mean [%s]?", selection, match));
+        if (!strategyMismatch.isEmpty()) {
+            throw new IllegalStateException("Unknown strategies (see above). Please refer to http://arquillian.org/smart-testing/#_strategies "
+                + "for the list of available strategies.");
         }
     }
 

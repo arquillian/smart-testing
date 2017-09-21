@@ -11,6 +11,9 @@ class AffectedRunnerProperties {
 
     private static final String SMART_TESTING_AFFECTED_CONFIG = "smart.testing.affected.config";
 
+    static final String SMART_TESTING_AFFECTED_TRANSITIVITY = "smart.testing.affected.transitivity";
+    static final String DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE = "true";
+
     static final String SMART_TESTING_AFFECTED_EXCLUSIONS = "smart.testing.affected.exclusions";
     static final String SMART_TESTING_AFFECTED_INCLUSIONS = "smart.testing.affected.inclusions";
     static final String INCLUSIONS = "inclusions";
@@ -33,6 +36,11 @@ class AffectedRunnerProperties {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    static boolean getSmartTestingAffectedTransitivity() {
+        return Boolean.parseBoolean(System.getProperty(SMART_TESTING_AFFECTED_TRANSITIVITY,
+            DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE));
     }
 
     static String getSmartTestingAffectedExclusions() {

@@ -2,17 +2,20 @@ package org.arquillian.smart.testing.vcs.git;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
-import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
+
+import static org.arquillian.smart.testing.scm.ChangeType.MODIFY;
+import static org.arquillian.smart.testing.scm.ChangeType.RENAME;
 
 public class ChangedTestsDetector implements TestExecutionPlanner {
 
@@ -46,7 +49,7 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
             });
 
         return files.stream()
-            .filter(change -> ChangeType.MODIFY.equals(change.getChangeType()))
+            .filter(change -> EnumSet.of(MODIFY, RENAME).contains(change.getChangeType()))
             .filter(change -> testVerifier.isTest(change.getLocation()))
             .map(change -> new TestSelection(change.getLocation(), getName()))
             .collect(Collectors.toList());
