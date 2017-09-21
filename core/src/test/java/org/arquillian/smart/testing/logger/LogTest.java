@@ -26,4 +26,17 @@ public class LogTest {
         // then
         assertThat(logger).isInstanceOf(new DummyLoggerFactory().getLogger().getClass());
     }
+
+    @Test
+    public void should_reset_logger_instance_to_default_when_logger_factory_reset() throws Exception {
+        // given
+        Log.setLoggerFactory(new DummyLoggerFactory());
+
+        //when
+        Log.setLoggerFactory(new DefaultLoggerFactory());
+        final Logger logger = Log.getLogger();
+
+        // then
+        assertThat(logger).isInstanceOf(new DefaultLoggerFactory().getLogger().getClass());
+    }
 }

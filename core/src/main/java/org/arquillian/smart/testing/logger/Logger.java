@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.logger;
 public interface Logger {
 
     /**
-     * Will format the given message with the given arguments and print it on standard output.
+     * Will format the given message with the given arguments and log it at info level.
      *
      * @param msg
      *     Message to print
@@ -13,7 +13,7 @@ public interface Logger {
     void info(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and print it on standard output.
+     * Will format the given message with the given arguments and log it warn level.
      *
      * @param msg
      *     Message to print
@@ -23,20 +23,20 @@ public interface Logger {
     void warn(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and print it on standard output, if debug mode is enabled.
+     * Will format the given message with the given arguments and log it at debug level, if debug mode is enabled.
      *
      * @param msg
-     *     The string message (or a key in the message catalog)
+     *     Message to print
      * @param args
      *     arguments to the message
      */
     void debug(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and print it on standard output.
+     * Will format the given message with the given arguments and log it at error level.
      *
      * @param msg
-     *     The string message (or a key in the message catalog)
+     *     Message to print
      * @param args
      *     arguments to the message
      */
