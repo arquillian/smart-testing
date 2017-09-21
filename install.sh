@@ -2,9 +2,8 @@
 
 MAVEN_METADATA=$(curl -sL http://central.maven.org/maven2/org/arquillian/smart/testing/smart-testing-parent/maven-metadata.xml)
 LATEST=$(echo ${MAVEN_METADATA} | grep -oPm1 "(?<=<latest>)[^<]+")
-RELEASE=$(echo ${MAVEN_METADATA} | grep -oPm1 "(?<=<release>)[^<]+")
 
-VERSION=${RELEASE}
+VERSION=${LATEST}
 INSTALL_SPECIFIC_VERSION="0"
 
 while test $# -gt 0; do
@@ -12,8 +11,7 @@ while test $# -gt 0; do
             -h|--help)
                 echo "Installs Arquillian Smart Testing Extension"
                 echo "options:"
-                echo "-l, --latest                   installs latest version of the extension"
-                echo "-r, --release                  installs latest released version of the extension"
+                echo "-l, --latest                   installs latest version of the extension (default)"
                 echo "-v, --version=VERSION          installs defined version (doesn't check if exists!)"
                 exit 0
                 ;;
@@ -22,18 +20,13 @@ while test $# -gt 0; do
                 VERSION=${LATEST}
                 shift
                 ;;
-            -r|--release)
-                shift
-                VERSION=${RELEASE}
-                shift
-                ;;
             -v)
                 shift
                 if test $# -gt 0; then
                     VERSION=$1
                     INSTALL_SPECIFIC_VERSION="1"
                 else
-                    echo "no version specified"
+                    echo "No version specified."
                     exit 1
                 fi
                 shift

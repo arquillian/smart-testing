@@ -9,8 +9,7 @@ Ok, just execute following snippet and you are all set:
 
 You can also add these flags:
 
-  * `-l|--latest` latest published artifact in Maven Central
-  * `-r|--release` latest release (that's the default)
+  * `-l|--latest` latest published artifact in Maven Central (that's the default)
   * `-v|--version=` - specific version to install
 
 For example:
