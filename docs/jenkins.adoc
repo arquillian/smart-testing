@@ -75,3 +75,4 @@ pipeline {
 There are few important things you have to keep in mind when adjusting your `Jenkinsfile` if you are using declarative script approach.
 
 First of all you need to disable automatic checkout. Then you need to manually call checkout and store the result into  a variable. Finally you can call Maven, getting Git parameters from `scmVars`.
+
