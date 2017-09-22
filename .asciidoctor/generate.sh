@@ -25,11 +25,27 @@ done
 
 WORKING_DIR=${TRAVIS_BUILD_DIR:-${PWD}}
 
+TARGET_FOLDER=""
+
+if [ ! -z "${TRAVIS_PULL_REQUEST// }" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+    TARGET_FOLDER="pr/${TRAVIS_PULL_REQUEST}"
+fi
+
+if [ ! -z "${TRAVIS_TAG}" ]; then
+    TARGET_FOLDER="${TRAVIS_TAG}"
+fi
+
+if [ -z "${TARGET_FOLDER// }" ] && [ "${TRAVIS_BRANCH}" != "master" ]; then
+    TARGET_FOLDER="preview/${TRAVIS_COMMIT}"
+fi
+
+echo "Generating doc in $TARGET_FOLDER"
+
 docker run -v ${WORKING_DIR}:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor \
     -r /docs/.asciidoctor/lib/const-inline-macro.rb \
     -r /docs/.asciidoctor/lib/copy-to-clipboard-inline-macro.rb \
     -a generated-doc=true -a asciidoctor-source=/docs/docs \
-    /docs/README.adoc -o /docs/gh-pages/index.html --trace;
+    /docs/README.adoc -o /docs/gh-pages/${TARGET_FOLDER}/index.html --trace;
 
 docker ps -a | grep -q 'Exited (0)' && FAILED=0 || FAILED=1
 
