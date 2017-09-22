@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
+import org.apache.maven.surefire.report.DefaultConsoleReporter;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.configuration.Configuration;
