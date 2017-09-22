@@ -19,6 +19,8 @@ For example:
 
 This script will automatically do what we described below. If you are curious keep on reading, but you may skip it too.
 
+IMPORTANT: The script is tested on Linux, but we do provide basic OSX support footnote:[In case no `.mvn/extension.xml` file exists.] with the fully fledged version coming next release.
+
 IMPORTANT: This script requires `xmllint`, so make sure you have it installed.
 
 === Maven Extension
