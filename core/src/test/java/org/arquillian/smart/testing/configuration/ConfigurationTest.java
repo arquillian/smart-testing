@@ -1,17 +1,9 @@
 package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
@@ -24,25 +16,26 @@ public class ConfigurationTest {
     @Test
     public void should_load_configuration_with_default_values_if_property_is_not_specified_in_config_file(){
         // given
-        final Report report = Report.builder()
-                .enable(true)
-                .name(REPORT_FILE_NAME)
-                .dir("target")
-            .build();
+        final Report report = new Report();
+        report.setEnable(true);
+        report.setName(REPORT_FILE_NAME);
+        report.setDir("target");
 
-        final Scm scm = Scm.builder()
-                .range(Range.builder().head(HEAD).tail(HEAD + "~3").build())
-            .build();
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(HEAD + "~3");
 
-        final Configuration expectedConfiguration = Configuration.builder()
-                .mode(ORDERING)
-                .strategies("new", "changed", "affected")
-                .applyTo("surefire")
-                .debug(true)
-                .disable(false)
-                .report(report)
-                .scm(scm)
-            .build();
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(ORDERING);
+        expectedConfiguration.setStrategies("new", "changed", "affected");
+        expectedConfiguration.setApplyTo("surefire");
+        expectedConfiguration.setDebug(true);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setScm(scm);
+        expectedConfiguration.setReport(report);
 
         // when
         final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/smart-testing.yml"));
@@ -55,24 +48,25 @@ public class ConfigurationTest {
     @Test
     public void should_load_dumped_configuration_from_file_as_configuration() {
         // given
-        final Report report = Report.builder()
-                .enable(false)
-                .name(REPORT_FILE_NAME)
-                .dir("target")
-            .build();
+        final Report report = new Report();
+        report.setEnable(false);
+        report.setName(REPORT_FILE_NAME);
+        report.setDir("target");
 
-        final Scm scm = Scm.builder()
-                .range(Range.builder().head(HEAD).tail(HEAD + "~0").build())
-            .build();
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(HEAD + "~0");
 
-        final Configuration expectedConfiguration = Configuration.builder()
-                .mode(SELECTING)
-                .strategies("new")
-                .debug(false)
-                .disable(false)
-                .report(report)
-                .scm(scm)
-            .build();
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(SELECTING);
+        expectedConfiguration.setStrategies("new");
+        expectedConfiguration.setDebug(false);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setScm(scm);
+        expectedConfiguration.setReport(report);
 
         // when
         final Configuration actualConfiguration =

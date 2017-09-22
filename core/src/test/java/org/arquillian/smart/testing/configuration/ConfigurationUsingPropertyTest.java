@@ -26,25 +26,26 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING, "changed");
         System.setProperty(SMART_TESTING_MODE, "selecting");
 
-        final Report report = Report.builder()
-                .enable(true)
-                .name(REPORT_FILE_NAME)
-                .dir("target")
-            .build();
+        final Report report = new Report();
+        report.setEnable(true);
+        report.setName(REPORT_FILE_NAME);
+        report.setDir("target");
 
-        final Scm scm = Scm.builder()
-                .range(Range.builder().head(HEAD).tail(HEAD + "~3").build())
-            .build();
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(HEAD + "~3");
 
-        final Configuration expectedConfiguration = Configuration.builder()
-                .mode(SELECTING)
-                .strategies("changed")
-                .applyTo("surefire")
-                .debug(true)
-                .disable(false)
-                .report(report)
-                .scm(scm)
-            .build();
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(SELECTING);
+        expectedConfiguration.setStrategies("changed");
+        expectedConfiguration.setApplyTo("surefire");
+        expectedConfiguration.setDebug(true);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setReport(report);
+        expectedConfiguration.setScm(scm);
 
         // when
         final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/smart-testing.yml"));
@@ -60,25 +61,26 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING, "changed");
         System.setProperty(SMART_TESTING_REPORT_ENABLE, "true");
 
+        final Report report = new Report();
+        report.setEnable(true);
+        report.setName(REPORT_FILE_NAME);
+        report.setDir("target");
 
-        final Report report = Report.builder()
-                .enable(true)
-                .name(REPORT_FILE_NAME)
-                .dir("target")
-            .build();
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(HEAD + "~0");
 
-        final Scm scm = Scm.builder()
-                .range(Range.builder().head(HEAD).tail(HEAD + "~0").build())
-            .build();
+        final Scm scm = new Scm();
+        scm.setRange(range);
 
-        final Configuration expectedConfiguration = Configuration.builder()
-                .mode(SELECTING)
-                .strategies("changed")
-                .debug(false)
-                .disable(false)
-                .report(report)
-                .scm(scm)
-            .build();
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(SELECTING);
+        expectedConfiguration.setStrategies("changed");
+        expectedConfiguration.setDebug(false);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setReport(report);
+        expectedConfiguration.setScm(scm);
+
 
         // when
         final Configuration actualConfiguration = Configuration.load();

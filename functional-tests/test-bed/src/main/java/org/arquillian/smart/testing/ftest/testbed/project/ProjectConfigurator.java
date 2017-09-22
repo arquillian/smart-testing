@@ -12,6 +12,7 @@ import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Mode;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
+import org.arquillian.smart.testing.ftest.testbed.configuration.builder.ConfigurationBuilder;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.Property;
@@ -84,7 +85,7 @@ public class ProjectConfigurator {
                     .configure();
             } else {
                 if (configuration == null) {
-                    this.configuration = Configuration.builder()
+                    this.configuration = new ConfigurationBuilder()
                             .strategies(strategies().split("\\s*,\\s*"))
                             .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
                         .build();

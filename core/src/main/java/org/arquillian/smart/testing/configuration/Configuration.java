@@ -58,7 +58,7 @@ public class Configuration {
         return strategies;
     }
 
-    public void setStrategies(String[] strategies) {
+    public void setStrategies(String... strategies) {
         this.strategies = strategies;
     }
 
@@ -228,12 +228,15 @@ public class Configuration {
         final String lastChanges = overWriteSystemProperty(scmConfig, "lastChanges", SCM_LAST_CHANGES, DEFAULT_LAST_COMMITS);
 
         final Map<String, Object> scmRange = scmConfig != null ? (Map<String, Object>) scmConfig.get("range") : null;
-        final Range range = Range.builder()
-                .head(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD))
-                .tail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)))
-            .build();
 
-        configuration.scm = Scm.builder().range(range).build();
+        final Range range = new Range();
+        range.setHead(overWriteSystemProperty(scmRange, "head", SCM_RANGE_HEAD, HEAD));
+        range.setTail(overWriteSystemProperty(scmRange, "tail", SCM_RANGE_TAIL, String.join("~", HEAD, lastChanges)));
+
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        configuration.scm = scm;
 
         return configuration;
     }
@@ -273,71 +276,4 @@ public class Configuration {
         return this.applyTo != null;
     }
 
-    public static Builder builder() {
-        return new Configuration.Builder();
-    }
-
-    public static class Builder {
-        private String[] strategies;
-        private RunMode mode;
-        private String applyTo;
-        private boolean disable;
-        private boolean debug;
-        private Report report;
-        private Scm scm;
-
-        public Builder strategies(String... strategies) {
-            this.strategies = strategies;
-            return this;
-        }
-
-        public Builder mode(RunMode mode) {
-            this.mode = mode;
-            return this;
-        }
-
-        public Builder mode(String mode) {
-            mode(RunMode.valueOf(mode.toUpperCase()));
-            return this;
-        }
-
-        public Builder applyTo(String applyTo) {
-            this.applyTo = applyTo;
-            return this;
-        }
-
-        public Builder disable(boolean disable) {
-            this.disable = disable;
-            return this;
-        }
-
-        public Builder debug(boolean debug) {
-            this.debug = debug;
-            return this;
-        }
-
-        public Builder report(Report report) {
-            this.report = report;
-            return this;
-        }
-
-        public Builder scm(Scm scm) {
-            this.scm = scm;
-            return this;
-        }
-
-        public Configuration build() {
-
-            final Configuration configuration = new Configuration();
-            configuration.strategies = this.strategies;
-            configuration.mode = this.mode;
-            configuration.applyTo = this.applyTo;
-            configuration.disable = this.disable;
-            configuration.debug = this.debug;
-            configuration.report = this.report;
-            configuration.scm = this.scm;
-
-            return configuration;
-        }
-    }
 }

@@ -5,8 +5,6 @@ debug: true
 disable: false
 report:
     enable: true
-    dir: target
-    name: report.xml
 scm:
     range:
       head: HEAD
