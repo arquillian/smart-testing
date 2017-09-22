@@ -21,6 +21,7 @@ before_install:
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
   - git describe --tags --exact-match HEAD >/dev/null 2>&1 && TAGGED=0 || TAGGED=1
+  - 'echo $TRAVIS_TAG'
   - '[ $TAGGED -eq 0 ] || [ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l) -gt 0 ] || [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
   - 'if [ $GENERATE_DOC -eq 0 ]; then
       git config user.name "${GH_USER}";
