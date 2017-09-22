@@ -16,6 +16,11 @@ public interface TestVerifier {
      * @return Whether the given path to a resource represents a test class or not
      */
     default boolean isTest(Path resource) {
+
+        if (!isJavaFile(resource)) {
+            return false;
+        }
+
         final String className = new ClassNameExtractor().extractFullyQualifiedName(resource);
         return isTest(className);
     }
@@ -27,9 +32,15 @@ public interface TestVerifier {
      * @return Whether the given path to a resource represents a non-test class or not
      */
     default boolean isCore(Path resource) {
+        if (!isJavaFile(resource)) {
+            return false;
+        }
         return !isTest(resource);
     }
 
+    default boolean isJavaFile(Path file) {
+        return file.toString().endsWith(".java");
+    }
 
     /**
      * Check whether the given {@link TestSelection} instance represents a test class or not
