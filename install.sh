@@ -51,7 +51,8 @@ function install_shaded_library() {
     SHADED_JAR="maven-lifecycle-extension-${VERSION}-shaded.jar"
     echo "Installing ${SHADED_JAR} into ${M2_HOME}/lib/ext"
     wget http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/${VERSION}/${SHADED_JAR}
-    read -r -p "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] " response
+    echo -n "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] "
+    read -r response
     case "$response" in
         [yY][eE][sS]|[yY])
               sudo mv $SHADED_JAR $M2_HOME/lib/ext
@@ -91,7 +92,8 @@ function install_extension() {
                 fi
                 echo "."
             elif [ $EXTENSION_REGISTERED != $LATEST ]; then
-                read -r -p ". Do you want to override with latest ${LATEST}? [y/N] " response
+                echo -n ". Do you want to override with latest ${LATEST}? [y/N] "
+                read -r response
                 case "$response" in
                     [yY][eE][sS]|[yY])
                           override_version ${LATEST}
@@ -124,7 +126,8 @@ function override_version() {
 function ignore_smart_testing_artifacts() {
     cat .gitignore 2>&1  | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
     if [ ${EXISTS} == 0 ]; then
-        read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
+        echo -n "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] "
+        read -r response
             case "$response" in
                 [nN][oO]|[nN])
                     ;;
