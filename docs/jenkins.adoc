@@ -28,7 +28,7 @@ mvn -Dconst:core/src/main/java/org/arquillian/smart/testing/Configuration.java[n
 On the next figure you can see the step configuration.
 
 .Freestyle Execute Shell Configuration
-image::st-freestyle.png[]
+image::st-jenkins-freestyle-job.png[]
 
 After setting this up you are ready to run the build.
 
