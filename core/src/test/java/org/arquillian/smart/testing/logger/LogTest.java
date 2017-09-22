@@ -1,9 +1,12 @@
 package org.arquillian.smart.testing.logger;
 
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class LogTest {
 
     @Test
