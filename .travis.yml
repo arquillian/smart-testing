@@ -52,7 +52,7 @@ before_script:
             git commit -m"docs: cleans up closed PR doc preview";
             git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
         fi
-        cd -;
+        cd ..;
       fi
   '
 
