@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpecificTestClassExecutionFunctionalTest {
 
-    private static final String SMART_TESTING_EXTENSION_DISABLED = "[Smart Testing Extension] Smart Testing is disabled.";
-    private static final String SMART_TESTING_EXTENSION_ENABLED = "[Smart Testing Extension] Enabling extension.";
+    private static final String SMART_TESTING_EXTENSION_DISABLED = "Smart Testing Extension - Smart Testing is disabled.";
+    private static final String SMART_TESTING_EXTENSION_ENABLED = "Smart Testing Extension - Enabling extension.";
     private static final String BASE_CONFIG = "config/impl-base";
 
     @ClassRule

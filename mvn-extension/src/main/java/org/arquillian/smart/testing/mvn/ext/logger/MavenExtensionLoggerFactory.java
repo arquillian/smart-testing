@@ -22,7 +22,7 @@ public class MavenExtensionLoggerFactory implements LoggerFactory {
 
     private class MavenExtensionLogger implements Logger {
 
-        private static final String SMART_TESTING_EXTENSION_PREFIX = "[Smart Testing Extension] ";
+        private static final String SMART_TESTING_EXTENSION_PREFIX = "Smart Testing Extension - ";
         private final org.codehaus.plexus.logging.Logger logger;
         private Configuration configuration;
 

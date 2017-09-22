@@ -23,7 +23,7 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
 
     private class SurefireProviderLogger implements Logger {
 
-        private static final String PREFIX = "%s: Smart Testing Provider - ";
+        private static final String PREFIX = "%s: Smart Testing Extension - ";
 
         private ConsoleLogger consoleLogger;
 

@@ -20,9 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DebugModeSmartTestingFunctionalTest {
 
-    private static final String MAVEN_DEBUG_LOGS = "[DEBUG] [Smart Testing Extension]";
-    private static final String DEFAULT_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
-    private static final String PROVIDER_DEBUG_LOGS = "DEBUG: Smart Testing Provider -";
+    private static final String MAVEN_DEBUG_LOGS = "[DEBUG] Smart Testing Extension -";
+    private static final String PROVIDER_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
@@ -55,7 +54,6 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains(DEFAULT_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
         assertThat(projectMavenLog).contains("Applied user properties");
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");

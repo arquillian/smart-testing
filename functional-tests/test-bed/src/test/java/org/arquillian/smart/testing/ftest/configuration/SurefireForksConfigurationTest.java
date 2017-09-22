@@ -23,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
-    private static final String MAVEN_LOGS = "[Smart Testing Extension]";
-    private static final String SUREFIRE_PROVIDER_LOGS = "Smart Testing Provider -";
+    private static final String SUREFIRE_PROVIDER_LOGS = "Smart Testing Extension -";
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
@@ -88,7 +87,6 @@ public class SurefireForksConfigurationTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        assertThat(projectMavenLog).contains(MAVEN_LOGS);
         assertThat(projectMavenLog).contains(SUREFIRE_PROVIDER_LOGS);
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), REPORT_FILE_NAME);
