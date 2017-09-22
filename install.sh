@@ -115,11 +115,7 @@ function install_extension() {
 }
 
 function override_version() {
-    cat .mvn/extensions.xml | awk -v groupId="org.arquillian.smart.testing" -v version=$1 -v RS="</extension>" '
-      $0 ~ "<groupId>" groupId "</groupId>" {
-        sub("<version>.*</version>", "<version>" version "</version>")
-      }
-      {printf "%s", $0 RS}' | sed '$ d' > .mvn/extensions-new.xml
+    sed -e "s/<version>.*<\/version>/<version>$1<\/version>/g" .mvn/extensions.xml > .mvn/extensions-new.xml
     mv .mvn/extensions-new.xml .mvn/extensions.xml
 }
 
