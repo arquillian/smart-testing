@@ -39,6 +39,15 @@ before_script:
   # Cleanup PR doc previews - until we figure out how to have a webhook on closing the PR
   - 'if [ "${BRANCH}" == "master" ]; then
         cd gh-pages;
+        UPDATE_GH_PAGES=0;
+        for pr in $(ls -1p pr/ >/dev/null 2>&1 | grep "/$" | sed "s/\/$//"); do
+            PR_CLOSED=$(curl https://api.github.com/repos/arquillian/smart-testing/pulls/$pr/merge -H "Authorization:token ${GH_TOKEN}" -I -s -o /dev/null -w "%{http_code}");
+            if [ "${PR_CLOSED}" == "204" ]; then
+                UPDATE_GH_PAGES=1;
+                rm -rf pr/${pr};
+            fi
+        done;
+
         
         cd ..;
       fi
