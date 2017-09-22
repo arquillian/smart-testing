@@ -73,6 +73,7 @@ after_success:
       git add .;
       git commit -m"docs: publishes new documentation";
       git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
+      echo ${TRAVIS_PULL_REQUEST};
       if [ ! -z "${TRAVIS_PULL_REQUEST// }" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
           curl https://api.github.com/repos/arquillian/smart-testing/issues/${TRAVIS_PULL_REQUEST}/comments -H "Authorization:token ${GH_TOKEN}" \
               -X POST -d "{ \"body\": \"Documentation ready for preview at http://arquillian.org/smart-testing/pr/${TRAVIS_PULL_REQUEST}\"}"
