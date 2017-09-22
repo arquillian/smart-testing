@@ -35,10 +35,6 @@ if [ ! -z "${TRAVIS_TAG}" ]; then
     TARGET_FOLDER="${TRAVIS_TAG}"
 fi
 
-if [ -z "${TARGET_FOLDER// }" ] && [ "${TRAVIS_BRANCH}" != "master" ]; then
-    TARGET_FOLDER="preview/${TRAVIS_COMMIT}"
-fi
-
 echo "Generating doc in $TARGET_FOLDER"
 
 docker run -v ${WORKING_DIR}:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor \

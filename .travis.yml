@@ -20,8 +20,10 @@ cache:
 before_install:
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
+  - COMMITS_WITH_FORCED_GEN=$(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l)
   - git describe --tags --exact-match HEAD >/dev/null 2>&1 && TAGGED=0 || TAGGED=1
-  - '[ $TAGGED -eq 0 ] || [ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l) -gt 0 ] || [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
+  - '[ $TAGGED -eq 0 ] || [ $COMMITS_WITH_FORCED_GEN -gt 0 ] || [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
+  - '[ "${BRANCH}" == "master" ] || [ ! -z "${TRAVIS_PULL_REQUEST// }"  -a "${TRAVIS_PULL_REQUEST}" != "false" ] && GENERATE_DOC=0 || GENERATE_DOC=1
   - 'if [ $GENERATE_DOC -eq 0 ]; then
       git config user.name "${GH_USER}";
       git config user.email "${GH_EMAIL}";
@@ -51,7 +53,7 @@ before_script:
         if [ $UPDATE_GH_PAGES -eq 1 ]; then
             git add .;
             git commit -m"docs: cleans up closed PR doc previews";
-            git push --quiet "${GH_REF}" gh-pages;
+            git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
         fi;
 
         cd ..;
@@ -72,7 +74,7 @@ after_success:
       cd gh-pages;
       git add .;
       git commit -m"docs: publishes new documentation";
-      git push --quiet "${GH_REF}" gh-pages;
+      git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
       if [ ! -z "${TRAVIS_PULL_REQUEST// }" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
         curl https://api.github.com/repos/arquillian/smart-testing/issues/${TRAVIS_PULL_REQUEST}/comments -H "Authorization:token ${GH_TOKEN}" -X POST -d "{ \"body\": \"Documentation ready for preview at http://arquillian.org/smart-testing/pr/${TRAVIS_PULL_REQUEST}\"}";
       fi;
