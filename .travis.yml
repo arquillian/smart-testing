@@ -21,7 +21,6 @@ before_install:
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
   - git describe --tags --exact-match HEAD >/dev/null 2>&1 && TAGGED=0 || TAGGED=1
-  - 'echo $TRAVIS_TAG'
   - '[ $TAGGED -eq 0 ] || [ $(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l) -gt 0 ] || [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
   - 'if [ $GENERATE_DOC -eq 0 ]; then
       git config user.name "${GH_USER}";
@@ -59,7 +58,6 @@ before_script:
       fi
   '
 
-
 env:
   - TEST_BED_M2_HOME=/home/travis/.arquillian/mvn/apache-maven-3.3.9
 
@@ -78,7 +76,6 @@ after_success:
       if [ ! -z "${TRAVIS_PULL_REQUEST// }" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
           curl https://api.github.com/repos/arquillian/smart-testing/issues/${TRAVIS_PULL_REQUEST}/comments -H "Authorization:token ${GH_TOKEN}" \
               -X POST -d "{ \"body\": \"Documentation ready for preview at http://arquillian.org/smart-testing/pr/${TRAVIS_PULL_REQUEST}\"}"
-
       fi
     fi'
 
