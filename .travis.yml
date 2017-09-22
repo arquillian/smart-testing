@@ -47,6 +47,7 @@ before_script:
             if [ "${PR_CLOSED}" == "204" ]; then
                 UPDATE_GH_PAGES=1;
                 rm -rf pr/${pr};
+                curl https://api.github.com/repos/arquillian/smart-testing/issues/${pr}/comments -H "Authorization:token ${GH_TOKEN}" -X POST -d "{ \"body\": \"Documentation was merged with master - latest version you can find at http://arquillian.org/smart-testing/.\"}";
             fi
         done;
 
