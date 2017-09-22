@@ -37,23 +37,24 @@ before_script:
   - wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz -P /home/travis/.arquillian/resolver/maven/download
   - tar -xf /home/travis/.arquillian/resolver/maven/download/apache-maven-3.3.9-bin.tar.gz -C ~/.arquillian/mvn
   # Cleanup PR doc previews - until we figure out how to have a webhook on closing the PR
-  - 'echo $BRANCH'
-  - 'if [ "$BRANCH" == "master" ]; then
-      cd gh-pages;
-      UPDATE_GH_PAGES=0
-      for pr in $(ls -1p pr/ | grep "/$" | sed "s/\/$//"); do
-        CLOSED=$(curl https://api.github.com/repos/arquillian/smart-testing/pulls/$pr/merge -H "Authorization:token ${GH_TOKEN}" -I -s -o /dev/null -w "%{http_code}")
-        if [ "$CLOSED" == "204" ]; then
-          UPDATE_GH_PAGES=1
-          rm -rf pr/${pr}
-        fi
-      done
-      if [ $UPDATE_GH_PAGES -eq 1 ]; then
-        git commit -m"docs: cleans up closed PR doc preview";
-        git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
+  - '
+      if [ "${BRANCH}" == "master" ]; then
+          cd gh-pages
+          UPDATE_GH_PAGES=0
+          for pr in $(ls -1p pr/ | grep "/$" | sed "s/\/$//"); do
+              PR_CLOSED=$(curl https://api.github.com/repos/arquillian/smart-testing/pulls/$pr/merge -H "Authorization:token ${GH_TOKEN}" -I -s -o /dev/null -w "%{http_code}")
+              if [ "${PR_CLOSED}" == "204" ]; then
+                  UPDATE_GH_PAGES=1
+                  rm -rf pr/${pr}
+              fi
+          done
+
+          if [ ${UPDATE_GH_PAGES} -eq 1 ]; then
+              git commit -m"docs: cleans up closed PR doc preview";
+              git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
+          fi
+          cd -
       fi
-      cd -
-     fi
   '
 
 
