@@ -48,7 +48,12 @@ before_script:
             fi
         done;
 
-        
+        if [ $UPDATE_GH_PAGES -eq 1 ]; then
+            git add .;
+            git commit -m"docs: cleans up closed PR doc previews";
+            git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
+        fi;
+
         cd ..;
       fi
   '
