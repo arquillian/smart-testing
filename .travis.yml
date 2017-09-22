@@ -55,7 +55,6 @@ before_script:
             git commit -m"docs: cleans up closed PR doc previews";
             git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
         fi;
-
         cd ..;
       fi
   '
@@ -76,7 +75,9 @@ after_success:
       git commit -m"docs: publishes new documentation";
       git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
       if [ ! -z "${TRAVIS_PULL_REQUEST// }" ] && [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
-        curl https://api.github.com/repos/arquillian/smart-testing/issues/${TRAVIS_PULL_REQUEST}/comments -H "Authorization:token ${GH_TOKEN}" -X POST -d "{ \"body\": \"Documentation ready for preview at http://arquillian.org/smart-testing/pr/${TRAVIS_PULL_REQUEST}\"}";
+        curl https://api.github.com/repos/arquillian/smart-testing/issues/${TRAVIS_PULL_REQUEST}/comments \
+        -H "Authorization:token ${GH_TOKEN}" -X POST \
+        -d "{ \"body\": \"Greeting earthlings! Documentation is ready for preview at http://arquillian.org/smart-testing/pr/${TRAVIS_PULL_REQUEST}. Just be patient. It might take a few minutes for the changes to show up.\"}";
       fi;
     fi'
 
