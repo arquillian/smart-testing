@@ -41,18 +41,19 @@ before_script:
   # Cleanup PR doc previews - until we figure out how to have a webhook on closing the PR
   - 'if [ "${BRANCH}" == "master" ] && [ $GENERATE_DOC -eq 0 ]; then
         cd gh-pages;
+        EXISTING_PR_RANGE=$(ls -1p pr/ 2>/dev/null | grep "/$" | sed "s/\/$//");
         UPDATE_GH_PAGES=0;
-        for pr in $(ls -1p pr/ >/dev/null 2>&1 | grep "/$" | sed "s/\/$//"); do
+        for pr in $EXISTING_PR_RANGE; do
             PR_CLOSED=$(curl https://api.github.com/repos/${TRAVIS_REPO_SLUG}/pulls/$pr/merge -H "Authorization:token ${GH_TOKEN}" -I -s -o /dev/null -w "%{http_code}");
             if [ "${PR_CLOSED}" == "204" ]; then
                 UPDATE_GH_PAGES=1;
                 rm -rf pr/${pr};
-                curl https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${pr}/comments -H "Authorization:token ${GH_TOKEN}" -X POST -d "{ \"body\": \"Documentation was merged with master - latest version you can find at http://arquillian.org/smart-testing/.\"}";
+                curl https://api.github.com/repos/${TRAVIS_REPO_SLUG}/issues/${pr}/comments -H "Authorization:token ${GH_TOKEN}" -X POST -d "{ \"body\": \"Documentation has been merged with master - latest version can be found at http://arquillian.org/smart-testing/.\"}";
             fi
         done;
 
         if [ $UPDATE_GH_PAGES -eq 1 ]; then
-            git add .;
+            git add -A .;
             git commit -m"docs: cleans up closed PR doc previews";
             git push --quiet "${GH_REF}" gh-pages > /dev/null 2>&1;
         fi;
