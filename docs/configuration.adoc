@@ -41,7 +41,7 @@ The values can be commit ids or using `const:core/src/main/java/org/arquillian/s
 For example: `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=HEAD~`
 By default if not specified, default value is `HEAD`.
 * `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=HEAD~~`.
+For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]=HEAD~~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
