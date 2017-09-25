@@ -66,7 +66,6 @@ On Linux you can combine it with following command:
 
 This will generate the documentation and open it in the browser.
 
-
 endif::generated-doc[]
 
 ifdef::generated-doc[]

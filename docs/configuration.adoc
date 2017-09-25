@@ -41,7 +41,7 @@ The values can be commit ids or using `const:core/src/main/java/org/arquillian/s
 For example: `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]=HEAD~`
 By default if not specified, default value is `HEAD`.
 * `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]` can be used to set the number of commits from `HEAD` that you want to inspect.
-For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]=HEAD~~`.
+For example `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]=3` will be equivalent as `-Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]=HEAD -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]=HEAD~~~`.
 
 TIP: Those properties might be in particular handy when used in the CI builds.
 For example in Jenkins when using https://wiki.jenkins.io/display/JENKINS/Git+Plugin[Git Plugin] you can configure your build as follows:
