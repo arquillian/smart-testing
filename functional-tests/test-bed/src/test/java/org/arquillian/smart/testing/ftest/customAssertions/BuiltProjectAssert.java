@@ -1,11 +1,15 @@
 package org.arquillian.smart.testing.ftest.customAssertions;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.FileAssert;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 
+import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
+import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.contentOf;
 
 public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, BuiltProject> {
@@ -47,7 +51,8 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
 
     private BuiltProjectAssert hasReportFile(String report) {
         final File targetDirectory = actual.getTargetDirectory();
-        final FileAssert fileAssert = new FileAssert(new File(targetDirectory, report));
+        Path reportPath = Paths.get(targetDirectory.toString(), SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
+        final FileAssert fileAssert = new FileAssert(new File(reportPath.toString(), report));
         if (isJar(actual)) {
             if (testsWereExecuted(targetDirectory)) {
                 fileAssert.exists();
