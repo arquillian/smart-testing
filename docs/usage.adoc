@@ -81,8 +81,8 @@ You can also choose to run only a concrete set of multiple test classes.
 NOTE: When multiple specific tests are set without any pattern, smart testing is disabled just like the case 
 for single test.
 
-You can further choose to execute multiple test classes in combination with smart testing's <<configuration#_modes, 
-`selecting`>> and <<configuration#_modes,`ordering`>> mode by using patterns as 
+You can further choose to execute multiple test classes in combination with smart testing's <<_modes,
+`selecting`>> and <<_modes,`ordering`>> mode by using patterns 
 http://maven.apache.org/surefire/maven-surefire-plugin/examples/single-test.html[supported by Maven].
 
 [[starMultipleTests]]
