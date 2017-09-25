@@ -38,11 +38,13 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
                 .configure()
             .run();
 
+        // tag::documentation[]
         project.configureSmartTesting()
                     .executionOrder(FAILED)
                     .inMode(SELECTING)
                 .createConfigFile()
             .enable();
+        // end::documentation[]
 
         final Collection<TestResult> expectedTestResults = project.applyAsCommits("fix: Introduces error by changing return value");
 

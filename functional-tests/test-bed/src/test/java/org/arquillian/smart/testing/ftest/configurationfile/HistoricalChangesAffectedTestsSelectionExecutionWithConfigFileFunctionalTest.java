@@ -61,6 +61,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
         // given
         final Project project = testBed.getProject();
 
+        // tag::documentation_config[]
         final Configuration configuration = new ConfigurationBuilder()
                 .mode(SELECTING)
                 .strategies(AFFECTED)
@@ -68,11 +69,15 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
                     .lastChanges("2")
                     .build()
                 .build();
+        // end::documentation_config[]
 
+        // tag::documentation[]
         project.configureSmartTesting()
                     .withConfiguration(configuration)
                 .createConfigFile()
             .enable();
+        // end::documentation[]
+
 
         final Collection<TestResult> expectedTestResults = project.applyAsCommits("Single method body modification - sysout",
                 "Inlined variable in a method");

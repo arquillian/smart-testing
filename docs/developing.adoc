@@ -40,6 +40,26 @@ include::../functional-tests/test-bed/src/test/java/org/arquillian/smart/testing
 This snippet will enable `smart-testing` extension in the background. It will also apply test selection criteria
 and execution mode (`selecting` meaning only tests which belong to categories defined in `executionOrder`).
 
+====== Config file creation
+We have self-explainatory fluent api to create configuration with required options.
+
+[source, java, indent=0]
+----
+include::..//functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/configurationfile/HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunctionalTest.java[tag=documentation_config]
+----
+
+Also we have fluent api to create configuration file at the root of your maven project using given configuration
+[source, java, indent=0]
+----
+include::..//functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/configurationfile/HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunctionalTest.java[tag=documentation]
+----
+
+OR using required options
+[source, java, indent=0]
+----
+include::..//functional-tests/test-bed/src/test/java/org/arquillian/smart/testing/ftest/configurationfile/HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctionalTest.java[tag=documentation]
+----
+
 ====== Applying changes
 
 We decided to apply changes to the selected code base by modifying sample repository directly.

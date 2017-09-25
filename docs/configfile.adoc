@@ -1,0 +1,52 @@
+== Configuration file
+
+You can use smart-testing.y(a)ml file which is present at `${project.dir}/smart-testing.yml`.
+Configuration file looks as follows:
+
+[[config-file]]
+[source, yaml, indent=0]
+----
+include::../core/src/test/resources/smart-testing.yml[]
+----
+copyToClipboard:config-file[]
+
+However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <<_reference_card, references>> for all supported system properties.
+
+=== Configuration file reference
+The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
+
+NOTE: You can use either a .yml or .yaml extension for this file.
+
+==== strategies
+This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.
+This should be defined in `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]`.
+
+==== mode
+This is used to select mode for Smart Testing. Look at <<_modes, modes>> for all supported options & default value.
+
+==== applyTo
+This applies smart testing to use with `surefire` or `failsafe` plugin definition. By default this is applied to `failsafe`, `surefire` both.
+This is optional field.
+
+==== debug
+This enables debug mode if sets to `true`. It will take `false` as default value. This is optional field.
+
+==== disable
+This disables smart testing extension without removing it if set to `true`. By default it's `false`.
+This is optional field.
+
+==== report
+
+===== enable
+This generates smart testing report if set to `true`. By default it's `false`. This is optional field.
+
+==== scm
+To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges` to configure `SCM_COMMIT` & `SCM_PREVIOUS_COMMIT`.
+This is optional field. By default `range[head]` will point to `HEAD` & `range[tail]` will point to `HEAD~0`.
+
+===== range
+* head - Set commit sha or `HEAD` notation.
+* tail - Set commit sha or `HEAD` notation.
+
+===== lastChanges
+This is used to set the number of commits from `HEAD` that you want to inspect
