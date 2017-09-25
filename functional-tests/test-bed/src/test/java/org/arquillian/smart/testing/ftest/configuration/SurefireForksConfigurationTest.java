@@ -90,7 +90,7 @@ public class SurefireForksConfigurationTest {
         assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
         assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainReport(REPORT_FILE_NAME);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
         softly.assertAll();
     }
 }

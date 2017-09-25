@@ -5,7 +5,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 
 public class CustomSoftAssertions extends SoftAssertions {
 
-    public BuildProjectAssert assertThat(BuiltProject actual) {
-        return proxy(BuildProjectAssert.class, BuiltProject.class, actual);
+    public BuiltProjectAssert assertThat(BuiltProject actual) {
+        return proxy(BuiltProjectAssert.class, BuiltProject.class, actual);
     }
 }

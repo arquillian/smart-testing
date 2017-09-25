@@ -59,7 +59,7 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
-        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 
     @Test
@@ -90,6 +90,6 @@ public class DebugModeSmartTestingFunctionalTest {
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(MAVEN_DEBUG_LOGS);
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
-        softly.assertThat(projectBuilder.getBuiltProject()).hasAllBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 }

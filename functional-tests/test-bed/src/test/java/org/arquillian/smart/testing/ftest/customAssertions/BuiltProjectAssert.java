@@ -5,27 +5,33 @@ import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.api.FileAssert;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 
-public class BuildProjectAssert extends AbstractAssert<BuildProjectAssert, BuiltProject> {
+public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, BuiltProject> {
 
-    BuildProjectAssert(BuiltProject actual) {
-        super(actual, BuildProjectAssert.class);
+    BuiltProjectAssert(BuiltProject actual) {
+        super(actual, BuiltProjectAssert.class);
     }
 
-    public static BuildProjectAssert assertThat(BuiltProject module) {
-        return new BuildProjectAssert(module);
+    public static BuiltProjectAssert assertThat(BuiltProject module) {
+        return new BuiltProjectAssert(module);
     }
 
-    public BuildProjectAssert hasAllBuiltSubModulesContainEffectivePom(String effectivePom) {
+    public BuiltProjectAssert allBuiltSubModulesContainEffectivePom(String effectivePom) {
         actual.getModules().forEach(subModule -> assertThat(subModule).containsEffectivePom(effectivePom));
         return this;
     }
 
-    public BuildProjectAssert hasAllBuiltSubModulesContainReport(String report) {
+    /**
+     * Will assert that all built sub-modules with test executions contain report.
+     *
+     * @param report
+     *     report file to verify
+     * */
+    public BuiltProjectAssert allBuiltSubModulesWithTestExecutionsContainReport(String report) {
         actual.getModules().forEach(subModule -> assertThat(subModule).hasReportFile(report));
         return this;
     }
 
-    private BuildProjectAssert containsEffectivePom(String effectivePom) {
+    private BuiltProjectAssert containsEffectivePom(String effectivePom) {
         if (actual.getTargetDirectory().exists()) {
             FileAssert fileAssert = new FileAssert(new File(actual.getTargetDirectory(), effectivePom));
             fileAssert.exists();
@@ -33,7 +39,7 @@ public class BuildProjectAssert extends AbstractAssert<BuildProjectAssert, Built
         return this;
     }
 
-    private BuildProjectAssert hasReportFile(String report) {
+    private BuiltProjectAssert hasReportFile(String report) {
         final File targetDirectory = actual.getTargetDirectory();
         final FileAssert fileAssert = new FileAssert(new File(targetDirectory, report));
         if (isJar(actual)) {
@@ -43,7 +49,7 @@ public class BuildProjectAssert extends AbstractAssert<BuildProjectAssert, Built
                 fileAssert.doesNotExist();
             }
         } else {
-            hasAllBuiltSubModulesContainReport(report);
+            allBuiltSubModulesWithTestExecutionsContainReport(report);
             fileAssert.doesNotExist();
         }
         return this;
