@@ -39,6 +39,7 @@ import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.ext
 public class EmbeddedHttpGitServer {
 
     private static final Logger LOGGER = Logger.getLogger(EmbeddedHttpGitServer.class.getName());
+    public static final String SUFFIX = ".git";
 
     private final int port;
     private final Map<String, LazilyLoadedRepository> repositories = new HashMap<>();
@@ -106,8 +107,9 @@ public class EmbeddedHttpGitServer {
     private GitServlet createGitServlet() {
         final GitServlet gitServlet = new GitServlet();
         gitServlet.setRepositoryResolver((req, name) -> {
-            if (repositories.containsKey(name)) {
-                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(name);
+            final String nameWithoutSuffix = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
+            if (repositories.containsKey(nameWithoutSuffix)) {
+                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(nameWithoutSuffix);
                 synchronized (gitServlet) {
                     lazilyLoadedRepository.cloneRepository();
                 }

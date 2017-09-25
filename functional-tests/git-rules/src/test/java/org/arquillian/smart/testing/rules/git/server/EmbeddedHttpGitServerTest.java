@@ -62,6 +62,20 @@ public class EmbeddedHttpGitServerTest {
     }
 
     @Test
+    public void should_be_able_to_clone_repository_using_http_call_ignoring_dot_git_suffix() throws Exception {
+        // given
+        gitServer = EmbeddedHttpGitServer.fromBundle("test-repo", "repo.bundle").usingPort(9922).create();
+        gitServer.start();
+
+        // when
+        gitCloner = new GitCloner("http://localhost:9922/test-repo.git");
+        repository = gitCloner.cloneRepositoryToTempFolder();
+
+        // then
+        assertThat(new File(repository.getDirectory().getParent(), "Jenkinsfile")).exists();
+    }
+
+    @Test
     public void should_be_able_to_use_custom_port_from_system_property_and_clone_repository_using_http_call()
         throws Exception {
         // given
