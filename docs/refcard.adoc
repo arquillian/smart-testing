@@ -15,22 +15,22 @@ include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
 |===
 |Property | Description |  Default | Possible Values
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_MODE"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]`
 |Set running mode
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="DEFAULT_MODE"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="DEFAULT_MODE"]`
 a|`ordering`, `selecting`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]`
 |Set strategies in CSV
 | -
 a|`new`, `changed`, `affected`, `failed`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_DISABLE"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_DISABLE"]`
 |Disable Smart Testing
 a|`false`
 a|`true`, `false`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_APPLY_TO"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_APPLY_TO"]`
 |Set plugin to apply Smart Testing in CSV
 a|`surefire, failsafe`
 a|`surefire`, `failsafe`
@@ -42,17 +42,17 @@ a|`surefire`, `failsafe`
 |===
 |Property | Description | Default | Applicable Strategies
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="PREVIOUS_COMMIT"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]`
 |Set first commit id for inspecting changes
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD"]~const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]`
 a|`new`, `changed`, `affected`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="COMMIT"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]`
 |Set last commit id for inspecting changes
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD"]`
 a|`new`, `changed`, `affected`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="LAST_COMMITS"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]`
 |Set the number of commits from `HEAD` that you want to inspect
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]`
 a|`new`, `changed`, `affected`
@@ -84,7 +84,7 @@ a|`affected`
 |===
 |Property | Description | Default
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/Configuration.java[name="SMART_TESTING_DEBUG"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_DEBUG"]`
 a|enables the debug mode (alternatively you can use Maven debug output `(-X)` flag)
 a|`false`
 
