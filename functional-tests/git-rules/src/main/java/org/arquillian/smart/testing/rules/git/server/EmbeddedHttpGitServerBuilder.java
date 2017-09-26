@@ -14,6 +14,7 @@ public class EmbeddedHttpGitServerBuilder {
 
     private int port = EmbeddedHttpGitServer.definedPort();
     private boolean useAvailablePort = false;
+
     public EmbeddedHttpGitServerBuilder(String name, String location) {
         this.locations.put(name, location);
     }
@@ -84,8 +85,9 @@ public class EmbeddedHttpGitServerBuilder {
         return new EmbeddedHttpGitServer(locations, port, useAvailablePort);
     }
 
-    void mergeLocations(EmbeddedHttpGitServerBuilder builder) {
+    EmbeddedHttpGitServerBuilder mergeLocations(EmbeddedHttpGitServerBuilder builder) {
         builder.locations.forEach(this.locations::put);
+        return this;
     }
 
 }

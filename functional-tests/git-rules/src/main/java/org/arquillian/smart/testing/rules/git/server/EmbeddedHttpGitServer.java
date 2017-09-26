@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,6 +19,7 @@ import org.eclipse.jgit.http.server.GitServlet;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
 
+import static java.util.Optional.ofNullable;
 import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.extractName;
 
 /**
@@ -151,7 +154,7 @@ public class EmbeddedHttpGitServer {
      * @param bundleFile bundle file name. should be present on the classpath
      */
     public static EmbeddedHttpGitServerBuilder fromBundle(String name, String bundleFile) {
-        final URL bundleResource = loadBundle(bundleFile);
+        final URL bundleResource = loadBundle(".", bundleFile);
         return new EmbeddedHttpGitServerBuilder(name, bundleResource.toExternalForm());
     }
 
@@ -238,8 +241,26 @@ public class EmbeddedHttpGitServer {
         return new EmbeddedHttpGitServerBuilder(name, url.toExternalForm());
     }
 
-    private static URL loadBundle(String bundleFile) {
-        final URL bundleResource = Thread.currentThread().getContextClassLoader().getResource(bundleFile);
+    /**
+     * Scans directory for *.bundle files and creates repositories named after a file without .bundle extension
+     * @param bundleDirectory directory to lookup for *.bundle files
+     * @return
+     */
+    public static EmbeddedHttpGitServerBuilder bundlesFromDirectory(String bundleDirectory) {
+        final URL bundleDirUrl = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).findResource(bundleDirectory);
+        if (bundleDirUrl == null) {
+            throw new IllegalStateException("Unable to find bundle directory " + bundleDirectory);
+        }
+        final File bundleDir = new File(bundleDirUrl.getFile());
+        return Arrays.stream(ofNullable(bundleDir.listFiles()).orElse(new File[0]))
+            .filter(file -> file.getName().endsWith(".bundle"))
+            .map(file -> fromFile(file.getName().substring(0, file.getName().lastIndexOf(".bundle")), file))
+            .reduce(EmbeddedHttpGitServerBuilder::mergeLocations)
+            .orElseThrow(() -> new IllegalArgumentException("Directory [" + bundleDirectory + "] doesn't contain .bundle files"));
+    }
+
+    private static URL loadBundle(String directory, String bundleFile) {
+        final URL bundleResource = Thread.currentThread().getContextClassLoader().getResource(directory + "/" + bundleFile);
         if (bundleResource == null) {
             throw new IllegalArgumentException(bundleFile + " couldn't be found on the classpath");
         }
@@ -264,5 +285,4 @@ public class EmbeddedHttpGitServer {
             }
         }
     }
-
 }
