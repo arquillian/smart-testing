@@ -43,6 +43,10 @@ public class GitServer extends ExternalResource {
         return new Builder(EmbeddedHttpGitServer.fromBundle(bundleFile));
     }
 
+    public static Builder fromBundle(String name, String bundleFile) {
+        return new Builder(EmbeddedHttpGitServer.fromBundle(name, bundleFile));
+    }
+
     public int getPort() {
         return this.gitServer.getPort();
     }
