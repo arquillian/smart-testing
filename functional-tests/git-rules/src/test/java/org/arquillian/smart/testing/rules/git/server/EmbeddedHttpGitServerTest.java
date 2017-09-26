@@ -50,15 +50,16 @@ public class EmbeddedHttpGitServerTest {
     @Test
     public void should_be_able_to_use_custom_port_and_clone_repository_using_http_call() throws Exception {
         // given
-        gitServer = EmbeddedHttpGitServer.fromBundle("test-repo", "repo.bundle").usingPort(8989).create();
+        gitServer = EmbeddedHttpGitServer.fromBundle("test-repo", "booster-catalog.bundle").usingPort(8989).create();
         gitServer.start();
 
         // when
         gitCloner = new GitCloner("http://localhost:8989/test-repo");
-        repository = gitCloner.cloneRepositoryToTempFolder();
+        repository = gitCloner.cloneRepositoryToTempFolder(true);
+        Git.wrap(repository).checkout().setName("next").call();
 
         // then
-        assertThat(new File(repository.getDirectory().getParent(), "Jenkinsfile")).exists();
+        assertThat(new File(repository.getDirectory().getParent(), "RELEASE.adoc")).exists();
     }
 
     @Test

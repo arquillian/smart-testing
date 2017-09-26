@@ -42,7 +42,7 @@ import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.ext
 public class EmbeddedHttpGitServer {
 
     private static final Logger LOGGER = Logger.getLogger(EmbeddedHttpGitServer.class.getName());
-    public static final String SUFFIX = ".git";
+    private static final String SUFFIX = ".git";
 
     private final int port;
     private final Map<String, LazilyLoadedRepository> repositories = new HashMap<>();
