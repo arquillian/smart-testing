@@ -124,15 +124,22 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
-            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            configuration.dump(mavenProject.getBasedir());
-            if (isFailedStrategyUsed()) {
-                SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+            String skipTests = mavenProject.getProperties().getProperty("skipTests");
+            if (skipTests != null && skipTests.equals("true")) {
+                MavenPropertyResolver.setSkipTests(true);
+                logger.info("Smart Testing is disabled. Reason: Test Execution has been skipped in %s module.",
+                    mavenProject.getArtifactId());
+            } else {
+                mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+                configuration.dump(mavenProject.getBasedir());
+                if (isFailedStrategyUsed()) {
+                    SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+                }
             }
         });
     }
 
-    private boolean isFailedStrategyUsed(){
+    private boolean isFailedStrategyUsed() {
         return Arrays.asList(configuration.getStrategies()).contains("failed");
     }
 

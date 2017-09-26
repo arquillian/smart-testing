@@ -101,4 +101,26 @@ public class SkipTestExecutionFunctionalTest {
             .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME)
             .doesNotContainDirectory("target");
     }
+
+    @Test
+    public void should_disable_smart_testing_and_execute_no_tests_when_test_execution_skipped_from_pom() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project
+            .applyAsCommits("Configures skipTests property in pom.");
+
+        project.configureSmartTesting()
+                .executionOrder(AFFECTED)
+                .inMode(ORDERING)
+            .enable();
+
+        // when
+        final TestResults actualTestResults = project.build(CORE_MODULES).run();
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
+        //assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
+    }
 }

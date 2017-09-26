@@ -8,8 +8,10 @@ class MavenPropertyResolver {
 
     private static final Pattern TEST_CLASS_PATTERN = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
 
+    private static boolean skipTests = false;
+
     static boolean isSkipTestExecutionSet() {
-        return isSkipTests() || isSkip();
+        return isSkipTests() || isSkip() || skipTests;
     }
 
     static private boolean isSkipTests() {
@@ -27,6 +29,10 @@ class MavenPropertyResolver {
     static boolean isSpecificTestClassSet() {
         String testClasses = System.getProperty("test");
         return testClasses != null && !containsPattern(testClasses);
+    }
+
+    static void setSkipTests(boolean skipTests) {
+        MavenPropertyResolver.skipTests = skipTests;
     }
 
     private static boolean containsPattern(String testClasses) {
