@@ -115,7 +115,7 @@ function install_extension() {
 }
 
 function override_version() {
-    sed -e "s/<version>.*<\/version>/<version>$1<\/version>/g" .mvn/extensions.xml > .mvn/extensions-new.xml
+    xsltproc --stringparam version $1 updateversion.xslt .mvn/extensions.xml > .mvn/extensions-new.xml
     mv .mvn/extensions-new.xml .mvn/extensions.xml
 }
 
