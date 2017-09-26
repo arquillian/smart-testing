@@ -30,7 +30,7 @@ ifndef::generated-doc[]
 
 To quickly start using Smart Testing all you need to do is to execute following snippet:
 
-`curl -sSL https://git.io/vdv4j | bash`
+`curl -sSL https://git.io/v5jy6 | bash`
 
 You can also add these flags:
 
@@ -39,7 +39,7 @@ You can also add these flags:
 
 For example:
 
-`curl -sSL https://git.io/vdv4j | bash -s +++--+++ --latest`
+`curl -sSL https://git.io/v5jy6 | bash -s +++--+++ --latest`
 
 IMPORTANT: The script is tested on Linux, but we do provide basic OSX support footnote:[In case no `.mvn/extension.xml` file exists.] with the fully fledged version coming next release.
 
