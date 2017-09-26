@@ -94,8 +94,12 @@ public class GitChangeResolver implements ChangeResolver {
     private Set<Change> retrieveCommitsChanges() {
         final Repository repository = git.getRepository();
         try (ObjectReader reader = repository.newObjectReader()) {
-            final ObjectId oldHead = repository.resolve(previous + ENSURE_TREE);
-            final ObjectId newHead = repository.resolve(head + ENSURE_TREE);
+
+            final ObjectId oldHead = repository.resolve(this.previous + ENSURE_TREE);
+            checkObjectIdExistence(oldHead, this.previous, repository.getDirectory().getAbsolutePath());
+
+            final ObjectId newHead = repository.resolve(this.head + ENSURE_TREE);
+            checkObjectIdExistence(newHead, this.head, repository.getDirectory().getAbsolutePath());
 
             final CanonicalTreeParser oldTree = new CanonicalTreeParser();
             oldTree.reset(reader, oldHead);
@@ -109,6 +113,12 @@ public class GitChangeResolver implements ChangeResolver {
             return transformToChangeSet(reduceToRenames(commitDiffs), repoRoot);
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private void checkObjectIdExistence(ObjectId retrievedId, String id, String repoLocation) {
+        if (retrievedId == null) {
+            throw new IllegalArgumentException(String.format("Commit id %s is not found into %s Git repository", id, repoLocation));
         }
     }
 

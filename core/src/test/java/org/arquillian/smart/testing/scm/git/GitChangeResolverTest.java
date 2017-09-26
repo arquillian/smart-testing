@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 
 public class GitChangeResolverTest {
@@ -106,6 +107,17 @@ public class GitChangeResolverTest {
             relative("README.adoc"), ChangeType.MODIFY));
     }
 
+    @Test
+    public void should_return_meanful_exception_when_incorrect_commit_provided() throws Exception {
+        // given
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "null", "07b181b");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> gitChangeResolver.diff());
+
+        // then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessageStartingWith("Commit id null is not found into");
+    }
 
     private Path relative(String path) {
         return Paths.get(gitFolder.getRoot().getAbsolutePath(), path);
