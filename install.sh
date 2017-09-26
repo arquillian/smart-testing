@@ -52,7 +52,7 @@ function install_shaded_library() {
     echo "Installing ${SHADED_JAR} into ${M2_HOME}/lib/ext"
     wget http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/${VERSION}/${SHADED_JAR}
     echo -n "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] "
-    read -r response
+    read -r response < /dev/tty
     case "$response" in
         [yY][eE][sS]|[yY])
               sudo mv $SHADED_JAR $M2_HOME/lib/ext
@@ -93,7 +93,7 @@ function install_extension() {
                 echo "."
             elif [ $EXTENSION_REGISTERED != $LATEST ]; then
                 echo -n ". Do you want to override with latest ${LATEST}? [y/N] "
-                read -r response
+                read -r response < /dev/tty
                 case "$response" in
                     [yY][eE][sS]|[yY])
                           override_version ${LATEST}
@@ -115,15 +115,33 @@ function install_extension() {
 }
 
 function override_version() {
-    xsltproc --stringparam version $1 updateversion.xslt .mvn/extensions.xml > .mvn/extensions-new.xml
+
+    echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">
+
+    <xsl:param name=\"version\"/>
+    <xsl:template match=\"node()|@*\">
+        <xsl:copy>
+            <xsl:apply-templates select=\"node()|@*\"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match=\"/extensions/extension[groupId='org.arquillian.smart.testing' and artifactId='maven-lifecycle-extension']/version/text()\">
+        <xsl:value-of select=\"\$version\"/>
+    </xsl:template>
+
+</xsl:stylesheet>
+    " >> .mvn/updateversion.xslt
+    xsltproc --stringparam version $1 .mvn/updateversion.xslt .mvn/extensions.xml > .mvn/extensions-new.xml
     mv .mvn/extensions-new.xml .mvn/extensions.xml
+    rm .mvn/updateversion.xslt
 }
 
 function ignore_smart_testing_artifacts() {
     cat .gitignore 2>&1  | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
     if [ ${EXISTS} == 0 ]; then
         echo -n "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] "
-        read -r response
+        read -r response < /dev/tty
             case "$response" in
                 [nN][oO]|[nN])
                     ;;
