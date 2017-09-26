@@ -39,16 +39,16 @@ public class GitServer extends ExternalResource {
         this.gitServer.stop();
     }
 
+    public int getPort() {
+        return this.gitServer.getPort();
+    }
+
     public static Builder fromBundle(String bundleFile) {
         return new Builder(EmbeddedHttpGitServer.fromBundle(bundleFile));
     }
 
     public static Builder fromBundle(String name, String bundleFile) {
         return new Builder(EmbeddedHttpGitServer.fromBundle(name, bundleFile));
-    }
-
-    public int getPort() {
-        return this.gitServer.getPort();
     }
 
     public static Builder fromPath(Path path) {
@@ -61,6 +61,10 @@ public class GitServer extends ExternalResource {
 
     public static Builder fromUrl(URL url) {
         return new Builder(EmbeddedHttpGitServer.fromUrl(url));
+    }
+
+    public static Builder bundlesFromDirectory(String bundleDirectory) {
+        return new Builder(EmbeddedHttpGitServer.bundlesFromDirectory(bundleDirectory));
     }
 
     public static class Builder {
