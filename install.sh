@@ -51,7 +51,8 @@ function install_shaded_library() {
     SHADED_JAR="maven-lifecycle-extension-${VERSION}-shaded.jar"
     echo "Installing ${SHADED_JAR} into ${M2_HOME}/lib/ext"
     wget http://central.maven.org/maven2/org/arquillian/smart/testing/maven-lifecycle-extension/${VERSION}/${SHADED_JAR}
-    read -r -p "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] " response
+    echo -n "We want to move shaded jar to M2_HOME with sudo. Can we? [y/N] "
+    read -r response < /dev/tty
     case "$response" in
         [yY][eE][sS]|[yY])
               sudo mv $SHADED_JAR $M2_HOME/lib/ext
@@ -91,7 +92,8 @@ function install_extension() {
                 fi
                 echo "."
             elif [ $EXTENSION_REGISTERED != $LATEST ]; then
-                read -r -p ". Do you want to override with latest ${LATEST}? [y/N] " response
+                echo -n ". Do you want to override with latest ${LATEST}? [y/N] "
+                read -r response < /dev/tty
                 case "$response" in
                     [yY][eE][sS]|[yY])
                           override_version ${LATEST}
@@ -113,18 +115,33 @@ function install_extension() {
 }
 
 function override_version() {
-    cat .mvn/extensions.xml | awk -v groupId="org.arquillian.smart.testing" -v version=$1 -v RS="</extension>" '
-      $0 ~ "<groupId>" groupId "</groupId>" {
-        sub("<version>.*</version>", "<version>" version "</version>")
-      }
-      {printf "%s", $0 RS}' | sed '$ d' > .mvn/extensions-new.xml
+
+    echo "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<xsl:stylesheet version=\"1.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">
+
+    <xsl:param name=\"version\"/>
+    <xsl:template match=\"node()|@*\">
+        <xsl:copy>
+            <xsl:apply-templates select=\"node()|@*\"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match=\"/extensions/extension[groupId='org.arquillian.smart.testing' and artifactId='maven-lifecycle-extension']/version/text()\">
+        <xsl:value-of select=\"\$version\"/>
+    </xsl:template>
+
+</xsl:stylesheet>
+    " >> .mvn/updateversion.xslt
+    xsltproc --stringparam version $1 .mvn/updateversion.xslt .mvn/extensions.xml > .mvn/extensions-new.xml
     mv .mvn/extensions-new.xml .mvn/extensions.xml
+    rm .mvn/updateversion.xslt
 }
 
 function ignore_smart_testing_artifacts() {
     cat .gitignore 2>&1  | grep -q '.smart-testing' && EXISTS=1 || EXISTS=0
     if [ ${EXISTS} == 0 ]; then
-        read -r -p "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] " response
+        echo -n "Do you want to add Smart Testing execution artifacts to .gitignore? [Y/n] "
+        read -r response < /dev/tty
             case "$response" in
                 [nN][oO]|[nN])
                     ;;
@@ -148,6 +165,7 @@ function command_exists {
 
 command_exists mvn 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
 command_exists xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
+command_exists xsltproc >/dev/null 2>&1 || { echo >&2 "This script requires xsltproc. Make sure you have it installed."; exit 1; }
 
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 
