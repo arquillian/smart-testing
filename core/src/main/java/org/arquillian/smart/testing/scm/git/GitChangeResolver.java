@@ -18,12 +18,14 @@ import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.RenameDetector;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 
+import static java.lang.String.format;
 import static org.arquillian.smart.testing.scm.Change.add;
 import static org.arquillian.smart.testing.scm.Change.modify;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.COMMIT;
@@ -33,6 +35,7 @@ import static org.arquillian.smart.testing.scm.ScmRunnerProperties.getPrevCommit
 
 public class GitChangeResolver implements ChangeResolver {
 
+    private static final String WRONG_COMMIT_ID_EXCEPTION = "Commit id '%s' is not found in %s Git repository";
     private static final String ENSURE_TREE = "^{tree}";
 
     private static final Logger logger = Logger.getLogger();
@@ -94,21 +97,28 @@ public class GitChangeResolver implements ChangeResolver {
     private Set<Change> retrieveCommitsChanges() {
         final Repository repository = git.getRepository();
         try (ObjectReader reader = repository.newObjectReader()) {
-            final ObjectId oldHead = repository.resolve(previous + ENSURE_TREE);
-            final ObjectId newHead = repository.resolve(head + ENSURE_TREE);
+            final ObjectId oldHead = repository.resolve(this.previous + ENSURE_TREE);
+            final ObjectId newHead = repository.resolve(this.head + ENSURE_TREE);
+            validateCommitExists(oldHead, this.previous, repository);
+            validateCommitExists(newHead, this.head, repository);
 
             final CanonicalTreeParser oldTree = new CanonicalTreeParser();
             oldTree.reset(reader, oldHead);
             final CanonicalTreeParser newTree = new CanonicalTreeParser();
             newTree.reset(reader, newHead);
 
-            final List<DiffEntry> commitDiffs = git.diff()
-                    .setNewTree(newTree)
-                    .setOldTree(oldTree)
-                .call();
+            final List<DiffEntry> commitDiffs = git.diff().setNewTree(newTree).setOldTree(oldTree).call();
             return transformToChangeSet(reduceToRenames(commitDiffs), repoRoot);
-        } catch (IOException | GitAPIException e) {
+        } catch (MissingObjectException e) {
+            throw new IllegalArgumentException(format(WRONG_COMMIT_ID_EXCEPTION, e.getObjectId().getName(), repository.getDirectory().getAbsolutePath()));
+        }catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
+        }
+    }
+
+    private void validateCommitExists(ObjectId retrievedId, String id, Repository repository) {
+        if (retrievedId == null) {
+            throw new IllegalArgumentException(format(WRONG_COMMIT_ID_EXCEPTION, id, repository.getDirectory().getAbsolutePath()));
         }
     }
 
