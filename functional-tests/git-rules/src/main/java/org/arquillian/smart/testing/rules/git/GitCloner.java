@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.logging.Logger;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ListBranchCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.RefAlreadyExistsException;
+import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 
 import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.extractName;
@@ -39,7 +42,11 @@ public class GitCloner {
         return repositoryUrl;
     }
 
+
     public Repository cloneRepositoryToTempFolder() throws GitAPIException, IOException {
+        return cloneRepositoryToTempFolder(false);
+    }
+    public Repository cloneRepositoryToTempFolder(boolean checkoutAll) throws GitAPIException, IOException {
         this.targetFolder = createTempFolder(repositoryName);
         final Repository repository = Git.cloneRepository()
                     .setURI(repositoryUrl)
@@ -48,6 +55,10 @@ public class GitCloner {
                     .setBranch("master")
                 .call()
             .getRepository();
+
+        if (checkoutAll) {
+            checkoutAllBranches(repository);
+        }
 
         LOGGER.info("Cloned test repository to: " + targetFolder);
         return repository;
@@ -63,6 +74,19 @@ public class GitCloner {
                 targetFolder.delete();
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
+            }
+        }
+    }
+
+    private void checkoutAllBranches(Repository repository) throws GitAPIException {
+        final Git git = Git.wrap(repository);
+        for (final Ref ref : git.branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call()) {
+            final String refName = ref.getName();
+            final String branchName = refName.substring(refName.lastIndexOf('/') + 1);
+            try {
+                git.checkout().setCreateBranch(true).setName(branchName).setStartPoint("origin/" + branchName).call();
+            } catch (RefAlreadyExistsException e) {
+                LOGGER.warning("Already exists, so ignoring " + e.getMessage());
             }
         }
     }
