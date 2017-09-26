@@ -29,13 +29,14 @@ import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.ext
  * This will get the content of remote repository, clone into to temporary folder (e.g. /tmp/git-cloned-repo-8011663866191655452-repo-name) and
  * expose this repository over HTTP, so you can call
  *
- * git clone http://localhost:8765
+ * git clone http://localhost:8765/repo-name
  *
  * and can interact with it locally.
  *
  * 8765 is a default port. This can changed either by passing extra constructor argument, or setting system property git.server.port
  *
  * IMPORTANT: unless initializeAll is explicitly called, all repositories are lazily cloned upon the first external call
+ * IMPORTANT: ignores nested URLs, meaning http://localhost:8765/repo-name == http://localhost:8765/org1/repo-name == http://localhost:8765/org2/repo-name.git
  *
  * Code inspired by https://github.com/centic9/jgit-cookbook/tree/master/httpserver
  */
@@ -110,16 +111,17 @@ public class EmbeddedHttpGitServer {
     private GitServlet createGitServlet() {
         final GitServlet gitServlet = new GitServlet();
         gitServlet.setRepositoryResolver((req, name) -> {
-            final String nameWithoutSuffix = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
-            if (repositories.containsKey(nameWithoutSuffix)) {
-                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(nameWithoutSuffix);
+            String trimmedName = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
+            trimmedName = trimmedName.substring(trimmedName.lastIndexOf('/') + 1);
+            if (repositories.containsKey(trimmedName)) {
+                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(trimmedName);
                 synchronized (gitServlet) {
                     lazilyLoadedRepository.cloneRepository();
+                    final Repository repository = lazilyLoadedRepository.get();
+                    enableInsecureReceiving(repository);
+                    repository.incrementOpen();
+                    return repository;
                 }
-                final Repository repository = lazilyLoadedRepository.get();
-                enableInsecureReceiving(repository);
-                repository.incrementOpen();
-                return repository;
             } else {
                 throw new RepositoryNotFoundException("Repository " + name + "does not exist");
             }

@@ -29,9 +29,9 @@ public class GitServerRuleTest {
     }
 
     @Test
-    public void should_clone_second_repository_using_http_call_and_custom_port_through_rule() throws Exception {
+    public void should_clone_second_repository_using_http_call_custom_port_and_using_last_part_of_the_url_as_repo_name_through_rule() throws Exception {
         // when
-        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/saas-launchpad");
+        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/can-be-anything/saas-launchpad");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then
