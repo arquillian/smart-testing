@@ -147,6 +147,7 @@ function command_exists {
 
 command_exists mvn 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you have it installed."; exit 1; }
 command_exists xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
+command_exists xsltproc >/dev/null 2>&1 || { echo >&2 "This script requires xsltproc. Make sure you have it installed."; exit 1; }
 
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 
