@@ -167,6 +167,11 @@ command_exists mvn 2>&1 || { echo >&2 "Cannot find Maven (mvn). Make sure you ha
 command_exists xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmllint. Make sure you have it installed."; exit 1; }
 command_exists xsltproc >/dev/null 2>&1 || { echo >&2 "This script requires xsltproc. Make sure you have it installed."; exit 1; }
 
+if [[ ! -f pom.xml ]]; then
+  echo >&2 "Cannot find pom.xml file. Is it a Maven project? Make sure you are in the project's root directory.";
+  exit 1;
+fi
+
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
 
 if [[ $MVN_VERSION =~ ^[3].[3-9].[0-9]$ ]]; then
