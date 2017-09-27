@@ -168,8 +168,8 @@ command_exists xmllint >/dev/null 2>&1 || { echo >&2 "This script requires xmlli
 command_exists xsltproc >/dev/null 2>&1 || { echo >&2 "This script requires xsltproc. Make sure you have it installed."; exit 1; }
 
 if [[ ! -f pom.xml ]]; then
-  echo >&2 "Cannot find pom.xml file. Is it a Maven project? Make sure you are in the project's root directory.";
-  exit 1;
+  echo >&2 "Cannot find pom.xml file. Is it a Maven project? Make sure you are in the project's root directory."
+  exit 1
 fi
 
 MVN_VERSION=$(mvn --version | head -n1 | cut -d' ' -f3)
