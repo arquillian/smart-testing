@@ -41,11 +41,11 @@ public class GitChangeResolver implements ChangeResolver {
     private final Git git;
 
     public GitChangeResolver() {
-        this(Paths.get("").toAbsolutePath().toFile(), Configuration.loadPrecalculated().getScm());
+        this(Paths.get("").toAbsolutePath().toFile());
     }
 
     public GitChangeResolver(File projectDir) {
-        this(projectDir, Configuration.loadPrecalculated().getScm());
+        this(projectDir, Configuration.loadPrecalculated(projectDir).getScm());
     }
 
     public GitChangeResolver(File projectDir, Scm scm) {

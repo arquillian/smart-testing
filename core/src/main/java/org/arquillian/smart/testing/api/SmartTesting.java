@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.api;
 
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.Function;
@@ -23,7 +24,7 @@ public class SmartTesting {
      * @return An instance of {@link ConfiguredSmartTesting} class
      */
     public static ConfiguredSmartTesting with(TestVerifier testVerifier) {
-        return with(testVerifier, Configuration.loadPrecalculated());
+        return with(testVerifier, Configuration.loadPrecalculated(Paths.get("").toFile()));
     }
 
     /**

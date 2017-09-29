@@ -62,7 +62,7 @@ public class FileSystemOperations {
         }
     }
 
-    public static void deleteDirectory(Path directory, boolean catchException) {
+    static void deleteDirectory(Path directory, boolean catchException) {
         if (directory.toFile().exists()) {
             try {
                 Files

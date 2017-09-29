@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -59,17 +59,11 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
-            storeConfiguration(session);
             calculateChanges();
             Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
             logStrategiesNotDefined();
         }
-    }
-
-    private void storeConfiguration(MavenSession session) {
-        final Path path = configuration.dump();
-        session.getAllProjects().forEach(mavenProject -> copyConfigurationFile(mavenProject.getModel(), path.toFile()));
     }
 
     private void copyConfigurationFile(Model model, File parentFile) {
@@ -133,8 +127,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     private void configureExtension(MavenSession session, Configuration configuration) {
         logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
+        final File dumpedConfigFile = configuration.dump(Paths.get("").toFile());
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            copyConfigurationFile(mavenProject.getModel(), dumpedConfigFile);
             if (isFailedStrategyUsed()) {
                 SurefireReportStorage.copySurefireReports(mavenProject.getModel());
             }

@@ -7,11 +7,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
+import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 @NotThreadSafe
@@ -21,6 +21,29 @@ public class ConfigurationUsingPropertyTest {
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Test
+    public void should_load_configuration_from_system_properties() {
+        // given
+        System.setProperty(SMART_TESTING, "changed");
+        System.setProperty(SMART_TESTING_MODE, "ordering");
+        System.setProperty(SMART_TESTING_REPORT_ENABLE, "true");
+
+        final Report report = new Report();
+        report.setEnable(true);
+
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setStrategies("changed");
+        expectedConfiguration.setMode(ORDERING);
+        expectedConfiguration.setReport(report);
+
+        // when
+        final Configuration actualConfiguration = Configuration.fromSystemProperties();
+
+        // then
+        Assertions.assertThat(actualConfiguration)
+            .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    @Test
     public void should_load_configuration_with_overwriting_system_properties_over_properties_from_config_file(){
         // given
         System.setProperty(SMART_TESTING, "changed");
@@ -28,8 +51,6 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = new Report();
         report.setEnable(true);
-        report.setName(REPORT_FILE_NAME);
-        report.setDir("target");
 
         final Range range = new Range();
         range.setHead(HEAD);
@@ -63,8 +84,6 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = new Report();
         report.setEnable(true);
-        report.setName(REPORT_FILE_NAME);
-        report.setDir("target");
 
         final Range range = new Range();
         range.setHead(HEAD);
@@ -81,7 +100,6 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setReport(report);
         expectedConfiguration.setScm(scm);
 
-
         // when
         final Configuration actualConfiguration = Configuration.load();
 
@@ -89,5 +107,4 @@ public class ConfigurationUsingPropertyTest {
         Assertions.assertThat(actualConfiguration)
             .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
-
 }

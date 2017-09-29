@@ -20,6 +20,7 @@ public class SmartTestingReportGenerator {
     private final Configuration configuration;
     private final String baseDir;
     public static final String REPORT_FILE_NAME = "report.xml";
+    public static final String TARGET = "target";
 
     public SmartTestingReportGenerator(Collection<TestSelection> testSelections, Configuration configuration, File baseDir) {
         this(testSelections, configuration, baseDir.getAbsolutePath());

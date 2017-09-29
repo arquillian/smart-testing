@@ -8,7 +8,6 @@ import org.junit.Test;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 
 public class ConfigurationTest {
@@ -18,8 +17,6 @@ public class ConfigurationTest {
         // given
         final Report report = new Report();
         report.setEnable(true);
-        report.setName(REPORT_FILE_NAME);
-        report.setDir("target");
 
         final Range range = new Range();
         range.setHead(HEAD);
@@ -46,12 +43,28 @@ public class ConfigurationTest {
     }
 
     @Test
+    public void should_load_default_configuration() {
+        // given
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(SELECTING);
+        expectedConfiguration.setDebug(false);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setReport(Report.fromDefaultValues());
+        expectedConfiguration.setScm(Scm.fromDefaultValues());
+
+        // when
+        final Configuration defaultConfiguration = Configuration.withDefaultValues();
+
+        // then
+        Assertions.assertThat(defaultConfiguration)
+            .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    @Test
     public void should_load_dumped_configuration_from_file_as_configuration() {
         // given
         final Report report = new Report();
         report.setEnable(false);
-        report.setName(REPORT_FILE_NAME);
-        report.setDir("target");
 
         final Range range = new Range();
         range.setHead(HEAD);

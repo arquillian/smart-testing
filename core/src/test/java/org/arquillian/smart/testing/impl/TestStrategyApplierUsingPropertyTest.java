@@ -42,7 +42,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
-            .in(getBaseDir(getClass()))
+            .in(getBaseDir())
             .applyOnClasses(testsToRun);
 
         // then
@@ -66,7 +66,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
-            .in(getBaseDir(getClass()))
+            .in(getBaseDir())
             .applyOnClasses(testsToRun);
 
         // then
@@ -90,7 +90,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
-            .in(getBaseDir(getClass()))
+            .in(getBaseDir())
             .applyOnClasses(testsToRun);
 
         // then
@@ -115,7 +115,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load())
-            .in(getBaseDir(getClass()))
+            .in(getBaseDir())
             .applyOnClasses(testsToRun);
 
         // then
@@ -141,8 +141,8 @@ public class TestStrategyApplierUsingPropertyTest {
         return new LinkedHashSet<>(Arrays.<Class<?>>asList(testClasses));
     }
 
-    private String getBaseDir(Class<?> aClass) {
-        final String path = aClass.getResource("/smart-testing.yml").getPath();
+    private String getBaseDir() {
+        final String path = getClass().getResource("/smart-testing.yml").getPath();
         return path.substring(0, path.indexOf(File.separator + "target"));
     }
 }

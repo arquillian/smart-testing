@@ -1,9 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -16,18 +13,14 @@ import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.hub.storage.local.FileSystemOperations;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
-import org.yaml.snakeyaml.Yaml;
 
 import static java.util.Arrays.asList;
-import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -37,6 +30,12 @@ import static org.mockito.Mockito.when;
 
 public class SmartTestingProviderTest {
 
+    @Rule
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder(Paths.get(".").toFile());
+
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+
     private final Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
     private ProviderParameters providerParameters;
     private SurefireProviderFactory providerFactory;
@@ -44,7 +43,7 @@ public class SmartTestingProviderTest {
     private SurefireProvider surefireProvider;
 
     @Before
-    public void setupMocks() {
+    public void setupMocksAndDumpConfiguration() throws IOException {
         providerParameters = mock(ProviderParameters.class);
 
         surefireProvider = mock(SurefireProvider.class);
@@ -54,13 +53,18 @@ public class SmartTestingProviderTest {
         when(providerFactory.createInstance()).thenReturn(surefireProvider);
 
         TestRequest testRequest = mock(TestRequest.class);
-        when(testRequest.getTestSourceDirectory()).thenReturn(new File("."));
+        when(testRequest.getTestSourceDirectory()).thenReturn(temporaryFolder.getRoot());
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
+
+        temporaryFolder.newFile("pom.xml");
+        Configuration.load().dump(temporaryFolder.getRoot());
     }
 
     @Test
     public void when_get_suites_is_called_then_same_list_of_classes_will_be_returned() {
         // given
+        System.setProperty("basedir", temporaryFolder.getRoot().toString());
+
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -73,6 +77,7 @@ public class SmartTestingProviderTest {
 
     @Test
     public void test_when_invoke_is_called_with_null() throws Exception {
+        System.setProperty("basedir", temporaryFolder.getRoot().toString());
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
@@ -111,17 +116,6 @@ public class SmartTestingProviderTest {
         verify(surefireProvider, times(0)).getSuites();
         verify(surefireProvider, times(1)).invoke(argThat((ArgumentMatcher<Iterable<Class>>)
             iterable -> iterableContains(iterable, expectedClassesToRun)));
-    }
-
-    @BeforeClass
-    public static void dumpConfiguration() {
-        Configuration.load().dump();
-    }
-
-    @AfterClass
-    public static void purgeConfiguration() {
-        final Path tempDirPath = Paths.get(Paths.get("").toAbsolutePath().toString(), SMART_TESTING_WORKING_DIRECTORY_NAME);
-        FileSystemOperations.deleteDirectory(tempDirPath, true);
     }
 
     private boolean iterableContains(Iterable<Class> iterable, Set expectedClasses) {
