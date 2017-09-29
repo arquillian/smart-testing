@@ -12,8 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GitServerRuleTest {
 
     @Rule
-    public final GitServer gitServer = GitServer.fromBundle("repo.bundle")
-        .fromBundle("launchpad", "saas-launchpad.bundle")
+    public final GitServer gitServer = GitServer.bundlesFromDirectory(".")
         .usingAnyFreePort() // this way we can run this test in parallel
         .create();
 
@@ -22,7 +21,7 @@ public class GitServerRuleTest {
     @Test
     public void should_clone_repository_using_http_call_and_custom_port_through_rule() throws Exception {
         // when
-        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/repo.bundle");
+        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/repo");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then
@@ -30,9 +29,9 @@ public class GitServerRuleTest {
     }
 
     @Test
-    public void should_clone_second_repository_using_http_call_and_custom_port_through_rule() throws Exception {
+    public void should_clone_second_repository_using_http_call_custom_port_and_using_last_part_of_the_url_as_repo_name_through_rule() throws Exception {
         // when
-        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/launchpad");
+        gitCloner = new GitCloner("http://localhost:" + gitServer.getPort() + "/can-be-anything/saas-launchpad");
         final Repository repository = gitCloner.cloneRepositoryToTempFolder();
 
         // then

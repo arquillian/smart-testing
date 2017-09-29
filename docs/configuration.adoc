@@ -99,7 +99,7 @@ exclusions=org.springframework.*, org.apache.commons.*
 
 IMPORTANT: Exclusions has precedence over inclusions.
 
-You can also disable transitivity by setting `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"] to `false`.
+You can also disable transitivity by setting `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"]` to `false`.
 
 ****
 

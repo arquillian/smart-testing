@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
-    <version>24</version>
+    <version>25</version>
     <relativePath />
   </parent>
 
   <groupId>org.arquillian.smart.testing</groupId>
   <artifactId>smart-testing-parent</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Smart Testing</name>

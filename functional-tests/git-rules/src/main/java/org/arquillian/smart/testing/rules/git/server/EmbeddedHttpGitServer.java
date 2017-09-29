@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,6 +19,7 @@ import org.eclipse.jgit.http.server.GitServlet;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.lib.StoredConfig;
 
+import static java.util.Optional.ofNullable;
 import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.extractName;
 
 /**
@@ -26,19 +29,21 @@ import static org.arquillian.smart.testing.rules.git.server.UrlNameExtractor.ext
  * This will get the content of remote repository, clone into to temporary folder (e.g. /tmp/git-cloned-repo-8011663866191655452-repo-name) and
  * expose this repository over HTTP, so you can call
  *
- * git clone http://localhost:8765
+ * git clone http://localhost:8765/repo-name
  *
  * and can interact with it locally.
  *
  * 8765 is a default port. This can changed either by passing extra constructor argument, or setting system property git.server.port
  *
  * IMPORTANT: unless initializeAll is explicitly called, all repositories are lazily cloned upon the first external call
+ * IMPORTANT: ignores nested URLs, meaning http://localhost:8765/repo-name == http://localhost:8765/org1/repo-name == http://localhost:8765/org2/repo-name.git
  *
  * Code inspired by https://github.com/centic9/jgit-cookbook/tree/master/httpserver
  */
 public class EmbeddedHttpGitServer {
 
     private static final Logger LOGGER = Logger.getLogger(EmbeddedHttpGitServer.class.getName());
+    private static final String SUFFIX = ".git";
 
     private final int port;
     private final Map<String, LazilyLoadedRepository> repositories = new HashMap<>();
@@ -106,15 +111,17 @@ public class EmbeddedHttpGitServer {
     private GitServlet createGitServlet() {
         final GitServlet gitServlet = new GitServlet();
         gitServlet.setRepositoryResolver((req, name) -> {
-            if (repositories.containsKey(name)) {
-                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(name);
+            String trimmedName = name.endsWith(SUFFIX) ? name.substring(0, name.length() - SUFFIX.length()) : name;
+            trimmedName = trimmedName.substring(trimmedName.lastIndexOf('/') + 1);
+            if (repositories.containsKey(trimmedName)) {
+                final LazilyLoadedRepository lazilyLoadedRepository = repositories.get(trimmedName);
                 synchronized (gitServlet) {
                     lazilyLoadedRepository.cloneRepository();
+                    final Repository repository = lazilyLoadedRepository.get();
+                    enableInsecureReceiving(repository);
+                    repository.incrementOpen();
+                    return repository;
                 }
-                final Repository repository = lazilyLoadedRepository.get();
-                enableInsecureReceiving(repository);
-                repository.incrementOpen();
-                return repository;
             } else {
                 throw new RepositoryNotFoundException("Repository " + name + "does not exist");
             }
@@ -149,7 +156,7 @@ public class EmbeddedHttpGitServer {
      * @param bundleFile bundle file name. should be present on the classpath
      */
     public static EmbeddedHttpGitServerBuilder fromBundle(String name, String bundleFile) {
-        final URL bundleResource = loadBundle(bundleFile);
+        final URL bundleResource = loadBundle(".", bundleFile);
         return new EmbeddedHttpGitServerBuilder(name, bundleResource.toExternalForm());
     }
 
@@ -236,8 +243,26 @@ public class EmbeddedHttpGitServer {
         return new EmbeddedHttpGitServerBuilder(name, url.toExternalForm());
     }
 
-    private static URL loadBundle(String bundleFile) {
-        final URL bundleResource = Thread.currentThread().getContextClassLoader().getResource(bundleFile);
+    /**
+     * Scans directory for *.bundle files and creates repositories named after a file without .bundle extension
+     * @param bundleDirectory directory to lookup for *.bundle files
+     * @return
+     */
+    public static EmbeddedHttpGitServerBuilder bundlesFromDirectory(String bundleDirectory) {
+        final URL bundleDirUrl = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).findResource(bundleDirectory);
+        if (bundleDirUrl == null) {
+            throw new IllegalStateException("Unable to find bundle directory " + bundleDirectory);
+        }
+        final File bundleDir = new File(bundleDirUrl.getFile());
+        return Arrays.stream(ofNullable(bundleDir.listFiles()).orElse(new File[0]))
+            .filter(file -> file.getName().endsWith(".bundle"))
+            .map(file -> fromFile(file.getName().substring(0, file.getName().lastIndexOf(".bundle")), file))
+            .reduce(EmbeddedHttpGitServerBuilder::mergeLocations)
+            .orElseThrow(() -> new IllegalArgumentException("Directory [" + bundleDirectory + "] doesn't contain .bundle files"));
+    }
+
+    private static URL loadBundle(String directory, String bundleFile) {
+        final URL bundleResource = Thread.currentThread().getContextClassLoader().getResource(directory + "/" + bundleFile);
         if (bundleResource == null) {
             throw new IllegalArgumentException(bundleFile + " couldn't be found on the classpath");
         }
@@ -262,5 +287,4 @@ public class EmbeddedHttpGitServer {
             }
         }
     }
-
 }

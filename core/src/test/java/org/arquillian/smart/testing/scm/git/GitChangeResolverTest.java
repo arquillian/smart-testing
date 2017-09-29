@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.tuple;
 
 public class GitChangeResolverTest {
@@ -106,6 +107,53 @@ public class GitChangeResolverTest {
             relative("README.adoc"), ChangeType.MODIFY));
     }
 
+    @Test
+    public void should_return_meaningful_exception_when_incorrect_previous_commit_provided() throws Exception {
+        // given
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "a34a06478ef3957c866cff3f546f2c55c1a39364", "07b181b");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> gitChangeResolver.diff());
+
+        // then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessageStartingWith("Commit id 'a34a06478ef3957c866cff3f546f2c55c1a39364' is not found in");
+    }
+
+    @Test
+    public void should_return_meaningful_exception_when_incorrect_head_provided() throws Exception {
+        // given
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "07b181b", "e195e3767591fbd041e041877c541229afaac3c9");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> gitChangeResolver.diff());
+
+        // then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessageStartingWith("Commit id 'e195e3767591fbd041e041877c541229afaac3c9' is not found in");
+    }
+
+    @Test
+    public void should_return_meaningful_exception_when_null_commit_provided() throws Exception {
+        // given
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "null", "07b181b");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> gitChangeResolver.diff());
+
+        // then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessageStartingWith("Commit id 'null' is not found in");
+    }
+
+    @Test
+    public void should_return_meaningful_exception_when_empty_commit_provided() throws Exception {
+        // given
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "", "07b181b");
+
+        // when
+        final Throwable throwable = catchThrowable(() -> gitChangeResolver.diff());
+
+        // then
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class).hasMessageStartingWith("Commit id '' is not found in");
+    }
 
     private Path relative(String path) {
         return Paths.get(gitFolder.getRoot().getAbsolutePath(), path);

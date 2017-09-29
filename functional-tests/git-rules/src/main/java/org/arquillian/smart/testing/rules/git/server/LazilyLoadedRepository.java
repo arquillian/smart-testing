@@ -32,7 +32,7 @@ class LazilyLoadedRepository {
     void cloneRepository() {
         try {
             if (!repository.isPresent()) {
-                this.repository = Optional.of(gitCloner.cloneRepositoryToTempFolder());
+                this.repository = Optional.of(gitCloner.cloneRepositoryToTempFolder(true));
             }
         } catch (GitAPIException | IOException e) {
             throw new RuntimeException("Failed cloning repository [" + gitCloner.getRepositoryName() + ", " + gitCloner.getRepositoryUrl() + "].", e);
