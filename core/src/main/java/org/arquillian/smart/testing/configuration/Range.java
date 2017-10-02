@@ -1,6 +1,9 @@
 package org.arquillian.smart.testing.configuration;
 
-public class Range {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Range implements ConfigurationSection{
 
     private String head;
     private String tail;
@@ -21,4 +24,11 @@ public class Range {
         return tail;
     }
 
+    @Override
+    public List<ConfigurationItem> registerConfigurationItems() {
+        List<ConfigurationItem> configItems = new ArrayList<>();
+        configItems.add(new ConfigurationItem("head"));
+        configItems.add(new ConfigurationItem("tail"));
+        return configItems;
+    }
 }

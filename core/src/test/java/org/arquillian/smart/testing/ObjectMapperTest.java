@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.arquillian.smart.testing.configuration.ConfigurationItem;
+import org.arquillian.smart.testing.configuration.ConfigurationSection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -160,7 +161,7 @@ public class ObjectMapperTest {
         map.clear();
     }
     
-    static class TestObject {
+    static class TestObject implements ConfigurationSection {
         private String s;
         private int i;
         private double d;
@@ -206,6 +207,11 @@ public class ObjectMapperTest {
 
         public void setDummyObject(DummyObject dummyObject) {
             this.dummyObject = dummyObject;
+        }
+
+        @Override
+        public List<ConfigurationItem> registerConfigurationItems() {
+            return null;
         }
     }
 

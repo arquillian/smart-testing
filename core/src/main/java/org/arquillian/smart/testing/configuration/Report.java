@@ -1,10 +1,13 @@
 package org.arquillian.smart.testing.configuration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 
-public class Report {
+public class Report implements ConfigurationSection {
 
     private Boolean enable;
     private String name = REPORT_FILE_NAME;
@@ -51,5 +54,14 @@ public class Report {
         report.setEnable(false);
 
         return report;
+    }
+
+    @Override
+    public List<ConfigurationItem> registerConfigurationItems() {
+        List<ConfigurationItem> configItems = new ArrayList<>();
+        configItems.add(new ConfigurationItem("enable", SMART_TESTING_REPORT_ENABLE, false));
+        configItems.add(new ConfigurationItem("name", null, REPORT_FILE_NAME));
+        configItems.add(new ConfigurationItem("dir", null, TARGET));
+        return configItems;
     }
 }

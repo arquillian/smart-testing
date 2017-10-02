@@ -9,18 +9,19 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.ObjectMapper;
-import org.arquillian.smart.testing.ObjectMerger;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.yaml.snakeyaml.Yaml;
 
-public class Configuration {
+public class Configuration implements ConfigurationSection{
 
     private static final Logger logger = Logger.getLogger();
 
@@ -102,6 +103,16 @@ public class Configuration {
 
     public void setScm(Scm scm) {
         this.scm = scm;
+    }
+
+    public List<ConfigurationItem> registerConfigurationItems(){
+        List<ConfigurationItem> configItems = new ArrayList<>();
+        configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
+        configItems.add(new ConfigurationItem("mode", SMART_TESTING_MODE, RunMode.SELECTING));
+        configItems.add(new ConfigurationItem("applyTo", SMART_TESTING_APPLY_TO));
+        configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
+        configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
+        return configItems;
     }
 
     static Configuration fromSystemProperties() {
@@ -239,9 +250,9 @@ public class Configuration {
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
         final Configuration configuration = ObjectMapper.mapToObject(Configuration.class, yamlConfiguration);
-        ObjectMerger<Configuration> configurationMerger =
-            new ObjectMerger<>(Configuration.fromSystemProperties(), configuration, Configuration.withDefaultValues());
-        return configurationMerger.merge();
+        //ObjectMerger<Configuration> configurationMerger =
+        //    new ObjectMerger<>(Configuration.fromSystemProperties(), configuration, Configuration.withDefaultValues());
+        return configuration;
     }
 
     private static boolean containsAnyStrategy(String strategies) {

@@ -7,45 +7,80 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.configuration.ConfigurationItem;
+import org.arquillian.smart.testing.configuration.ConfigurationSection;
 
 public class ObjectMapper {
 
-    public static <T> T mapToObject(Class<T> aClass, Map<String, Object> map) {
-        if (!map.isEmpty()) {
-            T instance;
-            try {
-                instance = aClass.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new RuntimeException("Failed to create new instance of class " + aClass, e);
-            }
-
-            Arrays.stream(aClass.getMethods()).filter(ObjectMapper::isSetter)
-                .forEach(method -> invokeMethodWithMappedValue(method, instance, map));
-
-            return instance;
+    public static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
+        T instance;
+        try {
+            instance = aClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to create new instance of class " + aClass, e);
         }
 
-        return null;
+        List<ConfigurationItem> configItems = ((ConfigurationSection) instance).registerConfigurationItems();
+
+        Arrays.stream(aClass.getMethods()).filter(ObjectMapper::isSetter)
+            .forEach(method -> invokeMethodWithMappedValue(configItems, method, instance, map));
+
+        return instance;
     }
 
-    private static <T> void invokeMethodWithMappedValue(Method method, T instance, Map<String, Object> map) {
+    private static <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
+        Map<String, Object> map) {
         method.setAccessible(true);
+        if (method.getParameterTypes().length != 1) {
+            return;
+        }
+        Class<?> parameterType = method.getParameterTypes()[0];
         final String field = method.getName().substring(3);
         final String property = Character.toLowerCase(field.charAt(0)) + field.substring(1);
-        final Object mappedValue = map.get(property);
+        Object configFileValue = map.get(property);
 
-        if (mappedValue != null && method.getParameterTypes().length == 1) {
-            try {
-                final Object converted = convert(method, mappedValue);
-                if (converted != null) {
-                    method.invoke(instance, converted);
-                }
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new RuntimeException("Failed to invoke method " + method, e);
+        Optional<ConfigurationItem> foundConfigItem =
+            configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
+
+        Object converted = null;
+        if (!foundConfigItem.isPresent()) {
+            if (!ConfigurationSection.class.isAssignableFrom(parameterType)) {
+                return;
+            } else if (configFileValue == null) {
+                converted = mapToObject((Class<ConfigurationSection>) parameterType, new HashMap<>(0));
+            } else {
+                converted =
+                    mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
+        } else {
+            Object mappedValue = null;
+            ConfigurationItem configItem = foundConfigItem.get();
+
+            if (configItem.getSystemProperty() != null) {
+                mappedValue = System.getProperty(configItem.getSystemProperty());
+            }
+            if (mappedValue == null) {
+                mappedValue = configFileValue;
+            }
+            if (mappedValue == null && configItem.getDefaultValue() != null) {
+                mappedValue = configItem.getDefaultValue();
+            }
+            if (mappedValue != null) {
+                converted = convert(method, mappedValue);
+            }
+        }
+
+        try {
+            if (converted != null) {
+                method.invoke(instance, converted);
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to invoke method " + method, e);
         }
     }
 
@@ -57,14 +92,20 @@ public class ObjectMapper {
             return handleEnum(method, mappedValue);
         } else if (parameterType.isAssignableFrom(List.class)) {
             return handleList(method, mappedValue);
-        } else if (!parameterType.isAssignableFrom(Map.class) && Map.class.isAssignableFrom(mappedValue.getClass())) {
-            return mapToObject(parameterType, (Map<String, Object>) mappedValue);
+        } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
+            if (parameterType.isAssignableFrom(mappedValue.getClass())){
+                return  mappedValue;
+            }
+            return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
         } else {
-            return mappedValue;
+            return convertToType(parameterType, mappedValue.toString());
         }
     }
 
     private static Enum handleEnum(Method method, Object mapValue) {
+        if (mapValue.getClass().isEnum()) {
+            return (Enum) mapValue;
+        }
         final Class<?>[] parameterTypes = method.getParameterTypes();
         String value = (String) mapValue;
         return Enum.valueOf((Class<Enum>) parameterTypes[0], value.toUpperCase());
