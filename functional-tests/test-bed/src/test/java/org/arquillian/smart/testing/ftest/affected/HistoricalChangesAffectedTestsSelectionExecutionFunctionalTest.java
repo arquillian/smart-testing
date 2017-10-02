@@ -7,6 +7,7 @@ import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Ignore("This is also covered in ChangesOnDiffModules test")
 public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
     @ClassRule

@@ -37,7 +37,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
 
         // when
         final TestResults actualTestResults = project
-            .build()
+            .build("config/impl-base")
                 .options()
                     .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
                 .configure()

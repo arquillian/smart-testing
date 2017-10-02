@@ -8,6 +8,7 @@ import org.arquillian.smart.testing.rules.git.GitClone;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.
 import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Ignore("Failed strategy uses only previous run result, no if tests is local or historical changes. ")
 public class HistoricalChangesFailedTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
