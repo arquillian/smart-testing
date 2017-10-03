@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing;
+package org.arquillian.smart.testing.configuration;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -12,12 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.configuration.ConfigurationItem;
-import org.arquillian.smart.testing.configuration.ConfigurationSection;
 
-public class ObjectMapper {
+class ObjectMapper {
 
-    public static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
+    static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
         T instance;
         try {
             instance = aClass.newInstance();

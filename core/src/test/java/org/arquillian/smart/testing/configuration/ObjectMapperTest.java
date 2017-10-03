@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing;
+package org.arquillian.smart.testing.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,14 +9,12 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.arquillian.smart.testing.configuration.ConfigurationItem;
-import org.arquillian.smart.testing.configuration.ConfigurationSection;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ObjectMapper.mapToObject;
-import static org.arquillian.smart.testing.ObjectMapperTest.TestEnum.FOO;
+import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
+import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEnum.FOO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ObjectMapperTest {
