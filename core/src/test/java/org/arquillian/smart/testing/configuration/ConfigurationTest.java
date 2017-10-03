@@ -2,25 +2,26 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.nio.file.Paths;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigurationTest {
 
     @Test
-    public void should_load_configuration_with_default_values_if_property_is_not_specified_in_config_file(){
+    public void should_load_configuration_with_default_values_if_property_is_not_specified_in_config_file() {
         // given
         final Report report = new Report();
         report.setEnable(true);
 
         final Range range = new Range();
         range.setHead(HEAD);
-        range.setTail(HEAD + "~3");
+        range.setTail(HEAD + "~2");
 
         final Scm scm = new Scm();
         scm.setRange(range);
@@ -35,29 +36,39 @@ public class ConfigurationTest {
         expectedConfiguration.setReport(report);
 
         // when
-        final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
+        final Configuration actualConfiguration =
+            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
 
         // then
-        Assertions.assertThat(actualConfiguration)
-            .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
 
     @Test
     public void should_load_default_configuration() {
         // given
+
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(String.join("~", HEAD, DEFAULT_LAST_COMMITS));
+
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        final Report report = new Report();
+        report.setEnable(false);
+
         final Configuration expectedConfiguration = new Configuration();
         expectedConfiguration.setMode(SELECTING);
         expectedConfiguration.setDebug(false);
         expectedConfiguration.setDisable(false);
-        expectedConfiguration.setReport(Report.fromDefaultValues());
-        expectedConfiguration.setScm(Scm.fromDefaultValues());
+        expectedConfiguration.setReport(report);
+        expectedConfiguration.setScm(scm);
 
         // when
-        final Configuration defaultConfiguration = Configuration.withDefaultValues();
+        final Configuration defaultConfiguration = Configuration.load();
 
         // then
-        Assertions.assertThat(defaultConfiguration)
-            .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+        assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
 
     @Test
@@ -86,7 +97,6 @@ public class ConfigurationTest {
             loadConfigurationFromFile(new File("src/test/resources/configuration/dumped-smart-testing.yml"));
 
         // then
-        Assertions.assertThat(actualConfiguration)
-            .isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
 }

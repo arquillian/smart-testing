@@ -37,25 +37,6 @@ public class Report implements ConfigurationSection {
         this.dir = dir;
     }
 
-    static Report fromSystemProperties() {
-        final String reportEnable = System.getProperty(SMART_TESTING_REPORT_ENABLE);
-        if (reportEnable == null) {
-            return null;
-        }
-
-        final Report report = new Report();
-        report.setEnable(Boolean.valueOf(reportEnable));
-
-        return report;
-    }
-
-    static Report fromDefaultValues() {
-        final Report report = new Report();
-        report.setEnable(false);
-
-        return report;
-    }
-
     @Override
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();

@@ -1,11 +1,12 @@
 mode: ordering
-strategies: new, changed, affected
+strategies:
+  - new
+  - changed
+  - affected
 applyTo: surefire
 debug: true
 disable: false
 report:
     enable: true
 scm:
-    range:
-      head: HEAD
-      tail: HEAD~2
+    lastChanges: 1

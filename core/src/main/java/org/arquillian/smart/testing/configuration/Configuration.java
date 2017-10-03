@@ -115,49 +115,6 @@ public class Configuration implements ConfigurationSection{
         return configItems;
     }
 
-    static Configuration fromSystemProperties() {
-        final Configuration configuration = new Configuration();
-
-        if (System.getProperty(SMART_TESTING) != null) {
-            final String strategies = System.getProperty(SMART_TESTING).toLowerCase();
-
-            if (containsAnyStrategy(strategies)) {
-                configuration.strategies = strategies.split("\\s*,\\s*");
-            }
-        }
-
-        if (System.getProperty(SMART_TESTING_MODE) != null) {
-            configuration.mode = RunMode.valueOf(System.getProperty(SMART_TESTING_MODE).toUpperCase());
-        }
-
-        if (System.getProperty(SMART_TESTING_DISABLE) != null) {
-            configuration.disable = Boolean.valueOf(System.getProperty(SMART_TESTING_DISABLE));
-        }
-
-        if (System.getProperty(SMART_TESTING_DEBUG) != null) {
-            configuration.debug = Boolean.valueOf(System.getProperty(SMART_TESTING_DEBUG));
-        }
-
-        configuration.applyTo = System.getProperty(SMART_TESTING_APPLY_TO);
-
-        configuration.report = Report.fromSystemProperties();
-        configuration.scm = Scm.fromSystemProperties();
-
-        return configuration;
-    }
-
-    static Configuration withDefaultValues() {
-        final Configuration configuration = new Configuration();
-
-        configuration.mode = RunMode.SELECTING;
-        configuration.report = Report.fromDefaultValues();
-        configuration.scm = Scm.fromDefaultValues();
-        configuration.debug = false;
-        configuration.disable = false;
-
-        return configuration;
-    }
-
     public static Configuration load() {
         return load(Paths.get("").toAbsolutePath().toFile());
     }
@@ -249,10 +206,7 @@ public class Configuration implements ConfigurationSection{
     }
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
-        final Configuration configuration = ObjectMapper.mapToObject(Configuration.class, yamlConfiguration);
-        //ObjectMerger<Configuration> configurationMerger =
-        //    new ObjectMerger<>(Configuration.fromSystemProperties(), configuration, Configuration.withDefaultValues());
-        return configuration;
+        return ObjectMapper.mapToObject(Configuration.class, yamlConfiguration);
     }
 
     private static boolean containsAnyStrategy(String strategies) {
