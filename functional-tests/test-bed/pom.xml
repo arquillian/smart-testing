@@ -91,7 +91,52 @@
           <skip>true</skip>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${version.surefire}</version>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <forkCount>${surefire.fork.count}</forkCount>
+              <threadCount>${surefire.thread.count}</threadCount>
+              <reuseForks>${surefire.reuse.forks}</reuseForks>
+              <argLine>-Xmx1024m</argLine>
+              <parallel>classesAndMethods</parallel>
+              <excludedGroups>net.jcip.annotations.NotThreadSafe</excludedGroups>
+            </configuration>
+          </execution>
+          <execution>
+            <id>not-thread-safe</id>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <reuseForks>false</reuseForks>
+              <groups>net.jcip.annotations.NotThreadSafe</groups>
+            </configuration>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>**/*Test.java</include>
+            <include>**/Test*.java</include>
+            <include>**/*TestCase.java</include>
+          </includes>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-
 </project>
