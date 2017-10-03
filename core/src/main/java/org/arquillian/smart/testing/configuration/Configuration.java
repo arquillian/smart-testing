@@ -152,8 +152,7 @@ public class Configuration {
     }
 
     public static Configuration load(File projectDir) {
-        final File[] files =
-            projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
+        final File[] files = projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
         Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
 

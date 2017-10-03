@@ -6,7 +6,7 @@ Configuration file looks as follows:
 [[config-file]]
 [source, yaml, indent=0]
 ----
-include::../core/src/test/resources/smart-testing.yml[]
+include::../core/src/test/resources/configuration/smart-testing.yml[]
 ----
 copyToClipboard:config-file[]
 

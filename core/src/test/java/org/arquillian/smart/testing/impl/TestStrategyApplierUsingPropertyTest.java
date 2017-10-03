@@ -142,7 +142,7 @@ public class TestStrategyApplierUsingPropertyTest {
     }
 
     private String getBaseDir() {
-        final String path = getClass().getResource("/smart-testing.yml").getPath();
+        final String path = getClass().getResource("/configuration/smart-testing.yml").getPath();
         return path.substring(0, path.indexOf(File.separator + "target"));
     }
 }
