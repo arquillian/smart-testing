@@ -35,7 +35,7 @@ public class ConfigurationTest {
         expectedConfiguration.setReport(report);
 
         // when
-        final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/smart-testing.yml"));
+        final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
 
         // then
         Assertions.assertThat(actualConfiguration)
@@ -83,7 +83,7 @@ public class ConfigurationTest {
 
         // when
         final Configuration actualConfiguration =
-            loadConfigurationFromFile(new File("src/test/resources/dumped-smart-testing.yml"));
+            loadConfigurationFromFile(new File("src/test/resources/configuration/dumped-smart-testing.yml"));
 
         // then
         Assertions.assertThat(actualConfiguration)

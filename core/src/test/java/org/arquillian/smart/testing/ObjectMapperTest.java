@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -148,19 +149,37 @@ public class ObjectMapperTest {
     }
 
     @Test
-    public void should_return_null_for_empty_map() {
+    public void should_return_default_value_for_empty_map() {
+        // given
+        final TestObject expected = new TestObject();
+        expected.setS(null);
+        expected.setAs(new String[0]);
+        expected.setB(false);
+        expected.setD(0.0);
+        expected.setE(FOO);
+        expected.setI(0);
+        expected.setL(Collections.emptyList());
+        expected.setM(Collections.emptyMap());
+
+        final DummyObject dummyObject = new DummyObject();
+        dummyObject.setB(false);
+        dummyObject.setL(Collections.emptyList());
+        dummyObject.setAs(new String[0]);
+
+        expected.setDummyObject(dummyObject);
+
         // when
         final TestObject testObject = mapToObject(TestObject.class, Collections.emptyMap());
 
         // then
-        assertThat(testObject).isNull();
+        assertThat(testObject).isEqualToComparingFieldByFieldRecursively(expected);
     }
 
     @After
     public void clearMap() {
         map.clear();
     }
-    
+
     static class TestObject implements ConfigurationSection {
         private String s;
         private int i;
@@ -211,11 +230,27 @@ public class ObjectMapperTest {
 
         @Override
         public List<ConfigurationItem> registerConfigurationItems() {
-            return null;
+            List<ConfigurationItem> configItems = new ArrayList<>();
+            configItems.add(new ConfigurationItem("i", 0));
+            configItems.add(new ConfigurationItem("s"));
+            configItems.add(new ConfigurationItem("d", 0.0));
+            configItems.add(new ConfigurationItem("b", false));
+            configItems.add(new ConfigurationItem("l", Collections.EMPTY_LIST));
+            configItems.add(new ConfigurationItem("m", Collections.EMPTY_MAP));
+            configItems.add(new ConfigurationItem("as", new String[0]));
+            configItems.add(new ConfigurationItem("e", TestEnum.FOO));
+
+            final DummyObject dummyObject = new DummyObject();
+            dummyObject.setB(false);
+            dummyObject.setL(Collections.emptyList());
+            dummyObject.setAs(new String[0]);
+            configItems.add(new ConfigurationItem("dummyObject", dummyObject));
+
+            return configItems;
         }
     }
 
-    static class DummyObject {
+    static class DummyObject implements ConfigurationSection {
         private boolean b;
         private String[] as;
         private List<String> l;
@@ -231,9 +266,20 @@ public class ObjectMapperTest {
         public void setL(List<String> l) {
             this.l = l;
         }
+
+        @Override
+        public List<ConfigurationItem> registerConfigurationItems() {
+            List<ConfigurationItem> configItems = new ArrayList<>();
+            configItems.add(new ConfigurationItem("b", false));
+            configItems.add(new ConfigurationItem("as", new String[0]));
+            configItems.add(new ConfigurationItem("l", Collections.EMPTY_LIST));
+
+            return configItems;
+        }
     }
 
     enum TestEnum {
-        FOO, BAR;
+        FOO,
+        BAR;
     }
 }

@@ -69,7 +69,7 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setScm(scm);
 
         // when
-        final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/smart-testing.yml"));
+        final Configuration actualConfiguration = Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
 
         // then
         Assertions.assertThat(actualConfiguration)

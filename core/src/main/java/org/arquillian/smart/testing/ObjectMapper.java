@@ -25,7 +25,7 @@ public class ObjectMapper {
             throw new RuntimeException("Failed to create new instance of class " + aClass, e);
         }
 
-        List<ConfigurationItem> configItems = ((ConfigurationSection) instance).registerConfigurationItems();
+        List<ConfigurationItem> configItems = instance.registerConfigurationItems();
 
         Arrays.stream(aClass.getMethods()).filter(ObjectMapper::isSetter)
             .forEach(method -> invokeMethodWithMappedValue(configItems, method, instance, map));
@@ -93,10 +93,12 @@ public class ObjectMapper {
         } else if (parameterType.isAssignableFrom(List.class)) {
             return handleList(method, mappedValue);
         } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
-            if (parameterType.isAssignableFrom(mappedValue.getClass())){
-                return  mappedValue;
+            if (parameterType.isAssignableFrom(mappedValue.getClass())) {
+                return mappedValue;
             }
             return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
+        } else if (parameterType.isAssignableFrom(mappedValue.getClass())) {
+            return mappedValue;
         } else {
             return convertToType(parameterType, mappedValue.toString());
         }
@@ -112,6 +114,9 @@ public class ObjectMapper {
     }
 
     private static <T> T[] handleArray(Class<T> parameterType, Object mapValue) {
+        if (mapValue != null && mapValue.getClass().isArray() && ((Object[]) mapValue).length == 0) {
+            return (T[]) mapValue;
+        }
         List<T> convertedList = getConvertedList(parameterType, mapValue);
         T[] array = (T[]) Array.newInstance(parameterType, convertedList.size());
         return convertedList.toArray(array);

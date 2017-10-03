@@ -21,6 +21,11 @@ public class ConfigurationItem {
         this.paramName = paramName;
     }
 
+    public ConfigurationItem(String paramName, Object defaultValue) {
+        this.paramName = paramName;
+        this.defaultValue = defaultValue;
+    }
+
     public String getParamName() {
         return paramName;
     }
