@@ -20,7 +20,7 @@ import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.yaml.snakeyaml.Yaml;
 
-public class Configuration implements ConfigurationSection{
+public class Configuration implements ConfigurationSection {
 
     private static final Logger logger = Logger.getLogger();
 
@@ -42,8 +42,8 @@ public class Configuration implements ConfigurationSection{
     private RunMode mode;
     private String applyTo;
 
-    private Boolean disable;
-    private Boolean debug;
+    private boolean disable;
+    private boolean debug;
 
     private Report report;
     private Scm scm;
@@ -72,19 +72,19 @@ public class Configuration implements ConfigurationSection{
         this.applyTo = applyTo;
     }
 
-    public Boolean isDisable() {
-        return disable != null && disable;
+    public boolean isDisable() {
+        return disable;
     }
 
-    public void setDisable(Boolean disable) {
+    public void setDisable(boolean disable) {
         this.disable = disable;
     }
 
-    public Boolean isDebug() {
-        return debug != null && debug;
+    public boolean isDebug() {
+        return debug;
     }
 
-    public void setDebug(Boolean debug) {
+    public void setDebug(boolean debug) {
         this.debug = debug;
     }
 
@@ -104,7 +104,7 @@ public class Configuration implements ConfigurationSection{
         this.scm = scm;
     }
 
-    public List<ConfigurationItem> registerConfigurationItems(){
+    public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
         configItems.add(new ConfigurationItem("mode", SMART_TESTING_MODE, RunMode.SELECTING));
@@ -119,21 +119,24 @@ public class Configuration implements ConfigurationSection{
     }
 
     public static Configuration load(File projectDir) {
-        final File[] files = projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
+        final File[] files =
+            projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
         Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
 
-        if (files != null) {
-            if (files.length == 0) {
-                logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
-                        + "Using system properties to load configuration for smart testing.");
-            } else {
-                try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
-                    final Yaml yaml = new Yaml();
-                    yamlConfiguration = (Map<String, Object>) yaml.load(io);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
+        if (files == null) {
+            throw new RuntimeException("I/O errors occurs while listing dir " + projectDir);
+        }
+
+        if (files.length == 0) {
+            logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
+                + "Using system properties to load configuration for smart testing.");
+        } else {
+            try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
+                final Yaml yaml = new Yaml();
+                yamlConfiguration = (Map<String, Object>) yaml.load(io);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         }
 
@@ -141,7 +144,8 @@ public class Configuration implements ConfigurationSection{
     }
 
     public static Configuration loadPrecalculated(File projectDir) {
-        final File configFile = new LocalStorage(projectDir).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
+        final File configFile =
+            new LocalStorage(projectDir).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
 
         return loadConfigurationFromFile(configFile);
     }
