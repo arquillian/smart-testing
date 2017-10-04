@@ -22,6 +22,12 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
         return new BuiltProjectAssert(module);
     }
 
+    /**
+     * Will assert that all built sub-modules contain effective pom.xml with smart testing extension configured.
+     *
+     * @param effectivePom
+     *     effectivePom file to verify
+     **/
     public BuiltProjectAssert allBuiltSubModulesContainEffectivePom(String effectivePom) {
         actual.getModules().forEach(subModule -> assertThat(subModule).containsEffectivePom(effectivePom));
         return this;

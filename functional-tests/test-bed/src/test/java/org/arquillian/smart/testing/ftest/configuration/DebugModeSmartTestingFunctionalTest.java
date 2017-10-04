@@ -25,13 +25,15 @@ public class DebugModeSmartTestingFunctionalTest {
     private static final String MAVEN_DEBUG_LOGS = "[DEBUG] Smart Testing Extension -";
     private static final String PROVIDER_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
     private static final String EFFECTIVE_POM = "smart-testing" + File.separator + SMART_TESTING_POM_FILE;
-    private final CustomSoftAssertions softly = new CustomSoftAssertions();
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public final CustomSoftAssertions softly = new CustomSoftAssertions();
 
     @Test
     public void should_show_debug_logs_when_smart_testing_is_executed_in_debug_mode() throws Exception {

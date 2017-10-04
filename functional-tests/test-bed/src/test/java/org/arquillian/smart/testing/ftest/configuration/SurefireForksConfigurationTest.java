@@ -22,13 +22,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
-    private final CustomSoftAssertions softly = new CustomSoftAssertions();
-
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public final CustomSoftAssertions softly = new CustomSoftAssertions();
 
     @Test
     public void test_with_reuse_forks_false() {
@@ -91,7 +92,6 @@ public class SurefireForksConfigurationTest {
         assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
-        softly.assertAll();
     }
 }
 
