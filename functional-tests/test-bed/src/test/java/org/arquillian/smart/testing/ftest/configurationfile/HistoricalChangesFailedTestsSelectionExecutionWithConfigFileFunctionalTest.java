@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.ftest.configurationfile;
 
 import java.util.Collection;
-import org.arquillian.smart.testing.ftest.FileVerifier;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -11,6 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.arquillian.smart.testing.ftest.customAssertions.ProjectReportAssert.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
@@ -57,6 +57,7 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        FileVerifier.assertThatFileIsNotPresent(project, TEMP_REPORT_DIR);
+
+        assertThat(project).doesNotContainFile(TEMP_REPORT_DIR);
     }
 }
