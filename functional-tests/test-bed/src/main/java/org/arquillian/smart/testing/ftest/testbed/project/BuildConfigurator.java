@@ -3,13 +3,17 @@ package org.arquillian.smart.testing.ftest.testbed.project;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
@@ -29,6 +33,7 @@ public class BuildConfigurator {
     private static final int DEFAULT_DEBUG_PORT = 8000;
     private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
+    private final Path root;
     private final ProjectBuilder projectBuilder;
     private final Map<String, String> systemProperties = new HashMap<>();
     private final Set<String> modulesToBeBuilt = new HashSet<>();
@@ -47,9 +52,10 @@ public class BuildConfigurator {
     private String mavenVersion;
     private Using usingInstallation;
 
-    BuildConfigurator(ProjectBuilder projectBuilder) {
+    BuildConfigurator(ProjectBuilder projectBuilder, Path root) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
         systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
+        this.root = root;
         this.projectBuilder = projectBuilder;
     }
 
@@ -243,7 +249,7 @@ public class BuildConfigurator {
     }
 
     boolean isSkipTestsEnabled() {
-        return skipTests;
+        return skipTests || Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests"));
     }
 
     String getMavenOpts() {
@@ -280,6 +286,16 @@ public class BuildConfigurator {
 
     boolean isIgnoreBuildFailure() {
         return ignoreBuildFailure;
+    }
+
+    private Properties getPropertiesFromPom() {
+        final File effectivePom = Paths.get(root.toAbsolutePath().toString() + "/pom.xml").toFile();
+        try (FileReader reader = new FileReader(effectivePom)) {
+            Model model = new MavenXpp3Reader().read(reader);
+            return model.getProperties();
+        } catch(Exception ex){
+            throw new RuntimeException("Failed to read properties from file " + effectivePom, ex);
+        }
     }
 
     String getMavenVersion() {

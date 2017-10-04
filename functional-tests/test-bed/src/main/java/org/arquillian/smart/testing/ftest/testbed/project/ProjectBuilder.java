@@ -39,7 +39,7 @@ public class ProjectBuilder {
 
     ProjectBuilder(Path root) {
         this.root = root;
-        this.buildConfigurator = new BuildConfigurator(this);
+        this.buildConfigurator = new BuildConfigurator(this, root);
     }
 
     public BuildConfigurator options() {
