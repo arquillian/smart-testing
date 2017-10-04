@@ -65,7 +65,7 @@ TIP: Usually `new` and `changed` strategies are used together `-Dconst:core/src/
 This strategy also relies on _SCM_ information but in this case it retrieves any *new* or *modified* business class
 between commits range and local changes as well.
 
-TIP: `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]`, `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]` Java system properties are valid as well.
+TIP: `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]`, `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]` and `const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]` Java system properties are valid as well.
 
 When this strategy gets all changes then inspect all tests of current project checking which ones _imports_ these classes.
 If the test exercises a business class that has been modified, we treat it as *important*  so it will be executed earlier in the test plan.
@@ -114,6 +114,4 @@ WARNING: At this moment, this strategy does not work with Java 9.
 
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
 All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="TEMPORARY_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/spi/TestResult.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
-
-
 

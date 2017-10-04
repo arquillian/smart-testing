@@ -10,8 +10,8 @@ import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TA
 public class Report implements ConfigurationSection {
 
     private boolean enable;
-    private String name = REPORT_FILE_NAME;
-    private String dir = TARGET;
+    private String name;
+    private String dir;
 
     public boolean isEnable() {
         return enable;

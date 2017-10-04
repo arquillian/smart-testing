@@ -10,6 +10,8 @@ import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
@@ -29,7 +31,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-1.yml"));
+            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -40,7 +42,7 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_for_scmLastChanges_from_config_file() {
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-1.yml"));
+            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -82,6 +84,8 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = new Report();
         report.setEnable(true);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
 
         final Range range = new Range();
         range.setHead(HEAD);
@@ -115,6 +119,8 @@ public class ConfigurationUsingPropertyTest {
 
         final Report report = new Report();
         report.setEnable(true);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
 
         final Range range = new Range();
         range.setHead(HEAD);

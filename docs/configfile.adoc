@@ -1,6 +1,7 @@
-== Configuration file
+== Configuration File
 
-You can use smart-testing.y(a)ml file which is present at `${project.dir}/smart-testing.yml`.
+You can use smart-testing `YAML` file at `${project.dir}/smart-testing.yml` or at `${project.dir}/smart-testing.yaml`.
+
 Configuration file looks as follows:
 
 [[config-file]]
@@ -10,43 +11,77 @@ include::../core/src/test/resources/configuration/smart-testing.yml[]
 ----
 copyToClipboard:config-file[]
 
+<1> This defines mode to be used by Smart Testing.
+<2> This defines strategies to be used while finding important tests.
+<3> This defines plugin to be used for Smart Testing.
+<4> This enables debug logs for Smart Testing.
+<5> This disables Smart Testing if set to true.
+<6> This enables Smart Testing report if set to true.
+<7> This sets first commit sha or `HEAD` notation for inspecting changes.
+<8> This sets last commit sha or `HEAD` notation for inspecting changes.
+
+All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter. You can look at <<_reference_card, references>> for default value of parameter.
+
 However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <<_reference_card, references>> for all supported system properties.
 
-=== Configuration file reference
+=== Configuration File Reference
 The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
 
-NOTE: You can use either a .yml or .yaml extension for this file.
+NOTE: You can use either a `.yml` or `.yaml` extension for this file.
 
-==== strategies
-This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.
-This should be defined in `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]`.
+[cols="2,6", options="header"]
+|===
+|Field | Description
 
-==== mode
-This is used to select mode for Smart Testing. Look at <<_modes, modes>> for all supported options & default value.
+a| strategies
+a| This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.
 
-==== applyTo
-This applies smart testing to use with `surefire` or `failsafe` plugin definition. By default this is applied to `failsafe`, `surefire` both.
-This is optional field.
+a| mode
+a| This is used to select mode for Smart Testing. Look at <<_modes, modes>> for all supported options & default value.
 
-==== debug
-This enables debug mode if sets to `true`. It will take `false` as default value. This is optional field.
+a| applyTo
+a| This applies smart testing to use with `surefire` or `failsafe` plugin definition.
 
-==== disable
-This disables smart testing extension without removing it if set to `true`. By default it's `false`.
-This is optional field.
+a| debug
+a| This option runs smart testing in debug mode.
 
-==== report
+a| disable
+a| This disables smart testing extension without removing it.
 
-===== enable
-This generates smart testing report if set to `true`. By default it's `false`. This is optional field.
+a| report
+a| This configures report options for smart testing. Look at <<_report_options, Report Options>> for all available options.
 
-==== scm
-To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges` to configure `SCM_COMMIT` & `SCM_PREVIOUS_COMMIT`.
-This is optional field. By default `range[head]` will point to `HEAD` & `range[tail]` will point to `HEAD~0`.
+a| scm
+a| To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges` to configure `SCM_COMMIT` & `SCM_PREVIOUS_COMMIT`.
+Look at <<_scm_options, Scm Options>> for all available options.
+|===
 
-===== range
-* head - Set commit sha or `HEAD` notation.
-* tail - Set commit sha or `HEAD` notation.
+==== Report Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| enable
+a| This generates smart testing report with selected tests.
+|===
 
-===== lastChanges
-This is used to set the number of commits from `HEAD` that you want to inspect
+==== Scm Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| range
+a| This configures range for Scm configuration. Look at <<_range_options, Range Options>> for all available options.
+
+a| lastChanges
+a| This is used to set the number of commits from `HEAD` that you want to inspect.
+|===
+
+==== Range Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| head
+a| Sets first commit sha or `HEAD` notation.
+
+a| tail
+a| Sets last  sha or `HEAD` notation.
+|===

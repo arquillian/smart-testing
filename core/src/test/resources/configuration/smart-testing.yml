@@ -1,11 +1,11 @@
-mode: ordering
-strategies: new, changed, affected
-applyTo: surefire
-debug: true
-disable: false
+mode: ordering #<!--1-->
+strategies: new, changed, affected #<!--2-->
+applyTo: surefire #<!--3-->
+debug: true #<!--4-->
+disable: false #<!--5-->
 report:
-    enable: true
+    enable: true #<!--6-->
 scm:
     range:
-      head: HEAD
-      tail: HEAD~2
+      head: HEAD #<!--7-->
+      tail: HEAD~2 #<!--8-->

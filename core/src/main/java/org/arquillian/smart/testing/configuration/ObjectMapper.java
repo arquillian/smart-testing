@@ -37,7 +37,6 @@ class ObjectMapper {
         if (method.getParameterTypes().length != 1) {
             return;
         }
-        Class<?> parameterType = method.getParameterTypes()[0];
         final String field = method.getName().substring(3);
         final String property = Character.toLowerCase(field.charAt(0)) + field.substring(1);
         Object configFileValue = map.get(property);
@@ -45,15 +44,26 @@ class ObjectMapper {
         Optional<ConfigurationItem> foundConfigItem =
             configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
 
-        Object converted = null;
+        Object converted = getConvertedObject(method, configFileValue, foundConfigItem);
+
+        try {
+            if (converted != null) {
+                method.invoke(instance, converted);
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to invoke method " + method, e);
+        }
+    }
+
+    private static Object getConvertedObject(Method method, Object configFileValue, Optional<ConfigurationItem> foundConfigItem) {
         if (!foundConfigItem.isPresent()) {
+            Class<?> parameterType = method.getParameterTypes()[0];
             if (!ConfigurationSection.class.isAssignableFrom(parameterType)) {
-                return;
+                return null;
             } else if (configFileValue == null) {
-                converted = mapToObject((Class<ConfigurationSection>) parameterType, new HashMap<>(0));
+                return mapToObject((Class<ConfigurationSection>) parameterType, new HashMap<>(0));
             } else {
-                converted =
-                    mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
+                return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
             Object mappedValue = null;
@@ -69,17 +79,10 @@ class ObjectMapper {
                 mappedValue = configItem.getDefaultValue();
             }
             if (mappedValue != null) {
-                converted = convert(method, mappedValue);
+                return convert(method, mappedValue);
             }
         }
-
-        try {
-            if (converted != null) {
-                method.invoke(instance, converted);
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException("Failed to invoke method " + method, e);
-        }
+        return null;
     }
 
     private static Object convert(Method method, Object mappedValue) {
@@ -90,13 +93,10 @@ class ObjectMapper {
             return handleEnum(method, mappedValue);
         } else if (parameterType.isAssignableFrom(List.class)) {
             return handleList(method, mappedValue);
-        } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
-            if (parameterType.isAssignableFrom(mappedValue.getClass())) {
-                return mappedValue;
-            }
-            return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
         } else if (parameterType.isAssignableFrom(mappedValue.getClass())) {
             return mappedValue;
+        } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
+            return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
         } else {
             return convertToType(parameterType, mappedValue.toString());
         }

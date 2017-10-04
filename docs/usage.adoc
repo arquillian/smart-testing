@@ -18,7 +18,7 @@ Remember that the default **mode** is `const:core/src/main/java/org/arquillian/s
 *You want to run all tests but given priority to the latest tests added or modified*
 
 [[orderingChanged]]
-`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]="new, changed"`  copyToClipboard:orderingChanged[]
+`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]=1 -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]="new, changed"`  copyToClipboard:orderingChanged[]
 
 *You want to run only tests that validates new or modified business classes locally*
 

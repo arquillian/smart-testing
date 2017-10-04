@@ -1,40 +1,46 @@
 package org.arquillian.smart.testing.configuration;
 
-public class ConfigurationItem {
+class ConfigurationItem {
 
     private final String paramName;
     private String systemProperty;
     private Object defaultValue;
 
-    public ConfigurationItem(String paramName, String systemProperty, Object defaultValue) {
+    /**
+     * Constructor
+     * @param paramName needs to match with name of setter method by excluding set/add.
+     * @param systemProperty required to overwrite field value.
+     * @param defaultValue to use for the field.
+     */
+    ConfigurationItem(String paramName, String systemProperty, Object defaultValue) {
         this.paramName = paramName;
         this.systemProperty = systemProperty;
         this.defaultValue = defaultValue;
     }
 
-    public ConfigurationItem(String paramName, String systemProperty) {
+    ConfigurationItem(String paramName, String systemProperty) {
         this.paramName = paramName;
         this.systemProperty = systemProperty;
     }
 
-    public ConfigurationItem(String paramName) {
+    ConfigurationItem(String paramName) {
         this.paramName = paramName;
     }
 
-    public ConfigurationItem(String paramName, Object defaultValue) {
+    ConfigurationItem(String paramName, Object defaultValue) {
         this.paramName = paramName;
         this.defaultValue = defaultValue;
     }
 
-    public String getParamName() {
+    String getParamName() {
         return paramName;
     }
 
-    public String getSystemProperty() {
+    String getSystemProperty() {
         return systemProperty;
     }
 
-    public Object getDefaultValue() {
+    Object getDefaultValue() {
         return defaultValue;
     }
 }

@@ -12,6 +12,7 @@ public class Scm implements ConfigurationSection {
 
     private Range range;
 
+    @SuppressWarnings("unused")
     public void setLastChanges(String lastChanges) {
         if (!Objects.equals(lastChanges, "0")) {
             final Range range = new Range();

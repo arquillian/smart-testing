@@ -25,7 +25,6 @@ public class Configuration implements ConfigurationSection {
     private static final Logger logger = Logger.getLogger();
 
     public static final String DEFAULT_MODE = "selecting";
-    public static final String DEFAULT_STRATEGIES = "";
     public static final String SMART_TESTING_REPORT_ENABLE = "smart.testing.report.enable";
 
     public static final String SMART_TESTING = "smart.testing";
@@ -107,7 +106,7 @@ public class Configuration implements ConfigurationSection {
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
-        configItems.add(new ConfigurationItem("mode", SMART_TESTING_MODE, RunMode.SELECTING));
+        configItems.add(new ConfigurationItem("mode", SMART_TESTING_MODE, RunMode.valueOf(DEFAULT_MODE.toUpperCase())));
         configItems.add(new ConfigurationItem("applyTo", SMART_TESTING_APPLY_TO));
         configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
@@ -210,10 +209,6 @@ public class Configuration implements ConfigurationSection {
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
         return ObjectMapper.mapToObject(Configuration.class, yamlConfiguration);
-    }
-
-    private static boolean containsAnyStrategy(String strategies) {
-        return !strategies.trim().isEmpty();
     }
 
     public boolean isSelectingMode() {

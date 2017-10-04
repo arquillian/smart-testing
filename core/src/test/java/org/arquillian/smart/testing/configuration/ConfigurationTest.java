@@ -7,6 +7,8 @@ import org.junit.Test;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +20,8 @@ public class ConfigurationTest {
         // given
         final Report report = new Report();
         report.setEnable(true);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
 
         final Range range = new Range();
         range.setHead(HEAD);
@@ -56,6 +60,8 @@ public class ConfigurationTest {
 
         final Report report = new Report();
         report.setEnable(false);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
 
         final Configuration expectedConfiguration = new Configuration();
         expectedConfiguration.setMode(SELECTING);
@@ -76,6 +82,8 @@ public class ConfigurationTest {
         // given
         final Report report = new Report();
         report.setEnable(false);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
 
         final Range range = new Range();
         range.setHead(HEAD);

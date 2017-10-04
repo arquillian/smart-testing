@@ -52,7 +52,7 @@ a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="HEAD"]`
 a|`new`, `changed`, `affected`
 
-a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]`
+a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_LAST_CHANGES"]`
 |Set the number of commits from `HEAD` that you want to inspect
 a|`const:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="DEFAULT_LAST_COMMITS"]`
 a|`new`, `changed`, `affected`

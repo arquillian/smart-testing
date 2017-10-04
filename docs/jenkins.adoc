@@ -59,7 +59,7 @@ pipeline {
             steps {
                 script {
                     def scmVars = checkout scm
-                    sh "mvn -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]='new, affected' -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]=${scmVars.GIT_COMMIT} -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]=${scmVars.GIT_PREVIOUS_COMMI} test"
+                    sh "mvn -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]='new, affected' -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]=ordering -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_HEAD"]=${scmVars.GIT_COMMIT} -Dconst:core/src/main/java/org/arquillian/smart/testing/scm/ScmRunnerProperties.java[name="SCM_RANGE_TAIL"]=${scmVars.GIT_PREVIOUS_COMMIT} test"
                 }
             }
             post {
