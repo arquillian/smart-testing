@@ -43,7 +43,7 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
                 "Inlined variable in a method", "Adds new unit test");
 
         // when
-        final TestResults actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build("config/impl-base").run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

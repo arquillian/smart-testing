@@ -33,7 +33,7 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
         project.applyAsCommits("Introduces error by changing return value");
 
         project
-            .build()
+            .build("container/impl-base")
                 .options()
                     .ignoreBuildFailure()
                 .configure()
@@ -49,7 +49,7 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
 
 
         // when
-        final TestResults actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build("container/impl-base").run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
