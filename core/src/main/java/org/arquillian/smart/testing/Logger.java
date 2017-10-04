@@ -7,7 +7,7 @@ public class Logger {
 
     private static final String PREFIX = "[%s] [Smart Testing Extension] ";
 
-    private boolean mavenDebugLogLevel = false;
+    private static boolean mavenDebugLogLevel = false;
 
     public static Logger getLogger() {
         return new Logger();
