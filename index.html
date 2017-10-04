@@ -534,40 +534,45 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_strategies">3.2. Strategies</a></li>
 </ul>
 </li>
-<li><a href="#_usage">4. Usage</a>
+<li><a href="#_configuration_file">4. Configuration File</a>
 <ul class="sectlevel2">
-<li><a href="#_examples">4.1. Examples</a></li>
-<li><a href="#_disabling_smart_testing">4.2. Disabling Smart Testing</a></li>
-<li><a href="#_plugin_selection">4.3. Plugin Selection</a></li>
-<li><a href="#_debug_mode">4.4. Debug Mode</a></li>
-<li><a href="#_specifying_concrete_set_of_test_classes">4.5. Specifying Concrete Set of Test Classes</a></li>
-<li><a href="#_skipping_tests">4.6. Skipping Tests</a></li>
-<li><a href="#_running_examples">4.7. Running Examples</a></li>
+<li><a href="#_configuration_file_reference">4.1. Configuration File Reference</a></li>
 </ul>
 </li>
-<li><a href="#_reports">5. Reports</a>
+<li><a href="#_usage">5. Usage</a>
 <ul class="sectlevel2">
-<li><a href="#_build_artifacts">5.1. Build Artifacts</a></li>
-<li><a href="#_configuration_2">5.2. Configuration</a></li>
+<li><a href="#_examples">5.1. Examples</a></li>
+<li><a href="#_disabling_smart_testing">5.2. Disabling Smart Testing</a></li>
+<li><a href="#_plugin_selection">5.3. Plugin Selection</a></li>
+<li><a href="#_debug_mode">5.4. Debug Mode</a></li>
+<li><a href="#_specifying_concrete_set_of_test_classes">5.5. Specifying Concrete Set of Test Classes</a></li>
+<li><a href="#_skipping_tests">5.6. Skipping Tests</a></li>
+<li><a href="#_running_examples">5.7. Running Examples</a></li>
 </ul>
 </li>
-<li><a href="#_jenkins">6. Jenkins</a>
+<li><a href="#_reports">6. Reports</a>
 <ul class="sectlevel2">
-<li><a href="#_jenkins_freestyle_project">6.1. Jenkins Freestyle project</a></li>
-<li><a href="#_jenkins_pipeline">6.2. Jenkins Pipeline</a></li>
+<li><a href="#_build_artifacts">6.1. Build Artifacts</a></li>
+<li><a href="#_configuration_2">6.2. Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_reference_card">7. Reference Card</a>
+<li><a href="#_jenkins">7. Jenkins</a>
 <ul class="sectlevel2">
-<li><a href="#_installation_2">7.1. Installation</a></li>
-<li><a href="#_configuration_3">7.2. Configuration</a></li>
-<li><a href="#_strategies_2">7.3. Strategies</a></li>
-<li><a href="#_getting_insights_of_the_execution">7.4. Getting insights of the execution</a></li>
+<li><a href="#_jenkins_freestyle_project">7.1. Jenkins Freestyle project</a></li>
+<li><a href="#_jenkins_pipeline">7.2. Jenkins Pipeline</a></li>
 </ul>
 </li>
-<li><a href="#_developing">8. Developing</a>
+<li><a href="#_reference_card">8. Reference Card</a>
 <ul class="sectlevel2">
-<li><a href="#_test_bed">8.1. Test Bed</a></li>
+<li><a href="#_installation_2">8.1. Installation</a></li>
+<li><a href="#_configuration_3">8.2. Configuration</a></li>
+<li><a href="#_strategies_2">8.3. Strategies</a></li>
+<li><a href="#_getting_insights_of_the_execution">8.4. Getting insights of the execution</a></li>
+</ul>
+</li>
+<li><a href="#_developing">9. Developing</a>
+<ul class="sectlevel2">
+<li><a href="#_test_bed">9.1. Test Bed</a></li>
 </ul>
 </li>
 </ul>
@@ -1000,10 +1005,265 @@ All reports from previous local build are automatically copied by the maven exte
 </div>
 </div>
 <div class="sect1">
-<h2 id="_usage"><a class="anchor" href="#_usage"></a>4. Usage</h2>
+<h2 id="_configuration_file"><a class="anchor" href="#_configuration_file"></a>4. Configuration File</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use smart-testing <code>YAML</code> file at <code>${project.dir}/smart-testing.yml</code> or at <code>${project.dir}/smart-testing.yaml</code>.</p>
+</div>
+<div class="paragraph">
+<p>Configuration file looks as follows:</p>
+</div>
+<div id="config-file" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering </span></span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="key">strategies</span>: <span class="string"><span class="content">new, changed, affected </span></span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="key">applyTo</span>: <span class="string"><span class="content">surefire </span></span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="key">debug</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
+<span class="key">disable</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
+<span class="key">report</span>:
+    <span class="key">enable</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
+<span class="key">scm</span>:
+    <span class="key">range</span>:
+      <span class="key">head</span>: <span class="string"><span class="content">HEAD </span></span><i class="conum" data-value="7"></i><b>(7)</b>
+      <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span> <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#config-file">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This defines mode to be used by Smart Testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This defines strategies to be used while finding important tests.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This defines plugin to be used for Smart Testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This enables debug logs for Smart Testing.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>This disables Smart Testing if set to true.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>This enables Smart Testing report if set to true.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>This sets first commit sha or <code>HEAD</code> notation for inspecting changes.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>This sets last commit sha or <code>HEAD</code> notation for inspecting changes.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>All parameters in configuration file are optional. If you haven&#8217;t used any parameter in configuration file, Smart testing will use default value for that parameter. You can look at <a href="#_reference_card">references</a> for default value of parameter.</p>
+</div>
+<div class="paragraph">
+<p>However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <a href="#_reference_card">references</a> for all supported system properties.</p>
+</div>
+<div class="sect2">
+<h3 id="_configuration_file_reference"><a class="anchor" href="#_configuration_file_reference"></a>4.1. Configuration File Reference</h3>
+<div class="paragraph">
+<p>The <code>smart-testing.yml</code> file is a <code>YAML</code> file defining required configuration to configure Smart Testing.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can use either a <code>.yml</code> or <code>.yaml</code> extension for this file.
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>strategies</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This is used to define required strategies to find important tests. Look at <a href="#_strategies">strategies</a> for all supported options.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>mode</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This is used to select mode for Smart Testing. Look at <a href="#_modes">modes</a> for all supported options &amp; default value.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>applyTo</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This applies smart testing to use with <code>surefire</code> or <code>failsafe</code> plugin definition.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>debug</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This option runs smart testing in debug mode.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>disable</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This disables smart testing extension without removing it.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>report</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This configures report options for smart testing. Look at <a href="#_report_options">Report Options</a> for all available options.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>scm</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>To run Smart Testing with <code>SCM</code> configuration. You can either define <code>range</code> or <code>lastChanges</code>. Look at <a href="#_scm_options">Scm Options</a>
+   for all available options.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="_report_options"><a class="anchor" href="#_report_options"></a>4.1.1. Report Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>enable</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This generates smart testing report with selected tests.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_scm_options"><a class="anchor" href="#_scm_options"></a>4.1.2. Scm Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>range</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This configures range for Scm configuration. Look at <a href="#_range_options">Range Options</a> for all available options.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>lastChanges</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This is used to set the number of commits from <code>HEAD</code> that you want to inspect.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_range_options"><a class="anchor" href="#_range_options"></a>4.1.3. Range Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>head</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets first commit sha or <code>HEAD</code> notation.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>tail</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets last  sha or <code>HEAD</code> notation.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usage"><a class="anchor" href="#_usage"></a>5. Usage</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_examples"><a class="anchor" href="#_examples"></a>4.1. Examples</h3>
+<h3 id="_examples"><a class="anchor" href="#_examples"></a>5.1. Examples</h3>
 <div class="paragraph">
 <p>After <a href="#_installation">installing</a> <strong>Smart Testing Maven Extension</strong> you can use any goal you use with <code>maven-surefire-plugin</code>
 or <code>maven-failsafe-plugin</code>.</p>
@@ -1059,7 +1319,7 @@ Let&#8217;s see some examples:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_disabling_smart_testing"><a class="anchor" href="#_disabling_smart_testing"></a>4.2. Disabling Smart Testing</h3>
+<h3 id="_disabling_smart_testing"><a class="anchor" href="#_disabling_smart_testing"></a>5.2. Disabling Smart Testing</h3>
 <div class="paragraph">
 <p>Sometimes you might want to disable smart testing extension without removing it.</p>
 </div>
@@ -1069,7 +1329,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_plugin_selection"><a class="anchor" href="#_plugin_selection"></a>4.3. Plugin Selection</h3>
+<h3 id="_plugin_selection"><a class="anchor" href="#_plugin_selection"></a>5.3. Plugin Selection</h3>
 <div class="paragraph">
 <p><strong>Smart testing</strong> extension hooks into <code>surefire</code> and <code>failsafe</code> lifecycle to provide the order/selection of tests to execute.</p>
 </div>
@@ -1081,7 +1341,7 @@ run with standard <code>surefire</code> / <code>failsafe</code> plugins.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>4.4. Debug Mode</h3>
+<h3 id="_debug_mode"><a class="anchor" href="#_debug_mode"></a>5.4. Debug Mode</h3>
 <div class="paragraph">
 <p>In order to get diagnostic information related to Smart Testing extension, you can enable the debug mode by either
 setting the system property <code>smart.testing.debug</code> or by setting the mvn debug output <code>(-X)</code> flag to have the entire build execution
@@ -1094,13 +1354,13 @@ as <code>smart-testing-effective-pom.xml</code></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>4.5. Specifying Concrete Set of Test Classes</h3>
+<h3 id="_specifying_concrete_set_of_test_classes"><a class="anchor" href="#_specifying_concrete_set_of_test_classes"></a>5.5. Specifying Concrete Set of Test Classes</h3>
 <div class="paragraph">
 <p>During development, you may want to run a single test class or a set of concrete test classes.
 You can do this by setting the maven <code>test</code> property to specific test class(es).</p>
 </div>
 <div class="sect3">
-<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>4.5.1. To Run a Single Test</h4>
+<h4 id="_to_run_a_single_test"><a class="anchor" href="#_to_run_a_single_test"></a>5.5.1. To Run a Single Test</h4>
 <div id="singleTest" class="paragraph">
 <p><code>mvn test -Dtest=SampleTest</code>  
         <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#singleTest">
@@ -1122,7 +1382,7 @@ This configuration disables smart testing and executes only the specified sample
 </div>
 </div>
 <div class="sect3">
-<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>4.5.2. To Run Multiple Test Classes</h4>
+<h4 id="_to_run_multiple_test_classes"><a class="anchor" href="#_to_run_multiple_test_classes"></a>5.5.2. To Run Multiple Test Classes</h4>
 <div class="paragraph">
 <p>You can also choose to run only a concrete set of multiple test classes.</p>
 </div>
@@ -1168,7 +1428,7 @@ However, if none fulfil the strategy criteria, no tests would be executed.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>4.6. Skipping Tests</h3>
+<h3 id="_skipping_tests"><a class="anchor" href="#_skipping_tests"></a>5.6. Skipping Tests</h3>
 <div class="paragraph">
 <p>To skip executing the tests for a particular project, Smart Testing aligns with
 <a href="http://maven.apache.org/surefire/maven-failsafe-plugin/examples/skipping-tests.html">Maven Surefire/Failsafe
@@ -1176,23 +1436,23 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 </div>
 </div>
 <div class="sect2">
-<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>4.7. Running Examples</h3>
+<h3 id="_running_examples"><a class="anchor" href="#_running_examples"></a>5.7. Running Examples</h3>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>4.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_changed_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_changed_strategy_and_selecting_mode"></a>5.7.1. Execute Smart Testing with Changed strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132108.js" id="asciicast-132108" async></script>
 </div>
 <div class="sect3">
-<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>4.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
+<h4 id="_execute_smart_testing_with_affected_strategy_and_selecting_mode"><a class="anchor" href="#_execute_smart_testing_with_affected_strategy_and_selecting_mode"></a>5.7.2. Execute Smart Testing with Affected strategy and Selecting Mode</h4>
 <script type="text/javascript" src="https://asciinema.org/a/132434.js" id="asciicast-132434" async></script>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reports"><a class="anchor" href="#_reports"></a>5. Reports</h2>
+<h2 id="_reports"><a class="anchor" href="#_reports"></a>6. Reports</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>5.1. Build Artifacts</h3>
+<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>6.1. Build Artifacts</h3>
 <div class="paragraph">
 <p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
 most efficient way to get a quick answer to:</p>
@@ -1243,7 +1503,7 @@ most efficient way to get a quick answer to:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>5.2. Configuration</h3>
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>6.2. Configuration</h3>
 <div class="paragraph">
 <p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.
 If you use the property, then you get the generated reports in <code>target/smart-testing/reporting</code> for every module separately.</p>
@@ -1252,7 +1512,7 @@ If you use the property, then you get the generated reports in <code>target/smar
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>6. Jenkins</h2>
+<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>7. Jenkins</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>So far you&#8217;ve seen how to use Smart Testing from developer perspective (running on local machine).
@@ -1268,7 +1528,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p>Let&#8217;s see how to configure Smart Testing in Jenkins.</p>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>6.1. Jenkins Freestyle project</h3>
+<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>7.1. Jenkins Freestyle project</h3>
 <div class="paragraph">
 <p>Freestyle project is the most basic way of creating builds with Jenkins.</p>
 </div>
@@ -1301,7 +1561,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>6.2. Jenkins Pipeline</h3>
+<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>7.2. Jenkins Pipeline</h3>
 <div class="paragraph">
 <p>Jenkins Pipeline is a group of plugins which support implementing and integrating continuous delivery pipelines into Jenkins.</p>
 </div>
@@ -1353,10 +1613,10 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>7. Reference Card</h2>
+<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>8. Reference Card</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>7.1. Installation</h3>
+<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>8.1. Installation</h3>
 <div class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
@@ -1372,7 +1632,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>7.2. Configuration</h3>
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>8.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1439,7 +1699,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>7.3. Strategies</h3>
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>8.3. Strategies</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1538,7 +1798,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>7.4. Getting insights of the execution</h3>
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>8.4. Getting insights of the execution</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 20%;">
@@ -1570,7 +1830,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>8. Developing</h2>
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>9. Developing</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -1585,7 +1845,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </table>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>8.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>9.1. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -1639,7 +1899,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>8.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>9.1.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -1661,6 +1921,46 @@ This section will be improved as we continue with the SPI design to let you hook
 <div class="paragraph">
 <p>This snippet will enable <code>smart-testing</code> extension in the background. It will also apply test selection criteria
 and execution mode (<code>selecting</code> meaning only tests which belong to categories defined in <code>executionOrder</code>).</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_config_file_creation"><a class="anchor" href="#_config_file_creation"></a>Config file creation</h6>
+<div class="paragraph">
+<p>We have self-explainatory fluent api to create configuration with required options.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">Configuration</span> configuration = <span class="keyword">new</span> ConfigurationBuilder()
+        .mode(SELECTING)
+        .strategies(AFFECTED)
+        .scm()
+            .lastChanges(<span class="string"><span class="delimiter">&quot;</span><span class="content">2</span><span class="delimiter">&quot;</span></span>)
+            .build()
+        .build();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Also we have fluent api to create configuration file at the root of your maven project using given configuration</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">project.configureSmartTesting()
+            .withConfiguration(configuration)
+        .createConfigFile()
+    .enable();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>OR using required options</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">project.configureSmartTesting()
+            .executionOrder(FAILED)
+            .inMode(SELECTING)
+        .createConfigFile()
+    .enable();</code></pre>
+</div>
 </div>
 </div>
 <div class="sect5">
@@ -1787,7 +2087,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>8.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>9.1.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -1887,7 +2187,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-04 07:18:58 UTC
+Last updated 2017-10-04 11:11:33 UTC
 </div>
 </div>
 <script>
