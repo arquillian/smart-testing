@@ -52,8 +52,8 @@ a| report
 a| This configures report options for smart testing. Look at <<_report_options, Report Options>> for all available options.
 
 a| scm
-a| To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges` to configure `SCM_COMMIT` & `SCM_PREVIOUS_COMMIT`.
-Look at <<_scm_options, Scm Options>> for all available options.
+a| To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges`. Look at <<_scm_options, Scm Options>>
+   for all available options.
 |===
 
 ==== Report Options
