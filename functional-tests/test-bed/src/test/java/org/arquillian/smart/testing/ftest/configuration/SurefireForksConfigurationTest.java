@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
-    private static final String SUREFIRE_PROVIDER_LOGS = "Smart Testing Extension -";
+    private static final String SUREFIRE_PROVIDER_LOGS = "INFO: Smart Testing Extension -";
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());

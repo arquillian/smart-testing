@@ -13,7 +13,7 @@ public interface Logger {
     void info(String msg, Object... args);
 
     /**
-     * Will format the given message with the given arguments and log it warn level.
+     * Will format the given message with the given arguments and log it at warn level.
      *
      * @param msg
      *     Message to print

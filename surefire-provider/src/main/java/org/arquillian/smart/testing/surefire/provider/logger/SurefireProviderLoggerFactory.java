@@ -57,10 +57,11 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
             if (args != null && args.length > 0) {
                 msg = format(msg, args);
             }
+            StringBuffer formattedMsg = new StringBuffer(format(PREFIX, level)).append(msg);
             if (consoleLogger.getClass().getName().equals("org.apache.maven.surefire.booter.ForkingRunListener")) {
-                return format(PREFIX, level) + msg + System.lineSeparator();
+                return formattedMsg.append(System.lineSeparator()).toString();
             }
-            return format(PREFIX, level) + msg;
+            return formattedMsg.toString();
         }
     }
 }
