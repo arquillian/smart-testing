@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.logger;
 
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 
 import static java.lang.String.format;
 
@@ -13,7 +13,7 @@ public class DefaultLoggerFactory implements LoggerFactory {
     }
 
     public DefaultLoggerFactory() {
-        this.isDebugLogLevel = Configuration.load().isDebugEnabled();
+        this.isDebugLogLevel = Configuration.load().isDebug();
     }
 
     @Override

@@ -19,8 +19,7 @@ import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetect
 
 public class AffectedTestsDetector implements TestExecutionPlanner {
 
-    private static final
-    Logger logger = Log.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     // TODO TestClassDetector is something that can be moved to extension
     private final TestClassDetector testClassDetector;

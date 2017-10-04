@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -59,6 +60,8 @@ public class SmartTestingProviderTest {
 
         temporaryFolder.newFile("pom.xml");
         Configuration.load().dump(temporaryFolder.getRoot());
+
+        when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));
     }
 
     @Test
