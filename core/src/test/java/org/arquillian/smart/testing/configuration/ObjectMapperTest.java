@@ -278,6 +278,6 @@ public class ObjectMapperTest {
 
     enum TestEnum {
         FOO,
-        BAR;
+        BAR
     }
 }
