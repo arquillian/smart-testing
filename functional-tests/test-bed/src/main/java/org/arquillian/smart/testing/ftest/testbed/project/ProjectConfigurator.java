@@ -74,27 +74,39 @@ public class ProjectConfigurator {
         return this;
     }
 
+    /**
+     * Enables using extension file {@link Using#EXTENSION_FILE}
+     *
+     * @return A modified instance of {@link Project}
+     */
     public Project enable() {
-        final Path rootPom = Paths.get(root.toString(), "pom.xml");
-        final MavenExtensionRegisterer mavenExtensionRegisterer = new MavenExtensionRegisterer(rootPom);
-        String currentVersion = resolveVersion();
-        mavenExtensionRegisterer.addSmartTestingExtension(currentVersion);
-            if (!createConfigFile) {
-                this.project.build().options()
-                        .withSystemProperties(SMART_TESTING, strategies(), SMART_TESTING_MODE, getMode().getName(), SMART_TESTING_VERSION, currentVersion)
-                    .configure();
-            } else {
-                if (configuration == null) {
-                    this.configuration = new ConfigurationBuilder()
-                            .strategies(strategies().split("\\s*,\\s*"))
-                            .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
-                        .build();
-                }
+        return enable(Using.EXTENSION_FILE);
+    }
 
-                this.project.configureSmartTesting()
-                        .withConfiguration(configuration)
-                    .createConfigFile();
+    public Project enable(Using usingInstallation) {
+        project.build().options().setUsingInstallation(usingInstallation);
+        final Path rootPom = Paths.get(root.toString(), "pom.xml");
+        String currentVersion = resolveVersion();
+        if (usingInstallation == Using.EXTENSION_FILE) {
+            new MavenExtensionFileRegisterer(rootPom).addSmartTestingExtension(currentVersion);
+        }
+        if (!createConfigFile) {
+            this.project.build().options()
+                .withSystemProperties(SMART_TESTING, strategies(), SMART_TESTING_MODE, getMode().getName(),
+                    SMART_TESTING_VERSION, currentVersion)
+                .configure();
+        } else {
+            if (configuration == null) {
+                this.configuration = new ConfigurationBuilder()
+                    .strategies(strategies().split("\\s*,\\s*"))
+                    .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
+                    .build();
             }
+
+            this.project.configureSmartTesting()
+                .withConfiguration(configuration)
+                .createConfigFile();
+        }
         return this.project;
     }
 

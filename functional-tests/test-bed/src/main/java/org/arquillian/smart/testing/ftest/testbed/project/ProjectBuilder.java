@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.arquillian.smart.testing.logger.Log;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
@@ -114,9 +115,22 @@ public class ProjectBuilder {
     }
 
     private void setCustomMavenInstallation(PomEquippedEmbeddedMaven embeddedMaven) {
-        final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
-        if (mvnInstallation != null) {
-            embeddedMaven.useInstallation(new File(mvnInstallation));
+        if (buildConfigurator.getMavenVersion() != null && !buildConfigurator.getMavenVersion().isEmpty()) {
+            setMavenVersion(embeddedMaven);
+        } else {
+            final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
+            if (mvnInstallation != null) {
+                embeddedMaven.useInstallation(new File(mvnInstallation));
+            }
+        }
+    }
+
+    private void setMavenVersion(PomEquippedEmbeddedMaven embeddedMaven) {
+        String mavenVersion = buildConfigurator.getMavenVersion();
+        embeddedMaven.useMaven3Version(mavenVersion);
+        if (buildConfigurator.getUsingInstallation() == Using.SHADED_JAR) {
+            String stVersion = buildConfigurator.getSystemProperties().get(Configuration.SMART_TESTING_VERSION);
+            new MavenExtensionShadedJarRegisterer().addSmartTestingExtension(stVersion, mavenVersion);
         }
     }
 
