@@ -50,7 +50,6 @@ public class ConfigurationTest {
     @Test
     public void should_load_default_configuration() {
         // given
-
         final Range range = new Range();
         range.setHead(HEAD);
         range.setTail(String.join("~", HEAD, DEFAULT_LAST_COMMITS));
