@@ -1614,7 +1614,7 @@ This section will be improved as we continue with the SPI design to let you hook
                 <span class="string"><span class="delimiter">&quot;</span><span class="content">Inlined variable in a method</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">Adds new unit test</span><span class="delimiter">&quot;</span></span>);
 
         <span class="comment">// when</span>
-        <span class="directive">final</span> TestResults actualTestResults = project.build().run();
+        <span class="directive">final</span> TestResults actualTestResults = project.build(<span class="string"><span class="delimiter">&quot;</span><span class="content">config/impl-base</span><span class="delimiter">&quot;</span></span>).run();
 
         <span class="comment">// then</span>
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -1887,7 +1887,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-09-27 13:59:52 UTC
+Last updated 2017-10-04 07:18:58 UTC
 </div>
 </div>
 <script>
