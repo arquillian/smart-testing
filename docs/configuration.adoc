@@ -14,6 +14,8 @@ The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configu
 
 In order to define the mode use `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]` Java system property with either one.
 
+IMPORTANT: To get fast feedback loop, you can tell *Smart Testing* to skip after `N` failures by setting system property `surefire.skipAfterFailureCount` to N. Read `http://maven.apache.org/surefire/maven-surefire-plugin/examples/skip-after-failure.html[skipAfterFailureCount]` for more information.
+
 === Strategies
 
 Until now, you've read that smart testing is changing test execution plan running or only including important tests.
