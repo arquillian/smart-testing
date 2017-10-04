@@ -1,0 +1,87 @@
+== Configuration File
+
+You can use smart-testing `YAML` file at `${project.dir}/smart-testing.yml` or at `${project.dir}/smart-testing.yaml`.
+
+Configuration file looks as follows:
+
+[[config-file]]
+[source, yaml, indent=0]
+----
+include::../core/src/test/resources/configuration/smart-testing.yml[]
+----
+copyToClipboard:config-file[]
+
+<1> This defines mode to be used by Smart Testing.
+<2> This defines strategies to be used while finding important tests.
+<3> This defines plugin to be used for Smart Testing.
+<4> This enables debug logs for Smart Testing.
+<5> This disables Smart Testing if set to true.
+<6> This enables Smart Testing report if set to true.
+<7> This sets first commit sha or `HEAD` notation for inspecting changes.
+<8> This sets last commit sha or `HEAD` notation for inspecting changes.
+
+All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter. You can look at <<_reference_card, references>> for default value of parameter.
+
+However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <<_reference_card, references>> for all supported system properties.
+
+=== Configuration File Reference
+The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
+
+NOTE: You can use either a `.yml` or `.yaml` extension for this file.
+
+[cols="2,6", options="header"]
+|===
+|Field | Description
+
+a| strategies
+a| This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.
+
+a| mode
+a| This is used to select mode for Smart Testing. Look at <<_modes, modes>> for all supported options & default value.
+
+a| applyTo
+a| This applies smart testing to use with `surefire` or `failsafe` plugin definition.
+
+a| debug
+a| This option runs smart testing in debug mode.
+
+a| disable
+a| This disables smart testing extension without removing it.
+
+a| report
+a| This configures report options for smart testing. Look at <<_report_options, Report Options>> for all available options.
+
+a| scm
+a| To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges`. Look at <<_scm_options, Scm Options>>
+   for all available options.
+|===
+
+==== Report Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| enable
+a| This generates smart testing report with selected tests.
+|===
+
+==== Scm Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| range
+a| This configures range for Scm configuration. Look at <<_range_options, Range Options>> for all available options.
+
+a| lastChanges
+a| This is used to set the number of commits from `HEAD` that you want to inspect.
+|===
+
+==== Range Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| head
+a| Sets first commit sha or `HEAD` notation.
+
+a| tail
+a| Sets last  sha or `HEAD` notation.
+|===

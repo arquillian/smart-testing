@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,8 +12,12 @@ import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
 
 import static java.util.Arrays.asList;
@@ -25,6 +30,12 @@ import static org.mockito.Mockito.when;
 
 public class SmartTestingProviderTest {
 
+    @Rule
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder(Paths.get(".").toFile());
+
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+
     private final Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
     private ProviderParameters providerParameters;
     private SurefireProviderFactory providerFactory;
@@ -32,7 +43,7 @@ public class SmartTestingProviderTest {
     private SurefireProvider surefireProvider;
 
     @Before
-    public void setupMocks() {
+    public void setupMocksAndDumpConfiguration() throws IOException {
         providerParameters = mock(ProviderParameters.class);
 
         surefireProvider = mock(SurefireProvider.class);
@@ -42,13 +53,18 @@ public class SmartTestingProviderTest {
         when(providerFactory.createInstance()).thenReturn(surefireProvider);
 
         TestRequest testRequest = mock(TestRequest.class);
-        when(testRequest.getTestSourceDirectory()).thenReturn(new File("."));
+        when(testRequest.getTestSourceDirectory()).thenReturn(temporaryFolder.getRoot());
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
+
+        temporaryFolder.newFile("pom.xml");
+        Configuration.load().dump(temporaryFolder.getRoot());
     }
 
     @Test
     public void when_get_suites_is_called_then_same_list_of_classes_will_be_returned() {
         // given
+        System.setProperty("basedir", temporaryFolder.getRoot().toString());
+
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -61,6 +77,7 @@ public class SmartTestingProviderTest {
 
     @Test
     public void test_when_invoke_is_called_with_null() throws Exception {
+        System.setProperty("basedir", temporaryFolder.getRoot().toString());
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 

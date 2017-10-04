@@ -1,0 +1,9 @@
+!!org.arquillian.smart.testing.configuration.Configuration
+applyTo: null
+debug: false
+disable: false
+mode: SELECTING
+report: {enable: false, dir: target, name: report.xml}
+scm:
+  range: {head: HEAD, tail: HEAD~0}
+strategies: [new]

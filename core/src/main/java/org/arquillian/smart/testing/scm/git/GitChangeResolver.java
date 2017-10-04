@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -28,10 +30,6 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import static java.lang.String.format;
 import static org.arquillian.smart.testing.scm.Change.add;
 import static org.arquillian.smart.testing.scm.Change.modify;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.PREVIOUS_COMMIT;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.getPrevCommitDefaultValue;
 
 public class GitChangeResolver implements ChangeResolver {
 
@@ -50,9 +48,11 @@ public class GitChangeResolver implements ChangeResolver {
     }
 
     public GitChangeResolver(File projectDir) {
-        this(projectDir,
-            System.getProperty(PREVIOUS_COMMIT, getPrevCommitDefaultValue()),
-            System.getProperty(COMMIT, HEAD));
+        this(projectDir, Configuration.loadPrecalculated(projectDir).getScm());
+    }
+
+    public GitChangeResolver(File projectDir, Scm scm) {
+        this(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
     }
 
     public GitChangeResolver(File dir, String previous, String head) {

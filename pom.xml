@@ -49,6 +49,7 @@
     <version.javassist>3.21.0-GA</version.javassist>
     <version.jgrapht>1.0.1</version.jgrapht>
     <version.shrinkwrap.resolver>3.0.0-alpha-4</version.shrinkwrap.resolver>
+    <version.snakeyaml>1.18</version.snakeyaml>
     <version.mockito>2.10.0</version.mockito>
     <version.jgit>4.8.0.201706111038-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
@@ -120,6 +121,11 @@
         <groupId>org.jgrapht</groupId>
         <artifactId>jgrapht-core</artifactId>
         <version>${version.jgrapht}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

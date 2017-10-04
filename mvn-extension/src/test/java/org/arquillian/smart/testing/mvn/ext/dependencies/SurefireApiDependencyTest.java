@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.mvn.ext.dependencies;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 import org.junit.Test;
 
@@ -64,7 +64,7 @@ public class SurefireApiDependencyTest {
         Model model = new Model();
         Plugin surefirePlugin = new Plugin();
         surefirePlugin.setArtifactId(ApplicablePlugins.SUREFIRE.getArtifactId());
-        surefirePlugin.setVersion("2.20");
+        surefirePlugin.setVersion(version);
         Build build = new Build();
         build.addPlugin(surefirePlugin);
         model.setBuild(build);

@@ -2,8 +2,8 @@ package org.arquillian.smart.testing.report;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;

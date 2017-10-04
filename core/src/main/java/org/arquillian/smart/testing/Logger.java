@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing;
 
 import static java.lang.String.format;
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DEBUG;
 
 public class Logger {
 

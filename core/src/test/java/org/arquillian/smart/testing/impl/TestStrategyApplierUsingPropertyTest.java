@@ -5,11 +5,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.ClassNameExtractorTest;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.FilesCodecTest;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.TestSelectionTest;
 import org.arquillian.smart.testing.api.SmartTesting;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
@@ -40,8 +40,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
-            .applyOnClasses(testsToRun);
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
@@ -55,7 +55,8 @@ public class TestStrategyApplierUsingPropertyTest {
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> testsToRun =
-            createTestsToRun(ClassNameExtractorTest.class, TestStrategyApplierUsingPropertyTest.class, TestSelectionTest.class);
+            createTestsToRun(ClassNameExtractorTest.class, TestStrategyApplierUsingPropertyTest.class,
+                TestSelectionTest.class);
 
         final Set<TestSelection> strategyTests = new LinkedHashSet<>();
         strategyTests.add(new TestSelection(TestSelectionTest.class.getName(), "static"));
@@ -63,8 +64,8 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
-            .applyOnClasses(testsToRun);
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
@@ -78,7 +79,8 @@ public class TestStrategyApplierUsingPropertyTest {
         System.setProperty(Configuration.SMART_TESTING, "static");
 
         final Set<Class<?>> testsToRun =
-            createTestsToRun(ClassNameExtractorTest.class, TestStrategyApplierUsingPropertyTest.class, TestSelectionTest.class);
+            createTestsToRun(ClassNameExtractorTest.class, TestStrategyApplierUsingPropertyTest.class,
+                TestSelectionTest.class);
 
         final Set<TestSelection> strategyTests = new LinkedHashSet<>();
         strategyTests.add(new TestSelection(TestSelectionTest.class.getName(), "static"));
@@ -86,12 +88,13 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
-            .applyOnClasses(testsToRun);
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
-            .containsExactly(TestSelectionTest.class, ClassNameExtractorTest.class, TestStrategyApplierUsingPropertyTest.class);
+            .containsExactly(TestSelectionTest.class, ClassNameExtractorTest.class,
+                TestStrategyApplierUsingPropertyTest.class);
     }
 
     @Test
@@ -110,14 +113,13 @@ public class TestStrategyApplierUsingPropertyTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
 
         // when
-        Set<TestSelection> optimizedClasses = new ConfiguredSmartTestingImpl(testExecutionPlannerLoader)
-            .applyOnClasses(testsToRun);
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
             .hasSize(1)
             .containsExactly(TestSelectionTest.class);
-
     }
 
     private TestExecutionPlannerLoader prepareLoader(final Set<Class<?>> testsToRun, Set<TestSelection> strategyTests) {

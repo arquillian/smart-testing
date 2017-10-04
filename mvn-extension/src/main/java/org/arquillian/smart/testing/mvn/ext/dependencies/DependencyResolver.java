@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.arquillian.smart.testing.Configuration;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 

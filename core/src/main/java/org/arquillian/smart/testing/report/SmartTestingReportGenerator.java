@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.report.model.SmartTestingExecution;
 import org.arquillian.smart.testing.report.model.TestConfiguration;
@@ -20,6 +20,7 @@ public class SmartTestingReportGenerator {
     private final Configuration configuration;
     private final String baseDir;
     public static final String REPORT_FILE_NAME = "report.xml";
+    public static final String TARGET = "target";
 
     public SmartTestingReportGenerator(Collection<TestSelection> testSelections, Configuration configuration, File baseDir) {
         this(testSelections, configuration, baseDir.getAbsolutePath());

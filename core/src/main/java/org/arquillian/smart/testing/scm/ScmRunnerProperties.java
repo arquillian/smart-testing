@@ -2,15 +2,10 @@ package org.arquillian.smart.testing.scm;
 
 public class ScmRunnerProperties {
 
-    public static final String PREVIOUS_COMMIT = "scm.range.tail";
-    public static final String COMMIT = "scm.range.head";
-    public static final String LAST_COMMITS = "scm.last.changes";
+    public static final String SCM_RANGE_TAIL = "scm.range.tail";
+    public static final String SCM_RANGE_HEAD = "scm.range.head";
+    public static final String SCM_LAST_CHANGES = "scm.last.changes";
     public static final String HEAD = "HEAD";
     public static final String DEFAULT_LAST_COMMITS = "0";
-
-
-    public static String getPrevCommitDefaultValue() {
-        return HEAD + "~" + System.getProperty(LAST_COMMITS, DEFAULT_LAST_COMMITS);
-    }
 }
 

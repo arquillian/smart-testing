@@ -9,13 +9,13 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.Configuration.SMART_TESTING_DEBUG;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DEBUG;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDERING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.COMMIT;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.PREVIOUS_COMMIT;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_TAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DebugModeSmartTestingFunctionalTest {
@@ -45,7 +45,7 @@ public class DebugModeSmartTestingFunctionalTest {
         ProjectBuilder projectBuilder = project.build("config/impl-base");
         final TestResults actualTestResults = projectBuilder
                 .options()
-                    .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~", SMART_TESTING_DEBUG, "true")
+                    .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~", SMART_TESTING_DEBUG, "true")
                 .configure()
             .run();
 
@@ -74,8 +74,8 @@ public class DebugModeSmartTestingFunctionalTest {
         projectBuilder
                 .options()
                     .withDebugOutput()
+                    .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~")
                     .logBuildOutput(false)
-                    .withSystemProperties(COMMIT, "HEAD", PREVIOUS_COMMIT, "HEAD~")
                 .configure()
             .run();
 

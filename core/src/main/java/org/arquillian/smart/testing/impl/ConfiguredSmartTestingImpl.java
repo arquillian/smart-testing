@@ -2,11 +2,11 @@ package org.arquillian.smart.testing.impl;
 
 import java.io.File;
 import java.util.Set;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.ConfiguredSmartTesting;
 import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
@@ -21,9 +21,9 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
         this.configuration = configuration;
     }
 
-    ConfiguredSmartTestingImpl(TestExecutionPlannerLoader testExecutionPlannerLoader) {
+    ConfiguredSmartTestingImpl(TestExecutionPlannerLoader testExecutionPlannerLoader, Configuration configuration) {
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
-        this.configuration = Configuration.load();
+        this.configuration = configuration;
     }
 
     @Override

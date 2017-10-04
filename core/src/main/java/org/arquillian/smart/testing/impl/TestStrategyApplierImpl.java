@@ -12,14 +12,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestStrategyApplier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
-
-import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
 
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
@@ -117,6 +115,6 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     private boolean isReportEnabled() {
-        return Boolean.valueOf(System.getProperty(ENABLE_REPORT_PROPERTY, "false"));
+        return configuration.getReport().isEnable();
     }
 }

@@ -12,7 +12,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.Configuration.ENABLE_REPORT_PROPERTY;
+import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.ftest.configuration.CustomAssertions.assertThatAllBuiltSubmodulesContainBuildArtifact;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
@@ -78,7 +78,7 @@ public class SurefireForksConfigurationTest {
         final TestResults actualTestResults = projectBuilder
             .options()
                 .withSystemProperties(systemPropertiesPairs)
-                .withSystemProperties(ENABLE_REPORT_PROPERTY, "true")
+                .withSystemProperties(SMART_TESTING_REPORT_ENABLE, "true")
             .configure()
             .run();
         // then

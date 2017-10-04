@@ -1,5 +1,9 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -7,11 +11,12 @@ import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
-import org.arquillian.smart.testing.Configuration;
 import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -61,10 +66,25 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
+    private void copyConfigurationFile(Model model, File parentFile) {
+        final LocalStorageFileAction configFile = new LocalStorage(model.getProjectDirectory())
+            .duringExecution()
+            .temporary()
+            .file(Configuration.SMART_TESTING_YML);
+        logger.debug("Copying " + Configuration.SMART_TESTING_YML + " from [%s] to [%s]", parentFile.getPath(),
+            configFile.getPath());
+
+        try {
+            configFile.create(Files.readAllBytes(parentFile.toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private void logExtensionDisableReason() {
         String reason = "Not Defined";
 
-        if (configuration.isDisabled()) {
+        if (configuration.isDisable()) {
             reason = "System Property `SMART_TESTING_DISABLE` is set.";
         } else if (isSkipTestExecutionSet()) {
             reason = "Test Execution has been skipped.";
@@ -107,8 +127,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     private void configureExtension(MavenSession session, Configuration configuration) {
         logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
+        final File dumpedConfigFile = configuration.dump(Paths.get("").toFile());
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            copyConfigurationFile(mavenProject.getModel(), dumpedConfigFile);
             if (isFailedStrategyUsed()) {
                 SurefireReportStorage.copySurefireReports(mavenProject.getModel());
             }
@@ -127,7 +149,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private boolean shouldSkipExtensionInstallation() {
         if (skipExtensionInstallation == null) {
-            skipExtensionInstallation = configuration.isDisabled() || isSkipTestExecutionSet() || isSpecificTestClassSet();
+            skipExtensionInstallation = configuration.isDisable() || isSkipTestExecutionSet() || isSpecificTestClassSet();
         }
         return skipExtensionInstallation;
     }

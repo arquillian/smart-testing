@@ -11,6 +11,7 @@ import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
+import org.arquillian.smart.testing.configuration.Configuration;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 
@@ -63,7 +64,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         Set<TestSelection> selection = SmartTesting
-            .with(className -> testsToRun.getClassByName(className) != null)
+            .with(className -> testsToRun.getClassByName(className) != null, Configuration.loadPrecalculated(getProjectDir()))
             .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
