@@ -1,13 +1,11 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
+import org.arquillian.smart.testing.impl.StrategyDependencyResolver;
 
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
@@ -24,18 +22,15 @@ import org.apache.maven.model.Dependency;
  *  - custom file can overwrite defaults
  *  - System properties overwrite all above
  */
-class StrategyDependencyResolver {
+class MavenStrategyDependencyResolver extends StrategyDependencyResolver {
 
-    private static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
 
-    private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
-
-    StrategyDependencyResolver(Path propertiesPath) {
-        this.propertiesPath = propertiesPath;
+    MavenStrategyDependencyResolver(Path propertiesPath) {
+        super(propertiesPath);
     }
 
-    StrategyDependencyResolver() {
-        this.propertiesPath = null;
+    MavenStrategyDependencyResolver() {
+        super();
     }
 
     Map<String, Dependency> resolveDependencies() {
@@ -46,31 +41,6 @@ class StrategyDependencyResolver {
         return transformToDependencies(properties);
     }
 
-    private Properties loadDefaultMapping() {
-        final Properties properties = new Properties();
-        try (InputStream strategyMapping = getClass().getClassLoader().getResourceAsStream("strategies.properties")) {
-            if (strategyMapping == null) {
-                throw new IllegalStateException("Unable to load default strategy dependencies mapping.");
-            }
-            properties.load(strategyMapping);
-        } catch (IOException e) {
-            throw new IllegalStateException("Unable to load default strategy dependencies mapping.", e);
-        }
-        return properties;
-    }
-
-    private Properties loadFromFile() {
-        final Properties properties = new Properties();
-        if (propertiesPath != null) {
-            try {
-                properties.load(new FileInputStream(this.propertiesPath.toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to load custom strategy mapping", e);
-            }
-        }
-
-        return properties;
-    }
 
     private Map<String, Dependency> transformToDependencies(Properties properties) {
         return properties

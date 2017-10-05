@@ -12,6 +12,7 @@ import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TA
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.contentOf;
 
 public class ConfigurationTest {
 
@@ -38,6 +39,7 @@ public class ConfigurationTest {
         expectedConfiguration.setDisable(false);
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
+        expectedConfiguration.setAutocorrect(true);
 
         // when
         final Configuration actualConfiguration =
@@ -68,12 +70,42 @@ public class ConfigurationTest {
         expectedConfiguration.setDisable(false);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setScm(scm);
+        expectedConfiguration.setAutocorrect(false);
 
         // when
         final Configuration defaultConfiguration = Configuration.load();
 
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    @Test
+    public void should_not_autocorrect_if_disabled() {
+
+        // given
+        final Configuration defaultConfiguration = Configuration.load();
+
+        // when
+        defaultConfiguration.setStrategies("nwe");
+        defaultConfiguration.applyAutocorrect();
+
+        // then
+        assertThat(defaultConfiguration.getStrategies()).containsExactly("nwe");
+
+    }
+
+    @Test
+    public void should_autocorrect_if_enabled() {
+        // given
+        final Configuration defaultConfiguration = Configuration.load();
+
+        // when
+        defaultConfiguration.setStrategies("nwe");
+        defaultConfiguration.setAutocorrect(true);
+        defaultConfiguration.applyAutocorrect();
+
+        // then
+        assertThat(defaultConfiguration.getStrategies()).containsExactly("new");
     }
 
     @Test

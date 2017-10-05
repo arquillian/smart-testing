@@ -57,6 +57,7 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
             testExecutionPlannerLoader =
                 new TestExecutionPlannerLoaderImpl(new JavaSPILoader(), testVerifier, projectDir);
         }
+        configuration.applyAutocorrect();
         return new TestStrategyApplierImpl(configuration, testExecutionPlannerLoader, projectDir);
     }
 }

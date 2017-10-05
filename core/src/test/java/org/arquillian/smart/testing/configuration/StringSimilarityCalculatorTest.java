@@ -1,6 +1,7 @@
-package org.arquillian.smart.testing.mvn.ext.dependencies;
+package org.arquillian.smart.testing.configuration;
 
 import java.util.Arrays;
+import org.arquillian.smart.testing.configuration.StringSimilarityCalculator;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -9,3 +9,4 @@ scm:
     range:
       head: HEAD #<!--7-->
       tail: HEAD~2 #<!--8-->
+autocorrect: true #<!--9-->

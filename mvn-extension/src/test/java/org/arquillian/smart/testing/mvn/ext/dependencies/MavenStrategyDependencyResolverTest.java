@@ -12,7 +12,7 @@ import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class StrategyDependencyResolverTest {
+public class MavenStrategyDependencyResolverTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
@@ -20,10 +20,10 @@ public class StrategyDependencyResolverTest {
     @Test
     public void should_resolve_dependencies_based_on_default_property_file_when_nothing_more_is_specified() throws Exception {
         // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
+        final MavenStrategyDependencyResolver mavenStrategyDependencyResolver = new MavenStrategyDependencyResolver();
 
         // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+        Map<String, Dependency> dependencies = mavenStrategyDependencyResolver.resolveDependencies();
 
         // then
         assertThat(dependencies.values()).hasSize(4)
@@ -42,10 +42,10 @@ public class StrategyDependencyResolverTest {
         System.setProperty("smart.testing.strategy.new",
             "org.arquillian.smart.testing:strategy-changed:0.0.5-SNAPSHOT");
 
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
+        final MavenStrategyDependencyResolver mavenStrategyDependencyResolver = new MavenStrategyDependencyResolver();
 
         // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+        Map<String, Dependency> dependencies = mavenStrategyDependencyResolver.resolveDependencies();
 
         // then
         assertThat(dependencies)
@@ -58,11 +58,11 @@ public class StrategyDependencyResolverTest {
     @Test
     public void should_overwrite_default_versions_when_property_file_is_used() throws Exception {
         // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
+        final MavenStrategyDependencyResolver mavenStrategyDependencyResolver = new MavenStrategyDependencyResolver(
             get("src/test/resources", "strategies-test.properties"));
 
         // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+        Map<String, Dependency> dependencies = mavenStrategyDependencyResolver.resolveDependencies();
 
         // then
         assertThat(dependencies.values()).hasSize(4)
@@ -79,14 +79,14 @@ public class StrategyDependencyResolverTest {
     public void should_overwrite_default_properties_by_those_specified_in_the_file_and_then_those_in_system_properties()
         throws Exception {
         // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
+        final MavenStrategyDependencyResolver mavenStrategyDependencyResolver = new MavenStrategyDependencyResolver(
             get("src/test/resources", "strategies-test.properties"));
 
         System.setProperty("smart.testing.strategy.affected",
             "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT");
 
         // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+        Map<String, Dependency> dependencies = mavenStrategyDependencyResolver.resolveDependencies();
 
         // then
         assertThat(dependencies.values()).hasSize(4)

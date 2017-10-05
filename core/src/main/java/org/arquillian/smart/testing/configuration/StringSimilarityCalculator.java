@@ -1,10 +1,10 @@
-package org.arquillian.smart.testing.mvn.ext.dependencies;
+package org.arquillian.smart.testing.configuration;
 
 import java.util.Collection;
 
 import static java.lang.Math.min;
 
-class StringSimilarityCalculator {
+public class StringSimilarityCalculator {
 
     /**
      * Finds closest matching string from targets comparing to passed sample using
@@ -14,7 +14,7 @@ class StringSimilarityCalculator {
      * @param targets targets to compare against
      * @return
      */
-    String findClosestMatch(String sample, Collection<String> targets) {
+    public String findClosestMatch(String sample, Collection<String> targets) {
         int distance = sample.length();
         String closestMatch = "";
         for (final String target : targets) {
