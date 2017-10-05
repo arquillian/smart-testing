@@ -14,7 +14,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.DefaultLoggerFactory;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
@@ -22,7 +23,7 @@ import org.yaml.snakeyaml.Yaml;
 
 public class Configuration implements ConfigurationSection {
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = new DefaultLoggerFactory(false).getLogger();
 
     public static final String DEFAULT_MODE = "selecting";
     public static final String SMART_TESTING_REPORT_ENABLE = "smart.testing.report.enable";
