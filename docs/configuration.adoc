@@ -14,6 +14,28 @@ The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configu
 
 In order to define the mode use `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]` Java system property with either one.
 
+[NOTE]
+====
+To get fast feedback loop, you can use surefire's skip after `N` failures/errors feature by setting system property `surefire.skipAfterFailureCount` to `N` or by following configuration:
+
+[[skip-config]]
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>${version.surefire.plugin}</version>
+    <configuration>
+      <skipAfterFailureCount>N</skipAfterFailureCount>
+    </configuration>
+</plugin>
+----
+copyToClipboard:skip-config[]
+
+However this functionality cannot be fully guaranteed (real first failure) in concurrent mode due to race conditions.
+Read `http://maven.apache.org/surefire/maven-surefire-plugin/examples/skip-after-failure.html[skipAfterFailureCount]` for more information.
+====
+
 === Strategies
 
 Until now, you've read that smart testing is changing test execution plan running or only including important tests.
