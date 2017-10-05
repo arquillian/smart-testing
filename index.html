@@ -798,6 +798,43 @@ and then the rest.</p>
 <div class="paragraph">
 <p>In order to define the mode use <code>smart.testing.mode</code> Java system property with either one.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>To get fast feedback loop, you can use surefire&#8217;s skip after <code>N</code> failures/errors feature by setting system property <code>surefire.skipAfterFailureCount</code> to <code>N</code> or by following configuration:</p>
+</div>
+<div id="skip-config" class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml"><span class="tag">&lt;plugin&gt;</span>
+    <span class="tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/groupId&gt;</span>
+    <span class="tag">&lt;artifactId&gt;</span>maven-surefire-plugin<span class="tag">&lt;/artifactId&gt;</span>
+    <span class="tag">&lt;version&gt;</span>${version.surefire.plugin}<span class="tag">&lt;/version&gt;</span>
+    <span class="tag">&lt;configuration&gt;</span>
+      <span class="tag">&lt;skipAfterFailureCount&gt;</span>N<span class="tag">&lt;/skipAfterFailureCount&gt;</span>
+    <span class="tag">&lt;/configuration&gt;</span>
+<span class="tag">&lt;/plugin&gt;</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#skip-config">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
+</div>
+<div class="paragraph">
+<p>However this functionality cannot be fully guaranteed (real first failure) in concurrent mode due to race conditions.
+Read <code><a href="http://maven.apache.org/surefire/maven-surefire-plugin/examples/skip-after-failure.html">skipAfterFailureCount</a></code> for more information.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_strategies"><a class="anchor" href="#_strategies"></a>3.2. Strategies</h3>
@@ -2187,7 +2224,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-04 12:56:49 UTC
+Last updated 2017-10-05 08:16:27 UTC
 </div>
 </div>
 <script>
