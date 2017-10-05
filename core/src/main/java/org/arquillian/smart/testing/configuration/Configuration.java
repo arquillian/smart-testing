@@ -30,6 +30,7 @@ public class Configuration implements ConfigurationSection {
 
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
+    public static final String SMART_TESTING_CUSTOM_STRATEGIES = "smart.testing.custom.strategies";
     public static final String SMART_TESTING_APPLY_TO = "smart.testing.apply.to";
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
@@ -40,6 +41,7 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
 
     private String[] strategies = new String[0];
+    private String customStrategiesDefinition;
     private RunMode mode;
     private String applyTo;
 
@@ -113,6 +115,14 @@ public class Configuration implements ConfigurationSection {
     public void setAutocorrect(boolean autocorrect) {
         this.autocorrect = autocorrect;
     }
+    
+    public Path getCustomStrategiesDefinition() {
+        return customStrategiesDefinition != null ? Paths.get(customStrategiesDefinition) : null;
+    }
+
+    public void setCustomStrategiesDefinition(String customStrategiesDefinition) {
+        this.customStrategiesDefinition = customStrategiesDefinition;
+    }
 
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
@@ -122,6 +132,7 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
         configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
+        configItems.add(new ConfigurationItem("customStrategiesDefinition", SMART_TESTING_CUSTOM_STRATEGIES));
         return configItems;
     }
 

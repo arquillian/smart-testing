@@ -40,6 +40,7 @@ public class ConfigurationTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setAutocorrect(true);
+        expectedConfiguration.setCustomStrategiesDefinition("./custom.properties");
 
         // when
         final Configuration actualConfiguration =

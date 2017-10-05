@@ -1,5 +1,5 @@
 package org.arquillian.smart.testing.strategies.failed;
-
+//tag::documentation[]
 import java.io.File;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.configuration.Configuration;
@@ -11,7 +11,7 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     @Override
     public String alias() {
         return "failed";
-    }
+    } // <1>
 
     @Override
     public boolean isFor(String name) {
@@ -24,3 +24,4 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     }
 
 }
+//end::documentation[]
