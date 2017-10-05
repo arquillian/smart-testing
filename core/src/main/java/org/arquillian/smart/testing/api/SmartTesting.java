@@ -24,7 +24,7 @@ public class SmartTesting {
      * @return An instance of {@link ConfiguredSmartTesting} class
      */
     public static ConfiguredSmartTesting with(TestVerifier testVerifier) {
-        return with(testVerifier, Configuration.loadPrecalculated(Paths.get("").toFile()));
+        return with(testVerifier, Configuration.loadPrecalculated(Paths.get("").toFile()), false);
     }
 
     /**
@@ -35,11 +35,12 @@ public class SmartTesting {
      *     An instance of {@link TestVerifier} implementation
      * @param configuration
      *     An instance of {@link Configuration}
-     *
+     * @param isSurefireOrMavenDebug
+     *     A boolean to check surefire or maven's debug is enabled
      * @return An instance of {@link ConfiguredSmartTesting} class
      */
-    public static ConfiguredSmartTesting with(TestVerifier testVerifier, Configuration configuration) {
-        return new ConfiguredSmartTestingImpl(testVerifier, configuration);
+    public static ConfiguredSmartTesting with(TestVerifier testVerifier, Configuration configuration, boolean isSurefireOrMavenDebug) {
+        return new ConfiguredSmartTestingImpl(testVerifier, configuration, isSurefireOrMavenDebug);
     }
 
     /**

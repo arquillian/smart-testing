@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
+import org.apache.maven.surefire.cli.CommandLineOption;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.ReporterException;
@@ -63,8 +64,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
+        // bootParams CLI options contains LOGGING_LEVEL_DEBUG for maven's -X & `maven.surefire.debug`
+        boolean isSurefireOrMavenDebug = bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG);
         Set<TestSelection> selection = SmartTesting
-            .with(className -> testsToRun.getClassByName(className) != null, Configuration.loadPrecalculated(getProjectDir()))
+            .with(className -> testsToRun.getClassByName(className) != null, Configuration.loadPrecalculated(getProjectDir()), isSurefireOrMavenDebug)
             .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
