@@ -79,6 +79,7 @@ public class SurefireForksConfigurationTest {
         final TestResults actualTestResults = projectBuilder
             .options()
                 .withDebugOutput()
+                .logBuildOutput(false)
                 .withSystemProperties(systemPropertiesPairs)
                 .withSystemProperties(SMART_TESTING_REPORT_ENABLE, "true")
             .configure()
