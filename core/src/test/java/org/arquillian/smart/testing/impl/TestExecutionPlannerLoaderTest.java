@@ -34,7 +34,22 @@ public class TestExecutionPlannerLoaderTest {
             new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
 
         // when
-        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
+        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy", false);
+
+        assertThat(testExecutionPlanner.getTests()).isEmpty();
+    }
+
+    @Test
+    public void should_autocorrent_and_find_matching_strategy() throws Exception {
+        // given
+        final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
+        when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
+            new DummyTestExecutionPlannerFactory()));
+        final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+
+        // when
+        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dumy", true);
 
         assertThat(testExecutionPlanner.getTests()).isEmpty();
     }
@@ -52,7 +67,7 @@ public class TestExecutionPlannerLoaderTest {
         expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
 
         // when
-        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new");
+        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new", false);
     }
 
     @Test
@@ -67,7 +82,7 @@ public class TestExecutionPlannerLoaderTest {
         expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");
 
         // when
-        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new");
+        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new", false);
     }
 
     private static class DummyTestExecutionPlannerFactory implements TestExecutionPlannerFactory {

@@ -79,34 +79,6 @@ public class ConfigurationTest {
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
 
-    @Test
-    public void should_not_autocorrect_if_disabled() {
-
-        // given
-        final Configuration defaultConfiguration = Configuration.load();
-
-        // when
-        defaultConfiguration.setStrategies("nwe");
-        defaultConfiguration.applyAutocorrect();
-
-        // then
-        assertThat(defaultConfiguration.getStrategies()).containsExactly("nwe");
-
-    }
-
-    @Test
-    public void should_autocorrect_if_enabled() {
-        // given
-        final Configuration defaultConfiguration = Configuration.load();
-
-        // when
-        defaultConfiguration.setStrategies("nwe");
-        defaultConfiguration.setAutocorrect(true);
-        defaultConfiguration.applyAutocorrect();
-
-        // then
-        assertThat(defaultConfiguration.getStrategies()).containsExactly("new");
-    }
 
     @Test
     public void should_load_dumped_configuration_from_file_as_configuration() {

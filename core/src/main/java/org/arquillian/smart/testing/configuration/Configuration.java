@@ -18,7 +18,6 @@ import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
-import org.arquillian.smart.testing.impl.StrategyDependencyResolver;
 import org.yaml.snakeyaml.Yaml;
 
 public class Configuration implements ConfigurationSection {
@@ -112,29 +111,6 @@ public class Configuration implements ConfigurationSection {
 
     public void setAutocorrect(boolean autocorrect) {
         this.autocorrect = autocorrect;
-    }
-
-    /**
-     * This method applies autocorrect to current configured strategies.
-     * If autocorrect is disabled then the configured strategies remains untouched.
-     */
-    public void applyAutocorrect() {
-
-        if (autocorrect) {
-            final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
-            final List<String> registeredStrategies = strategyDependencyResolver.resolveStrategies();
-
-            final StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
-            for (int i=0; i < strategies.length; i++) {
-                String definedStrategy = strategies[i];
-
-                if (!registeredStrategies.contains(definedStrategy)) {
-                    final String closestMatch = stringSimilarityCalculator.findClosestMatch(definedStrategy, registeredStrategies);
-                    strategies[i] = closestMatch;
-                }
-
-            }
-        }
     }
 
     public List<ConfigurationItem> registerConfigurationItems() {

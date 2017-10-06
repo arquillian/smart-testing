@@ -29,9 +29,9 @@ public class DependencyResolver {
 
     private void addStrategies(Model model) {
         final String[] strategies = configuration.getStrategies();
-        final MavenStrategyDependencyResolver mavenStrategyDependencyResolver = new MavenStrategyDependencyResolver();
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
         model.addDependency(smartTestingProviderDependency());
-        final Map<String, Dependency> dependencies = mavenStrategyDependencyResolver.resolveDependencies();
+        final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
         final List<String> strategyMismatch = new ArrayList<>();
         final List<String> registeredStrategies = new ArrayList<>();
         for (int i=0; i < strategies.length; i++) {
