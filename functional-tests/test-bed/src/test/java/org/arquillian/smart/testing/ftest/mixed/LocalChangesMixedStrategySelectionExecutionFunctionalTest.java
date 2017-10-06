@@ -52,8 +52,9 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
             .containsAll(expectedTestResults)
             .hasSameSizeAs(expectedTestResults);
 
-        softly.assertThat(project).doesNotContainDirectory(SMART_TESTING_SCM_CHANGES);
-        softly.assertThat(project).doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
+        softly.assertThat(project)
+            .doesNotContainDirectory(SMART_TESTING_SCM_CHANGES)
+            .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }
 // end::documentation[]
