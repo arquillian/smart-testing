@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
 import java.io.File;
-import org.arquillian.smart.testing.ftest.customAssertions.CustomSoftAssertions;
+import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -33,7 +33,7 @@ public class DebugModeSmartTestingFunctionalTest {
     public TestBed testBed = new TestBed(GIT_CLONE);
 
     @Rule
-    public final CustomSoftAssertions softly = new CustomSoftAssertions();
+    public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
     public void should_show_debug_logs_when_smart_testing_is_executed_in_debug_mode() throws Exception {

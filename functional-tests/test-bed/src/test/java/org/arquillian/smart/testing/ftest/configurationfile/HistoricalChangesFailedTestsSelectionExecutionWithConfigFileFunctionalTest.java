@@ -10,7 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.customAssertions.ProjectReportAssert.assertThat;
+import static org.arquillian.smart.testing.ftest.customAssertions.SmartTestingProjectAssert.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
@@ -58,6 +58,6 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
-        assertThat(project).doesNotContainFile(TEMP_REPORT_DIR);
+        assertThat(project).doesNotContainDirectory(TEMP_REPORT_DIR);
     }
 }

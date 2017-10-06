@@ -10,7 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.customAssertions.ProjectReportAssert.assertThat;
+import static org.arquillian.smart.testing.ftest.customAssertions.SmartTestingProjectAssert.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
@@ -47,8 +47,8 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThat(project).doesNotContainFile(SMART_TESTING_SCM_CHANGES);
-        assertThat(project).doesNotContainFile(SMART_TESTING_WORKING_DIRECTORY_NAME);
+        assertThat(project).doesNotContainDirectory(SMART_TESTING_SCM_CHANGES);
+        assertThat(project).doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }
 // end::documentation[]

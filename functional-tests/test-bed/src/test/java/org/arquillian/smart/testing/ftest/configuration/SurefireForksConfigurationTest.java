@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
 import java.util.Collection;
-import org.arquillian.smart.testing.ftest.customAssertions.CustomSoftAssertions;
+import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.ProjectBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -29,7 +29,7 @@ public class SurefireForksConfigurationTest {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Rule
-    public final CustomSoftAssertions softly = new CustomSoftAssertions();
+    public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
     public void test_with_reuse_forks_false() {

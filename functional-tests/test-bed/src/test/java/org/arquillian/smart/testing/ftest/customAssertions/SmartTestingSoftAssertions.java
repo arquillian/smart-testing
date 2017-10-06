@@ -7,7 +7,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
-public class CustomSoftAssertions extends SoftAssertions implements TestRule {
+public class SmartTestingSoftAssertions extends SoftAssertions implements TestRule {
 
     public BuiltProjectAssert assertThat(BuiltProject actual) {
         return proxy(BuiltProjectAssert.class, BuiltProject.class, actual);
@@ -18,7 +18,7 @@ public class CustomSoftAssertions extends SoftAssertions implements TestRule {
         return new Statement() {
             public void evaluate() throws Throwable {
                 base.evaluate();
-                MultipleFailureException.assertEmpty(CustomSoftAssertions.this.errorsCollected());
+                MultipleFailureException.assertEmpty(SmartTestingSoftAssertions.this.errorsCollected());
             }
         };
     }
