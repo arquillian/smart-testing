@@ -3,12 +3,10 @@ package org.arquillian.smart.testing.ftest.testbed.project;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +18,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.jboss.shrinkwrap.resolver.impl.maven.embedded.BuiltProjectImpl;
 
 import static java.lang.System.getProperty;
 import static java.util.Arrays.stream;
@@ -249,7 +249,16 @@ public class BuildConfigurator {
     }
 
     boolean isSkipTestsEnabled() {
-        return skipTests || Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests"));
+        return skipTests || isSkipTestsSetInPom();
+    }
+
+    private Boolean isSkipTestsSetInPom() {
+        return Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests")) || isSkipTestSetInPluginConfiguration();
+    }
+
+    private Boolean isSkipTestSetInPluginConfiguration() {
+        Xpp3Dom skipTests = getSurefirePluginConfiguration().getChild("skipTests");
+        return skipTests != null && "true".equals(skipTests.getValue());
     }
 
     String getMavenOpts() {
@@ -289,13 +298,20 @@ public class BuildConfigurator {
     }
 
     private Properties getPropertiesFromPom() {
-        final File effectivePom = Paths.get(root.toAbsolutePath().toString() + "/pom.xml").toFile();
-        try (FileReader reader = new FileReader(effectivePom)) {
-            Model model = new MavenXpp3Reader().read(reader);
-            return model.getProperties();
-        } catch(Exception ex){
-            throw new RuntimeException("Failed to read properties from file " + effectivePom, ex);
-        }
+        return new BuiltProjectImpl(root.toAbsolutePath().toString() + File.separator + "pom.xml")
+            .getModel()
+            .getProperties();
+    }
+
+    private Xpp3Dom getSurefirePluginConfiguration() {
+        return new BuiltProjectImpl(root.toAbsolutePath().toString() + File.separator + "pom.xml")
+            .getModel()
+            .getBuild()
+            .getPlugins()
+            .stream()
+            .filter(plugin -> plugin.getArtifactId().contains("maven-surefire-plugin"))
+            .map(plugin -> (Xpp3Dom) plugin.getConfiguration())
+            .collect(Collectors.toList()).get(0);
     }
 
     String getMavenVersion() {
