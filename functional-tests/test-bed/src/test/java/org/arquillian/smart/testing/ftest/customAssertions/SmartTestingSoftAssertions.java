@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.customAssertions;
 
+import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.assertj.core.api.SoftAssertions;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.junit.rules.TestRule;
@@ -13,12 +14,16 @@ public class SmartTestingSoftAssertions extends SoftAssertions implements TestRu
         return proxy(BuiltProjectAssert.class, BuiltProject.class, actual);
     }
 
+    public ProjectAssert assertThat(Project actual) {
+        return proxy(ProjectAssert.class, Project.class, actual);
+    }
+
     @Override
     public Statement apply(Statement base, Description description) {
         return new Statement() {
             public void evaluate() throws Throwable {
                 base.evaluate();
-                MultipleFailureException.assertEmpty(SmartTestingSoftAssertions.this.errorsCollected());
+                MultipleFailureException.assertEmpty(errorsCollected());
             }
         };
     }

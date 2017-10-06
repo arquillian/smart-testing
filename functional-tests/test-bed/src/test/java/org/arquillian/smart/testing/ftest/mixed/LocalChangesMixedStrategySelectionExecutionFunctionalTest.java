@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.ftest.mixed;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -10,14 +11,12 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.arquillian.smart.testing.ftest.customAssertions.SmartTestingProjectAssert.assertThat;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
 import static org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage.SMART_TESTING_SCM_CHANGES;
-import static org.assertj.core.api.Assertions.assertThat;
 
 // tag::documentation[]
 public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
@@ -27,6 +26,9 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
     public void should_execute_all_new_tests_and_related_to_production_code_changes() throws Exception {
@@ -46,9 +48,12 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
         final TestResults actualTestResults = project.build("config/impl-base").run();
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        assertThat(project).doesNotContainDirectory(SMART_TESTING_SCM_CHANGES);
-        assertThat(project).doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass())
+            .containsAll(expectedTestResults)
+            .hasSameSizeAs(expectedTestResults);
+
+        softly.assertThat(project).doesNotContainDirectory(SMART_TESTING_SCM_CHANGES);
+        softly.assertThat(project).doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }
 // end::documentation[]

@@ -60,7 +60,7 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
         Path reportPath = Paths.get(targetDirectory.toString(), SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
         final FileAssert fileAssert = new FileAssert(new File(reportPath.toString(), report));
         if (isJar(actual)) {
-            if (testsWereExecuted(targetDirectory)) {
+            if (hasCompiledTests(targetDirectory)) {
                 fileAssert.exists();
             } else {
                 fileAssert.doesNotExist();
@@ -76,7 +76,7 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
         return subModule.getModel().getPackaging().equals("jar");
     }
 
-    private static boolean testsWereExecuted(File target) {
+    private static boolean hasCompiledTests(File target) {
         return new File(target, "test-classes").exists();
     }
 }
