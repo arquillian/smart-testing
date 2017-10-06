@@ -102,6 +102,7 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setDisable(false);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setScm(scm);
+        expectedConfiguration.setAutocorrect(true);
 
         // when
         final Configuration actualConfiguration =
