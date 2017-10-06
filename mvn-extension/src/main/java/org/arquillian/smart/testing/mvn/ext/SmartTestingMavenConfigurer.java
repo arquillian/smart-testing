@@ -16,8 +16,8 @@ import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.logger.MavenExtensionLoggerFactory;
 import org.arquillian.smart.testing.scm.Change;
@@ -49,6 +49,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
+        Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
         configuration = Configuration.load();
 
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
@@ -101,6 +102,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterSessionEnd(MavenSession session) throws MavenExecutionException {
+
         if (skipExtensionInstallation) {
             return;
         }

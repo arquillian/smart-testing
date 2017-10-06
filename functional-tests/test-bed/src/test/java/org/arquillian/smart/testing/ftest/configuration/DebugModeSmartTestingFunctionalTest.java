@@ -54,7 +54,7 @@ public class DebugModeSmartTestingFunctionalTest {
         // then
         String projectMavenLog = project.getMavenLog();
         assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
-        assertThat(projectMavenLog).contains("Applied user properties");
+        assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), "smart-testing/smart-testing-pom.xml");
     }
 

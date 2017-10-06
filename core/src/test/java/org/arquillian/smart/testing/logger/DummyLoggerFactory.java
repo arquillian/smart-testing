@@ -28,5 +28,10 @@ public class DummyLoggerFactory implements LoggerFactory {
         public void error(String msg, Object... args) {
 
         }
+
+        @Override
+        public boolean isDebug() {
+            return false;
+        }
     }
 }

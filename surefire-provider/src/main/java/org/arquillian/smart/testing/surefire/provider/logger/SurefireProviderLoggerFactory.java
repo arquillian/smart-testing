@@ -63,5 +63,11 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
             }
             return formattedMsg.toString();
         }
+
+        @Override
+        public boolean isDebug() {
+            return debugLogEnabled;
+        }
+
     }
 }

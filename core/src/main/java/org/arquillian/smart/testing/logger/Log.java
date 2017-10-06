@@ -11,6 +11,7 @@ public class Log {
     public static void setLoggerFactory(LoggerFactory loggerFactory) {
         synchronized (DEFAULT_LOGGER_FACTORY) {
             Log.loggerFactory = loggerFactory;
+            DEFAULT_LOGGER_FACTORY.setDebug(loggerFactory.getLogger().isDebug());
         }
     }
 

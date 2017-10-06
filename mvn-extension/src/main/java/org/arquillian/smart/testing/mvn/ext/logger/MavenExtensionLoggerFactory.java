@@ -15,6 +15,10 @@ public class MavenExtensionLoggerFactory implements LoggerFactory {
         this.configuration = configuration;
     }
 
+    public MavenExtensionLoggerFactory(org.codehaus.plexus.logging.Logger logger) {
+        this.logger = logger;
+    }
+
     @Override
     public Logger getLogger() {
         return new MavenExtensionLogger(logger, configuration);
@@ -44,7 +48,7 @@ public class MavenExtensionLoggerFactory implements LoggerFactory {
         @Override
         public void debug(String msg, Object... args) {
             logger.debug(getFormattedMsg(msg, args));
-            if (configuration.isDebug() && !logger.isDebugEnabled()) {
+            if (configuration != null && configuration.isDebug() && !logger.isDebugEnabled()) {
                 new DefaultLoggerFactory(true).getLogger().debug(msg, args);
             }
         }
@@ -52,6 +56,12 @@ public class MavenExtensionLoggerFactory implements LoggerFactory {
         @Override
         public void error(String msg, Object... args) {
             logger.error(getFormattedMsg(msg, args));
+        }
+
+        @Override
+        public boolean isDebug() {
+            return logger.isDebugEnabled() || (configuration != null && configuration.isDebug())
+                   || Boolean.valueOf(System.getProperty(Configuration.SMART_TESTING_DEBUG));
         }
 
         private String getFormattedMsg(String msg, Object... args) {

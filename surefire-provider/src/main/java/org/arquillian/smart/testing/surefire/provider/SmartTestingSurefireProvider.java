@@ -27,6 +27,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private final SurefireProviderFactory surefireProviderFactory;
     private final ProviderParameters bootParams;
     private ConsoleLogger consoleLogger;
+    private final Configuration configuration;
 
     @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
@@ -35,6 +36,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
         this.surefireProvider = surefireProviderFactory.createInstance();
         this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.configuration = Configuration.loadPrecalculated(getProjectDir());
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
 
@@ -44,6 +46,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
         this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.configuration = Configuration.loadPrecalculated(getProjectDir());
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
 
@@ -73,7 +76,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
         Set<TestSelection> selection = SmartTesting
-            .with(className -> testsToRun.getClassByName(className) != null, Configuration.loadPrecalculated(getProjectDir()))
+            .with(className -> testsToRun.getClassByName(className) != null, configuration)
             .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
@@ -97,7 +100,6 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     private boolean isAnyDebugEnabled() {
-        return bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG)
-            || Configuration.load().isDebug();
+        return bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG) || configuration.isDebug();
     }
 }

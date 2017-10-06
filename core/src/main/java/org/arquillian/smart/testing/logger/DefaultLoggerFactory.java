@@ -13,12 +13,16 @@ public class DefaultLoggerFactory implements LoggerFactory {
     }
 
     public DefaultLoggerFactory() {
-        this.isDebugLogLevel = Configuration.load().isDebug();
+        this.isDebugLogLevel = Boolean.valueOf(System.getProperty(Configuration.SMART_TESTING_DEBUG));
     }
 
     @Override
     public Logger getLogger() {
         return new DefaultLogger(isDebugLogLevel);
+    }
+
+    void setDebug(boolean isDebugLogLevel) {
+        this.isDebugLogLevel = isDebugLogLevel;
     }
 
     private class DefaultLogger implements Logger {
@@ -83,6 +87,11 @@ public class DefaultLoggerFactory implements LoggerFactory {
          */
         public void error(String msg, Object... args) {
             System.err.println(getFormattedMsg("ERROR", msg, args));
+        }
+
+        @Override
+        public boolean isDebug() {
+            return isDebugLogLevel;
         }
 
         private String getFormattedMsg(String level, String msg, Object... args) {

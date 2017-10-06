@@ -41,4 +41,12 @@ public interface Logger {
      *     arguments to the message
      */
     void error(String msg, Object... args);
+
+    /**
+     * Returns if debug log level is enabled
+     *
+     * @return
+     *     if debug log level is enabled
+     */
+    boolean isDebug();
 }
