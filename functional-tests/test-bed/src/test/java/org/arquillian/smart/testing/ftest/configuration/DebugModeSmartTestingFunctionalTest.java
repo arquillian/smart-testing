@@ -48,7 +48,6 @@ public class DebugModeSmartTestingFunctionalTest {
         final TestResults actualTestResults = projectBuilder
                 .options()
                     .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~", SMART_TESTING_DEBUG, "true")
-                    .logBuildOutput()
                 .configure()
             .run();
 

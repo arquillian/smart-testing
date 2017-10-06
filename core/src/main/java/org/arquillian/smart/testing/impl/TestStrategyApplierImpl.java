@@ -16,12 +16,13 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.report.SmartTestingReportGenerator;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 class TestStrategyApplierImpl implements TestStrategyApplier {
 
-    private static final org.arquillian.smart.testing.logger.Logger logger = Log.getLogger();
+    private static final Logger logger = Log.getLogger();
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final File projectDir;
     private final Configuration configuration;
