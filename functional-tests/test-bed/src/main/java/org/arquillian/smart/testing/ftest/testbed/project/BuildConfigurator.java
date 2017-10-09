@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ public class BuildConfigurator {
     private static final int DEFAULT_DEBUG_PORT = 8000;
     private static final int DEFAULT_SUREFIRE_DEBUG_PORT = 5005;
 
-    private final Path root;
     private final ProjectBuilder projectBuilder;
     private final Map<String, String> systemProperties = new HashMap<>();
     private final Set<String> modulesToBeBuilt = new HashSet<>();
@@ -52,10 +50,9 @@ public class BuildConfigurator {
     private String mavenVersion;
     private Using usingInstallation;
 
-    BuildConfigurator(ProjectBuilder projectBuilder, Path root) {
+    BuildConfigurator(ProjectBuilder projectBuilder) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
         systemProperties.put("surefire.timeout", "0"); // see http://bit.ly/2u7xCAH
-        this.root = root;
         this.projectBuilder = projectBuilder;
     }
 
@@ -253,12 +250,18 @@ public class BuildConfigurator {
     }
 
     private Boolean isSkipTestsSetInPom() {
-        return Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests")) || isSkipTestSetInPluginConfiguration();
+        return Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests"))
+            || isSkipTestPropertyConfigured() || isSkipPropertyConfigured();
     }
 
-    private Boolean isSkipTestSetInPluginConfiguration() {
+    private Boolean isSkipTestPropertyConfigured() {
         Xpp3Dom skipTests = getSurefirePluginConfiguration().getChild("skipTests");
         return skipTests != null && "true".equals(skipTests.getValue());
+    }
+
+    private Boolean isSkipPropertyConfigured() {
+        Xpp3Dom skip = getSurefirePluginConfiguration().getChild("skip");
+        return skip != null && "true".equals(skip.getValue());
     }
 
     String getMavenOpts() {
@@ -298,16 +301,14 @@ public class BuildConfigurator {
     }
 
     private Properties getPropertiesFromPom() {
-        return new BuiltProjectImpl(root.toAbsolutePath().toString() + File.separator + "pom.xml")
+        return new BuiltProjectImpl(projectBuilder.getRoot().toAbsolutePath().toString() + File.separator + "pom.xml")
             .getModel()
             .getProperties();
     }
 
     private Xpp3Dom getSurefirePluginConfiguration() {
-        return new BuiltProjectImpl(root.toAbsolutePath().toString() + File.separator + "pom.xml")
-            .getModel()
-            .getBuild()
-            .getPlugins()
+        return new BuiltProjectImpl(projectBuilder.getRoot().toAbsolutePath().toString() + File.separator + "pom.xml")
+            .getModel().getBuild().getPlugins()
             .stream()
             .filter(plugin -> plugin.getArtifactId().contains("maven-surefire-plugin"))
             .map(plugin -> (Xpp3Dom) plugin.getConfiguration())

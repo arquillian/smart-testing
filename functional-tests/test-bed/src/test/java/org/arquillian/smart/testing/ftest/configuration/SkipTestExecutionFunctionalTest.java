@@ -120,7 +120,6 @@ public class SkipTestExecutionFunctionalTest {
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        System.out.println(capturedMavenLog);
         softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
     }

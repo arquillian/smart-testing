@@ -39,7 +39,7 @@ public class ProjectBuilder {
 
     ProjectBuilder(Path root) {
         this.root = root;
-        this.buildConfigurator = new BuildConfigurator(this, root);
+        this.buildConfigurator = new BuildConfigurator(this);
     }
 
     public BuildConfigurator options() {
@@ -99,6 +99,10 @@ public class ProjectBuilder {
 
     public BuiltProject getBuiltProject() {
         return builtProject;
+    }
+
+    Path getRoot() {
+        return root;
     }
 
     private Properties asProperties(Map<String, String> propertyMap) {
