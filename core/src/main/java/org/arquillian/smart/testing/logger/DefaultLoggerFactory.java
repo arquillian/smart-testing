@@ -6,7 +6,7 @@ import static java.lang.String.format;
 
 public class DefaultLoggerFactory implements LoggerFactory {
 
-    private boolean isDebugLogLevel = false;
+    private boolean isDebugLogLevel;
 
     public DefaultLoggerFactory(boolean isDebugLogLevel) {
         this.isDebugLogLevel = isDebugLogLevel;
