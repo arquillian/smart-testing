@@ -60,7 +60,7 @@ public class SurefireForksConfigurationTest {
         verifyTestSuiteExecution("forkCount", "0", "reuseForks", "false");
     }
 
-    private void verifyTestSuiteExecution(String... systemPropertiesPairs){
+    private void verifyTestSuiteExecution(String... systemPropertiesPairs) {
         // given
         final Project project = testBed.getProject();
 
@@ -86,9 +86,10 @@ public class SurefireForksConfigurationTest {
         // then
         String projectMavenLog = project.getMavenLog();
 
-        softly.assertThat(projectMavenLog).contains("INFO: Smart Testing Extension - Applied usage: [selecting]");
-        softly.assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
-        softly.assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
+        softly.assertThat(projectMavenLog)
+            .contains("INFO: Smart Testing Extension - Applied usage: [selecting]")
+            .contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ")
+            .contains("[INFO] Smart Testing Extension - Enabling extension.");
 
         softly.assertThat(actualTestResults.accumulatedPerTestClass())
             .containsAll(expectedTestResults)

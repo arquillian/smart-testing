@@ -40,8 +40,8 @@ public class DebugModeSmartTestingFunctionalTest {
         final Project project = testBed.getProject();
 
         project.configureSmartTesting()
-                .executionOrder(AFFECTED)
-                .inMode(ORDERING)
+            .executionOrder(AFFECTED)
+            .inMode(ORDERING)
             .enable();
 
         project
@@ -51,15 +51,18 @@ public class DebugModeSmartTestingFunctionalTest {
         // when
         ProjectBuilder projectBuilder = project.build("config/impl-base");
         final TestResults actualTestResults = projectBuilder
-                .options()
-                    .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~", SMART_TESTING_DEBUG, "true")
-                .configure()
+            .options()
+            .withSystemProperties(SCM_RANGE_HEAD, "HEAD", SCM_RANGE_TAIL, "HEAD~", SMART_TESTING_DEBUG, "true")
+            .configure()
             .run();
 
         // then
         String projectMavenLog = project.getMavenLog();
-        softly.assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
-        softly.assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
+
+        softly.assertThat(projectMavenLog)
+            .contains(PROVIDER_DEBUG_LOGS)
+            .contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
+
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 
@@ -89,8 +92,11 @@ public class DebugModeSmartTestingFunctionalTest {
 
         // then
         String projectMavenLog = project.getMavenLog();
-        softly.assertThat(projectMavenLog).contains(MAVEN_DEBUG_LOGS);
-        softly.assertThat(projectMavenLog).contains(PROVIDER_DEBUG_LOGS);
+
+        softly.assertThat(projectMavenLog)
+            .contains(MAVEN_DEBUG_LOGS)
+            .contains(PROVIDER_DEBUG_LOGS);
+
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
     }
 }
