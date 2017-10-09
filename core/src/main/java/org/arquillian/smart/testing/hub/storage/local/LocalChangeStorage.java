@@ -8,13 +8,14 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.scm.Change;
 
 public class LocalChangeStorage implements ChangeStorage {
 
-    private static final Logger LOGGER = Logger.getLogger();
+    private static final Logger LOGGER = Log.getLogger();
 
     public static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
 

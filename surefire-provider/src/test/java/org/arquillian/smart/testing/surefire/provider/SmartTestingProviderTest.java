@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
+import org.apache.maven.surefire.report.DefaultConsoleReporter;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.configuration.Configuration;
@@ -58,6 +60,8 @@ public class SmartTestingProviderTest {
 
         temporaryFolder.newFile("pom.xml");
         Configuration.load().dump(temporaryFolder.getRoot());
+
+        when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));
     }
 
     @Test

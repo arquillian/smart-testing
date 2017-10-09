@@ -8,13 +8,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.logger.Log;
 
 class ModifiedPomExporter {
 
     private static final String SMART_TESTING_POM_FILE = "smart-testing-effective-pom.xml";
 
-    private static Logger logger = Logger.getLogger();
+    private static Logger logger = Log.getLogger();
 
     static void exportModifiedPom(Model model) {
         try (StringWriter pomOut = new StringWriter()) {

@@ -19,6 +19,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
@@ -77,12 +78,21 @@ public class SurefireForksConfigurationTest {
         ProjectBuilder projectBuilder = project.build("config/impl-base");
         final TestResults actualTestResults = projectBuilder
             .options()
+                .withDebugOutput()
+                .logBuildOutput(false)
                 .withSystemProperties(systemPropertiesPairs)
                 .withSystemProperties(SMART_TESTING_REPORT_ENABLE, "true")
             .configure()
             .run();
+
         // then
+        String projectMavenLog = project.getMavenLog();
+
+        assertThat(projectMavenLog).contains("INFO: Smart Testing Extension - Applied usage: [selecting]");
+        assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
+        assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
         assertThatAllBuiltSubmodulesContainBuildArtifact(projectBuilder.getBuiltProject(), REPORT_FILE_NAME);
     }
 }
+
