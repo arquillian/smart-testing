@@ -27,13 +27,18 @@
  */
 package org.arquillian.smart.testing.strategies.affected;
 
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -44,6 +49,7 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassDependenciesGraph {
 
+    private static final Logger logger = Log.getLogger();
     private static final Filter coreJava = new Filter("", "java.*");
 
     private final JavaClassBuilder builder;
@@ -73,14 +79,86 @@ public class ClassDependenciesGraph {
 
         // Then find dependencies
         for (String changedTestClassNames : testClassesNames) {
-            JavaClass javaClass = builder.getClassDescription(changedTestClassNames);
-            if (javaClass != null) {
-                addToIndex(new JavaElement(javaClass), javaClass.getImports());
+            JavaClass testJavaClass = builder.getClassDescription(changedTestClassNames);
+            if (testJavaClass != null) {
+                final String[] imports = testJavaClass.getImports();
+                final List<String> manualProductionClasses = calculateManualAddedDependencies(testJavaClass);
+                manualProductionClasses.addAll(Arrays.asList(imports));
+                addToIndex(new JavaElement(testJavaClass), manualProductionClasses);
             }
         }
     }
 
-    private void addToIndex(JavaElement javaElement, String[] imports) {
+    private List<String> calculateManualAddedDependencies(JavaClass testJavaClass) {
+        final List<String> manualDependencyClasses = new ArrayList<>();
+        final Tests[] allTestsAnnotation = getAllAnnotations(testJavaClass);
+
+        for (Tests tests : allTestsAnnotation) {
+            List<String> packages = getPackages(testJavaClass.packageName(), tests);
+            for (String packag : packages) {
+                final String trimmedPackage = packag.trim();
+                manualDependencyClasses.addAll(scanClassesFromPackage(trimmedPackage));
+            }
+        }
+
+        return manualDependencyClasses;
+
+    }
+
+    private Tests[] getAllAnnotations(JavaClass testJavaClass) {
+
+        final Optional<TestsList> testsListOptional = testJavaClass.getAnnotationByType(TestsList.class);
+
+        Tests[] tests = testsListOptional
+            .map(TestsList::value)
+            .orElseGet(() -> testJavaClass.getAnnotationByType(Tests.class)
+                .map(annotation -> new Tests[] {annotation})
+                .orElse(new Tests[0]));
+
+
+        return tests;
+    }
+
+    private List<String> scanClassesFromPackage(String trimmedPackage) {
+        final List<String> manualDependencyClasses = new ArrayList<>();
+        if (trimmedPackage.endsWith(".*")) {
+            String realPackage = trimmedPackage.substring(0, trimmedPackage.indexOf(".*"));
+            final List<String> classesOfPackage =
+                new FastClasspathScanner(realPackage).scan()
+                    .getNamesOfAllClasses();
+
+            manualDependencyClasses.addAll(
+                classesOfPackage);
+        } else {
+            final List<String> classesOfPackage =
+                new FastClasspathScanner(trimmedPackage).disableRecursiveScanning().scan()
+                    .getNamesOfAllClasses();
+            manualDependencyClasses.addAll(
+                classesOfPackage);
+        }
+
+        if (manualDependencyClasses.isEmpty()) {
+            logger.warn("You set %s package as reference classes to run tests, but no classes found. Maybe a package refactor?", trimmedPackage);
+        }
+
+        return manualDependencyClasses;
+    }
+
+    private List<String> getPackages(String testPackage, Tests tests) {
+        List<String> packages = new ArrayList<>();
+        if (tests.classes().length == 0 && tests.packages().length == 0 && tests.packagesOf().length == 0) {
+            packages.add(testPackage);
+        } else {
+            packages.addAll(Arrays.asList(tests.packages()));
+
+            packages.addAll(Arrays.stream(tests.packagesOf())
+                .map(clazz -> clazz.getPackage().getName())
+                .collect(Collectors.toList()));
+        }
+        return packages;
+    }
+
+    private void addToIndex(JavaElement javaElement, List<String> imports) {
         addToGraph(javaElement);
         updateJavaElementWithImportReferences(javaElement, imports);
     }
@@ -101,14 +179,14 @@ public class ClassDependenciesGraph {
         }
     }
 
-    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass, String[] imports) {
+    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass, List<String> imports) {
 
         for (String importz : imports) {
 
             if (addImport(javaElementParentClass, importz) && filter.shouldBeIncluded(importz) && this.enableTransitivity) {
                 JavaClass javaClass = builder.getClassDescription(importz);
                 if (javaClass != null) {
-                    updateJavaElementWithImportReferences(javaElementParentClass, javaClass.getImports());
+                    updateJavaElementWithImportReferences(javaElementParentClass, Arrays.asList(javaClass.getImports()));
                 }
             }
         }

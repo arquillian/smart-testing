@@ -18,6 +18,11 @@
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>strategy-changed</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -28,6 +33,10 @@
     <dependency>
       <groupId>org.jgrapht</groupId>
       <artifactId>jgrapht-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.lukehutch</groupId>
+      <artifactId>fast-classpath-scanner</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

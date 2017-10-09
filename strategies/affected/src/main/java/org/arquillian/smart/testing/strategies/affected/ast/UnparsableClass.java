@@ -28,6 +28,7 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
+import java.util.Optional;
 
 public class UnparsableClass implements JavaClass {
     private static final String[] NO_IMPORT = new String[0];
@@ -44,6 +45,11 @@ public class UnparsableClass implements JavaClass {
     }
 
     @Override
+    public <T> Optional<T> getAnnotationByType(Class<T> type) {
+        return Optional.empty();
+    }
+
+    @Override
     public String[] getImports() {
         return NO_IMPORT;
     }
@@ -51,6 +57,11 @@ public class UnparsableClass implements JavaClass {
     @Override
     public String getName() {
         return classname;
+    }
+
+    @Override
+    public String packageName() {
+        return "";
     }
 
     @Override

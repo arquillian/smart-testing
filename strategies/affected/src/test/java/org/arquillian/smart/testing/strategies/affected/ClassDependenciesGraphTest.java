@@ -8,10 +8,14 @@ import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.D;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.MyBusinessObject;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.MyControllerObject;
+import org.arquillian.smart.testing.strategies.affected.fakeproject.main.superbiz.Alone;
+import org.arquillian.smart.testing.strategies.affected.fakeproject.main.superbiz.component.Unwanted;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.ATest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.BTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.CTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusinessObjectTest;
+import org.arquillian.smart.testing.strategies.affected.fakeproject.test.YTest;
+import org.arquillian.smart.testing.strategies.affected.fakeproject.test.ZTest;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
@@ -138,6 +142,48 @@ public class ClassDependenciesGraphTest {
         assertThat(testsDependingOn)
             .containsExactlyInAnyOrder(
                 "org.arquillian.smart.testing.strategies.affected.fakeproject.test.ATest", "org.arquillian.smart.testing.strategies.affected.fakeproject.test.BTest");
+    }
+
+    @Test
+    public void should_detect_all_changes_adding_package_annotated_transitive() {
+        // given
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
+
+        final String testLocation = ZTest.class.getResource("ZTest.class").getPath();
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+
+        // when
+        Set<File> mainObjectsChanged = new HashSet<>();
+        mainObjectsChanged.add(new File(Unwanted.class.getResource("Unwanted.class").getPath()));
+
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
+
+        // then
+        assertThat(testsDependingOn)
+            .containsExactlyInAnyOrder(
+                "org.arquillian.smart.testing.strategies.affected.fakeproject.test.ZTest");
+    }
+
+    @Test
+    public void should_detect_all_changes_adding_class_package_annotated_transitive() {
+        // given
+        final ClassDependenciesGraph
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier());
+
+        final String testLocation = YTest.class.getResource("YTest.class").getPath();
+        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+
+        // when
+        Set<File> mainObjectsChanged = new HashSet<>();
+        mainObjectsChanged.add(new File(Alone.class.getResource("Alone.class").getPath()));
+
+        final Set<String> testsDependingOn = classDependenciesGraph.findTestsDependingOn(mainObjectsChanged);
+
+        // then
+        assertThat(testsDependingOn)
+            .containsExactlyInAnyOrder(
+                "org.arquillian.smart.testing.strategies.affected.fakeproject.test.YTest");
     }
 
     @Test
