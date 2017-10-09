@@ -1908,6 +1908,9 @@ This section will be improved as we continue with the SPI design to let you hook
     <span class="annotation">@Rule</span>
     <span class="directive">public</span> <span class="directive">final</span> TestBed testBed = <span class="keyword">new</span> TestBed(GIT_CLONE);
 
+    <span class="annotation">@Rule</span>
+    <span class="directive">public</span> <span class="directive">final</span> SmartTestingSoftAssertions softly = <span class="keyword">new</span> SmartTestingSoftAssertions();
+
     <span class="annotation">@Test</span>
     <span class="directive">public</span> <span class="type">void</span> should_execute_all_new_tests_and_related_to_production_code_changes() <span class="directive">throws</span> <span class="exception">Exception</span> {
         <span class="comment">// given</span>
@@ -1926,9 +1929,13 @@ This section will be improved as we continue with the SPI design to let you hook
         <span class="directive">final</span> TestResults actualTestResults = project.build(<span class="string"><span class="delimiter">&quot;</span><span class="content">config/impl-base</span><span class="delimiter">&quot;</span></span>).run();
 
         <span class="comment">// then</span>
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_SCM_CHANGES);
-        FileVerifier.assertThatFileIsNotPresent(project, SMART_TESTING_WORKING_DIRECTORY_NAME);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass())
+            .containsAll(expectedTestResults)
+            .hasSameSizeAs(expectedTestResults);
+
+        softly.assertThat(project)
+            .doesNotContainDirectory(SMART_TESTING_SCM_CHANGES)
+            .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }</code></pre>
 </div>
@@ -2236,7 +2243,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-09 12:57:13 UTC
+Last updated 2017-10-09 18:55:00 UTC
 </div>
 </div>
 <script>
