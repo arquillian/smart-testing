@@ -64,7 +64,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
         final TestResults actualTestResults = project.build("config/impl-base").run("clean", "verify");
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).isEmpty();
 
     }
 

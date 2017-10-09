@@ -66,7 +66,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         final TestResults actualTestResults = project.build().run("clean", "verify");
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).isEmpty();
 
     }
 }
