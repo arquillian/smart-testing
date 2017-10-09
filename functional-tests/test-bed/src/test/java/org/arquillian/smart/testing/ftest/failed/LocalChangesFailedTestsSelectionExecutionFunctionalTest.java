@@ -27,7 +27,6 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
     @Rule
     public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
-
     @Test
     public void should_only_execute_previously_failing_tests_when_failed_is_enabled() throws Exception {
         // given

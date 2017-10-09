@@ -18,7 +18,6 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurefireForksConfigurationTest {
 
@@ -87,11 +86,16 @@ public class SurefireForksConfigurationTest {
         // then
         String projectMavenLog = project.getMavenLog();
 
-        assertThat(projectMavenLog).contains("INFO: Smart Testing Extension - Applied usage: [selecting]");
-        assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
-        assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
-        softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
+        softly.assertThat(projectMavenLog).contains("INFO: Smart Testing Extension - Applied usage: [selecting]");
+        softly.assertThat(projectMavenLog).contains("[DEBUG] Smart Testing Extension - Modified pom stored at: ");
+        softly.assertThat(projectMavenLog).contains("[INFO] Smart Testing Extension - Enabling extension.");
+
+        softly.assertThat(actualTestResults.accumulatedPerTestClass())
+            .containsAll(expectedTestResults)
+            .hasSameSizeAs(expectedTestResults);
+
+        softly.assertThat(projectBuilder.getBuiltProject())
+            .allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 }
 
