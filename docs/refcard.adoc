@@ -96,7 +96,6 @@ a|`false`
 
 === Configuration File
 
-[[config-file]]
 [source, yaml, indent=0]
 ----
 include::../core/src/test/resources/configuration/smart-testing-with-lastChanges.yml[]
