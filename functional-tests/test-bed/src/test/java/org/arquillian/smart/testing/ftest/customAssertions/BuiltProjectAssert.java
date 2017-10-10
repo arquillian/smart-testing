@@ -23,7 +23,8 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
     }
 
     /**
-     * Will assert that all built sub-modules contain effective pom.xml with smart testing extension configured.
+     * Will assert that all built sub-modules (with packaging type other than pom) contain effective pom.xml with
+     * smart testing extension configured.
      *
      * @param effectivePom
      *     effectivePom file to verify
@@ -46,7 +47,7 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
 
     private BuiltProjectAssert containsEffectivePom(String effectivePom) {
         final String smartTestingExtension = "org.arquillian.smart.testing";
-        if (actual.getTargetDirectory().exists()) {
+        if (actual.getTargetDirectory().exists() && !actual.getModel().getPackaging().equals("pom")) {
             final File pomFile = new File(actual.getTargetDirectory(), effectivePom);
             FileAssert fileAssert = new FileAssert(pomFile);
             fileAssert.exists();
