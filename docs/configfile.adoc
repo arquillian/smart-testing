@@ -19,10 +19,13 @@ copyToClipboard:config-file[]
 <6> This enables Smart Testing report if set to true.
 <7> This sets first commit sha or `HEAD` notation for inspecting changes.
 <8> This sets last commit sha or `HEAD` notation for inspecting changes.
+<9> This defines if smart testing should auto correct misspelled strategies.
 
-All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter. You can look at <<_reference_card, references>> for default value of parameter.
+All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter.
+You can look at <<_reference_card, references>> for default value of parameter.
 
-However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <<_reference_card, references>> for all supported system properties.
+However you can overwrite all configuration options using system properties supported by Smart Testing.
+You can look <<_reference_card, references>> for all supported system properties.
 
 === Configuration File Reference
 The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
@@ -54,6 +57,9 @@ a| This configures report options for smart testing. Look at <<_report_options, 
 a| scm
 a| To run Smart Testing with `SCM` configuration. You can either define `range` or `lastChanges`. Look at <<_scm_options, Scm Options>>
    for all available options.
+
+a| autocorrect
+a| This configures Smart Testing to auto correct misspelled strategies to the closest one. For example in case of user set strategies to `nwe`, if `autocorrect` is enabled then it is automatically changed to `new`.
 |===
 
 ==== Report Options

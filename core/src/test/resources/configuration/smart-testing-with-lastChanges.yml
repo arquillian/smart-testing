@@ -10,3 +10,4 @@ report:
     enable: true
 scm:
     lastChanges: 1
+autocorrect: true
