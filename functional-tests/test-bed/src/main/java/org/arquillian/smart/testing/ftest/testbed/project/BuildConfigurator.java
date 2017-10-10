@@ -38,6 +38,8 @@ public class BuildConfigurator {
     private boolean skipTests = false;
     private File workingDirectory;
     private String mavenOpts = "-Xms512m -Xmx1024m";
+    private String mavenVersion;
+    private Using usingInstallation;
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
@@ -181,6 +183,11 @@ public class BuildConfigurator {
         return this;
     }
 
+    public BuildConfigurator useMavenVersion(String mavenVersion){
+        this.mavenVersion = mavenVersion;
+        return this;
+    }
+
     void enableDebugOptions() {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
@@ -256,7 +263,11 @@ public class BuildConfigurator {
     boolean isIgnoreBuildFailure() {
         return ignoreBuildFailure;
     }
-    
+
+    String getMavenVersion() {
+        return mavenVersion;
+    }
+
     private int getAvailableLocalPort() {
         ServerSocket socket = null;
         try {
@@ -275,4 +286,11 @@ public class BuildConfigurator {
         }
     }
 
+    Using getUsingInstallation() {
+        return usingInstallation;
+    }
+
+    void setUsingInstallation(Using usingInstallation) {
+        this.usingInstallation = usingInstallation;
+    }
 }
