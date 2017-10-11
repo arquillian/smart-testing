@@ -66,6 +66,21 @@ public class GitChangeResolverTest {
     }
 
     @Test
+    public void should_not_applicable_when_git_repository_is_not_initialized() throws IOException {
+        // given
+        gitFolder.delete();
+        gitFolder.create();
+
+        this.gitChangeResolver = new GitChangeResolver(gitFolder.getRoot(), "HEAD", "HEAD~0");
+
+        // when
+        final boolean applicable = gitChangeResolver.isApplicable();
+
+        // then
+        assertThat(applicable).isFalse();
+    }
+
+    @Test
     public void should_fetch_all_untracked_files() throws IOException {
         // given
         gitFolder.newFile("untracked.txt");
