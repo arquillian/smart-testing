@@ -65,9 +65,7 @@ public class SurefireApiDependencyTest {
         throws Exception {
         // given
         Model model = prepareModelWithSurefirePlugin("2.20");
-        final Configuration conf = Configuration.load();
-        conf.setAutocorrect(true);
-        conf.setStrategies("nwe");
+        final Configuration conf = configureWithAutocorrect("nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
         model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
 
@@ -90,9 +88,7 @@ public class SurefireApiDependencyTest {
         throws Exception {
         // given
         Model model = prepareModelWithSurefirePlugin("2.20");
-        final Configuration conf = Configuration.load();
-        conf.setAutocorrect(true);
-        conf.setStrategies("new", "nwe");
+        final Configuration conf = configureWithAutocorrect("new", "nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
         model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
 
@@ -109,9 +105,7 @@ public class SurefireApiDependencyTest {
         throws Exception {
         // given
         Model model = prepareModelWithSurefirePlugin("2.20");
-        final Configuration conf = Configuration.load();
-        conf.setAutocorrect(true);
-        conf.setStrategies("nwe", "new");
+        final Configuration conf = configureWithAutocorrect("nwe", "new");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
         model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
 
@@ -121,6 +115,13 @@ public class SurefireApiDependencyTest {
         // then
         assertThat(exception).isInstanceOf(IllegalStateException.class);
 
+    }
+
+    private Configuration configureWithAutocorrect(String... strategies) {
+        final Configuration conf = Configuration.load();
+        conf.setAutocorrect(true);
+        conf.setStrategies(strategies);
+        return conf;
     }
 
     private Model prepareModelWithSurefirePlugin(String version) {

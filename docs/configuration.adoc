@@ -1,7 +1,7 @@
 == Configuration
 
 This section explains configuration parameters of Smart Testing.
-Notice that they are all summarized at <<Reference Card>> sectin.
+Notice that they are all summarized at <<Reference Card>> section.
 
 Also Smart Testing can be configured with a configuration file instead of System properties.
 You can read about configuration file at <<Configuration File>>.
