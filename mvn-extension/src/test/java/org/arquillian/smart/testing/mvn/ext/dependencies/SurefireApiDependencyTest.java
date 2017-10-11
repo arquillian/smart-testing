@@ -7,12 +7,18 @@ import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 import org.assertj.core.groups.Tuple;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class SurefireApiDependencyTest {
+
+    @Rule
+    public final EnvironmentVariables environmentVariables
+        = new EnvironmentVariables();
 
     @Test
     public void should_add_surefire_dependency()
