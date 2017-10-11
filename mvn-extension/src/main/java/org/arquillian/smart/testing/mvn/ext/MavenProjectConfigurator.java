@@ -16,7 +16,6 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 
 import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
 
@@ -79,7 +78,8 @@ class MavenProjectConfigurator {
 
         return testRunnerPluginConfigurations.stream()
             .filter(
-                testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs(model)))
+                testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin")
+                    && new MavenPropertyResolver(model).isSkipITs()))
             .collect(Collectors.toList());
     }
 
