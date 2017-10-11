@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.rules.git.GitClone;
@@ -22,6 +23,9 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
+
+    @Rule
+    public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
     public void should_only_execute_tests_related_to_single_local_change_in_production_code_when_affected_is_enabled() throws Exception {
@@ -58,10 +62,16 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
 
         // when
-        final TestResults actualTestResults = project.build("config/impl-base").run();
+        final TestResults actualTestResults = project
+            .build("config/impl-base")
+                .options()
+                    .useSurefireVersion("2.20.1")
+                .configure()
+            .run();
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        softly.assertThat(project.getMavenLog()).contains("maven-surefire-plugin:2.20.1:test");
     }
 
 }
