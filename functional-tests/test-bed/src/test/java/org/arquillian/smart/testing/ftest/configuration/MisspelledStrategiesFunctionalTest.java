@@ -72,8 +72,6 @@ public class MisspelledStrategiesFunctionalTest {
             .run();
 
         // then
-        String projectMavenLog = project.getMavenLog();
-        System.out.printf(projectMavenLog);
         assertThat(project.failed()).isFalse();
     }
 
