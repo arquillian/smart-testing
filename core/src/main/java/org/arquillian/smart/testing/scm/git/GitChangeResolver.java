@@ -11,8 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.Scm;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -76,8 +76,9 @@ public class GitChangeResolver implements ChangeResolver {
     @Override
     public Set<Change> diff() {
         final Set<Change> allChanges= new HashSet<>();
-
-        allChanges.addAll(retrieveCommitsChanges());
+        if (isAnyCommitExists()) {
+            allChanges.addAll(retrieveCommitsChanges());
+        }
         allChanges.addAll(retrieveUncommittedChanges());
 
         return allChanges;
@@ -93,6 +94,15 @@ public class GitChangeResolver implements ChangeResolver {
             return false;
         }
         return true;
+    }
+
+    private boolean isAnyCommitExists() {
+        try {
+            final ObjectId head = git.getRepository().resolve("HEAD" + ENSURE_TREE);
+            return head != null;
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private Set<Change> retrieveCommitsChanges() {
