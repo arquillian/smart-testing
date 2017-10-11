@@ -1,16 +1,15 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
@@ -18,7 +17,7 @@ class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     private final Configuration configuration;
 
@@ -70,31 +69,6 @@ class MavenProjectConfigurator {
             .filter(
                 testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
             .collect(Collectors.toList());
-    }
-
-    private Xpp3Dom defineTestSelectionCriteria() {
-        final Xpp3Dom strategies = new Xpp3Dom("strategies");
-        final StringJoiner stringJoiner = new StringJoiner(",");
-        for (final String strategy : configuration.getStrategies()) {
-            stringJoiner.add(strategy);
-        }
-        strategies.setValue(stringJoiner.toString());
-        return strategies;
-    }
-
-    private Xpp3Dom defineUsageMode() {
-        final Xpp3Dom usage = new Xpp3Dom("usage");
-        usage.setValue(configuration.getMode().getName());
-        return usage;
-    }
-
-    private Xpp3Dom getOrCreatePropertiesChild(Xpp3Dom configurationDom) {
-        Xpp3Dom properties = configurationDom.getChild("properties");
-        if (properties == null) {
-            properties = new Xpp3Dom("properties");
-            configurationDom.addChild(properties);
-        }
-        return properties;
     }
 
     private void failBecauseOfPluginVersionMismatch(Model model) {

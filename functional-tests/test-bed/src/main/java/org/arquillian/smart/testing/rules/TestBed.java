@@ -8,8 +8,9 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -21,7 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 public class TestBed implements TestRule {
 
-    private static final Logger LOGGER = Logger.getLogger();
+    private static final Logger LOGGER = Log.getLogger();
 
     private final GitClone gitClone;
 

@@ -7,11 +7,12 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.logger.Log;
 
 class FileSystemOperations {
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     static Path copyDirectory(Path src, Path dest, boolean catchException) {
         return copyDirectory(src, dest, file -> true, catchException);

@@ -23,7 +23,7 @@ before_install:
   - COMMITS_WITH_FORCED_GEN=$(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l)
   - git describe --tags --exact-match HEAD >/dev/null 2>&1 && TAGGED=0 || TAGGED=1
   - '[ $TAGGED -eq 0 ] || [ $COMMITS_WITH_FORCED_GEN -gt 0 ] || [ $MODIFIED_DOCS -ge 1 ] && GENERATE_DOC=0 || GENERATE_DOC=1'
-  - '[ "${BRANCH}" == "master" ] || [ ! -z "${TRAVIS_PULL_REQUEST// }"  -a "${TRAVIS_PULL_REQUEST}" != "false" ] && GENERATE_DOC=0 || GENERATE_DOC=1'
+  - '[ "${BRANCH}" == "master" ] && [ "${TRAVIS_REPO_SLUG}" == "arquillian/smart-testing" ] || [ ! -z "${TRAVIS_PULL_REQUEST// }"  -a "${TRAVIS_PULL_REQUEST}" != "false" ] && GENERATE_DOC=0 || GENERATE_DOC=1'
   - 'if [ $GENERATE_DOC -eq 0 ]; then
       git config user.name "${GH_USER}";
       git config user.email "${GH_EMAIL}";

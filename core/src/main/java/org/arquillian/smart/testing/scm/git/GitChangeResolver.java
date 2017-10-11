@@ -9,9 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.Scm;
+import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
@@ -36,7 +37,7 @@ public class GitChangeResolver implements ChangeResolver {
     private static final String WRONG_COMMIT_ID_EXCEPTION = "Commit id '%s' is not found in %s Git repository";
     private static final String ENSURE_TREE = "^{tree}";
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     private final String previous;
     private final String head;
@@ -75,8 +76,9 @@ public class GitChangeResolver implements ChangeResolver {
     @Override
     public Set<Change> diff() {
         final Set<Change> allChanges= new HashSet<>();
-
-        allChanges.addAll(retrieveCommitsChanges());
+        if (isAnyCommitExists()) {
+            allChanges.addAll(retrieveCommitsChanges());
+        }
         allChanges.addAll(retrieveUncommittedChanges());
 
         return allChanges;
@@ -92,6 +94,15 @@ public class GitChangeResolver implements ChangeResolver {
             return false;
         }
         return true;
+    }
+
+    private boolean isAnyCommitExists() {
+        try {
+            final ObjectId head = git.getRepository().resolve("HEAD" + ENSURE_TREE);
+            return head != null;
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     private Set<Change> retrieveCommitsChanges() {

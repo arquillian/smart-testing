@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
+import org.apache.maven.surefire.report.DefaultConsoleReporter;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.configuration.Configuration;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 public class SmartTestingProviderTest {
 
     @Rule
-    public final TemporaryFolder temporaryFolder = new TemporaryFolder(Paths.get(".").toFile());
+    public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
@@ -58,13 +59,14 @@ public class SmartTestingProviderTest {
 
         temporaryFolder.newFile("pom.xml");
         Configuration.load().dump(temporaryFolder.getRoot());
+        System.setProperty("basedir", temporaryFolder.getRoot().toString());
+
+        when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));
     }
 
     @Test
     public void when_get_suites_is_called_then_same_list_of_classes_will_be_returned() {
         // given
-        System.setProperty("basedir", temporaryFolder.getRoot().toString());
-
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 
         // when
@@ -77,7 +79,6 @@ public class SmartTestingProviderTest {
 
     @Test
     public void test_when_invoke_is_called_with_null() throws Exception {
-        System.setProperty("basedir", temporaryFolder.getRoot().toString());
         // given
         SmartTestingSurefireProvider provider = new SmartTestingSurefireProvider(providerParameters, providerFactory);
 

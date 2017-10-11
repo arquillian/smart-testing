@@ -93,7 +93,6 @@
         <version>${version.maven.plugin.shade}</version>
         <configuration>
           <createDependencyReducedPom>false</createDependencyReducedPom>
-          <minimizeJar>true</minimizeJar>
           <shadedArtifactAttached>true</shadedArtifactAttached>
           <shadedClassifierName>shaded</shadedClassifierName>
           <artifactSet>
@@ -101,6 +100,16 @@
               <exclude>org.slf4j:*</exclude>
             </excludes>
           </artifactSet>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
         </configuration>
         <executions>
           <execution>
