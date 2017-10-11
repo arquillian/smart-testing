@@ -81,7 +81,7 @@ public class GitChangeResolver implements ChangeResolver {
         try {
             final FileRepositoryBuilder builder = new FileRepositoryBuilder();
             builder.readEnvironment().findGitDir(projectDir).build();
-        } catch (IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             logger.warn("Working directory is not git directory. Cause: %s", e.getMessage());
             return false;
         }
