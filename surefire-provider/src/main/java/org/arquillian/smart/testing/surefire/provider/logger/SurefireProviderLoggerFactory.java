@@ -37,17 +37,7 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
 
         private SurefireProviderLogger(Object consoleLogger) {
             this.consoleLogger = consoleLogger;
-            Optional<Method> method = Arrays.stream(consoleLogger.getClass().getMethods())
-                .filter(this::isPublicConsoleLogMethod)
-                .findFirst();
-
-            if (method.isPresent()) {
-                logMethod = method.get();
-            } else {
-                new DefaultLoggerFactory()
-                    .getLogger()
-                    .warn(NOT_COMPATIBLE_MESSAGE);
-            }
+            this.logMethod = getLogMethod();
         }
 
         @Override
@@ -81,6 +71,23 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
                 }
             }
             System.out.println(message);
+        }
+
+        private Method getLogMethod() {
+            if (consoleLogger != null) {
+                Optional<Method> method = Arrays.stream(consoleLogger.getClass().getMethods())
+                    .filter(this::isPublicConsoleLogMethod)
+                    .findFirst();
+
+                if (method.isPresent()) {
+                    return method.get();
+                } else {
+                    new DefaultLoggerFactory()
+                        .getLogger()
+                        .warn(NOT_COMPATIBLE_MESSAGE);
+                }
+            }
+            return null;
         }
 
         private boolean isPublicConsoleLogMethod(Method method){
