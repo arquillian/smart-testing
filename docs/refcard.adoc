@@ -10,7 +10,6 @@ include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
 
 === Configuration
 
-
 [cols="1,2,2,1", options="header"]
 |===
 |Property | Description |  Default | Possible Values
@@ -34,6 +33,11 @@ a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configura
 |Set plugin to apply Smart Testing in CSV
 a|`surefire, failsafe`
 a|`surefire`, `failsafe`
+
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_AUTOCORRECT"]`
+|Enable auto correct of misspelled strategies
+a|`false`
+a|`true`, `false`
 |===
 
 === Strategies
@@ -89,3 +93,10 @@ a|enables the debug mode (alternatively you can use Maven debug output `(-X)` fl
 a|`false`
 
 |===
+
+=== Configuration File
+
+[source, yaml, indent=0]
+----
+include::../core/src/test/resources/configuration/smart-testing-with-lastChanges.yml[]
+----

@@ -13,14 +13,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestExecutionPlannerLoaderTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final File projectDir = new File(System.getProperty("user.dir"));
 
@@ -34,8 +33,25 @@ public class TestExecutionPlannerLoaderTest {
             new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
 
         // when
-        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
+        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy", false);
 
+        // then
+        assertThat(testExecutionPlanner.getTests()).isEmpty();
+    }
+
+    @Test
+    public void should_autocorrent_and_find_matching_strategy() throws Exception {
+        // given
+        final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
+        when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
+            new DummyTestExecutionPlannerFactory()));
+        final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+
+        // when
+        final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dumy", true);
+
+        // then
         assertThat(testExecutionPlanner.getTests()).isEmpty();
     }
 
@@ -48,11 +64,13 @@ public class TestExecutionPlannerLoaderTest {
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
             new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
 
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
-
         // when
-        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new");
+        final Throwable exception = catchThrowable(() -> testExecutionPlannerLoader.getPlannerForStrategy("new", false));
+
+        // then
+        assertThat(exception).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("No strategy found for [new]. Available strategies are: [[dummy]]. Please make sure you have corresponding dependency defined.");
+
     }
 
     @Test
@@ -63,11 +81,12 @@ public class TestExecutionPlannerLoaderTest {
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
             new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
 
-        expectedException.expect(IllegalStateException.class);
-        expectedException.expectMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");
-
         // when
-        final TestExecutionPlanner exceptionShouldBeThrown = testExecutionPlannerLoader.getPlannerForStrategy("new");
+        final Throwable exception = catchThrowable(() -> testExecutionPlannerLoader.getPlannerForStrategy("new", false));
+
+        // then
+        assertThat(exception).isInstanceOf(IllegalStateException.class)
+            .hasMessage("There is no strategy available. Please make sure you have corresponding dependencies defined.");
     }
 
     private static class DummyTestExecutionPlannerFactory implements TestExecutionPlannerFactory {

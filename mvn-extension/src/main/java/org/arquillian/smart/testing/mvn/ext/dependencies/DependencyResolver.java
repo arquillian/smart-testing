@@ -1,12 +1,14 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.StringSimilarityCalculator;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
@@ -31,21 +33,41 @@ public class DependencyResolver {
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver();
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-        final Map<String, String> strategyMismatch = new HashMap<>();
-        for (final String definedStrategy : strategies) {
+        final List<String> strategyMismatch = new ArrayList<>();
+        final List<String> registeredStrategies = new ArrayList<>();
+        for (int i=0; i < strategies.length; i++) {
+            String definedStrategy = strategies[i];
             if (!dependencies.containsKey(definedStrategy)) {
                 final String closestMatch = stringSimilarityCalculator.findClosestMatch(definedStrategy, dependencies.keySet());
-                strategyMismatch.put(definedStrategy, closestMatch);
+                if (configuration.isAutocorrect()) {
+                    if (registeredStrategies.contains(closestMatch)) {
+                        strategyMismatch.add(String.format("Autocorrected [%s] strategy to [%s] but it was already registered", closestMatch, definedStrategy));
+                    } else {
+                        final Dependency dependency = dependencies.get(closestMatch);
+                        model.addDependency(dependency);
+                        strategies[i]= closestMatch;
+                        registeredStrategies.add(closestMatch);
+                    }
+                } else {
+                    strategyMismatch.add(String.format("Unable to find strategy [%s]. Did you mean [%s]?", definedStrategy, closestMatch));
+                }
             } else {
-                final Dependency dependency = dependencies.get(definedStrategy);
-                model.addDependency(dependency);
+
+                if (registeredStrategies.contains(definedStrategy)) {
+                    strategyMismatch.add(String.format("Strategy [%s] was already registered or autocorrected", definedStrategy));
+                } else {
+                    final Dependency dependency = dependencies.get(definedStrategy);
+                    model.addDependency(dependency);
+                    registeredStrategies.add(definedStrategy);
+                }
             }
         }
-        strategyMismatch.forEach((selection, match) -> LOGGER.error("Unable to find strategy [%s]. Did you mean [%s]?", selection, match));
+        strategyMismatch.forEach(msg -> LOGGER.error(msg));
         if (!strategyMismatch.isEmpty()) {
             throw new IllegalStateException("Unknown strategies (see above). Please refer to http://arquillian.org/smart-testing/#_strategies "
                 + "for the list of available strategies.");
         }
+        configuration.setStrategies(strategies);
     }
 
     public void addAsPluginDependency(Plugin plugin) {

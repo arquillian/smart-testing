@@ -68,7 +68,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
 
         final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
-            final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
+            final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy, configuration.isAutocorrect());
             selectedTests.addAll(plannerForStrategy.getTests());
         }
         logger.info("Applied strategies: %s", strategies);
