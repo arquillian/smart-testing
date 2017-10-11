@@ -32,7 +32,6 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private final ProviderParameters bootParams;
     private final Configuration configuration;
     private SurefireProvider surefireProvider;
-    private Object consoleLogger;
 
     @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
@@ -40,9 +39,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.consoleLogger = getConsoleLogger();
         this.configuration = Configuration.loadPrecalculated(getProjectDir());
-        Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
+        Log.setLoggerFactory(new SurefireProviderLoggerFactory(getConsoleLogger(), isAnyDebugEnabled()));
     }
 
     SmartTestingSurefireProvider(ProviderParameters bootParams, SurefireProviderFactory surefireProviderFactory) {
@@ -50,9 +48,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.consoleLogger = getConsoleLogger();
         this.configuration = Configuration.loadPrecalculated(getProjectDir());
-        Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
+        Log.setLoggerFactory(new SurefireProviderLoggerFactory(getConsoleLogger(), isAnyDebugEnabled()));
     }
 
     public Iterable<Class<?>> getSuites() {
