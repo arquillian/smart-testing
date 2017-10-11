@@ -10,6 +10,7 @@ import org.assertj.core.groups.Tuple;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -17,8 +18,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 public class SurefireApiDependencyTest {
 
     @Rule
-    public final EnvironmentVariables environmentVariables
-        = new EnvironmentVariables();
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Test
     public void should_add_surefire_dependency()
