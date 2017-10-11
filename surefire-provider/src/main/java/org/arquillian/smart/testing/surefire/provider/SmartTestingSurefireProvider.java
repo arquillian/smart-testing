@@ -2,11 +2,14 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import org.apache.maven.surefire.cli.CommandLineOption;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
-import org.apache.maven.surefire.report.ConsoleLogger;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
@@ -14,20 +17,22 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.logger.DefaultLoggerFactory;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.surefire.provider.logger.SurefireProviderLoggerFactory;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
+import static org.arquillian.smart.testing.surefire.provider.logger.SurefireProviderLoggerFactory.NOT_COMPATIBLE_MESSAGE;
 
 // TODO figure out how to inject our services here
 public class SmartTestingSurefireProvider implements SurefireProvider {
 
-    private SurefireProvider surefireProvider;
     private final ProviderParametersParser paramParser;
     private final SurefireProviderFactory surefireProviderFactory;
     private final ProviderParameters bootParams;
-    private ConsoleLogger consoleLogger;
     private final Configuration configuration;
+    private SurefireProvider surefireProvider;
+    private Object consoleLogger;
 
     @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
@@ -35,7 +40,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.consoleLogger = getConsoleLogger();
         this.configuration = Configuration.loadPrecalculated(getProjectDir());
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
@@ -45,7 +50,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.consoleLogger = getConsoleLogger();
         this.configuration = Configuration.loadPrecalculated(getProjectDir());
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
@@ -101,5 +106,28 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
 
     private boolean isAnyDebugEnabled() {
         return bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG) || configuration.isDebug();
+    }
+
+    private Object getConsoleLogger() {
+        try {
+            Optional<Method> method = Arrays.stream(bootParams.getClass().getMethods())
+                .filter(this::isGetConsoleLoggerMethod)
+                .findFirst();
+            if (method.isPresent()) {
+                return method.get().invoke(bootParams);
+            }
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            new DefaultLoggerFactory()
+                .getLogger()
+                .warn(NOT_COMPATIBLE_MESSAGE);
+        }
+        return null;
+    }
+
+    private boolean isGetConsoleLoggerMethod(Method method) {
+        return method.getName().equals("getConsoleLogger")
+            && method.getParameterCount() == 0
+            && Arrays.asList(method.getModifiers()).contains(Modifier.PUBLIC)
+            && method.getReturnType() != Void.class;
     }
 }
