@@ -568,6 +568,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_configuration_3">8.2. Configuration</a></li>
 <li><a href="#_strategies_2">8.3. Strategies</a></li>
 <li><a href="#_getting_insights_of_the_execution">8.4. Getting insights of the execution</a></li>
+<li><a href="#_configuration_file_2">8.5. Configuration File</a></li>
 </ul>
 </li>
 <li><a href="#_developing">9. Developing</a>
@@ -773,6 +774,14 @@ which registers the smart testing extension:</p>
 <div class="sect1">
 <h2 id="_configuration"><a class="anchor" href="#_configuration"></a>3. Configuration</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This section explains configuration parameters of Smart Testing.
+Notice that they are all summarized at <a href="#_reference_card">Reference Card</a> section.</p>
+</div>
+<div class="paragraph">
+<p>Also Smart Testing can be configured with a configuration file instead of System properties.
+You can read about configuration file at <a href="#_configuration_file">Configuration File</a>.</p>
+</div>
 <div class="sect2">
 <h3 id="_modes"><a class="anchor" href="#_modes"></a>3.1. Modes</h3>
 <div class="paragraph">
@@ -848,6 +857,9 @@ Currently we have following strategies in place: <code>new</code>, <code>changed
 </div>
 <div class="paragraph">
 <p>To set them you need to set Java system property <code>smart.testing</code> to one or more strategies in comma-separated value form.</p>
+</div>
+<div class="paragraph">
+<p>Smart Testing is able to auto correct misspelled strategies in case of setting Java System property <code>smart.testing.autocorrect</code> to true.</p>
 </div>
 <div class="paragraph">
 <p>Subsequent sections dive deeper into each and every one of them.</p>
@@ -1062,7 +1074,8 @@ All reports from previous local build are automatically copied by the maven exte
 <span class="key">scm</span>:
     <span class="key">range</span>:
       <span class="key">head</span>: <span class="string"><span class="content">HEAD </span></span><i class="conum" data-value="7"></i><b>(7)</b>
-      <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span> <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+      <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span><i class="conum" data-value="8"></i><b>(8)</b>
+<span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1106,13 +1119,19 @@ All reports from previous local build are automatically copied by the maven exte
 <td><i class="conum" data-value="8"></i><b>8</b></td>
 <td>This sets last commit sha or <code>HEAD</code> notation for inspecting changes.</td>
 </tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>This defines if smart testing should auto correct misspelled strategies.</td>
+</tr>
 </table>
 </div>
 <div class="paragraph">
-<p>All parameters in configuration file are optional. If you haven&#8217;t used any parameter in configuration file, Smart testing will use default value for that parameter. You can look at <a href="#_reference_card">references</a> for default value of parameter.</p>
+<p>All parameters in configuration file are optional. If you haven&#8217;t used any parameter in configuration file, Smart testing will use default value for that parameter.
+You can look at <a href="#_reference_card">references</a> for default value of parameter.</p>
 </div>
 <div class="paragraph">
-<p>However you can overwrite all configuration options using system properties supported by Smart Testing. You can look <a href="#_reference_card">references</a> for all supported system properties.</p>
+<p>However you can overwrite all configuration options using system properties supported by Smart Testing.
+You can look <a href="#_reference_card">references</a> for all supported system properties.</p>
 </div>
 <div class="sect2">
 <h3 id="_configuration_file_reference"><a class="anchor" href="#_configuration_file_reference"></a>4.1. Configuration File Reference</h3>
@@ -1198,6 +1217,14 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>To run Smart Testing with <code>SCM</code> configuration. You can either define <code>range</code> or <code>lastChanges</code>. Look at <a href="#_scm_options">Scm Options</a>
    for all available options.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>autocorrect</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This configures Smart Testing to auto correct misspelled strategies to the closest one. For example in case of user set strategies to <code>nwe</code>, if <code>autocorrect</code> is enabled then it is automatically changed to <code>new</code>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1744,6 +1771,18 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p><code>surefire</code>, <code>failsafe</code></p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.autocorrect</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable auto correct of misspelled strategies</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>true</code>, <code>false</code></p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1875,6 +1914,26 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect2">
+<h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>8.5. Configuration File</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering</span></span>
+<span class="key">strategies</span>:
+  - <span class="string"><span class="content">new</span></span>
+  - <span class="string"><span class="content">changed</span></span>
+  - <span class="string"><span class="content">affected</span></span>
+<span class="key">applyTo</span>: <span class="string"><span class="content">surefire</span></span>
+<span class="key">debug</span>: <span class="string"><span class="content">true</span></span>
+<span class="key">disable</span>: <span class="string"><span class="content">false</span></span>
+<span class="key">report</span>:
+    <span class="key">enable</span>: <span class="string"><span class="content">true</span></span>
+<span class="key">scm</span>:
+    <span class="key">lastChanges</span>: <span class="string"><span class="content">1</span></span>
+<span class="key">autocorrect</span>: <span class="string"><span class="content">true</span></span></code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2243,7 +2302,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-11 16:37:23 UTC
+Last updated 2017-10-11 18:43:15 UTC
 </div>
 </div>
 <script>
