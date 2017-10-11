@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.scm.git;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -9,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Set;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.After;
 import org.junit.Before;
@@ -75,6 +77,28 @@ public class GitChangeResolverTest {
         // then
         assertThat(untrackedChanges).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
             relative("untracked.txt"), ChangeType.ADD));
+    }
+
+    @Test
+    public void should_fetch_all_untracked_files_for_first_commit() throws IOException, GitAPIException {
+        // given
+        final File parent = gitFolder.newFolder("parent");
+        final File newGitFolder = parent.getParentFile();
+
+        gitFolder.newFile("parent/foo.txt");
+
+        try (Git git = Git.init()
+            .setDirectory(newGitFolder)
+            .call()) {}
+
+        this.gitChangeResolver = new GitChangeResolver(newGitFolder, "HEAD~0", "HEAD");
+
+        // when
+        final Set<Change> untrackedChanges = gitChangeResolver.diff();
+
+        // then
+        assertThat(untrackedChanges).hasSize(1).extracting(Change::getLocation, Change::getChangeType).containsOnly(tuple(
+            relative("parent/foo.txt"), ChangeType.ADD));
     }
 
     @Test
