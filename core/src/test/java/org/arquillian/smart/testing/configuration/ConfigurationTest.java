@@ -79,7 +79,6 @@ public class ConfigurationTest {
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
 
-
     @Test
     public void should_load_dumped_configuration_from_file_as_configuration() {
         // given
