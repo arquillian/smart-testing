@@ -13,7 +13,7 @@ Remember that the default **mode** is `const:core/src/main/java/org/arquillian/s
 *You want to run only tests that you've just added or modified locally*
 
 [[selectingChanged]]
-`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]="new, changed"` `mvn clean test -Dsmart.testing="new, changed"`  copyToClipboard:selectingChanged[]
+`mvn clean test -Dconst:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]="new, changed"`  copyToClipboard:selectingChanged[]
 
 *You want to run all tests but given priority to the latest tests added or modified*
 
