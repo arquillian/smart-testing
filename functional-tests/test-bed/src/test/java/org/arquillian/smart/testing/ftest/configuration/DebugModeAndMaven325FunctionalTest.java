@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.ftest.configuration;
 
-import java.io.File;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
@@ -29,7 +28,6 @@ public class DebugModeAndMaven325FunctionalTest {
 
     private static final String MAVEN_DEBUG_LOGS = "[DEBUG] Smart Testing Extension -";
     private static final String PROVIDER_DEBUG_LOGS = "DEBUG: Smart Testing Extension -";
-    private static final String EFFECTIVE_POM = "smart-testing" + File.separator + SMART_TESTING_POM_FILE;
 
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
@@ -75,7 +73,8 @@ public class DebugModeAndMaven325FunctionalTest {
             .contains(PROVIDER_DEBUG_LOGS)
             .contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
 
-        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject().getModule("config"))
+            .allBuiltSubModulesContainEffectivePom(SMART_TESTING_POM_FILE);
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 
@@ -110,7 +109,8 @@ public class DebugModeAndMaven325FunctionalTest {
             .contains(MAVEN_DEBUG_LOGS)
             .contains(PROVIDER_DEBUG_LOGS);
 
-        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject().getModule("config"))
+            .allBuiltSubModulesContainEffectivePom(SMART_TESTING_POM_FILE);
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 }
