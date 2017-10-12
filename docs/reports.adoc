@@ -23,5 +23,5 @@ include::../core/src/test/resources/sample-report.xml[]
 By default this feature is disabled. You can enable it by setting property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_REPORT_ENABLE"]` to `true`.
 If you use the property, then you get the generated reports in `target/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/AfterExecutionLocalStorage.java[name="SMART_TESTING_TARGET_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/AfterExecutionLocalStorage.java[name="REPORTING_SUBDIRECTORY"]` for every module separately.
 
-If you are running smart testing in debug mode using property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_DEBUG"]` or in maven debug output mode using `-X` or `--debug` then Smart Testing will generate report.
+If you are running Smart Testing in debug mode using property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_DEBUG"]` or Maven in debug mode using `-X` or `--debug` then Smart Testing will generate report.
 
