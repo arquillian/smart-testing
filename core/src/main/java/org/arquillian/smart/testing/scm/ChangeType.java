@@ -15,6 +15,6 @@ public enum ChangeType {
     RENAME,
 
     /** Copy an existing file to a new location, keeping the original */
-    COPY;
+    COPY
 
 }
