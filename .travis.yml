@@ -18,8 +18,8 @@ cache:
     - $HOME/.m2
 
 env:
-  - TEST_SUITE=units GENERATE_DOC=1
   - TEST_SUITE=functional TEST_BED_M2_HOME=/home/travis/.arquillian/mvn/apache-maven-3.3.9 GENERATE_DOC=1
+  - TEST_SUITE=units GENERATE_DOC=1
   - GENERATE_DOC=0
 
 before_install:
