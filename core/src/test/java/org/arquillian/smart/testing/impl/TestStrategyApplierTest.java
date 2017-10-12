@@ -28,7 +28,7 @@ public class TestStrategyApplierTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(classes);
 
         final TestStrategyApplierImpl testStrategyApplier =
-            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."), false);
+            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."));
 
         // when
         final Collection<TestSelection> testSelections =
@@ -53,7 +53,7 @@ public class TestStrategyApplierTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(classes);
 
         final TestStrategyApplierImpl testStrategyApplier =
-            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."), false);
+            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."));
 
         // when
         final Collection<TestSelection> testSelections =

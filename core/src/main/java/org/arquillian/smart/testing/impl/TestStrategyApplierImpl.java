@@ -26,14 +26,12 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     private final TestExecutionPlannerLoader testExecutionPlannerLoader;
     private final File projectDir;
     private final Configuration configuration;
-    private final boolean isSurefireOrMavenDebug;
 
     TestStrategyApplierImpl(Configuration configuration, TestExecutionPlannerLoader testExecutionPlannerLoader,
-        File projectDir, boolean isSurefireOrMavenDebug) {
+        File projectDir) {
         this.configuration = configuration;
         this.testExecutionPlannerLoader = testExecutionPlannerLoader;
         this.projectDir = projectDir;
-        this.isSurefireOrMavenDebug = isSurefireOrMavenDebug;
     }
 
     public Set<TestSelection> applyOnNames(Iterable<String> testsToRun) {
@@ -83,7 +81,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
             logger.debug("Applied test selections: %s", testSelections.toString());
         }
 
-        if (isReportEnabled() || configuration.isDebug() || isSurefireOrMavenDebug) {
+        if (isReportEnabled() || configuration.isDebug() || logger.isDebug()) {
             final SmartTestingReportGenerator
                 reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, projectDir);
             reportGenerator.generateReport();

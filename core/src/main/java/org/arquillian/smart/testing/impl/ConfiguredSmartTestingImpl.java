@@ -15,12 +15,10 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
     private TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestVerifier testVerifier;
     private File projectDir;
-    private boolean isSurefireOrMavenDebug;
 
-    public ConfiguredSmartTestingImpl(TestVerifier testVerifier, Configuration configuration, boolean isSurefireOrMavenDebug) {
+    public ConfiguredSmartTestingImpl(TestVerifier testVerifier, Configuration configuration) {
         this.testVerifier = testVerifier;
         this.configuration = configuration;
-        this.isSurefireOrMavenDebug = isSurefireOrMavenDebug;
     }
 
     ConfiguredSmartTestingImpl(TestExecutionPlannerLoader testExecutionPlannerLoader, Configuration configuration) {
@@ -59,6 +57,6 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
             testExecutionPlannerLoader =
                 new TestExecutionPlannerLoaderImpl(new JavaSPILoader(), testVerifier, projectDir);
         }
-        return new TestStrategyApplierImpl(configuration, testExecutionPlannerLoader, projectDir, isSurefireOrMavenDebug);
+        return new TestStrategyApplierImpl(configuration, testExecutionPlannerLoader, projectDir);
     }
 }

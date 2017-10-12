@@ -20,6 +20,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.ORDE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.mvn.ext.ModifiedPomExporter.SMART_TESTING_POM_FILE;
+import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_TAIL;
@@ -40,7 +41,7 @@ public class DebugModeAndMaven325FunctionalTest {
     public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
-    public void should_show_debug_logs_when_smart_testing_is_executed_in_debug_mode_changes_using_325_maven()
+    public void should_show_debug_logs_and_generate_report_when_smart_testing_is_executed_in_debug_mode_changes_using_325_maven()
         throws Exception {
         // given
         final Project project = testBed.getProject();
@@ -75,6 +76,7 @@ public class DebugModeAndMaven325FunctionalTest {
             .contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
 
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 
     @Test
@@ -109,5 +111,6 @@ public class DebugModeAndMaven325FunctionalTest {
             .contains(PROVIDER_DEBUG_LOGS);
 
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(EFFECTIVE_POM);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 }

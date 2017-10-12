@@ -75,10 +75,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     }
 
     private TestsToRun getOptimizedTestsToRun(TestsToRun testsToRun) {
-        // bootParams CLI options contains LOGGING_LEVEL_DEBUG for maven's -X & `maven.surefire.debug`
-        boolean isSurefireOrMavenDebug = bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG);
         Set<TestSelection> selection = SmartTesting
-            .with(className -> testsToRun.getClassByName(className) != null, configuration, isAnyDebugEnabled())
+            .with(className -> testsToRun.getClassByName(className) != null, configuration)
             .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
