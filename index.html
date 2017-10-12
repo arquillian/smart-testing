@@ -569,11 +569,7 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_strategies_2">8.3. Strategies</a></li>
 <li><a href="#_getting_insights_of_the_execution">8.4. Getting insights of the execution</a></li>
 <li><a href="#_configuration_file_2">8.5. Configuration File</a></li>
-</ul>
-</li>
-<li><a href="#_developing">9. Developing</a>
-<ul class="sectlevel2">
-<li><a href="#_test_bed">9.1. Test Bed</a></li>
+<li><a href="#_test_bed">8.6. Test Bed</a></li>
 </ul>
 </li>
 </ul>
@@ -753,7 +749,7 @@ This script requires <code>xmllint</code>, and <code>xsltproc</code>, so make su
 creating folder called <code>.mvn</code> in the root of your project and create inside it an <code>extensions.xml</code> file
 which registers the smart testing extension:</p>
 </div>
-<div class="listingblock">
+<div id="smart-testing-extension" class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
@@ -765,6 +761,13 @@ which registers the smart testing extension:</p>
   <span class="tag">&lt;/extension&gt;</span>
 <span class="tag">&lt;/extensions&gt;</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#smart-testing-extension">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
 </div>
 <script type="text/javascript" src="https://asciinema.org/a/131840.js" id="asciicast-131840" async></script>
 </div>
@@ -1343,7 +1346,7 @@ Let&#8217;s see some examples:</p>
 <p><strong>You want to run only tests that you&#8217;ve just added or modified locally</strong></p>
 </div>
 <div id="selectingChanged" class="paragraph">
-<p><code>mvn clean test -Dsmart.testing="new, changed"</code> <code>mvn clean test -Dsmart.testing="new, changed"</code>  
+<p><code>mvn clean test -Dsmart.testing="new, changed"</code>  
         <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#selectingChanged">
           <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
         </button>
@@ -1584,6 +1587,9 @@ most efficient way to get a quick answer to:</p>
 <p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.
 If you use the property, then you get the generated reports in <code>target/smart-testing/reporting</code> for every module separately.</p>
 </div>
+<div class="paragraph">
+<p>If you are running Smart Testing in debug mode using property <code>smart.testing.debug</code> or Maven build output in debug mode using <code>-X</code> or <code>--debug</code> then Smart Testing will generate report.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1693,7 +1699,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>8.1. Installation</h3>
-<div class="listingblock">
+<div id="extension" class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="xml"><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>
@@ -1705,6 +1711,13 @@ But ultimately your software is going to be built on CI/CD server and saving tim
   <span class="tag">&lt;/extension&gt;</span>
 <span class="tag">&lt;/extensions&gt;</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#extension">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    </p>
 </div>
 </div>
 <div class="sect2">
@@ -1917,7 +1930,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 <div class="sect2">
 <h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>8.5. Configuration File</h3>
-<div class="listingblock">
+<div id="configuration-file" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering</span></span>
 <span class="key">strategies</span>:
@@ -1934,12 +1947,14 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <span class="key">autocorrect</span>: <span class="string"><span class="content">true</span></span></code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>
+        <button class="cpybtn" width="13" data-clipboard-action="copy" data-clipboard-target="#configuration-file">
+          <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEwMjQiIHdpZHRoPSI4OTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHBhdGggZD0iTTEyOCA3NjhoMjU2djY0SDEyOHYtNjR6IG0zMjAtMzg0SDEyOHY2NGgzMjB2LTY0eiBtMTI4IDE5MlY0NDhMMzg0IDY0MGwxOTIgMTkyVjcwNGgzMjBWNTc2SDU3NnogbS0yODgtNjRIMTI4djY0aDE2MHYtNjR6TTEyOCA3MDRoMTYwdi02NEgxMjh2NjR6IG01NzYgNjRoNjR2MTI4Yy0xIDE4LTcgMzMtMTkgNDVzLTI3IDE4LTQ1IDE5SDY0Yy0zNSAwLTY0LTI5LTY0LTY0VjE5MmMwLTM1IDI5LTY0IDY0LTY0aDE5MkMyNTYgNTcgMzEzIDAgMzg0IDBzMTI4IDU3IDEyOCAxMjhoMTkyYzM1IDAgNjQgMjkgNjQgNjR2MzIwaC02NFYzMjBINjR2NTc2aDY0MFY3Njh6TTEyOCAyNTZoNTEyYzAtMzUtMjktNjQtNjQtNjRoLTY0Yy0zNSAwLTY0LTI5LTY0LTY0cy0yOS02NC02NC02NC02NCAyOS02NCA2NC0yOSA2NC02NCA2NGgtNjRjLTM1IDAtNjQgMjktNjQgNjR6IiAvPgo8L3N2Zz4K" width="13"/>
+        </button>
+    
+== Developing</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>9. Developing</h2>
-<div class="sectionbody">
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -1952,8 +1967,9 @@ This section will be improved as we continue with the SPI design to let you hook
 </tr>
 </table>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>9.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>8.6. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -2014,7 +2030,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>9.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>8.6.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -2202,7 +2218,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>9.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>8.6.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -2302,7 +2318,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-11 18:43:15 UTC
+Last updated 2017-10-12 10:14:35 UTC
 </div>
 </div>
 <script>
