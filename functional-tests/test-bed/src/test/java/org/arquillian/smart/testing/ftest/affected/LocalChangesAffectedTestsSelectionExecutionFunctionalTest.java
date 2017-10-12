@@ -58,7 +58,12 @@ public class LocalChangesAffectedTestsSelectionExecutionFunctionalTest {
             "Inlined variable in a method");
 
         // when
-        final TestResults actualTestResults = project.build("config/impl-base").run();
+        final TestResults actualTestResults = project
+            .build("config/impl-base")
+                .options()
+                    .useSurefireVersion("2.20.1")
+                .configure()
+            .run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

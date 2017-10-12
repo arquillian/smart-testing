@@ -1,6 +1,8 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.ServerSocket;
@@ -10,6 +12,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import static java.lang.System.getProperty;
 import static java.util.Arrays.stream;
@@ -183,8 +189,20 @@ public class BuildConfigurator {
         return this;
     }
 
-    public BuildConfigurator useMavenVersion(String mavenVersion){
+    public BuildConfigurator useMavenVersion(String mavenVersion) {
         this.mavenVersion = mavenVersion;
+        return this;
+    }
+
+    public BuildConfigurator useSurefireVersion(String version) {
+        File pomFile = new File(projectBuilder.getRoot().toAbsolutePath().toString()+ File.separator + "pom.xml");
+        try {
+            Model model = new MavenXpp3Reader().read(new FileInputStream(pomFile));
+            model.getProperties().setProperty("version.surefire.plugin", version);
+            new MavenXpp3Writer().write(new FileOutputStream(pomFile), model);
+        } catch (IOException | XmlPullParserException e) {
+            throw new RuntimeException("Failed setting surefire version in pom.", e);
+        }
         return this;
     }
 
@@ -293,4 +311,5 @@ public class BuildConfigurator {
     void setUsingInstallation(Using usingInstallation) {
         this.usingInstallation = usingInstallation;
     }
+
 }
