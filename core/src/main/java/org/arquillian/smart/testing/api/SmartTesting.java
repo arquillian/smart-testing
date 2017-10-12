@@ -35,6 +35,7 @@ public class SmartTesting {
      *     An instance of {@link TestVerifier} implementation
      * @param configuration
      *     An instance of {@link Configuration}
+     *
      * @return An instance of {@link ConfiguredSmartTesting} class
      */
     public static ConfiguredSmartTesting with(TestVerifier testVerifier, Configuration configuration) {

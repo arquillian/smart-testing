@@ -81,7 +81,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
             logger.debug("Applied test selections: %s", testSelections.toString());
         }
 
-        if (isReportEnabled() || configuration.isDebug() || logger.isDebug()) {
+        if (isReportEnabled() || logger.isDebug()) {
             final SmartTestingReportGenerator
                 reportGenerator = new SmartTestingReportGenerator(testSelections, configuration, projectDir);
             reportGenerator.generateReport();
