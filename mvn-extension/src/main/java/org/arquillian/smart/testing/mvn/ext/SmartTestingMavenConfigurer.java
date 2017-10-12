@@ -42,7 +42,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     @Requirement
     public org.codehaus.plexus.logging.Logger mavenLogger;
 
-    private final ChangeStorage changeStorage = new LocalChangeStorage(".");
+    private final ChangeStorage changeStorage = new LocalChangeStorage();
 
     private Configuration configuration;
 
@@ -50,8 +50,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
+        File projectDirectory = session.getCurrentProject().getModel().getProjectDirectory();
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
-        configuration = Configuration.load();
+        configuration = Configuration.load(projectDirectory);
 
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
@@ -65,7 +66,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
-            calculateChanges();
+            calculateChanges(projectDirectory);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
             logStrategiesNotDefined();
@@ -121,14 +122,15 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         purgeLocalStorage(session);
     }
 
-    private void calculateChanges() {
+    private void calculateChanges(File projectDirectory) {
         final Iterable<ChangeResolver> changeResolvers =
-            new JavaSPILoader().all(ChangeResolver.class, ChangeResolver::isApplicable);
-        final Collection<Change> changes = stream(changeResolvers.spliterator(), false).map(ChangeResolver::diff)
+            new JavaSPILoader().all(ChangeResolver.class, resolver -> resolver.isApplicable(projectDirectory));
+        final Collection<Change> changes = stream(changeResolvers.spliterator(), false)
+            .map(changeResolver -> changeResolver.diff(projectDirectory))
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
 
-        changeStorage.store(changes);
+        changeStorage.store(changes, projectDirectory);
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {

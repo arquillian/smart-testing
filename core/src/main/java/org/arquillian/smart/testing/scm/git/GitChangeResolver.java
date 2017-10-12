@@ -38,62 +38,58 @@ public class GitChangeResolver implements ChangeResolver {
     private static final String ENSURE_TREE = "^{tree}";
 
     private static final Logger logger = Log.getLogger();
-
-    private final String previous;
-    private final String head;
-    private final File repoRoot;
-    private final Git git;
-
-    public GitChangeResolver() {
-        this(Paths.get("").toAbsolutePath().toFile());
-    }
-
-    public GitChangeResolver(File projectDir) {
-        this(projectDir, Configuration.loadPrecalculated(projectDir).getScm());
-    }
-
-    public GitChangeResolver(File projectDir, Scm scm) {
-        this(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
-    }
-
-    public GitChangeResolver(File dir, String previous, String head) {
-        this.previous = previous;
-        this.head = head;
-        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        try {
-            this.git = new Git(builder.readEnvironment().findGitDir(dir).build());
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Unable to find git repository for path " + dir.getAbsolutePath(), e);
-        }
-        this.repoRoot = git.getRepository().getDirectory().getParentFile();
-    }
+    private Git git;
 
     @Override
     public void close() throws Exception {
-        git.close();
+        closeGitIfExists();
+    }
+
+    private void closeGitIfExists() {
+        if (git != null) {
+            git.close();
+        }
     }
 
     @Override
-    public Set<Change> diff() {
+    public Set<Change> diff(File projectDir) {
+        Scm scm = Configuration.loadPrecalculated(projectDir).getScm();
+        return diff(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
+    }
+
+    Set<Change> diff(File projectDir, String previous, String head) {
+        buildGit(projectDir);
+
+        File repoRoot = git.getRepository().getDirectory().getParentFile();
         final Set<Change> allChanges= new HashSet<>();
         if (isAnyCommitExists()) {
-            allChanges.addAll(retrieveCommitsChanges());
+            allChanges.addAll(retrieveCommitsChanges(previous, head, repoRoot));
         }
-        allChanges.addAll(retrieveUncommittedChanges());
+        allChanges.addAll(retrieveUncommittedChanges(repoRoot));
 
         return allChanges;
     }
 
     @Override
-    public boolean isApplicable() {
+    public boolean isApplicable(File projectDir) {
         try {
             final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-            builder.readEnvironment().findGitDir().build();
+            builder.readEnvironment().findGitDir(projectDir).build();
         } catch (IOException e) {
             logger.warn("Working directory is not git directory. Cause: %s", e.getMessage());
             return false;
         }
         return true;
+    }
+
+    private void buildGit(File projectDir){
+        closeGitIfExists();
+        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
+        try {
+            git = new Git(builder.readEnvironment().findGitDir(projectDir).build());
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Unable to find git repository for path " + projectDir.getAbsolutePath(), e);
+        }
     }
 
     private boolean isAnyCommitExists() {
@@ -105,13 +101,13 @@ public class GitChangeResolver implements ChangeResolver {
         }
     }
 
-    private Set<Change> retrieveCommitsChanges() {
+    private Set<Change> retrieveCommitsChanges(String previous, String head, File repoRoot) {
         final Repository repository = git.getRepository();
         try (ObjectReader reader = repository.newObjectReader()) {
-            final ObjectId oldHead = repository.resolve(this.previous + ENSURE_TREE);
-            final ObjectId newHead = repository.resolve(this.head + ENSURE_TREE);
-            validateCommitExists(oldHead, this.previous, repository);
-            validateCommitExists(newHead, this.head, repository);
+            final ObjectId oldHead = repository.resolve(previous + ENSURE_TREE);
+            final ObjectId newHead = repository.resolve(head + ENSURE_TREE);
+            validateCommitExists(oldHead, previous, repository);
+            validateCommitExists(newHead, head, repository);
 
             final CanonicalTreeParser oldTree = new CanonicalTreeParser();
             oldTree.reset(reader, oldHead);
@@ -133,7 +129,7 @@ public class GitChangeResolver implements ChangeResolver {
         }
     }
 
-    private Set<Change> retrieveUncommittedChanges() {
+    private Set<Change> retrieveUncommittedChanges(File repoRoot) {
         final Set<Change> allChanges = new HashSet<>();
 
         final Status status;

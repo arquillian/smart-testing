@@ -19,25 +19,13 @@ public class LocalChangeStorage implements ChangeStorage {
 
     public static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
 
-    private final String currentDirectory;
-
-    // Used by SPI
-    @SuppressWarnings("unused")
-    public LocalChangeStorage() {
-        this.currentDirectory = ".";
-    }
-
-    public LocalChangeStorage(String currentDirectory) {
-        this.currentDirectory = currentDirectory;
-    }
-
     @Override
-    public void store(Collection<Change> changes) {
+    public void store(Collection<Change> changes, File projectDir) {
         StringBuilder fileContent = new StringBuilder();
         changes.forEach(change -> fileContent.append(change.write()).append(System.lineSeparator()));
 
         LocalStorageFileAction scmChangesFile =
-            new LocalStorage(currentDirectory)
+            new LocalStorage(projectDir)
                 .duringExecution()
                 .temporary()
                 .file(SMART_TESTING_SCM_CHANGES);
@@ -49,9 +37,9 @@ public class LocalChangeStorage implements ChangeStorage {
     }
 
     @Override
-    public Optional<Collection<Change>> read() {
+    public Optional<Collection<Change>> read(File projectDir) {
         final Optional<Path> smartTestingScmChangesOptional =
-            findFileInDirectoryOrParents(new File(currentDirectory).getAbsoluteFile(), SMART_TESTING_SCM_CHANGES);
+            findFileInDirectoryOrParents(projectDir.getAbsoluteFile(), SMART_TESTING_SCM_CHANGES);
 
         if (smartTestingScmChangesOptional.isPresent()) {
 

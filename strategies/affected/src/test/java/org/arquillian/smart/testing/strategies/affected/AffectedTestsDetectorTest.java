@@ -53,10 +53,11 @@ public class AffectedTestsDetectorTest {
         // given
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);
-        when(changeStorage.read()).thenReturn(Optional.of(Collections.singletonList(change)));
+        when(changeStorage.read(new File("."))).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
-            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new CustomTestVerifier());
+            new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new File("."),
+                new CustomTestVerifier());
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();

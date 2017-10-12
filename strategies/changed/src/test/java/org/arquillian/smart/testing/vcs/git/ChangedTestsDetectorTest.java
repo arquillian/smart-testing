@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
@@ -34,8 +35,9 @@ public class ChangedTestsDetectorTest {
     @Test
     public void should_find_all_modified_tests_in_the_range_of_commits() throws Exception {
         // given
+        createConfiguration("7699c2c", "04d04fe");
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -51,8 +53,9 @@ public class ChangedTestsDetectorTest {
         // given
         // 76b6069 renames test introduced in b4a8a3 - org.arquillian.smart.testing.vcs.git.EvenMoreDummyFilesDetectorTest
         // 6b4a8a3 introduces new test - org.arquillian.smart.testing.vcs.git.DummyFilesDetectorTest
+        createConfiguration("6b4a8a3", "76b6069");
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "6b4a8a3", "76b6069"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -66,12 +69,13 @@ public class ChangedTestsDetectorTest {
     @Test
     public void should_find_all_local_modified_tests_as_changed() throws IOException {
         // given
+        createConfiguration("a4261d5", "1ee4abf");
         final Path testFile = Paths.get(gitFolder.getRoot().getAbsolutePath(),
             "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
         Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
 
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -85,13 +89,14 @@ public class ChangedTestsDetectorTest {
     @Test
     public void should_find_modified_staged_tests_as_changed() throws IOException, GitAPIException {
         //given
+        createConfiguration("7699c2c", "04d04fe");
         final Path testFile = Paths.get(gitFolder.getRoot().getAbsolutePath(),
             "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
         Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
         GitRepositoryOperations.addFile(gitFolder.getRoot(), testFile.toString());
 
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -106,8 +111,9 @@ public class ChangedTestsDetectorTest {
     @Test
     public void should_not_find_newly_added_tests_in_commit_range_as_changed() throws IOException {
         //given
+        createConfiguration("a4261d5", "1ee4abf");
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -121,6 +127,7 @@ public class ChangedTestsDetectorTest {
     @Test
     public void should_not_find_untracked_tests_as_changed() throws IOException {
         //given
+        createConfiguration("7699c2c", "04d04fe");
         final File testFile = gitFolder.newFile("core.src.test.java.org.arquillian.smart.testing.CalculatorTest.java");
         Files.write(testFile.toPath(), ("package org.arquillian.smart.testing;\n"
             + "\n"
@@ -136,7 +143,7 @@ public class ChangedTestsDetectorTest {
             + "}").getBytes(), StandardOpenOption.APPEND);
 
         final ChangedTestsDetector changedTestsDetector =
-            new ChangedTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "7699c2c", "04d04fe"), new NoopStorage(),
+            new ChangedTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(),
                 className -> className.endsWith("Test"));
 
         // when
@@ -146,5 +153,12 @@ public class ChangedTestsDetectorTest {
         assertThat(changedTest).extracting(TestSelection::getClassName)
             .containsOnly("org.arquillian.smart.testing.vcs.git.NewFilesDetectorTest")
             .doesNotContain("org.arquillian.smart.testing.CalculatorTest");
+    }
+
+    private void createConfiguration(String tail, String head){
+        Configuration configuration = Configuration.load(gitFolder.getRoot());
+        configuration.getScm().getRange().setTail(tail);
+        configuration.getScm().getRange().setHead(head);
+        configuration.dump(gitFolder.getRoot());
     }
 }
