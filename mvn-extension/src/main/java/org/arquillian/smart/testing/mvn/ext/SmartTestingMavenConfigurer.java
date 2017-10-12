@@ -133,7 +133,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
 
-        changeStorage.store(changes, projectDirectory);
+        if (!changes.isEmpty()) {
+            changeStorage.store(changes, projectDirectory);
+        }
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {

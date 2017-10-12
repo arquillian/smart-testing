@@ -123,8 +123,7 @@ public class GitChangeResolver implements ChangeResolver {
             final List<DiffEntry> commitDiffs = git.diff().setNewTree(newTree).setOldTree(oldTree).call();
             return transformToChangeSet(reduceToRenames(commitDiffs), repoRoot);
         } catch (MissingObjectException e) {
-            throw new IllegalArgumentException(format(WRONG_COMMIT_ID_EXCEPTION, e.getObjectId().getName(),
-                repository.getDirectory().getAbsolutePath()));
+            throw new IllegalArgumentException(format(WRONG_COMMIT_ID_EXCEPTION, e.getObjectId().getName(), repository.getDirectory().getAbsolutePath()));
         } catch (IOException | GitAPIException e) {
             throw new IllegalStateException(e);
         }
@@ -132,8 +131,7 @@ public class GitChangeResolver implements ChangeResolver {
 
     private void validateCommitExists(ObjectId retrievedId, String id, Repository repository) {
         if (retrievedId == null) {
-            throw new IllegalArgumentException(
-                format(WRONG_COMMIT_ID_EXCEPTION, id, repository.getDirectory().getAbsolutePath()));
+            throw new IllegalArgumentException(format(WRONG_COMMIT_ID_EXCEPTION, id, repository.getDirectory().getAbsolutePath()));
         }
     }
 
