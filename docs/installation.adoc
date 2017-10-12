@@ -35,12 +35,13 @@ You can still use the process described at <<Maven >= 3.1.X>> or use the new _co
 creating folder called `.mvn` in the root of your project and create inside it an `extensions.xml` file
 which registers the smart testing extension:
 
+[[smart-testing-extension]]
 [source, xml,indent=0]
 .${maven.projectBasedir}/.mvn/extensions.xml
 ----
 include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
 ----
-
+copyToClipboard:smart-testing-extension[]
 
 ++++
 <script type="text/javascript" src="https://asciinema.org/a/131840.js" id="asciicast-131840" async></script>
