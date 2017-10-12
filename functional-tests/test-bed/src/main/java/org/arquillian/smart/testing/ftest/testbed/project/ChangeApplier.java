@@ -111,6 +111,9 @@ class ChangeApplier {
         // So we create temporary commits to overcome this issue
         // and reset softly on the way to have it all as local changes
         for (final RevCommit stash : stashesToApply) {
+            if (stash == null){
+                continue;
+            }
             git.stashApply().setStashRef(stash.getName()).call();
             if (tmpCommit != null) {
                 git.reset().setRef(ONE_BACK).setMode(SOFT).call();

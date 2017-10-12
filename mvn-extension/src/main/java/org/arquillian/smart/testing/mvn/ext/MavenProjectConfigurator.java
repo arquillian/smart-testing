@@ -5,7 +5,8 @@ import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.Logger;
+import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
@@ -16,7 +17,7 @@ class MavenProjectConfigurator {
 
     private static final Version MINIMUM_VERSION = Version.from("2.19.1");
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     private final Configuration configuration;
 

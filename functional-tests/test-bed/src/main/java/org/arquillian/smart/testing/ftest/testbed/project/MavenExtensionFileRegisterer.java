@@ -8,21 +8,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
-class MavenExtensionRegisterer {
+class MavenExtensionFileRegisterer {
 
-    private static final String EXTENSIONS_XML = "extensions.xml";
+    public static final String MVN_CONFIG_DIR = ".mvn";
+    public static final String EXTENSIONS_XML = "extensions.xml";
     private static final String VERSION_PLACEHOLDER = "${version}";
 
     private final Path rootPom;
 
-    MavenExtensionRegisterer(Path rootPom) {
+    MavenExtensionFileRegisterer(Path rootPom) {
         this.rootPom = rootPom;
     }
 
     void addSmartTestingExtension(String version) {
         final Path projectRoot = rootPom.getParent();
         try {
-            final Path extensionFolder = Files.createDirectories(projectRoot.resolve(".mvn"));
+            final Path extensionFolder = Files.createDirectories(projectRoot.resolve(MVN_CONFIG_DIR));
             final InputStream extensionFile =
                 Thread.currentThread().getContextClassLoader().getResourceAsStream(EXTENSIONS_XML);
 
@@ -35,5 +36,4 @@ class MavenExtensionRegisterer {
             throw new RuntimeException("Failed registering smart-testing extension locally in .mvn folder", e);
         }
     }
-
 }

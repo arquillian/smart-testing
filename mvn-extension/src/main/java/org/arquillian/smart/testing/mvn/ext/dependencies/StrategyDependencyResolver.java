@@ -26,7 +26,7 @@ import org.apache.maven.model.Dependency;
  */
 class StrategyDependencyResolver {
 
-    private static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
+    protected static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
 
     private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
 

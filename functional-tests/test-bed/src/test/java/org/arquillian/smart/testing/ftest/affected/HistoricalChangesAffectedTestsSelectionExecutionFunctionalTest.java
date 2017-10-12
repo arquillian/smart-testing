@@ -3,11 +3,10 @@ package org.arquillian.smart.testing.ftest.affected;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
-import org.arquillian.smart.testing.rules.git.GitClone;
-import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.rules.TestBed;
+import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 

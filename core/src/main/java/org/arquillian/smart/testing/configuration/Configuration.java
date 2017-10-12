@@ -14,15 +14,16 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import org.arquillian.smart.testing.Logger;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
+import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.yaml.snakeyaml.Yaml;
 
 public class Configuration implements ConfigurationSection {
 
-    private static final Logger logger = Logger.getLogger();
+    private static final Logger logger = Log.getLogger();
 
     public static final String DEFAULT_MODE = "selecting";
     public static final String SMART_TESTING_REPORT_ENABLE = "smart.testing.report.enable";
@@ -33,6 +34,7 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
     public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
+    public static final String SMART_TESTING_AUTOCORRECT = "smart.testing.autocorrect";
 
     public static final String SMART_TESTING_YML = "smart-testing.yml";
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
@@ -43,6 +45,7 @@ public class Configuration implements ConfigurationSection {
 
     private boolean disable;
     private boolean debug;
+    private boolean autocorrect;
 
     private Report report;
     private Scm scm;
@@ -103,6 +106,14 @@ public class Configuration implements ConfigurationSection {
         this.scm = scm;
     }
 
+    public boolean isAutocorrect() {
+        return autocorrect;
+    }
+
+    public void setAutocorrect(boolean autocorrect) {
+        this.autocorrect = autocorrect;
+    }
+
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
@@ -110,6 +121,7 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("applyTo", SMART_TESTING_APPLY_TO));
         configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
+        configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
         return configItems;
     }
 

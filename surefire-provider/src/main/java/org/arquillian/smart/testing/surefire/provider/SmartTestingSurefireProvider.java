@@ -6,6 +6,7 @@ import java.util.Set;
 import org.apache.maven.surefire.cli.CommandLineOption;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
+import org.apache.maven.surefire.report.ConsoleLogger;
 import org.apache.maven.surefire.report.ReporterException;
 import org.apache.maven.surefire.suite.RunResult;
 import org.apache.maven.surefire.testset.TestSetFailedException;
@@ -13,6 +14,8 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.surefire.provider.logger.SurefireProviderLoggerFactory;
 
 import static org.apache.maven.surefire.util.TestsToRun.fromClass;
 
@@ -23,6 +26,8 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private final ProviderParametersParser paramParser;
     private final SurefireProviderFactory surefireProviderFactory;
     private final ProviderParameters bootParams;
+    private ConsoleLogger consoleLogger;
+    private final Configuration configuration;
 
     @SuppressWarnings("unused") // Used by Surefire Core
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
@@ -30,6 +35,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
         this.surefireProvider = surefireProviderFactory.createInstance();
+        this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.configuration = Configuration.loadPrecalculated(getProjectDir());
+        Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
 
     SmartTestingSurefireProvider(ProviderParameters bootParams, SurefireProviderFactory surefireProviderFactory) {
@@ -37,6 +45,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
+        this.consoleLogger = this.bootParams.getConsoleLogger();
+        this.configuration = Configuration.loadPrecalculated(getProjectDir());
+        Log.setLoggerFactory(new SurefireProviderLoggerFactory(consoleLogger, isAnyDebugEnabled()));
     }
 
     public Iterable<Class<?>> getSuites() {
@@ -67,7 +78,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         // bootParams CLI options contains LOGGING_LEVEL_DEBUG for maven's -X & `maven.surefire.debug`
         boolean isSurefireOrMavenDebug = bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG);
         Set<TestSelection> selection = SmartTesting
-            .with(className -> testsToRun.getClassByName(className) != null, Configuration.loadPrecalculated(getProjectDir()), isSurefireOrMavenDebug)
+            .with(className -> testsToRun.getClassByName(className) != null, configuration, isAnyDebugEnabled())
             .in(getProjectDir())
             .applyOnClasses(testsToRun);
 
@@ -88,5 +99,9 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
             return source;
         }
         return findFirstMatchingPom(source.getParentFile());
+    }
+
+    private boolean isAnyDebugEnabled() {
+        return bootParams.getMainCliOptions().contains(CommandLineOption.LOGGING_LEVEL_DEBUG) || configuration.isDebug();
     }
 }

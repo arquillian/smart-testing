@@ -127,7 +127,7 @@ public class TestStrategyApplierUsingPropertyTest {
         when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
 
         TestExecutionPlannerLoader testExecutionPlannerLoader = mock(TestExecutionPlannerLoader.class);
-        when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
+        when(testExecutionPlannerLoader.getPlannerForStrategy("static", false)).thenReturn(testExecutionPlanner);
         when(testExecutionPlannerLoader.getVerifier())
             .thenReturn(className -> testsToRun.stream().map(Class::getName).anyMatch(name -> name.equals(className)));
 

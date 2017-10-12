@@ -5,7 +5,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 interface TestExecutionPlannerLoader {
 
-    TestExecutionPlanner getPlannerForStrategy(String strategy);
+    TestExecutionPlanner getPlannerForStrategy(String strategy, boolean autocorrect);
 
     TestVerifier getVerifier();
 }

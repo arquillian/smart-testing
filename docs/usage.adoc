@@ -59,6 +59,8 @@ Debug logs provide information related to smart testing execution, system proper
 test selection information. In addition for each and every module we store modified `pom.xml` at `target/smart-testing`
 as `smart-testing-effective-pom.xml`
 
+NOTE: All Smart Testing related logs can be found with the prefix `Smart Testing Extension -`
+
 === Specifying Concrete Set of Test Classes
 
 During development, you may want to run a single test class or a set of concrete test classes.

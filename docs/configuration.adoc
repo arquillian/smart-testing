@@ -1,5 +1,11 @@
 == Configuration
 
+This section explains configuration parameters of Smart Testing.
+Notice that they are all summarized at <<Reference Card>> section.
+
+Also Smart Testing can be configured with a configuration file instead of System properties.
+You can read about configuration file at <<Configuration File>>.
+
 === Modes
 
 So far in <<What is this?>> section we explained that *Smart testing* changes the order of test execution plan
@@ -45,6 +51,8 @@ There are several strategies that you can choose from which determine what are t
 Currently we have following strategies in place: `new`, `changed`, `affected` and `failed`.
 
 To set them you need to set Java system property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]` to one or more strategies in comma-separated value form.
+
+Smart Testing is able to auto correct misspelled strategies in case of setting Java System property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_AUTOCORRECT"]` to true.
 
 Subsequent sections dive deeper into each and every one of them.
 

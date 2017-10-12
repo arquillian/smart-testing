@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.StringSimilarityCalculator;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -21,7 +22,7 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
         this.projectDir = projectDir;
     }
 
-    public TestExecutionPlanner getPlannerForStrategy(String strategy) {
+    public TestExecutionPlanner getPlannerForStrategy(String strategy, boolean autocorrect) {
 
         if (availableStrategies.isEmpty()) {
             loadStrategies();
@@ -29,6 +30,15 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
 
         if (availableStrategies.containsKey(strategy)) {
             return availableStrategies.get(strategy).create(projectDir, verifier);
+        } else {
+            if (autocorrect) {
+                final StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
+                final String closestMatch =
+                    stringSimilarityCalculator.findClosestMatch(strategy, availableStrategies.keySet());
+                if (availableStrategies.containsKey(closestMatch)) {
+                    return availableStrategies.get(closestMatch).create(projectDir, verifier);
+                }
+            }
         }
 
         throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()
