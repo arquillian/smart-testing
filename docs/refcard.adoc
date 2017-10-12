@@ -2,11 +2,13 @@
 
 === Installation
 
+[[extension]]
 [source, xml,indent=0]
 .${maven.projectBasedir}/.mvn/extensions.xml
 ----
 include::../functional-tests/test-bed/src/main/resources/extensions.xml[]
 ----
+copyToClipboard:extension[]
 
 === Configuration
 
@@ -96,7 +98,9 @@ a|`false`
 
 === Configuration File
 
+[[configuration-file]]
 [source, yaml, indent=0]
 ----
 include::../core/src/test/resources/configuration/smart-testing-with-lastChanges.yml[]
 ----
+copyToClipboard:configuration-file[]
