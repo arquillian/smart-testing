@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
@@ -34,9 +35,9 @@ public class NewTestsGitBasedDetectorTest {
     @Test
     public void should_find_all_new_classes_in_the_range_of_commits() throws Exception {
         // given
+        createConfiguration("a4261d5", "1ee4abf");
         final NewTestsDetector newTestsDetector =
-            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> true);
+            new NewTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(), path -> true);
 
         // when
         final Collection<TestSelection> newTests = newTestsDetector.getTests();
@@ -49,12 +50,12 @@ public class NewTestsGitBasedDetectorTest {
     @Test
     public void should_find_local_untracked_files_as_new() throws IOException {
         //given
+        createConfiguration("a4261d5", "1ee4abf");
         final File testFile = gitFolder.newFile("core/src/test/java/org/arquillian/smart/testing/CalculatorTest.java");
         Files.write(testFile.toPath(), getContentsOfClass().getBytes(), StandardOpenOption.APPEND);
 
         final NewTestsDetector newTestsDetector =
-            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> true);
+            new NewTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(), path -> true);
 
         // when
         final Collection<TestSelection> newTests = newTestsDetector.getTests();
@@ -68,14 +69,14 @@ public class NewTestsGitBasedDetectorTest {
     @Test
     public void should_find_local_newly_staged_files_as_new() throws IOException, GitAPIException {
         //given
+        createConfiguration("a4261d5", "1ee4abf");
         final File testFile = gitFolder.newFile("core/src/test/java/org/arquillian/smart/testing/CalculatorTest.java");
         Files.write(testFile.toPath(), getContentsOfClass().getBytes(), StandardOpenOption.APPEND);
 
         GitRepositoryOperations.addFile(gitFolder.getRoot(), testFile.getAbsolutePath());
 
         final NewTestsDetector newTestsDetector =
-            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> true);
+            new NewTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(), path -> true);
 
         // when
         final Collection<TestSelection> newTests = newTestsDetector.getTests();
@@ -89,14 +90,14 @@ public class NewTestsGitBasedDetectorTest {
     @Test
     public void should_not_find_local_modified_file_as_new_when_using_commit_range() throws IOException {
         //given
+        createConfiguration("a4261d5", "1ee4abf");
         final Path testFile = Paths.get(gitFolder.getRoot().getAbsolutePath(),
             "core/src/test/java/org/arquillian/smart/testing/FilesTest.java");
 
         Files.write(testFile, "//This is a test".getBytes(), StandardOpenOption.APPEND);
 
         final NewTestsDetector newTestsDetector =
-            new NewTestsDetector(new GitChangeResolver(gitFolder.getRoot(), "a4261d5", "1ee4abf"), new NoopStorage(),
-                path -> true);
+            new NewTestsDetector(new GitChangeResolver(), new NoopStorage(), gitFolder.getRoot(), path -> true);
 
         // when
         final Collection<TestSelection> newTests = newTestsDetector.getTests();
@@ -118,5 +119,12 @@ public class NewTestsGitBasedDetectorTest {
             + "        Assert.assertEquals(6, 4 + 2);\n"
             + "    }\n"
             + "}";
+    }
+
+    private void createConfiguration(String tail, String head){
+        Configuration configuration = Configuration.load(gitFolder.getRoot());
+        configuration.getScm().getRange().setTail(tail);
+        configuration.getScm().getRange().setHead(head);
+        configuration.dump(gitFolder.getRoot());
     }
 }

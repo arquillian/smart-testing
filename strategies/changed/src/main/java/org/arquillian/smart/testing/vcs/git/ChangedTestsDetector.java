@@ -4,13 +4,12 @@ import java.io.File;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.scm.Change;
-import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
@@ -24,15 +23,21 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
 
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;
+    private final File projectDir;
     private final TestVerifier testVerifier;
 
     public ChangedTestsDetector(File projectDir, TestVerifier testVerifier) {
-        this(new GitChangeResolver(projectDir), new JavaSPILoader().onlyOne(ChangeStorage.class).get(), testVerifier);
+        this(new JavaSPILoader().onlyOne(ChangeResolver.class).get(),
+            new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
+            projectDir,
+            testVerifier);
     }
 
-    public ChangedTestsDetector(ChangeResolver changeResolver, ChangeStorage changeStorage, TestVerifier testVerifier) {
+    public ChangedTestsDetector(ChangeResolver changeResolver, ChangeStorage changeStorage, File projectDir,
+        TestVerifier testVerifier) {
         this.changeResolver = changeResolver;
         this.changeStorage = changeStorage;
+        this.projectDir = projectDir;
         this.testVerifier = testVerifier;
     }
 
@@ -43,10 +48,10 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<TestSelection> getTests() {
-        final Collection<Change> files = changeStorage.read()
+        final Collection<Change> files = changeStorage.read(projectDir)
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff();
+                return changeResolver.diff(projectDir);
             });
 
         return files.stream()

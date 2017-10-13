@@ -157,8 +157,11 @@ public class Configuration implements ConfigurationSection {
     public static Configuration loadPrecalculated(File projectDir) {
         final File configFile =
             new LocalStorage(projectDir).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
-
-        return loadConfigurationFromFile(configFile);
+        if (configFile.exists()) {
+            return loadConfigurationFromFile(configFile);
+        } else {
+            return load(projectDir);
+        }
     }
 
     static Configuration loadConfigurationFromFile(File configFile) {

@@ -15,6 +15,7 @@ import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
+import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetector;
 
 public class AffectedTestsDetector implements TestExecutionPlanner {
@@ -26,17 +27,23 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
     private final ChangeResolver changeResolver;
     private final ChangeStorage changeStorage;
+    private final File projectDir;
     private final TestVerifier testVerifier;
 
-    AffectedTestsDetector(final TestClassDetector testClassDetector, TestVerifier testVerifier) {
-        this(testClassDetector, new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
-            new JavaSPILoader().onlyOne(ChangeResolver.class).get(), testVerifier);
+    AffectedTestsDetector(File projectDir, TestVerifier testVerifier) {
+        this(new FileSystemTestClassDetector(projectDir, testVerifier),
+            new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
+            new JavaSPILoader().onlyOne(ChangeResolver.class).get(),
+            projectDir,
+            testVerifier);
     }
 
-    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver, TestVerifier testVerifier) {
+    AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver,
+        File projectDir, TestVerifier testVerifier) {
         this.testClassDetector = testClassDetector;
         this.changeStorage = changeStorage;
         this.changeResolver = changeResolver;
+        this.projectDir = projectDir;
         this.testVerifier = testVerifier;
     }
 
@@ -58,10 +65,10 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         final Set<File> allTestsOfCurrentProject = this.testClassDetector.detect();
         classDependenciesGraph.buildTestDependencyGraph(allTestsOfCurrentProject);
 
-        final Collection<Change> files = changeStorage.read()
+        final Collection<Change> files = changeStorage.read(projectDir)
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff();
+                return changeResolver.diff(projectDir);
             });
 
         logger.debug("Time To Build Affected Dependencies Graph %d ms", (System.currentTimeMillis() - beforeDetection));

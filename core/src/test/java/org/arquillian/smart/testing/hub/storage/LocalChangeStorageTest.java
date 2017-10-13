@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.hub.storage;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,15 +26,15 @@ public class LocalChangeStorageTest {
     @Test
     public void should_read_changes_when_current_dir_is_equal_to_root_dir() {
         // given
-        final String rootDir = temporaryFolder.getRoot().getAbsolutePath();
-        LocalChangeStorage localChangeStorage = new LocalChangeStorage(rootDir);
+        final File rootDir = temporaryFolder.getRoot();
+        LocalChangeStorage localChangeStorage = new LocalChangeStorage();
 
         final List<Change> changes =
-            Collections.singletonList(new Change(Paths.get(rootDir, "mychange.txt"), ChangeType.ADD));
+            Collections.singletonList(new Change(rootDir.toPath().resolve("mychange.txt"), ChangeType.ADD));
 
         // when
-        localChangeStorage.store(changes);
-        final Optional<Collection<Change>> readChangesOptional = localChangeStorage.read();
+        localChangeStorage.store(changes, rootDir);
+        final Optional<Collection<Change>> readChangesOptional = localChangeStorage.read(rootDir);
         
         // then
         assertThat(readChangesOptional).contains(changes);
@@ -42,18 +43,18 @@ public class LocalChangeStorageTest {
     @Test
     public void should_read_changes_when_current_dir_is_a_subdir_of_root_dir() throws IOException {
         // given
-        final String rootDir = temporaryFolder.getRoot().getAbsolutePath();
-        final String subDir = temporaryFolder.newFolder().getAbsolutePath();
+        final File rootDir = temporaryFolder.getRoot();
+        final File subDir = temporaryFolder.newFolder();
         final List<Change> changes =
-            Collections.singletonList(new Change(Paths.get(rootDir, "mychange.txt"), ChangeType.ADD));
+            Collections.singletonList(new Change(rootDir.toPath().resolve("mychange.txt"), ChangeType.ADD));
 
-        final LocalChangeStorage mvnExtensionLocalChangeStorage = new LocalChangeStorage(rootDir);
-        final LocalChangeStorage surefireExecutionLocalChangeStorage = new LocalChangeStorage(subDir);
+        final LocalChangeStorage mvnExtensionLocalChangeStorage = new LocalChangeStorage();
+        final LocalChangeStorage surefireExecutionLocalChangeStorage = new LocalChangeStorage();
 
         // when
-        mvnExtensionLocalChangeStorage.store(changes);
+        mvnExtensionLocalChangeStorage.store(changes, rootDir);
 
-        final Optional<Collection<Change>> readChangesOptional = surefireExecutionLocalChangeStorage.read();
+        final Optional<Collection<Change>> readChangesOptional = surefireExecutionLocalChangeStorage.read(subDir);
 
         // then
         assertThat(readChangesOptional).contains(changes);
@@ -62,19 +63,19 @@ public class LocalChangeStorageTest {
     @Test
     public void should_read_changes_when_current_dir_is_a_deepsubdir_of_root_dir() throws IOException {
         // given
-        final String rootDir = temporaryFolder.getRoot().getAbsolutePath();
-        final Path deepDirectory = Files.createDirectories(Paths.get(rootDir, "level1", "level2", "level3"));
+        final File rootDir = temporaryFolder.getRoot();
+        final Path deepDirectory = Files.createDirectories(Paths.get(rootDir.getAbsolutePath(), "level1", "level2", "level3"));
 
-        final LocalChangeStorage mvnExtensionLocalChangeStorage = new LocalChangeStorage(rootDir);
-        final LocalChangeStorage surefireExecutionLocalChangeStorage = new LocalChangeStorage(deepDirectory.toString());
+        final LocalChangeStorage mvnExtensionLocalChangeStorage = new LocalChangeStorage();
+        final LocalChangeStorage surefireExecutionLocalChangeStorage = new LocalChangeStorage();
 
         final List<Change> changes =
-            Collections.singletonList(new Change(Paths.get(rootDir, "mychange.txt"), ChangeType.ADD));
+            Collections.singletonList(new Change(rootDir.toPath().resolve("mychange.txt"), ChangeType.ADD));
 
         // when
-        mvnExtensionLocalChangeStorage.store(changes);
+        mvnExtensionLocalChangeStorage.store(changes, rootDir);
 
-        final Optional<Collection<Change>> readChangesOptional = surefireExecutionLocalChangeStorage.read();
+        final Optional<Collection<Change>> readChangesOptional = surefireExecutionLocalChangeStorage.read(deepDirectory.toFile());
 
         // then
         assertThat(readChangesOptional).contains(changes);
@@ -83,11 +84,11 @@ public class LocalChangeStorageTest {
     @Test
     public void should_return_empty_if_file_not_found() {
         // given
-        final String rootDir = temporaryFolder.getRoot().getAbsolutePath();
-        LocalChangeStorage localChangeStorage = new LocalChangeStorage(rootDir);
+        final File rootDir = temporaryFolder.getRoot();
+        LocalChangeStorage localChangeStorage = new LocalChangeStorage();
 
         // when
-        final Optional<Collection<Change>> readChangesOptional = localChangeStorage.read();
+        final Optional<Collection<Change>> readChangesOptional = localChangeStorage.read(rootDir);
 
         // then
         assertThat(readChangesOptional).isEmpty();
