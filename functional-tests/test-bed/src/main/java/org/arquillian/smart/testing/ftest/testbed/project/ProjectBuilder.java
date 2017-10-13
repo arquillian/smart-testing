@@ -66,6 +66,7 @@ public class ProjectBuilder {
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
                     .setGoals(goals)
+                    .setThreads(buildConfigurator.useThreads() ? "50C" : null)
                     .setProjects(buildConfigurator.getModulesToBeBuilt())
                     .setDebug(buildConfigurator.isMavenDebugOutputEnabled())
                     .setQuiet(buildConfigurator.disableQuietWhenAnyDebugModeEnabled() && buildConfigurator.isQuietMode())

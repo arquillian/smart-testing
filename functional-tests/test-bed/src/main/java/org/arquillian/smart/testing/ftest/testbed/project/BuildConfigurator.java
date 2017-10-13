@@ -37,9 +37,10 @@ public class BuildConfigurator {
     private boolean ignoreBuildFailure = false;
     private boolean skipTests = false;
     private File workingDirectory;
-    private String mavenOpts = "-Xms512m -Xmx1024m";
+    private String mavenOpts = "-Xms512m -Xmx1024m -XX:+TieredCompilation -XX:TieredStopAtLevel=1";
     private String mavenVersion;
     private Using usingInstallation;
+    private boolean useThreads = true;
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
@@ -183,8 +184,13 @@ public class BuildConfigurator {
         return this;
     }
 
-    public BuildConfigurator useMavenVersion(String mavenVersion){
+    public BuildConfigurator useMavenVersion(String mavenVersion) {
         this.mavenVersion = mavenVersion;
+        return this;
+    }
+
+    public BuildConfigurator useThreads(boolean useThreads){
+        this.useThreads = useThreads;
         return this;
     }
 
@@ -266,6 +272,10 @@ public class BuildConfigurator {
 
     String getMavenVersion() {
         return mavenVersion;
+    }
+
+    boolean useThreads(){
+        return useThreads;
     }
 
     private int getAvailableLocalPort() {
