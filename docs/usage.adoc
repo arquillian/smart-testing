@@ -56,7 +56,7 @@ setting the system property `const:core/src/main/java/org/arquillian/smart/testi
 in the debug mode (available out of the box in Maven).
 
 Debug logs provide information related to smart testing execution, system properties set by the user,
-test selection information. In addition for each and every module we store modified `pom.xml` at `target/smart-testing`
+test selection information. In addition for each and every module we store modified `pom.xml` at `target/smart-testing/reporting`
 as `smart-testing-effective-pom.xml`
 
 NOTE: All Smart Testing related logs can be found with the prefix `Smart Testing Extension -`

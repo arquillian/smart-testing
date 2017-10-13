@@ -49,8 +49,10 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
 
     private void containsEffectivePom(String effectivePom) {
         final String smartTestingExtension = "org.arquillian.smart.testing";
-        if (actual.getTargetDirectory().exists() && !actual.getModel().getPackaging().equals("pom")) {
-            final File pomFile = new File(actual.getTargetDirectory(), effectivePom);
+        final File targetDirectory = actual.getTargetDirectory();
+        Path reportPath = Paths.get(targetDirectory.toString(), SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
+        if (targetDirectory.exists() && !actual.getModel().getPackaging().equals("pom")) {
+            final File pomFile = new File(reportPath.toString(), effectivePom);
             FileAssert fileAssert = new FileAssert(pomFile);
             fileAssert.exists();
             Assertions.assertThat(contentOf(pomFile)).contains(smartTestingExtension);
