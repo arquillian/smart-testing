@@ -50,7 +50,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-        File projectDirectory = session.getCurrentProject().getModel().getProjectDirectory();
+        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
         configuration = Configuration.load(projectDirectory);
 
