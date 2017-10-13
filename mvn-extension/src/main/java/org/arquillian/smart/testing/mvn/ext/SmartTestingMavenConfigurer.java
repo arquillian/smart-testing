@@ -110,8 +110,8 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.isDebug() || mavenLogger.isDebugEnabled()) {
             logger.debug("Version: %s", ExtensionVersion.version().toString());
-            session.getAllProjects()
-                .forEach(mavenProject -> ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
+            session.getAllProjects().forEach(mavenProject ->
+                ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
         }
 
         if (!configuration.areStrategiesDefined()) {
@@ -144,8 +144,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         });
     }
 
-
-    private boolean isFailedStrategyUsed() {
+    private boolean isFailedStrategyUsed(){
         return Arrays.asList(configuration.getStrategies()).contains("failed");
     }
 
@@ -166,9 +165,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         session.getAllProjects().forEach(mavenProject -> {
             Model model = mavenProject.getModel();
             String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
-            if (new File(target, "classes").exists()) {
-                new LocalStorage(model.getProjectDirectory()).duringExecution().purge(target);
-            }
+            new LocalStorage(model.getProjectDirectory()).duringExecution().purge(target);
         });
     }
 }

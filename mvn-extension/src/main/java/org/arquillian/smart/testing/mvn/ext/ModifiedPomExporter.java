@@ -32,8 +32,8 @@ public class ModifiedPomExporter {
             .toReporting()
             .file(SMART_TESTING_POM_FILE);
 
-        logger.debug("Storing modified pom.xml at: " + modifiedPomAction.getPath());
         modifiedPomAction.create(modifiedPom.toString().getBytes());
+        logger.debug("Modified pom stored at: " + modifiedPomAction.getPath());
     }
 }
 

@@ -53,6 +53,7 @@ public class DuringExecutionLocalStorage extends AfterExecutionLocalStorage {
             Path dirToStore = new LocalStorage(rootDir)
                 .afterExecution(targetDir)
                 .getPathTo(dirNameToStore);
+
             FileSystemOperations.copyDirectory(dirToCopy, dirToStore, true);
         }
         FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
