@@ -50,6 +50,25 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
 
+        loadConfigAndCheckIfInstallationShouldBeSkipped(session);
+        if (skipExtensionInstallation){
+            return;
+        }
+
+        logger.debug("Version: %s", ExtensionVersion.version().toString());
+        logger.debug("Applied user properties: %s", session.getUserProperties());
+
+        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
+        if (configuration.areStrategiesDefined()) {
+            configureExtension(session, configuration);
+            calculateChanges(projectDirectory, configuration);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
+        } else {
+            logStrategiesNotDefined();
+        }
+    }
+
+    private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session){
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(session.getGoals());
         skipExtensionInstallation = skipInstallationChecker.shouldSkip();
         if (skipExtensionInstallation) {
@@ -59,26 +78,13 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
         configuration = Configuration.load(projectDirectory);
-
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
-
-        logger.debug("Version: %s", ExtensionVersion.version().toString());
-        logger.debug("Applied user properties: %s", session.getUserProperties());
-
 
         if (configuration.isDisable()) {
             skipExtensionInstallation = true;
             logExtensionDisableReason(logger, "System Property " + SMART_TESTING_DISABLE + " is set.");
             return;
-        }
-
-        if (configuration.areStrategiesDefined()) {
-            configureExtension(session, configuration);
-            calculateChanges(projectDirectory, configuration);
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
-        } else {
-            logStrategiesNotDefined();
         }
     }
 
