@@ -1,10 +1,13 @@
 package org.arquillian.smart.testing.configuration;
 
+import java.util.regex.Pattern;
+
 public class ConfigurationItem {
 
     private final String paramName;
     private String systemProperty;
     private Object defaultValue;
+    private Pattern pattern;
 
     /**
      * Constructor
@@ -46,5 +49,9 @@ public class ConfigurationItem {
 
     public Object getDefaultValue() {
         return defaultValue;
+    }
+
+    public Pattern getPattern() {
+        return pattern;
     }
 }

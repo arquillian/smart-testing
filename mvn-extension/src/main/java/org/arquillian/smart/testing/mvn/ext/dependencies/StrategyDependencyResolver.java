@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -29,21 +30,42 @@ class StrategyDependencyResolver {
     protected static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
 
     private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
+    private final String[] customStrategies;
 
     StrategyDependencyResolver(Path propertiesPath) {
         this.propertiesPath = propertiesPath;
+        this.customStrategies = null;
     }
 
     StrategyDependencyResolver() {
         this.propertiesPath = null;
+        this.customStrategies = null;
+    }
+
+    StrategyDependencyResolver(String[] customStrategies) {
+        this.propertiesPath = null;
+        this.customStrategies = customStrategies;
     }
 
     Map<String, Dependency> resolveDependencies() {
         final Properties properties = new Properties();
         properties.putAll(loadDefaultMapping());
+        properties.putAll(loadCustomStrategies());
         properties.putAll(loadFromFile());
         properties.putAll(System.getProperties());
         return transformToDependencies(properties);
+    }
+
+    private Properties loadCustomStrategies() {
+        final Properties properties = new Properties();
+
+        if (customStrategies != null) {
+            final Map<String, String> collect = Arrays.stream(customStrategies)
+                .collect(Collectors.toMap(def -> def.substring(0, def.indexOf('=')),
+                    def -> def.substring(def.indexOf('=') + 1)));
+            properties.putAll(collect);
+        }
+        return properties;
     }
 
     private Properties loadDefaultMapping() {

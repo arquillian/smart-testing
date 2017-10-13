@@ -10,4 +10,5 @@ scm:
       head: HEAD #<!--7-->
       tail: HEAD~2 #<!--8-->
 autocorrect: true #<!--9-->
-customStrategiesDefinition: ./custom.properties #<!--10-->
+customStrategies:  #<!--10-->
+    - smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0

@@ -7,11 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 
 import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEnum.FOO;
@@ -187,6 +190,7 @@ public class ObjectMapperTest {
         private List<String> l;
         private Map<String, String> m;
         private TestEnum e;
+        private String[] multiple;
 
         private DummyObject dummyObject;
 

@@ -20,7 +20,7 @@ copyToClipboard:config-file[]
 <7> This sets first commit sha or `HEAD` notation for inspecting changes.
 <8> This sets last commit sha or `HEAD` notation for inspecting changes.
 <9> This defines if smart testing should auto correct misspelled strategies.
-<10> This defines the location file for registering custom strategies.
+<10> This defines the pair key/value of custom strategies as list.
 
 All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter.
 You can look at <<_reference_card, references>> for default value of parameter.
@@ -61,6 +61,9 @@ a| To run Smart Testing with `SCM` configuration. You can either define `range` 
 
 a| autocorrect
 a| This configures Smart Testing to auto correct misspelled strategies to the closest one. For example in case of user set strategies to `nwe`, if `autocorrect` is enabled then it is automatically changed to `new`.
+
+a| customStrategies
+a| A list of custom strategies in the form of key/value. It is important to notice that the _key_ part must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
 |===
 
 ==== Report Options

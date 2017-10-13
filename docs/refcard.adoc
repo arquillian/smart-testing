@@ -82,6 +82,11 @@ a| `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strateg
 |Set transitivity enabled
 a|const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE"]
 a|`affected`
+
+a| `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.<strategyName>
+|Register custom strategies implementations
+a|
+a|Value is the Maven coordinates of the custom strategy
 |===
 
 === Getting insights of the execution

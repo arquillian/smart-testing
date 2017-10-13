@@ -40,7 +40,7 @@ public class ConfigurationTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setAutocorrect(true);
-        expectedConfiguration.setCustomStrategiesDefinition("./custom.properties");
+        expectedConfiguration.setCustomStrategies(new String[]{"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0"});
 
         // when
         final Configuration actualConfiguration =

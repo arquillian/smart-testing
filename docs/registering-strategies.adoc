@@ -6,8 +6,7 @@ To do it you just need to follow next four steps:
 
 * Implement `org.arquillian.smart.testing.spi.TestExecutionPlannerFactory` Java SPI and registering as such.
 * Implement `org.arquillian.smart.testing.spi.TestExecutionPlanner` interface.
-* Create a `.properties` file with name strategy as _key_ part, and maven coordinates of strategy as _value_ part. (optional)
-* Configures `.properties` location in *Smart Testing*. (optional)
+* Register strategy on Smart Testing configuration file (optional).
 
 === Implementing `TestExecutionPlannerFactory`
 
@@ -48,32 +47,26 @@ include::../strategies/failed/src/main/java/org/arquillian/smart/testing/strateg
 <1> Method that returns list of tests to execute
 <2> `TestSelection` requires fully qualified test class name and the strategy where is calculated
 
-=== Create `.properties` file
+=== Registering strategy
 
-Finally you need to create a `.properties` file where you set the strategy name as key and the Maven coordinates as value.
+Finally you need to register strategy in Smart Testing configuration file where you set the strategy name as key and the Maven coordinates as value.
 This file is required so *Smart Testing* can automatically register the artifacts in build tool script.
 
 As an example of registering previous strategy:
 
-[[custom-strategy]]
-[source, properties]
-.custom-smart-testing.properties
+[source, yml]
+.smart-testing.yml
 ----
-smart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0
+customStrategies:
+    - smart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0
 ----
 
 It is important to notice that the _key_ part must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
 
-=== Setting Location
-
-Finally you need to instruct *Smart Testing* where is the `.properties` file containing the name of the strategy and the Maven coordinates where strategy is implemented.
-
-You can do it in two ways, the first one is using a configuration file as shown in <<Configuration File>> or the second one using `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"]` system property.
-In both approaches you need to set the file location either using relative or absolute path.
 
 === Alternative Approach
 
-You can still use another approach to register the pair _strategy name_:_Maven coordinates without using a `.properties` file and it is using a System property.
+You can still use another approach to register the pair _strategy name_:_Maven coordinates without configuring them in Smart Testing configuration file and it is using a System property.
 
 For example <<custom-strategy, previous example>> would be equivalent as running *Smart Testing* with next System property:
 

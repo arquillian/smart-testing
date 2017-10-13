@@ -30,7 +30,7 @@ public class DependencyResolver {
 
     private void addStrategies(Model model) {
         final String[] strategies = configuration.getStrategies();
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(configuration.getCustomStrategiesDefinition());
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(configuration.getCustomStrategies());
         model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
         final List<String> strategyMismatch = new ArrayList<>();
