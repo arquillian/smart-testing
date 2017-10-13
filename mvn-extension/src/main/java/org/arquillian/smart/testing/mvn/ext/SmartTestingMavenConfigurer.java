@@ -11,7 +11,6 @@ import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
@@ -109,6 +108,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
+        if (configuration.isDebug() || mavenLogger.isDebugEnabled()) {
+            logger.debug("Version: %s", ExtensionVersion.version().toString());
+            session.getAllProjects()
+                .forEach(mavenProject -> ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
+        }
+
         if (!configuration.areStrategiesDefined()) {
             logStrategiesNotDefined();
         }
@@ -132,7 +137,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         final File dumpedConfigFile = configuration.dump(Paths.get("").toFile());
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            exportModifiedPom(mavenProject);
             copyConfigurationFile(mavenProject.getModel(), dumpedConfigFile);
             if (isFailedStrategyUsed()) {
                 SurefireReportStorage.copySurefireReports(mavenProject.getModel());
@@ -140,12 +144,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         });
     }
 
-    private void exportModifiedPom(MavenProject mavenProject) {
-        if (configuration.isDebug() || mavenLogger.isDebugEnabled()) {
-            logger.debug("Version: %s", ExtensionVersion.version().toString());
-            ModifiedPomExporter.exportModifiedPom(mavenProject.getModel());
-        }
-    }
 
     private boolean isFailedStrategyUsed() {
         return Arrays.asList(configuration.getStrategies()).contains("failed");
