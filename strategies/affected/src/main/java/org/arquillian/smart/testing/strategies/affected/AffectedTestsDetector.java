@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
@@ -29,22 +30,25 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     private final ChangeStorage changeStorage;
     private final File projectDir;
     private final TestVerifier testVerifier;
+    private final Configuration configuration;
 
-    AffectedTestsDetector(File projectDir, TestVerifier testVerifier) {
+    AffectedTestsDetector(File projectDir, TestVerifier testVerifier, Configuration configuration) {
         this(new FileSystemTestClassDetector(projectDir, testVerifier),
             new JavaSPILoader().onlyOne(ChangeStorage.class).get(),
             new JavaSPILoader().onlyOne(ChangeResolver.class).get(),
             projectDir,
-            testVerifier);
+            testVerifier,
+            configuration);
     }
 
     AffectedTestsDetector(TestClassDetector testClassDetector, ChangeStorage changeStorage, ChangeResolver changeResolver,
-        File projectDir, TestVerifier testVerifier) {
+        File projectDir, TestVerifier testVerifier, Configuration configuration) {
         this.testClassDetector = testClassDetector;
         this.changeStorage = changeStorage;
         this.changeResolver = changeResolver;
         this.projectDir = projectDir;
         this.testVerifier = testVerifier;
+        this.configuration = configuration;
     }
 
     @Override
@@ -68,7 +72,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         final Collection<Change> files = changeStorage.read(projectDir)
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff(projectDir);
+                return changeResolver.diff(projectDir, configuration);
             });
 
         logger.debug("Time To Build Affected Dependencies Graph %d ms", (System.currentTimeMillis() - beforeDetection));

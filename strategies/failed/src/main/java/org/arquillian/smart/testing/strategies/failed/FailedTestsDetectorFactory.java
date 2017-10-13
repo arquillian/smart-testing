@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.strategies.failed;
 
 import java.io.File;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
@@ -18,7 +19,7 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
+    public TestExecutionPlanner create(File projectDir, TestVerifier verifier, Configuration configuration) {
         return new FailedTestsDetector();
     }
 

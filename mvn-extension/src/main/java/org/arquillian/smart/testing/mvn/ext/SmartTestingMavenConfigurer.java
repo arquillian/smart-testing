@@ -66,7 +66,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
-            calculateChanges(projectDirectory);
+            calculateChanges(projectDirectory, configuration);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
         } else {
             logStrategiesNotDefined();
@@ -122,11 +122,11 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         purgeLocalStorage(session);
     }
 
-    private void calculateChanges(File projectDirectory) {
+    private void calculateChanges(File projectDirectory, Configuration configuration) {
         final Iterable<ChangeResolver> changeResolvers =
             new JavaSPILoader().all(ChangeResolver.class, resolver -> resolver.isApplicable(projectDirectory));
         final Collection<Change> changes = stream(changeResolvers.spliterator(), false)
-            .map(changeResolver -> changeResolver.diff(projectDirectory))
+            .map(changeResolver -> changeResolver.diff(projectDirectory, configuration))
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
 

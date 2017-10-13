@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.StringSimilarityCalculator;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
@@ -12,11 +13,14 @@ import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
 
     private final Map<String, TestExecutionPlannerFactory> availableStrategies = new HashMap<>();
+    private final Configuration configuration;
     private final JavaSPILoader spiLoader;
     private final TestVerifier verifier;
     private final File projectDir;
 
-    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir) {
+    TestExecutionPlannerLoaderImpl(JavaSPILoader spiLoader, TestVerifier verifier, File projectDir,
+        Configuration configuration) {
+        this.configuration = configuration;
         this.spiLoader = spiLoader;
         this.verifier = verifier;
         this.projectDir = projectDir;
@@ -29,14 +33,14 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
         }
 
         if (availableStrategies.containsKey(strategy)) {
-            return availableStrategies.get(strategy).create(projectDir, verifier);
+            return availableStrategies.get(strategy).create(projectDir, verifier, configuration);
         } else {
             if (autocorrect) {
                 final StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
                 final String closestMatch =
                     stringSimilarityCalculator.findClosestMatch(strategy, availableStrategies.keySet());
                 if (availableStrategies.containsKey(closestMatch)) {
-                    return availableStrategies.get(closestMatch).create(projectDir, verifier);
+                    return availableStrategies.get(closestMatch).create(projectDir, verifier, configuration);
                 }
             }
         }

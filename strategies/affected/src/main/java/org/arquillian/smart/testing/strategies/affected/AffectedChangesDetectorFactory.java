@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
@@ -18,8 +19,8 @@ public class AffectedChangesDetectorFactory implements TestExecutionPlannerFacto
     }
 
     @Override
-    public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
-        return new AffectedTestsDetector(projectDir, verifier);
+    public TestExecutionPlanner create(File projectDir, TestVerifier verifier, Configuration configuration) {
+        return new AffectedTestsDetector(projectDir, verifier, configuration);
     }
 
 }

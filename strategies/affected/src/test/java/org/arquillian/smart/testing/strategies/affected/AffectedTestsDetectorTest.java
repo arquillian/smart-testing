@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -23,6 +24,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -57,7 +59,7 @@ public class AffectedTestsDetectorTest {
 
         final AffectedTestsDetector affectedTestsDetector =
             new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new File("."),
-                new CustomTestVerifier());
+                new CustomTestVerifier(), mock(Configuration.class));
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();
