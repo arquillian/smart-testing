@@ -73,8 +73,7 @@ public class DebugModeAndMaven325FunctionalTest {
             .contains(PROVIDER_DEBUG_LOGS)
             .contains(PROVIDER_DEBUG_LOGS + " Applied user properties");
 
-        softly.assertThat(projectBuilder.getBuiltProject().getModule("config"))
-            .allBuiltSubModulesContainEffectivePom(SMART_TESTING_POM_FILE);
+        softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesContainEffectivePom(SMART_TESTING_POM_FILE);
         softly.assertThat(projectBuilder.getBuiltProject()).allBuiltSubModulesWithTestExecutionsContainReport(REPORT_FILE_NAME);
     }
 

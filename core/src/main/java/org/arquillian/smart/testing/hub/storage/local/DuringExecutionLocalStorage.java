@@ -3,15 +3,11 @@ package org.arquillian.smart.testing.hub.storage.local;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import org.arquillian.smart.testing.logger.Log;
-import org.arquillian.smart.testing.logger.Logger;
 
 /**
  * Class that takes care of storing/managing files and directories used and stored during the test execution.
  */
 public class DuringExecutionLocalStorage extends AfterExecutionLocalStorage {
-
-    private static final Logger logger = Log.getLogger();
 
     public static final String SMART_TESTING_WORKING_DIRECTORY_NAME = ".smart-testing";
     public static final String TEMPORARY_SUBDIRECTORY = "temporary";
@@ -57,7 +53,6 @@ public class DuringExecutionLocalStorage extends AfterExecutionLocalStorage {
             Path dirToStore = new LocalStorage(rootDir)
                 .afterExecution(targetDir)
                 .getPathTo(dirNameToStore);
-            logger.debug("copying directories from %s to %s", dirToCopy, dirToStore);
             FileSystemOperations.copyDirectory(dirToCopy, dirToStore, true);
         }
         FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
