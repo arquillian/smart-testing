@@ -11,10 +11,14 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
 
-    private final Configuration configuration;
+    private Configuration configuration;
     private TestExecutionPlannerLoader testExecutionPlannerLoader;
     private TestVerifier testVerifier;
     private File projectDir;
+
+    public ConfiguredSmartTestingImpl(TestVerifier testVerifier) {
+        this.testVerifier = testVerifier;
+    }
 
     public ConfiguredSmartTestingImpl(TestVerifier testVerifier, Configuration configuration) {
         this.testVerifier = testVerifier;
@@ -53,9 +57,12 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
             String basedir = System.getProperty("basedir");
             projectDir = new File(basedir != null ? basedir : ".");
         }
+        if (configuration == null) {
+            configuration = Configuration.loadPrecalculated(projectDir);
+        }
         if (testExecutionPlannerLoader == null) {
             testExecutionPlannerLoader =
-                new TestExecutionPlannerLoaderImpl(new JavaSPILoader(), testVerifier, projectDir);
+                new TestExecutionPlannerLoaderImpl(new JavaSPILoader(), testVerifier, projectDir, configuration);
         }
         return new TestStrategyApplierImpl(configuration, testExecutionPlannerLoader, projectDir);
     }

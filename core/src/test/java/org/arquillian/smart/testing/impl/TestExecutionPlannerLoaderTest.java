@@ -5,15 +5,13 @@ import java.util.Collection;
 import java.util.Collections;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -30,7 +28,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
-            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir, mock(Configuration.class));
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy", false);
@@ -46,7 +44,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
-            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir, mock(Configuration.class));
 
         // when
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dumy", true);
@@ -62,7 +60,7 @@ public class TestExecutionPlannerLoaderTest {
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenAnswer(i -> Collections.singletonList(
             new DummyTestExecutionPlannerFactory()));
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
-            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir, mock(Configuration.class));
 
         // when
         final Throwable exception = catchThrowable(() -> testExecutionPlannerLoader.getPlannerForStrategy("new", false));
@@ -79,7 +77,7 @@ public class TestExecutionPlannerLoaderTest {
         final JavaSPILoader mockedSpiLoader = mock(JavaSPILoader.class);
         when(mockedSpiLoader.all(eq(TestExecutionPlannerFactory.class))).thenReturn(Collections.emptyList());
         final TestExecutionPlannerLoaderImpl testExecutionPlannerLoader =
-            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir);
+            new TestExecutionPlannerLoaderImpl(mockedSpiLoader, resource -> true, projectDir, mock(Configuration.class));
 
         // when
         final Throwable exception = catchThrowable(() -> testExecutionPlannerLoader.getPlannerForStrategy("new", false));
@@ -101,7 +99,7 @@ public class TestExecutionPlannerLoaderTest {
         }
 
         @Override
-        public TestExecutionPlanner create(File projectDir, TestVerifier verifier) {
+        public TestExecutionPlanner create(File projectDir, TestVerifier verifier, Configuration configuration) {
             return new TestExecutionPlanner() {
                 @Override
                 public Collection<TestSelection> getTests() {

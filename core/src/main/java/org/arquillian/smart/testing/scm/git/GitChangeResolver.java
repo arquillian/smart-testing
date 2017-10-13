@@ -52,8 +52,14 @@ public class GitChangeResolver implements ChangeResolver {
     }
 
     @Override
-    public Set<Change> diff(File projectDir) {
-        Scm scm = Configuration.loadPrecalculated(projectDir).getScm();
+    public Set<Change> diff(File projectDir, Configuration configuration) {
+        Scm scm;
+        if (configuration == null){
+            scm = Configuration.loadPrecalculated(projectDir).getScm();
+        } else {
+            scm = configuration.getScm();
+        }
+
         return diff(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
     }
 
