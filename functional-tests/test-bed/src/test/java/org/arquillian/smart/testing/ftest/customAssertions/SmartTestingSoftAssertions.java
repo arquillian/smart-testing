@@ -5,7 +5,6 @@ import org.assertj.core.api.SoftAssertions;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
-import org.junit.runners.model.MultipleFailureException;
 import org.junit.runners.model.Statement;
 
 public class SmartTestingSoftAssertions extends SoftAssertions implements TestRule {
@@ -23,7 +22,7 @@ public class SmartTestingSoftAssertions extends SoftAssertions implements TestRu
         return new Statement() {
             public void evaluate() throws Throwable {
                 base.evaluate();
-                MultipleFailureException.assertEmpty(errorsCollected());
+                assertAll();
             }
         };
     }

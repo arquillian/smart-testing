@@ -30,7 +30,8 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
      *     effectivePom file to verify
      **/
     public BuiltProjectAssert allBuiltSubModulesContainEffectivePom(String effectivePom) {
-        actual.getModules().forEach(subModule -> assertThat(subModule).containsEffectivePom(effectivePom));
+        actual.getModules().forEach(subModule -> assertThat(subModule).allBuiltSubModulesContainEffectivePom(effectivePom));
+        containsEffectivePom(effectivePom);
         return this;
     }
 
@@ -41,11 +42,12 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
      *     report file to verify
      **/
     public BuiltProjectAssert allBuiltSubModulesWithTestExecutionsContainReport(String report) {
-        actual.getModules().forEach(subModule -> assertThat(subModule).hasReportFile(report));
+        actual.getModules().forEach(subModule -> assertThat(subModule).allBuiltSubModulesWithTestExecutionsContainReport(report));
+        hasReportFile(report);
         return this;
     }
 
-    private BuiltProjectAssert containsEffectivePom(String effectivePom) {
+    private void containsEffectivePom(String effectivePom) {
         final String smartTestingExtension = "org.arquillian.smart.testing";
         if (actual.getTargetDirectory().exists() && !actual.getModel().getPackaging().equals("pom")) {
             final File pomFile = new File(actual.getTargetDirectory(), effectivePom);
@@ -53,10 +55,9 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
             fileAssert.exists();
             Assertions.assertThat(contentOf(pomFile)).contains(smartTestingExtension);
         }
-        return this;
     }
 
-    private BuiltProjectAssert hasReportFile(String report) {
+    private void hasReportFile(String report) {
         final File targetDirectory = actual.getTargetDirectory();
         Path reportPath = Paths.get(targetDirectory.toString(), SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
         final FileAssert fileAssert = new FileAssert(new File(reportPath.toString(), report));
@@ -67,10 +68,8 @@ public class BuiltProjectAssert extends AbstractAssert<BuiltProjectAssert, Built
                 fileAssert.doesNotExist();
             }
         } else {
-            allBuiltSubModulesWithTestExecutionsContainReport(report);
             fileAssert.doesNotExist();
         }
-        return this;
     }
 
     private static boolean isJar(BuiltProject subModule) {
