@@ -2,12 +2,15 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.Arrays;
 import java.util.List;
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
+import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.NO_GOAL_REASON;
@@ -16,10 +19,14 @@ import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.SPECI
 import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.TEST_SKIPPED_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class SkipInstallationCheckerTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
+
+    @Rule
+    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
 
     private MavenSession setUpMavenSession(List<String> goals, String defaultGoal) {
         Build build = Mockito.mock(Build.class);
@@ -44,8 +51,8 @@ public class SkipInstallationCheckerTest {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenSession);
 
         // then
-        assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-        assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
+        softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+        softly.assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
     }
 
     @Test
@@ -69,8 +76,8 @@ public class SkipInstallationCheckerTest {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenSession);
 
         // then
-        assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-        assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
+        softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+        softly.assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
     }
 
     @Test
@@ -82,8 +89,8 @@ public class SkipInstallationCheckerTest {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenSession);
 
         // then
-        assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-        assertThat(skipInstallationChecker.getReason()).contains(NO_GOAL_REASON);
+        softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+        softly.assertThat(skipInstallationChecker.getReason()).contains(NO_GOAL_REASON);
     }
 
     @Test
@@ -95,8 +102,8 @@ public class SkipInstallationCheckerTest {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenSession);
 
         // then
-        assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-        assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
+        softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+        softly.assertThat(skipInstallationChecker.getReason()).contains(NO_TEST_GOAL_REASON);
     }
 
     @Test
@@ -154,10 +161,10 @@ public class SkipInstallationCheckerTest {
 
         // then
         if (shouldSkip) {
-            assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-            assertThat(skipInstallationChecker.getReason()).contains(SPECIFIC_CLASSES_REASON);
+            softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+            softly.assertThat(skipInstallationChecker.getReason()).contains(SPECIFIC_CLASSES_REASON);
         } else {
-            assertThat(skipInstallationChecker.shouldSkip()).isFalse();
+            softly.assertThat(skipInstallationChecker.shouldSkip()).isFalse();
         }
     }
 
@@ -180,7 +187,7 @@ public class SkipInstallationCheckerTest {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenSession);
 
         // then
-        assertThat(skipInstallationChecker.shouldSkip()).isTrue();
-        assertThat(skipInstallationChecker.getReason()).contains(TEST_SKIPPED_REASON);
+        softly.assertThat(skipInstallationChecker.shouldSkip()).isTrue();
+        softly.assertThat(skipInstallationChecker.getReason()).contains(TEST_SKIPPED_REASON);
     }
 }
