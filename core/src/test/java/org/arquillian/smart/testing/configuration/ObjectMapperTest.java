@@ -190,7 +190,6 @@ public class ObjectMapperTest {
         private List<String> l;
         private Map<String, String> m;
         private TestEnum e;
-        private String[] multiple;
 
         private DummyObject dummyObject;
 

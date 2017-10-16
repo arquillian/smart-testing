@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
+import org.arquillian.smart.testing.configuration.Configuration;
 
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
@@ -27,7 +28,7 @@ import org.apache.maven.model.Dependency;
  */
 class StrategyDependencyResolver {
 
-    protected static final String SMART_TESTING_STRATEGY_PREFIX = "smart.testing.strategy.";
+    protected static final String SMART_TESTING_STRATEGY_PREFIX = Configuration.SMART_TESTING_CUSTOM_STRATEGIES + ".";
 
     private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
     private final String[] customStrategies;
@@ -100,7 +101,7 @@ class StrategyDependencyResolver {
             .stream()
             .filter(key -> key.startsWith(SMART_TESTING_STRATEGY_PREFIX))
             .map(String::valueOf)
-            .collect(Collectors.toMap(key -> key.substring(key.lastIndexOf('.') + 1),
+            .collect(Collectors.toMap(this::filterPrefix,
                 key -> {
                     final String[] gav = ((String) properties.get(key)).split(":");
                     final Dependency dependency = new Dependency();
@@ -114,5 +115,9 @@ class StrategyDependencyResolver {
                     dependency.setScope("runtime");
                     return dependency;
                 }));
+    }
+
+    private String filterPrefix(String key) {
+        return key.substring(key.lastIndexOf(SMART_TESTING_STRATEGY_PREFIX) + SMART_TESTING_STRATEGY_PREFIX.length());
     }
 }

@@ -90,9 +90,22 @@ public class StrategyDependencyResolverTest {
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-cool:1.0.0");
+    }
+
+    @Test
+    public void should_register_custom_strategies_if_specified_as_array_with_dots_as_name() {
+        // given
+        String[] customStrategies = new String[] { "smart.testing.strategy.my.cool=org.arquillian.smart.testing:strategy-cool:1.0.0" };
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(customStrategies);
+
+        // when
+        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+
+        // then
+        assertThat(dependencies.keySet())
+            .containsExactlyInAnyOrder("affected", "changed", "my.cool", "new", "failed");
     }
 
     @Test
