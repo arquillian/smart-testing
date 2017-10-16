@@ -229,20 +229,20 @@ public class ObjectMapperTest {
         @Override
         public List<ConfigurationItem> registerConfigurationItems() {
             List<ConfigurationItem> configItems = new ArrayList<>();
-            configItems.add(new ConfigurationItem("i", 0));
+            configItems.add(new ConfigurationItem("i", null, 0));
             configItems.add(new ConfigurationItem("s"));
-            configItems.add(new ConfigurationItem("d", 0.0));
-            configItems.add(new ConfigurationItem("b", false));
-            configItems.add(new ConfigurationItem("l", Collections.EMPTY_LIST));
-            configItems.add(new ConfigurationItem("m", Collections.EMPTY_MAP));
-            configItems.add(new ConfigurationItem("as", new String[0]));
-            configItems.add(new ConfigurationItem("e", TestEnum.FOO));
+            configItems.add(new ConfigurationItem("d", null, 0.0));
+            configItems.add(new ConfigurationItem("b", null, false));
+            configItems.add(new ConfigurationItem("l", null, Collections.EMPTY_LIST));
+            configItems.add(new ConfigurationItem("m", null, Collections.EMPTY_MAP));
+            configItems.add(new ConfigurationItem("as", null, new String[0]));
+            configItems.add(new ConfigurationItem("e", null, TestEnum.FOO));
 
             final DummyObject dummyObject = new DummyObject();
             dummyObject.setB(false);
             dummyObject.setL(Collections.emptyList());
             dummyObject.setAs(new String[0]);
-            configItems.add(new ConfigurationItem("dummyObject", dummyObject));
+            configItems.add(new ConfigurationItem("dummyObject", null, dummyObject));
 
             return configItems;
         }
@@ -268,9 +268,9 @@ public class ObjectMapperTest {
         @Override
         public List<ConfigurationItem> registerConfigurationItems() {
             List<ConfigurationItem> configItems = new ArrayList<>();
-            configItems.add(new ConfigurationItem("b", false));
-            configItems.add(new ConfigurationItem("as", new String[0]));
-            configItems.add(new ConfigurationItem("l", Collections.EMPTY_LIST));
+            configItems.add(new ConfigurationItem("b", null, false));
+            configItems.add(new ConfigurationItem("as", null, new String[0]));
+            configItems.add(new ConfigurationItem("l", null, Collections.EMPTY_LIST));
 
             return configItems;
         }
