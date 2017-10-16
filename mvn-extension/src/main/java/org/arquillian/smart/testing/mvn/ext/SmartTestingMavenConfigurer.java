@@ -69,7 +69,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session){
-        SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(session.getGoals());
+        SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(session);
         skipExtensionInstallation = skipInstallationChecker.shouldSkip();
         if (skipExtensionInstallation) {
             logExtensionDisableReason(Log.getLogger(), skipInstallationChecker.getReason());
