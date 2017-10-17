@@ -63,6 +63,17 @@ public class GitChangeResolver implements ChangeResolver {
         return diff(projectDir, scm.getRange().getTail(), scm.getRange().getHead());
     }
 
+    @Override
+    public Collection<Change> diff(File projectDir, Configuration configuration, String strategy) {
+        if (isApplicable(projectDir)) {
+            return diff(projectDir, configuration);
+        } else {
+            throw new IllegalStateException(
+                String.format("strategy %s needs scm to be initialized. Git is not initialized. "
+                    + "Please initialize git using `git init`", strategy));
+        }
+    }
+
     Set<Change> diff(File projectDir, String previous, String head) {
         buildGit(projectDir);
 
@@ -78,22 +89,18 @@ public class GitChangeResolver implements ChangeResolver {
 
     @Override
     public boolean isApplicable(File projectDir) {
-        try {
-            final FileRepositoryBuilder builder = new FileRepositoryBuilder();
-            builder.readEnvironment().findGitDir(projectDir).build();
-        } catch (IllegalArgumentException | IOException e) {
-            logger.warn("Working directory is not git directory. Cause: %s", e.getMessage());
-            return false;
-        }
-        return true;
+        return getFileRepositoryBuilder(projectDir).getGitDir() != null;
+    }
+
+    private FileRepositoryBuilder getFileRepositoryBuilder(File currentGitDir) {
+        return new FileRepositoryBuilder().readEnvironment().findGitDir(currentGitDir);
     }
 
     private void buildGit(File projectDir){
         closeGitIfExists();
-        final FileRepositoryBuilder builder = new FileRepositoryBuilder();
         try {
-            git = new Git(builder.readEnvironment().findGitDir(projectDir).build());
-        } catch (IOException e) {
+            git = new Git(getFileRepositoryBuilder(projectDir).build());
+        } catch (IOException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to find git repository for path " + projectDir.getAbsolutePath(), e);
         }
     }

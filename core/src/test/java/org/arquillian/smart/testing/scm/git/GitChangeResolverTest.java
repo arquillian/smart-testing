@@ -28,11 +28,6 @@ public class GitChangeResolverTest {
     @Rule
     public final TemporaryFolder gitFolder = new TemporaryFolder(new File("/tmp"));
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    public static final String CUSTOM = "custom";
-
     private GitChangeResolver gitChangeResolver;
 
     @Before
@@ -69,37 +64,6 @@ public class GitChangeResolverTest {
 
         // then
         assertThat(diff).hasSize(18);
-    }
-
-    @Test
-    public void should_not_applicable_when_git_repository_is_not_initialized() throws IOException {
-        // given
-        gitFolder.delete();
-        gitFolder.create();
-
-        this.gitChangeResolver = new GitChangeResolver();
-
-        // when
-        final boolean applicable = gitChangeResolver.isApplicable(gitFolder.getRoot());
-
-        // then
-        assertThat(applicable).isFalse();
-    }
-
-    @Test
-    public void should_throw_exception_for_fetching_all_changes_when_git_repository_is_not_initialized()
-        throws IOException {
-        // given
-        gitFolder.delete();
-        gitFolder.create();
-
-        this.gitChangeResolver = new GitChangeResolver();
-
-        // then
-        thrown.expect(IllegalStateException.class);
-
-        // when
-        gitChangeResolver.diff(gitFolder.getRoot(), "HEAD", "HEAD~0");
     }
 
     @Test
