@@ -63,7 +63,7 @@ a| autocorrect
 a| This configures Smart Testing to auto correct misspelled strategies to the closest one. For example in case of user set strategies to `nwe`, if `autocorrect` is enabled then it is automatically changed to `new`.
 
 a| customStrategies
-a| A list of custom strategies in the form of key/value. It is important to notice that the _key_ part must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
+a| A list of custom strategies in the form of key/value. It is important to notice that the _key_ part must be prefixed with `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"].`.
 |===
 
 ==== Report Options

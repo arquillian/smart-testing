@@ -44,7 +44,7 @@ a|`true`, `false`
 
 === Strategies
 
-[cols="1,2,2,1", options="header"]
+[cols="2,2,1,1", options="header"]
 |===
 |Property | Description | Default | Applicable Strategies
 
@@ -83,7 +83,7 @@ a| `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strateg
 a|const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE"]
 a|`affected`
 
-a| `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.<strategyName>
+a| `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"].<strategyName>`
 |Register custom strategies implementations
 a|
 a|Value is the Maven coordinates of the custom strategy
