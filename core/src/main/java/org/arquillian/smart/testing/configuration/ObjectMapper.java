@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 class ObjectMapper {
@@ -69,9 +70,23 @@ class ObjectMapper {
             Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
 
-            if (configItem.getSystemProperty() != null) {
+            if (configItem.getSystemProperty() != null && !configItem.getSystemProperty().endsWith("*")) {
                 mappedValue = System.getProperty(configItem.getSystemProperty());
             }
+
+            if (configItem.getSystemProperty() != null && configItem.getSystemProperty().endsWith("*")) {
+                String property = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
+                final Set<Map.Entry<Object, Object>> entries = System.getProperties().entrySet();
+                final List<String> customStrategiesDefinition = entries.stream()
+                    .filter(e -> e.getKey().toString().startsWith(property))
+                    .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
+                    .collect(Collectors.toList());
+
+                if (!customStrategiesDefinition.isEmpty()) {
+                    mappedValue = customStrategiesDefinition;
+                }
+            }
+
             if (mappedValue == null) {
                 mappedValue = configFileValue;
             }

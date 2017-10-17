@@ -53,7 +53,6 @@ class StrategyDependencyResolver {
         properties.putAll(loadDefaultMapping());
         properties.putAll(loadCustomStrategies());
         properties.putAll(loadFromFile());
-        properties.putAll(System.getProperties());
         return transformToDependencies(properties);
     }
 
@@ -118,6 +117,6 @@ class StrategyDependencyResolver {
     }
 
     private String filterPrefix(String key) {
-        return key.substring(key.lastIndexOf(SMART_TESTING_STRATEGY_PREFIX) + SMART_TESTING_STRATEGY_PREFIX.length());
+        return key.substring(SMART_TESTING_STRATEGY_PREFIX.length());
     }
 }

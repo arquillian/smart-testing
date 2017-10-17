@@ -32,7 +32,7 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
     public static final String SMART_TESTING_CUSTOM_STRATEGIES = "smart.testing.strategy";
-    public static final String SMART_TESTING_CUSTOM_STRATEGIES_PATTERN = SMART_TESTING_CUSTOM_STRATEGIES.replace(".", "\\.") + ".*";
+    public static final String SMART_TESTING_CUSTOM_STRATEGIES_PATTERN = SMART_TESTING_CUSTOM_STRATEGIES + ".*";
     public static final String SMART_TESTING_APPLY_TO = "smart.testing.apply.to";
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
@@ -134,7 +134,7 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
         configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
-        configItems.add(new ConfigurationItem("customStrategies", Pattern.compile(SMART_TESTING_CUSTOM_STRATEGIES_PATTERN)));
+        configItems.add(new ConfigurationItem("customStrategies", SMART_TESTING_CUSTOM_STRATEGIES_PATTERN));
         return configItems;
     }
 

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.junit.After;
@@ -21,6 +20,9 @@ import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEn
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ObjectMapperTest {
+
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     private Map<String, Object> map;
 
@@ -113,6 +115,18 @@ public class ObjectMapperTest {
     }
 
     @Test
+    public void should_read_multiple_system_properties_expression() {
+        // given
+        System.setProperty("my.property.x", "smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
+    }
+
+    @Test
     public void should_set_nested_object_to_object() {
         // given
         Map<String, Object> innerObjectMap = new HashMap<>();
@@ -190,6 +204,7 @@ public class ObjectMapperTest {
         private List<String> l;
         private Map<String, String> m;
         private TestEnum e;
+        private String[] multiple;
 
         private DummyObject dummyObject;
 
@@ -229,17 +244,22 @@ public class ObjectMapperTest {
             this.dummyObject = dummyObject;
         }
 
+        public void setMultiple(String[] multiple) {
+            this.multiple = multiple;
+        }
+
         @Override
         public List<ConfigurationItem> registerConfigurationItems() {
             List<ConfigurationItem> configItems = new ArrayList<>();
             configItems.add(new ConfigurationItem("i", null, 0));
             configItems.add(new ConfigurationItem("s"));
-            configItems.add(new ConfigurationItem("d", null, 0.0));
-            configItems.add(new ConfigurationItem("b", null, false));
-            configItems.add(new ConfigurationItem("l", null, Collections.EMPTY_LIST));
-            configItems.add(new ConfigurationItem("m", null, Collections.EMPTY_MAP));
-            configItems.add(new ConfigurationItem("as", null, new String[0]));
-            configItems.add(new ConfigurationItem("e", null, TestEnum.FOO));
+            configItems.add(new ConfigurationItem("d", 0.0));
+            configItems.add(new ConfigurationItem("b", false));
+            configItems.add(new ConfigurationItem("l", Collections.EMPTY_LIST));
+            configItems.add(new ConfigurationItem("m", Collections.EMPTY_MAP));
+            configItems.add(new ConfigurationItem("as", new String[0]));
+            configItems.add(new ConfigurationItem("e", TestEnum.FOO));
+            configItems.add(new ConfigurationItem("multiple", "my.property.*"));
 
             final DummyObject dummyObject = new DummyObject();
             dummyObject.setB(false);

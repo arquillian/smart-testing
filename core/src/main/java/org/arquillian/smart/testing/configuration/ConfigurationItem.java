@@ -20,7 +20,7 @@ public class ConfigurationItem {
 
     /**
      * Constructor
-     * @param paramName needs to match with name of setter method by excluding set/add.
+     * @param paramName needs to match with name of setter method by excluding set/add
      * @param systemProperty required to overwrite field value.
      */
     public ConfigurationItem(String paramName, String systemProperty) {
@@ -34,6 +34,16 @@ public class ConfigurationItem {
      */
     public ConfigurationItem(String paramName) {
         this.paramName = paramName;
+    }
+
+    /**
+     * Constructor
+     * @param paramName needs to match with name of setter method by excluding set/add.
+     * @param defaultValue to use for the field.
+     */
+    ConfigurationItem(String paramName, Object defaultValue) {
+        this.paramName = paramName;
+        this.defaultValue = defaultValue;
     }
 
     public String getParamName() {
