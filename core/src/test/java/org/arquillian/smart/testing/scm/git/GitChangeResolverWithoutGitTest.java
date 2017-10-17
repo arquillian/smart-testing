@@ -3,17 +3,20 @@ package org.arquillian.smart.testing.scm.git;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.rules.ExpectedException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GitChangeResolverWithoutGitTest {
+
+    @Rule
+    public RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -23,13 +26,17 @@ public class GitChangeResolverWithoutGitTest {
 
     @Before
     public void createTempFolder() throws IOException {
-        gitFolder = Files.createTempDirectory("junit-").toFile();
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            System.setProperty("java.io.tmpdir", "C:\\temp");
+        } else {
+            System.setProperty("java.io.tmpdir", "/tmp");
+        }
+        gitFolder = Files.createTempDirectory(".junit-").toFile();
     }
 
     @After
-    public void closeRepoAndDeleteTempFolder() throws Exception {
+    public void closeRepo() throws Exception {
         this.gitChangeResolver.close();
-        Files.deleteIfExists(Paths.get(gitFolder.toString()));
     }
 
 
