@@ -89,17 +89,17 @@ public class GitChangeResolver implements ChangeResolver {
 
     @Override
     public boolean isApplicable(File projectDir) {
-        return getFileRepositoryBuilder(projectDir).getGitDir() != null;
+        return fileRepositoryBuilder(projectDir).getGitDir() != null;
     }
 
-    private FileRepositoryBuilder getFileRepositoryBuilder(File currentGitDir) {
+    private FileRepositoryBuilder fileRepositoryBuilder(File currentGitDir) {
         return new FileRepositoryBuilder().readEnvironment().findGitDir(currentGitDir);
     }
 
     private void buildGit(File projectDir){
         closeGitIfExists();
         try {
-            git = new Git(getFileRepositoryBuilder(projectDir).build());
+            git = new Git(fileRepositoryBuilder(projectDir).build());
         } catch (IOException | IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to find git repository for path " + projectDir.getAbsolutePath(), e);
         }

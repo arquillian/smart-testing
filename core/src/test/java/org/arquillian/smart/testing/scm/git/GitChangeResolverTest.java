@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +25,7 @@ import static org.assertj.core.api.Assertions.tuple;
 public class GitChangeResolverTest {
 
     @Rule
-    public final TemporaryFolder gitFolder = new TemporaryFolder(new File("/tmp"));
+    public final TemporaryFolder gitFolder = new TemporaryFolder();
 
     private GitChangeResolver gitChangeResolver;
 
