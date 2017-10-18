@@ -9,15 +9,16 @@ import java.net.ServerSocket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.shrinkwrap.resolver.impl.maven.embedded.BuiltProjectImpl;
 
 import static java.lang.System.getProperty;
@@ -249,27 +250,40 @@ public class BuildConfigurator {
         return skipTests || isSkipTestsSetInPom();
     }
 
-    private Boolean isSkipTestsSetInPom() {
-        return Boolean.valueOf(getPropertiesFromPom().getProperty("skipTests"))
-            || isSkipTestPropertyConfigured() || isSkipPropertyConfigured();
-    }
-
-    private Boolean isSkipTestPropertyConfigured() {
-        Xpp3Dom skipTests = getSurefirePluginConfiguration().getChild("skipTests");
-        return skipTests != null && "true".equals(skipTests.getValue());
-    }
-
-    private Boolean isSkipPropertyConfigured() {
-        Xpp3Dom skip = getSurefirePluginConfiguration().getChild("skip");
-        return skip != null && "true".equals(skip.getValue());
-    }
-
     String getMavenOpts() {
         return mavenOpts;
     }
 
     File getWorkingDirectory() {
         return workingDirectory;
+    }
+
+    private Boolean isSkipTestsSetInPom() {
+        Plugin surefirePlugin = getPlugin("maven-surefire-plugin");
+        Plugin failsafePlugin = getPlugin("maven-failsafe-plugin");
+
+        if (surefirePlugin != null && failsafePlugin == null) {
+            Xpp3Dom configuration = (Xpp3Dom) surefirePlugin.getConfiguration();
+            return isPropertySetInPluginConfiguration(configuration, "skipTests")
+                || isPropertySetInPluginConfiguration(configuration, "skip");
+        }
+        return isPropertyInPom("maven.test.skip") || isPropertyInPom("skipTests");
+    }
+
+    private boolean isPropertySetInPluginConfiguration(Xpp3Dom pluginConfiguration, String property) {
+        Xpp3Dom propertyKey = pluginConfiguration.getChild(property);
+        if (propertyKey == null) {
+            if (property.equals("skip")) {
+                return isPropertyInPom("maven.test.skip");
+            }
+            return isPropertyInPom(property);
+        }
+        return Boolean.valueOf(propertyKey.getValue());
+    }
+
+    private boolean isPropertyInPom(String property) {
+        String key = getBuiltProject().getModel().getProperties().getProperty(property);
+        return Boolean.valueOf(key);
     }
 
     private boolean isRemoteDebugEnabled() {
@@ -300,19 +314,19 @@ public class BuildConfigurator {
         return ignoreBuildFailure;
     }
 
-    private Properties getPropertiesFromPom() {
-        return new BuiltProjectImpl(projectBuilder.getRoot().toAbsolutePath().toString() + File.separator + "pom.xml")
-            .getModel()
-            .getProperties();
+    private Plugin getPlugin(String artifactId) {
+        List<Plugin> pluginList = getBuiltProject().getModel().getBuild().getPlugins()
+            .stream()
+            .filter(plugin -> plugin.getArtifactId().contains(artifactId))
+            .collect(Collectors.toList());
+        if (!pluginList.isEmpty()) {
+            return pluginList.get(0);
+        }
+        return null;
     }
 
-    private Xpp3Dom getSurefirePluginConfiguration() {
-        return new BuiltProjectImpl(projectBuilder.getRoot().toAbsolutePath().toString() + File.separator + "pom.xml")
-            .getModel().getBuild().getPlugins()
-            .stream()
-            .filter(plugin -> plugin.getArtifactId().contains("maven-surefire-plugin"))
-            .map(plugin -> (Xpp3Dom) plugin.getConfiguration())
-            .collect(Collectors.toList()).get(0);
+    private BuiltProjectImpl getBuiltProject() {
+        return new BuiltProjectImpl(projectBuilder.getRoot().toAbsolutePath().toString() + File.separator + "pom.xml");
     }
 
     String getMavenVersion() {

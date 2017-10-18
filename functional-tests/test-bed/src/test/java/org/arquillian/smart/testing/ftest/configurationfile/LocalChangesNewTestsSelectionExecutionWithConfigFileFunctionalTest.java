@@ -56,17 +56,14 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
                 .createConfigFile()
             .enable();
 
-        project
-            .applyAsCommits("Disable surefire and enable just failsafe plugin");
-
         final Collection<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Adds new unit test");
+            .applyAsLocalChanges("Skip surefire and enable just failsafe plugin with sample integration test");
 
         // when
         final TestResults actualTestResults = project.build().run("clean", "verify");
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).isEmpty();
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
     }
 }

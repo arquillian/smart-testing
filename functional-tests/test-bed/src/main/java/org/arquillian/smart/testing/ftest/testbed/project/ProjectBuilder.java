@@ -54,10 +54,6 @@ public class ProjectBuilder {
         return accumulatedTestResults();
     }
 
-    Path getRoot() {
-        return root;
-    }
-
     private BuiltProject executeGoals(String... goals) {
         final PomEquippedEmbeddedMaven embeddedMaven =
             EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
