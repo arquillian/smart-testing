@@ -7,6 +7,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,26 +71,7 @@ class ObjectMapper {
             Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
 
-            if (configItem.getSystemProperty() != null && !configItem.getSystemProperty().endsWith(".*")) {
-                mappedValue = System.getProperty(configItem.getSystemProperty());
-            }
-
-            if (configItem.getSystemProperty() != null && configItem.getSystemProperty().endsWith(".*")) {
-                String property = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
-                final Set<Map.Entry<Object, Object>> entries = System.getProperties().entrySet();
-                final List<String> customStrategiesDefinition = entries.stream()
-                    .filter(e -> e.getKey().toString().startsWith(property))
-                    .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
-                    .collect(Collectors.toList());
-
-                if (!customStrategiesDefinition.isEmpty()) {
-                    mappedValue = customStrategiesDefinition;
-                }
-            }
-
-            if (mappedValue == null) {
-                mappedValue = configFileValue;
-            }
+            mappedValue = getUserSetProperty(method, configItem, configFileValue);
             if (mappedValue == null && configItem.getDefaultValue() != null) {
                 mappedValue = configItem.getDefaultValue();
             }
@@ -98,6 +80,51 @@ class ObjectMapper {
             }
         }
         return null;
+    }
+
+    private static Object getUserSetProperty(Method method, ConfigurationItem configItem, Object configFileValue) {
+        if (configItem.getSystemProperty() != null) {
+            if (!configItem.getSystemProperty().endsWith(".*")) {
+                String sysPropertyValue = System.getProperty(configItem.getSystemProperty());
+                return sysPropertyValue != null ? sysPropertyValue : configFileValue;
+            } else {
+                return createMultipleOccurrenceProperty(method, configItem, configFileValue);
+            }
+        }
+        return configFileValue;
+    }
+
+    private static List<Object> createMultipleOccurrenceProperty(Method method, ConfigurationItem configItem,
+        Object configFileValue) {
+
+        List<Object> multipleValue = new ArrayList();
+        if (configFileValue != null) {
+            addMultipleValueFromFile(method, configFileValue, multipleValue);
+        }
+
+        String property = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
+        final Set<Map.Entry<Object, Object>> entries = System.getProperties().entrySet();
+        multipleValue.addAll(entries.stream()
+            .filter(e -> e.getKey().toString().startsWith(property))
+            .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
+            .collect(Collectors.toList()));
+
+        if (!multipleValue.isEmpty()) {
+            return multipleValue;
+        }
+        return null;
+    }
+
+    private static void addMultipleValueFromFile(Method method, Object configFileValue, List<Object> listToAdd) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        if (parameterType.isAssignableFrom(List.class)) {
+            listToAdd.addAll((Collection<?>) handleList(method, configFileValue));
+        } else if (parameterType.isArray()) {
+            List<?> fromArray = Arrays.asList(handleArray(parameterType.getComponentType(), configFileValue));
+            listToAdd.addAll(fromArray);
+        } else {
+            listToAdd.add(configFileValue);
+        }
     }
 
     private static Object convert(Method method, Object mappedValue) {
