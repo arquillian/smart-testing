@@ -28,8 +28,6 @@ import org.codehaus.plexus.component.annotations.Requirement;
 
 import static java.util.stream.StreamSupport.stream;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -46,30 +44,47 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private Configuration configuration;
 
-    private Boolean skipExtensionInstallation;
+    private boolean skipExtensionInstallation;
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
-        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
-        configuration = Configuration.load(projectDirectory);
 
-        Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
-        logger = Log.getLogger();
-
-        logger.debug("Applied user properties: %s", session.getUserProperties());
-
-        if (shouldSkipExtensionInstallation()) {
-            logExtensionDisableReason();
+        loadConfigAndCheckIfInstallationShouldBeSkipped(session);
+        if (skipExtensionInstallation){
             return;
         }
 
+        logger.debug("Version: %s", ExtensionVersion.version().toString());
+        logger.debug("Applied user properties: %s", session.getUserProperties());
+
+        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
         if (configuration.areStrategiesDefined()) {
             configureExtension(session, configuration);
             calculateChanges(projectDirectory, configuration);
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorage(session)));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
         } else {
             logStrategiesNotDefined();
+        }
+    }
+
+    private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session){
+        SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(session);
+        skipExtensionInstallation = skipInstallationChecker.shouldSkip();
+        if (skipExtensionInstallation) {
+            logExtensionDisableReason(Log.getLogger(), skipInstallationChecker.getReason());
+            return;
+        }
+
+        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
+        configuration = Configuration.load(projectDirectory);
+        Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
+        logger = Log.getLogger();
+
+        if (configuration.isDisable()) {
+            skipExtensionInstallation = true;
+            logExtensionDisableReason(logger, "System Property " + SMART_TESTING_DISABLE + " is set.");
+            return;
         }
     }
 
@@ -88,18 +103,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
-    private void logExtensionDisableReason() {
+    private void logExtensionDisableReason(Logger customLogger, String customReason) {
         String reason = "Not Defined";
-
-        if (configuration.isDisable()) {
-            reason = "System Property " + SMART_TESTING_DISABLE + " is set.";
-        } else if (isSkipTestExecutionSet()) {
-            reason = "Test Execution has been skipped.";
-        } else if (isSpecificTestClassSet()) {
-            reason = "Single Test Class execution is set.";
+        if (customReason != null && !customReason.isEmpty()){
+            reason = customReason;
         }
-
-        logger.info("Smart Testing is disabled. Reason: %s", reason);
+        customLogger.info("Smart Testing is disabled. Reason: %s", reason);
     }
 
     @Override
@@ -109,17 +118,11 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        if (configuration.isDebug() || mavenLogger.isDebugEnabled()) {
-            logger.debug("Version: %s", ExtensionVersion.version().toString());
-            session.getAllProjects().forEach(mavenProject ->
-                ModifiedPomExporter.exportModifiedPom(mavenProject.getModel()));
-        }
-
         if (!configuration.areStrategiesDefined()) {
             logStrategiesNotDefined();
         }
 
-        purgeLocalStorage(session);
+        purgeLocalStorageAndExportPom(session);
     }
 
     private void calculateChanges(File projectDirectory, Configuration configuration) {
@@ -156,18 +159,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
                 + "For details on how to configure it head over to http://bit.ly/st-config");
     }
 
-    private boolean shouldSkipExtensionInstallation() {
-        if (skipExtensionInstallation == null) {
-            skipExtensionInstallation = configuration.isDisable() || isSkipTestExecutionSet() || isSpecificTestClassSet();
-        }
-        return skipExtensionInstallation;
-    }
-
-    private void purgeLocalStorage(MavenSession session) {
+    private void purgeLocalStorageAndExportPom(MavenSession session) {
         session.getAllProjects().forEach(mavenProject -> {
             Model model = mavenProject.getModel();
+            boolean isDebug = configuration.isDebug() || mavenLogger.isDebugEnabled();
             String target = model.getBuild() != null ? model.getBuild().getDirectory() : null;
+
             new LocalStorage(model.getProjectDirectory()).duringExecution().purge(target);
+            if (isDebug && new File(target).exists()) {
+                ModifiedPomExporter.exportModifiedPom(mavenProject.getModel());
+            }
         });
     }
 }

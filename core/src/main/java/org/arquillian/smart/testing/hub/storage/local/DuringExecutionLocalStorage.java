@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.hub.storage.local;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -36,15 +37,19 @@ public class DuringExecutionLocalStorage extends AfterExecutionLocalStorage {
     /**
      * Copies all directories that should be stored after the test execution to the given {@code targetDir} directory.
      * If there is some directory with the same name present, then both directories are merged.
+     * If the target directory does not exist or is not provided, then the directories are not moved anywhere.
      * <p>
      * When the directories are copied, then the whole {@link SMART_TESTING_WORKING_DIRECTORY_NAME} is removed
      * </p>
      */
     public void purge(String targetDir) {
-        Arrays.stream(getDirsToStore())
-            .forEach(dirNameToStore -> {
-                storeDirectory(dirNameToStore, targetDir);
-            });
+        if (targetDir != null &&  new File(targetDir).exists()) {
+            Arrays.stream(getDirsToStore())
+                .forEach(dirNameToStore -> {
+                    storeDirectory(dirNameToStore, targetDir);
+                });
+        }
+        FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
     }
 
     private void storeDirectory(String dirNameToStore, String targetDir) {
@@ -56,6 +61,5 @@ public class DuringExecutionLocalStorage extends AfterExecutionLocalStorage {
 
             FileSystemOperations.copyDirectory(dirToCopy, dirToStore, true);
         }
-        FileSystemOperations.deleteDirectory(Paths.get(rootDir, SMART_TESTING_WORKING_DIRECTORY_NAME), true);
     }
 }
