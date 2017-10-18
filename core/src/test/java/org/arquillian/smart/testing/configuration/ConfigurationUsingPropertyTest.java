@@ -103,6 +103,7 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setReport(report);
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setAutocorrect(true);
+        expectedConfiguration.setCustomStrategies(new String[]{"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0"});
 
         // when
         final Configuration actualConfiguration =

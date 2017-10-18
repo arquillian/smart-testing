@@ -43,7 +43,7 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
 
     private String[] strategies = new String[0];
-    private String[] customStrategies;
+    private String[] customStrategies = new String[0];
     private RunMode mode;
     private String applyTo;
 

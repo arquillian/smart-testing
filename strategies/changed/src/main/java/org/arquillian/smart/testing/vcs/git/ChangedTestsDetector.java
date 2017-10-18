@@ -52,12 +52,13 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public Collection<TestSelection> getTests() {
-        final Collection<Change> files = changeStorage.read(projectDir)
+        //tag::read_changes[]
+        final Collection<Change> files = changeStorage.read(projectDir) // <1>
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff(projectDir, configuration);
+                return changeResolver.diff(projectDir, configuration); // <2>
             });
-
+        //end::read_changes[]
         return files.stream()
             .filter(change -> EnumSet.of(MODIFY, RENAME).contains(change.getChangeType()))
             .filter(change -> testVerifier.isTest(change.getLocation()))

@@ -70,11 +70,11 @@ class ObjectMapper {
             Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
 
-            if (configItem.getSystemProperty() != null && !configItem.getSystemProperty().endsWith("*")) {
+            if (configItem.getSystemProperty() != null && !configItem.getSystemProperty().endsWith(".*")) {
                 mappedValue = System.getProperty(configItem.getSystemProperty());
             }
 
-            if (configItem.getSystemProperty() != null && configItem.getSystemProperty().endsWith("*")) {
+            if (configItem.getSystemProperty() != null && configItem.getSystemProperty().endsWith(".*")) {
                 String property = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
                 final Set<Map.Entry<Object, Object>> entries = System.getProperties().entrySet();
                 final List<String> customStrategiesDefinition = entries.stream()

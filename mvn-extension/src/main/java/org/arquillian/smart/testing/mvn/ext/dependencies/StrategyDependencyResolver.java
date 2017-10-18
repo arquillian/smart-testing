@@ -13,34 +13,33 @@ import org.arquillian.smart.testing.configuration.Configuration;
 
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
- *
+ * <p>
  * For example one can defined mapping between "awesome" strategy to its corresponding dependency as follows:
- *
+ * <p>
  * smart.testing.strategy.awesome=org.awesome:smart-testing-awesome:0.0.1
- *
+ * <p>
  * Version in the g:a:v can be omitted and will be resolved to the one matching "Smart Testing Extension" which is in use.
- *
+ * <p>
  * Properties are loaded with the following precedence:
- *
- *  - default ones stored internally are loaded first
- *  - custom file can overwrite defaults
- *  - System properties overwrite all above
+ * <p>
+ * - default ones stored internally are loaded first
+ * - custom file can overwrite defaults
+ * - System properties overwrite all above
  */
 class StrategyDependencyResolver {
 
     protected static final String SMART_TESTING_STRATEGY_PREFIX = Configuration.SMART_TESTING_CUSTOM_STRATEGIES + ".";
 
-    private final Path propertiesPath; // TODO this could be configurable through system property and with this we need a path
-    private final String[] customStrategies;
+    private final Path propertiesPath;
+        // TODO this could be configurable through system property and with this we need a path
+    private String[] customStrategies = new String[0];
 
     StrategyDependencyResolver(Path propertiesPath) {
         this.propertiesPath = propertiesPath;
-        this.customStrategies = null;
     }
 
     StrategyDependencyResolver() {
         this.propertiesPath = null;
-        this.customStrategies = null;
     }
 
     StrategyDependencyResolver(String[] customStrategies) {
@@ -59,12 +58,10 @@ class StrategyDependencyResolver {
     private Properties loadCustomStrategies() {
         final Properties properties = new Properties();
 
-        if (customStrategies != null) {
-            final Map<String, String> collect = Arrays.stream(customStrategies)
-                .collect(Collectors.toMap(def -> def.substring(0, def.indexOf('=')),
-                    def -> def.substring(def.indexOf('=') + 1)));
-            properties.putAll(collect);
-        }
+        final Map<String, String> collect = Arrays.stream(customStrategies)
+            .collect(Collectors.toMap(def -> def.substring(0, def.indexOf('=')),
+                def -> def.substring(def.indexOf('=') + 1)));
+        properties.putAll(collect);
         return properties;
     }
 

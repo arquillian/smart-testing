@@ -107,28 +107,4 @@ public class StrategyDependencyResolverTest {
         assertThat(dependencies.keySet())
             .containsExactlyInAnyOrder("affected", "changed", "my.cool", "new", "failed");
     }
-
-    @Test
-    public void should_overwrite_default_properties_by_those_specified_in_the_file_and_then_those_in_system_properties()
-        throws Exception {
-        // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
-            get("src/test/resources", "strategies-test.properties"));
-
-        System.setProperty("smart.testing.strategy.affected",
-            "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT");
-
-        // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-
-        // then
-        assertThat(dependencies.values()).hasSize(4)
-            .extracting(
-                dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
-            .contains(
-                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
-    }
 }

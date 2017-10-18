@@ -9,16 +9,19 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEnum.FOO;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class ObjectMapperTest {
 
     @Rule

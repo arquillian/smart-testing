@@ -47,6 +47,44 @@ include::../strategies/failed/src/main/java/org/arquillian/smart/testing/strateg
 <1> Method that returns list of tests to execute
 <2> `TestSelection` requires fully qualified test class name and the strategy where is calculated
 
+==== `ChangeStorage`, `ChangeResolver` and `TestResultParser`
+
+*Smart Testing* provides some services to get some common operations.
+These services can be used to get information from current project.
+
+===== `ChangeStorage`
+
+Change Storage service is used to get the changes (from SCM perspective) that has occurred in current project.
+This service does not read changes from SCM directly but from a file that has precalculated all changes at the beginning of the Smart Testing process.
+
+Notice that in this way your strategy is more performant since, code does not need to calculate changes for each strategy.
+
+To get it you just need to call `new JavaSPILoader().onlyOne(ChangeStorage.class).get()`.
+
+===== `ChangeResolver`
+
+Change Resolver service is like <<ChangeStorage>> but in this case the changes are calculated directly from SCM.
+
+To get it you just need to call `new JavaSPILoader().onlyOne(ChangeResolver.class).get()`.
+
+This service is usually not used directly in strategies since we recommend using <<ChangeStorage>> service for this purposes and just fall back to this service in case of error.
+
+For example:
+
+[source, java]
+----
+include::../strategies/changed/src/main/java/org/arquillian/smart/testing/vcs/git/ChangedTestsDetector.java[indent=0, tag=read_changes]
+----
+<1> Changes are read from precalculated file
+<2> Fallback to calculate directly from SCM
+
+===== `TestResultParser`
+
+Test Result Parser is a service that reads previous test results.
+Currently it behaves like a parser for `surefire` report file.
+
+To use it you just need to call `new JavaSPILoader().onlyOne(TestResultParser.class).get()`.
+
 === Registering strategy
 
 Finally you need to register strategy in Smart Testing configuration file where you set the strategy name as key and the Maven coordinates as value.
@@ -73,7 +111,6 @@ For example <<custom-strategy, previous example>> would be equivalent as running
 `-Dsmart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0`
 
 Notice again that it must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
-
 
 
 
