@@ -60,7 +60,7 @@ class StrategyDependencyResolver {
 
         final Map<String, String> collect = Arrays.stream(customStrategies)
             .collect(Collectors.toMap(def -> def.substring(0, def.indexOf('=')),
-                def -> def.substring(def.indexOf('=') + 1)));
+                def -> def.substring(def.indexOf('=') + 1), (value, value2) -> value2));
         properties.putAll(collect);
         return properties;
     }
