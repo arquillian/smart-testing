@@ -21,7 +21,7 @@ public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
     @Override
     public TestExecutionPlanner create(File projectDir, TestVerifier verifier, Configuration configuration) {
         return new FailedTestsDetector();
-    }
+    } // <2>
 
 }
 //end::documentation[]

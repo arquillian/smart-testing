@@ -8,7 +8,7 @@ To do it you just need to follow next four steps:
 * Implement `org.arquillian.smart.testing.spi.TestExecutionPlanner` interface.
 * Register strategy on Smart Testing configuration file (optional).
 
-=== Implementing `TestExecutionPlannerFactory`
+=== Implementing TestExecutionPlannerFactory
 
 `TestExecutionPlannerFactory` is a Java SPI interface that manages the creation of the strategy.
 You need to implement three simple methods, two related with the name of the strategy and one that generates the strategy class.
@@ -31,7 +31,7 @@ Of course as any other Java SPI, you need to register it in `META-INF/services`.
 include::../strategies/failed/src/main/resources/META-INF/services/org.arquillian.smart.testing.spi.TestExecutionPlannerFactory[]
 ----
 
-=== Implementing `TestExecutionPlanner`
+=== Implementing TestExecutionPlanner
 
 `TestExecutionPlanner` is the strategy implementation of the strategy.
 The important method there is `getTests()` which returns a collection of the tests that must be executed.
@@ -47,12 +47,12 @@ include::../strategies/failed/src/main/java/org/arquillian/smart/testing/strateg
 <1> Method that returns list of tests to execute
 <2> `TestSelection` requires fully qualified test class name and the strategy where is calculated
 
-==== `ChangeStorage`, `ChangeResolver` and `TestResultParser`
+==== ChangeStorage, ChangeResolver and TestResultParser
 
 *Smart Testing* provides some services to get some common operations.
 These services can be used to get information from current project.
 
-===== `ChangeStorage`
+===== ChangeStorage
 
 Change Storage service is used to get the changes (from SCM perspective) that has occurred in current project.
 This service does not read changes from SCM directly but from a file that has precalculated all changes at the beginning of the Smart Testing process.
@@ -61,7 +61,7 @@ Notice that in this way your strategy is more performant since, code does not ne
 
 To get it you just need to call `new JavaSPILoader().onlyOne(ChangeStorage.class).get()`.
 
-===== `ChangeResolver`
+===== ChangeResolver
 
 Change Resolver service is like <<ChangeStorage>> but in this case the changes are calculated directly from SCM.
 
@@ -78,7 +78,7 @@ include::../strategies/changed/src/main/java/org/arquillian/smart/testing/vcs/gi
 <1> Changes are read from precalculated file
 <2> Fallback to calculate directly from SCM
 
-===== `TestResultParser`
+===== TestResultParser
 
 Test Result Parser is a service that reads previous test results.
 Currently it behaves like a parser for `surefire` report file.
@@ -99,18 +99,18 @@ customStrategies:
     - smart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0
 ----
 
-It is important to notice that the _key_ part must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
+It is important to notice that the _key_ part must be prefixed with `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"].`.
 
 
 === Alternative Approach
 
-You can still use another approach to register the pair _strategy name_:_Maven coordinates without configuring them in Smart Testing configuration file and it is using a System property.
+You can still use another approach to register the pair _strategy.name_=_Maven:coordinates_ without configuring them in Smart Testing configuration file and it is using a System property.
 
 For example <<custom-strategy, previous example>> would be equivalent as running *Smart Testing* with next System property:
 
 `-Dsmart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0`
 
-Notice again that it must be prefixed with `const:mvn-extension/src/main/java/org/arquillian/smart/testing/mvn/ext/dependencies/StrategyDependencyResolver.java[name="SMART_TESTING_STRATEGY_PREFIX"]`.
+Notice again that it must be prefixed with `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"].`.
 
 
 
