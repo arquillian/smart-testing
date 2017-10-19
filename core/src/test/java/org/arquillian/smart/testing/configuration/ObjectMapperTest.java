@@ -130,6 +130,31 @@ public class ObjectMapperTest {
     }
 
     @Test
+    public void should_set_multiple_property_to_object() {
+        // given
+        map.put("multiple", "my.property.x=smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
+    }
+
+    @Test
+    public void should_override_multiple_property_with_same_key_by_system_property_value() {
+        // given
+        map.put("multiple", "my.property.x=smart");
+        System.setProperty("my.property.x", "new-smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=new-smart"});
+    }
+
+    @Test
     public void should_set_nested_object_to_object() {
         // given
         Map<String, Object> innerObjectMap = new HashMap<>();
