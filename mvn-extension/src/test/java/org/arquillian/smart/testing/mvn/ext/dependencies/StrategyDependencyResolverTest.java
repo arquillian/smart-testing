@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
-import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
@@ -53,26 +52,6 @@ public class StrategyDependencyResolverTest {
             dependency -> "org.arquillian.smart.testing:strategy-changed:0.0.5-SNAPSHOT".equals(
                 dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
         );
-    }
-
-    @Test
-    public void should_overwrite_default_versions_when_property_file_is_used() throws Exception {
-        // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
-            get("src/test/resources", "strategies-test.properties"));
-
-        // when
-        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
-
-        // then
-        assertThat(dependencies.values()).hasSize(4)
-            .extracting(
-                dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
-            .contains(
-                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-affected:0.0.12-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
     }
 
     @Test

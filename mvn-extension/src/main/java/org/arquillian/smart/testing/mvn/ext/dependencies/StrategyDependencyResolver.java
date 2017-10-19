@@ -1,9 +1,7 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
@@ -29,21 +27,13 @@ import org.arquillian.smart.testing.configuration.Configuration;
 class StrategyDependencyResolver {
 
     protected static final String SMART_TESTING_STRATEGY_PREFIX = Configuration.SMART_TESTING_CUSTOM_STRATEGIES + ".";
-
-    private final Path propertiesPath;
-        // TODO this could be configurable through system property and with this we need a path
-    private String[] customStrategies = new String[0];
-
-    StrategyDependencyResolver(Path propertiesPath) {
-        this.propertiesPath = propertiesPath;
-    }
+    private String[] customStrategies;
 
     StrategyDependencyResolver() {
-        this.propertiesPath = null;
+        this.customStrategies = new String[0];
     }
 
     StrategyDependencyResolver(String[] customStrategies) {
-        this.propertiesPath = null;
         this.customStrategies = customStrategies;
     }
 
@@ -51,7 +41,6 @@ class StrategyDependencyResolver {
         final Properties properties = new Properties();
         properties.putAll(loadDefaultMapping());
         properties.putAll(loadCustomStrategies());
-        properties.putAll(loadFromFile());
         return transformToDependencies(properties);
     }
 
@@ -75,19 +64,6 @@ class StrategyDependencyResolver {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load default strategy dependencies mapping.", e);
         }
-        return properties;
-    }
-
-    private Properties loadFromFile() {
-        final Properties properties = new Properties();
-        if (propertiesPath != null) {
-            try {
-                properties.load(new FileInputStream(this.propertiesPath.toFile()));
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to load custom strategy mapping", e);
-            }
-        }
-
         return properties;
     }
 
