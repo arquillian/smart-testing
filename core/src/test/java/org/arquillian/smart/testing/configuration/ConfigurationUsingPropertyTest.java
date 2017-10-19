@@ -82,6 +82,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING_MODE, "selecting");
         System.setProperty(SCM_RANGE_TAIL, HEAD + "~4");
         System.setProperty("smart.testing.strategy.my", "org.arquillian.smart.testing:strategy-my:1.0.0");
+        System.setProperty("smart.testing.strategy.cool", "org.arquillian.smart.testing:strategy-cool:1.0.1");
 
         final Report report = new Report();
         report.setEnable(true);
@@ -105,8 +106,8 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setAutocorrect(true);
         expectedConfiguration.setCustomStrategies(
-            new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
-                "smart.testing.strategy.my=org.arquillian.smart.testing:strategy-my:1.0.0"});
+            new String[] {"smart.testing.strategy.my=org.arquillian.smart.testing:strategy-my:1.0.0",
+                "smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.1"});
 
         // when
         final Configuration actualConfiguration =

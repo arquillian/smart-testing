@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 class ObjectMapper {
@@ -97,17 +96,23 @@ class ObjectMapper {
     private static List<Object> createMultipleOccurrenceProperty(Method method, ConfigurationItem configItem,
         Object configFileValue) {
 
-        List<Object> multipleValue = new ArrayList();
+        String sysPropKey = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
+        Map<Object, Object> systemProperties =
+            System.getProperties().entrySet()
+                .stream()
+                .filter(sysKey -> sysKey.getKey().toString().startsWith(sysPropKey))
+                .collect(Collectors.toMap(prop -> prop.getKey(), prop -> prop.getValue()));
+
+        List<Object> multipleValue = new ArrayList<>();
         if (configFileValue != null) {
-            addMultipleValueFromFile(method, configFileValue, multipleValue);
+            multipleValue.addAll(getValuesFromFile(method, sysPropKey, configFileValue, systemProperties));
         }
 
-        String property = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
-        final Set<Map.Entry<Object, Object>> entries = System.getProperties().entrySet();
-        multipleValue.addAll(entries.stream()
-            .filter(e -> e.getKey().toString().startsWith(property))
-            .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
-            .collect(Collectors.toList()));
+        multipleValue
+            .addAll(systemProperties.entrySet()
+                .stream()
+                .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
+                .collect(Collectors.toList()));
 
         if (!multipleValue.isEmpty()) {
             return multipleValue;
@@ -115,16 +120,30 @@ class ObjectMapper {
         return null;
     }
 
-    private static void addMultipleValueFromFile(Method method, Object configFileValue, List<Object> listToAdd) {
+    private static List<Object> getValuesFromFile(Method method, String sysPropKey, Object configFileValue,
+        Map<Object, Object> systemProperties) {
         Class<?> parameterType = method.getParameterTypes()[0];
+        ArrayList<Object> fromFileParam = new ArrayList<>();
         if (parameterType.isAssignableFrom(List.class)) {
-            listToAdd.addAll((Collection<?>) handleList(method, configFileValue));
+            fromFileParam.addAll((Collection<?>) handleList(method, configFileValue));
         } else if (parameterType.isArray()) {
-            List<?> fromArray = Arrays.asList(handleArray(parameterType.getComponentType(), configFileValue));
-            listToAdd.addAll(fromArray);
+            fromFileParam.addAll(Arrays.asList(handleArray(parameterType.getComponentType(), configFileValue)));
         } else {
-            listToAdd.add(configFileValue);
+            fromFileParam.add(configFileValue);
         }
+        return fromFileParam
+            .stream()
+            .filter(param -> !isSetBySysProperty(param, sysPropKey, systemProperties))
+            .collect(Collectors.toList());
+    }
+
+    private static boolean isSetBySysProperty(Object param, String sysPropKey, Map<Object, Object> systemProperties) {
+        String[] paramSplit = String.valueOf(param).split("=");
+        if (paramSplit.length == 2) {
+            String key = paramSplit[0];
+            return systemProperties.containsKey(key) || systemProperties.containsKey(String.join(".", sysPropKey, key));
+        }
+        return false;
     }
 
     private static Object convert(Method method, Object mappedValue) {
