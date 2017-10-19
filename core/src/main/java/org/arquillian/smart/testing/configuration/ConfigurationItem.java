@@ -47,5 +47,4 @@ public class ConfigurationItem {
     public Object getDefaultValue() {
         return defaultValue;
     }
-
 }

@@ -12,7 +12,6 @@ import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TA
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.contentOf;
 
 public class ConfigurationTest {
 
@@ -40,7 +39,9 @@ public class ConfigurationTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setAutocorrect(true);
-        expectedConfiguration.setCustomStrategies(new String[]{"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0"});
+        expectedConfiguration.setCustomStrategies(
+            new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
+                "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});
 
         // when
         final Configuration actualConfiguration =

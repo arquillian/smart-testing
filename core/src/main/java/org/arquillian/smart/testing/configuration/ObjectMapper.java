@@ -100,7 +100,7 @@ class ObjectMapper {
         Map<Object, Object> systemProperties =
             System.getProperties().entrySet()
                 .stream()
-                .filter(sysKey -> sysKey.getKey().toString().startsWith(sysPropKey))
+                .filter(prop -> prop.getKey().toString().startsWith(sysPropKey))
                 .collect(Collectors.toMap(prop -> prop.getKey(), prop -> prop.getValue()));
 
         List<Object> multipleValue = new ArrayList<>();
@@ -108,8 +108,8 @@ class ObjectMapper {
             multipleValue.addAll(getValuesFromFile(method, sysPropKey, configFileValue, systemProperties));
         }
 
-        multipleValue
-            .addAll(systemProperties.entrySet()
+        multipleValue.addAll(
+            systemProperties.entrySet()
                 .stream()
                 .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
                 .collect(Collectors.toList()));
