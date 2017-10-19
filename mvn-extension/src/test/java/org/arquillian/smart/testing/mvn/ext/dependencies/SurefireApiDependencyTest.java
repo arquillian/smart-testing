@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
+import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -9,12 +10,13 @@ import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 import org.assertj.core.groups.Tuple;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+@Category(NotThreadSafe.class)
 public class SurefireApiDependencyTest {
 
     @Rule
