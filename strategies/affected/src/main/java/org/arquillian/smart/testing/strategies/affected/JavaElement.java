@@ -8,25 +8,21 @@ public class JavaElement {
     private final String className;
     private final File classFile;
 
-
-    public JavaElement(String className) {
-        this.className = className;
-        this.classFile = null;
-    }
-
     /**
-     * Constructor for creating a Java element.
      * @param className of the java element.
      * @param classFile location of the java element. Can be null.
      */
-    public JavaElement(String className, File classFile) {
+    private JavaElement(String className, File classFile) {
         this.className = className;
         this.classFile = classFile;
     }
 
-    public JavaElement(JavaClass javaClass) {
-        this.className = javaClass.getName();
-        this.classFile = javaClass.getClassFile();
+    JavaElement(String className) {
+        this(className, null);
+    }
+
+    JavaElement(JavaClass javaClass) {
+        this(javaClass.getName(), javaClass.getClassFile());
     }
 
     public File getClassFile() {

@@ -7,7 +7,6 @@ public class ConfigurationItem {
     private Object defaultValue;
 
     /**
-     * Constructor
      * @param paramName needs to match with name of setter method by excluding set/add.
      * @param systemProperty required to overwrite field value.
      * @param defaultValue to use for the field.
@@ -19,7 +18,6 @@ public class ConfigurationItem {
     }
 
     /**
-     * Constructor
      * @param paramName needs to match with name of setter method by excluding set/add.
      * @param systemProperty required to overwrite field value.
      */
@@ -29,7 +27,6 @@ public class ConfigurationItem {
     }
 
     /**
-     * Constructor
      * @param paramName needs to match with name of setter method by excluding set/add.
      */
     public ConfigurationItem(String paramName) {

@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Filter {
+class Filter {
 
     private final List<String> inclusions = new ArrayList<>();
     private final List<String> exclusions = new ArrayList<>();
 
     /**
-     * Constructor to set inclusions and exlusions to filter.
      * @param inclusions in CSV format
      * @param exclusions in CSV format
      */
-    public Filter(String inclusions, String exclusions) {
+    Filter(String inclusions, String exclusions) {
 
         if (inclusions != null && !inclusions.isEmpty()) {
             this.inclusions.addAll(parse(inclusions));
