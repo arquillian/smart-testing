@@ -1,18 +1,17 @@
 package org.arquillian.smart.testing.configuration;
 
-import java.io.File;
-import java.nio.file.Paths;
 import org.junit.Test;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
+import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
+import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsPath;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.contentOf;
 
 public class ConfigurationTest {
 
@@ -43,7 +42,7 @@ public class ConfigurationTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -104,9 +103,10 @@ public class ConfigurationTest {
 
         // when
         final Configuration actualConfiguration =
-            loadConfigurationFromFile(new File("src/test/resources/configuration/dumped-smart-testing.yml"));
+            loadConfigurationFromFile(getResourceAsFile("configuration/dumped-smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
     }
+
 }
