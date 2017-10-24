@@ -22,8 +22,11 @@ public class LoaderVersionExtractor {
 
     public static final MavenLibrary LIBRARY_SUREFIRE_API =
         new MavenLibrary("org.apache.maven.surefire", "surefire-api");
+    public static final MavenLibrary LIBRARY_SUREFIRE_JUNIT_5 =
+        new MavenLibrary("org.junit.platform", "junit-platform-surefire-provider");
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
+    public static final MavenLibrary LIBRARY_JUNIT_5 = new MavenLibrary("org.junit.jupiter", "junit-jupiter-api");
     private static final Logger logger = Log.getLogger();
     private static final Map<ClassLoader, Map<MavenLibrary, String>> loaderWithLibraryVersions = new HashMap<>();
     private static final List<MavenLibrary> initLibraries = new ArrayList<>();
@@ -32,6 +35,8 @@ public class LoaderVersionExtractor {
         initLibraries.add(LIBRARY_SUREFIRE_API);
         initLibraries.add(LIBRARY_JUNIT);
         initLibraries.add(LIBRARY_TEST_NG);
+        initLibraries.add(LIBRARY_JUNIT_5);
+        initLibraries.add(LIBRARY_SUREFIRE_JUNIT_5);
     }
 
     public static String getSurefireApiVersion() {
@@ -40,6 +45,14 @@ public class LoaderVersionExtractor {
 
     public static String getJunitVersion() {
         return getVersionFromClassLoader(LIBRARY_JUNIT, currentThread().getContextClassLoader());
+    }
+
+    public static String getJUnit5Version() {
+        return getVersionFromClassLoader(LIBRARY_JUNIT_5, currentThread().getContextClassLoader());
+    }
+
+    public static String getSurefireJUnit5Version() {
+        return getVersionFromClassLoader(LIBRARY_SUREFIRE_JUNIT_5, currentThread().getContextClassLoader());
     }
 
     public static String getTestNgVersion() {
@@ -80,6 +93,7 @@ public class LoaderVersionExtractor {
 
             while (manifests.hasMoreElements()) {
                 String manifestURL = manifests.nextElement().toString();
+                System.out.println(manifestURL);
 
                 Optional<MavenLibrary> matched =
                     librariesToFind.parallelStream()

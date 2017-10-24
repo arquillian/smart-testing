@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.surefire.provider;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.arquillian.smart.testing.surefire.provider.info.JUnit4ProviderInfo;
+import org.arquillian.smart.testing.surefire.provider.info.JUnit5ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.JUnitCoreProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.ProviderInfo;
 import org.arquillian.smart.testing.surefire.provider.info.TestNgProviderInfo;
@@ -16,8 +17,10 @@ public class SurefireProviderFactory {
     SurefireProviderFactory(ProviderParametersParser paramParser) {
         ProviderInfo[] wellKnownProviders = new ProviderInfo[] {
             new TestNgProviderInfo(),
+            new JUnit5ProviderInfo(),
             new JUnitCoreProviderInfo(paramParser),
-            new JUnit4ProviderInfo()};
+            new JUnit4ProviderInfo()
+            };
         providerInfo = autoDetectOneProvider(wellKnownProviders);
         providerParameters = paramParser.getProviderParameters();
         surefireProviderClass = loadProviderClass();
@@ -44,6 +47,7 @@ public class SurefireProviderFactory {
     private ProviderInfo autoDetectOneProvider(ProviderInfo[] wellKnownProviders) {
         for (ProviderInfo wellKnownProvider : wellKnownProviders) {
             if (wellKnownProvider.isApplicable()) {
+                System.out.println(wellKnownProvider.getProviderClassName());
                 return wellKnownProvider;
             }
         }

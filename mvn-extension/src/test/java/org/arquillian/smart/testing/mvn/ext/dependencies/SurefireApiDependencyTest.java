@@ -108,6 +108,23 @@ public class SurefireApiDependencyTest {
 
     }
 
+    @Test
+    public void should_remove_junit5_platform_dependency() {
+        // given
+        Model model = prepareModelWithSurefirePlugin("2.19.1");
+        final Configuration conf = configureWithAutocorrect("nwe");
+        final DependencyResolver dependencyResolver = new DependencyResolver(conf);
+        final Plugin plugin = model.getBuild().getPlugins().get(0);
+        plugin.addDependency(new DependencyResolver.JUnit5SurefireProviderDependency());
+
+        // when
+        dependencyResolver.removeJUnit5PlatformDependency(plugin);
+
+        // then
+        assertThat(plugin.getDependencies()).hasSize(0);
+
+    }
+
     private Configuration configureWithAutocorrect(String... strategies) {
         final Configuration conf = Configuration.load();
         conf.setAutocorrect(true);
@@ -124,6 +141,7 @@ public class SurefireApiDependencyTest {
         Plugin surefirePlugin = new Plugin();
         surefirePlugin.setArtifactId(ApplicablePlugins.SUREFIRE.getArtifactId());
         surefirePlugin.setVersion(version);
+
         Build build = new Build();
         build.addPlugin(surefirePlugin);
         model.setBuild(build);
