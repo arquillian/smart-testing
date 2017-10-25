@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
+import java.util.Optional;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
@@ -75,7 +76,7 @@ public class SurefireApiDependencyTest {
         Model model = prepareModelWithSurefirePlugin("2.20");
         final Configuration conf = configureWithAutocorrect("nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
-        model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
+        model.addDependency(new DependencyResolver.SurefireApiDependency("2.20"));
 
         // when
         dependencyResolver.addRequiredDependencies(model);
@@ -98,7 +99,7 @@ public class SurefireApiDependencyTest {
         Model model = prepareModelWithSurefirePlugin("2.20");
         final Configuration conf = configureWithAutocorrect("new", "nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
-        model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
+        model.addDependency(new DependencyResolver.SurefireApiDependency("2.20"));
 
         // when
         final Throwable exception = catchThrowable(() -> dependencyResolver.addRequiredDependencies(model));
@@ -109,19 +110,19 @@ public class SurefireApiDependencyTest {
     }
 
     @Test
-    public void should_remove_junit5_platform_dependency() {
+    public void should_return_junit5_platform_dependency() {
         // given
         Model model = prepareModelWithSurefirePlugin("2.19.1");
-        final Configuration conf = configureWithAutocorrect("nwe");
+        final Configuration conf = configureWithAutocorrect("new");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
         final Plugin plugin = model.getBuild().getPlugins().get(0);
         plugin.addDependency(new DependencyResolver.JUnit5SurefireProviderDependency());
 
         // when
-        dependencyResolver.removeJUnit5PlatformDependency(plugin);
+        final Optional<Dependency> jUnit5PlatformDependency = dependencyResolver.findJUnit5PlatformDependency(plugin);
 
         // then
-        assertThat(plugin.getDependencies()).hasSize(0);
+        assertThat(jUnit5PlatformDependency).isPresent();
 
     }
 

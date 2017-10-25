@@ -74,21 +74,13 @@ public class DependencyResolver {
         plugin.addDependency(smartTestingProviderDependency());
     }
 
-    public Optional<Dependency> removeJUnit5PlatformDependency(Plugin plugin) {
-        final Optional<Dependency> junit5SurefirePlatform = plugin.getDependencies()
+    public Optional<Dependency> findJUnit5PlatformDependency(Plugin plugin) {
+       return plugin.getDependencies()
             .stream()
             .filter(JUnit5SurefireProviderDependency::matches)
             .findFirst();
-
-        if (junit5SurefirePlatform.isPresent()) {
-            final Dependency dependency = junit5SurefirePlatform.get();
-            plugin.removeDependency(dependency);
-            return junit5SurefirePlatform;
-        }
-
-        return Optional.empty();
-
     }
+
 
     private void addSurefireApiDependency(Model model) {
         boolean alreadyContains = model.getDependencies()

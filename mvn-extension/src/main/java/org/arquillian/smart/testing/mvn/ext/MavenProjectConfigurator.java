@@ -50,13 +50,14 @@ class MavenProjectConfigurator {
                 .forEach(plugin -> {
                     dependencyResolver.addAsPluginDependency(plugin);
 
-                    final Optional<Dependency> dependency = dependencyResolver.removeJUnit5PlatformDependency(plugin);
+                    final Optional<Dependency> dependency = dependencyResolver.findJUnit5PlatformDependency(plugin);
                     dependency.ifPresent(d -> {
                         try {
                             localStorage.duringExecution()
                                 .temporary()
                                 .file("junit5PlatformVersion")
                                 .create(d.getVersion().getBytes());
+                            plugin.removeDependency(dependency.get());
                         } catch (IOException e) {
                             throw new IllegalStateException(e);
                         }
