@@ -88,21 +88,6 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
-    private void copyConfigurationFile(Model model, File parentFile) {
-        final LocalStorageFileAction configFile = new LocalStorage(model.getProjectDirectory())
-            .duringExecution()
-            .temporary()
-            .file(Configuration.SMART_TESTING_YML);
-        logger.debug("Copying " + Configuration.SMART_TESTING_YML + " from [%s] to [%s]", parentFile.getPath(),
-            configFile.getPath());
-
-        try {
-            configFile.create(Files.readAllBytes(parentFile.toPath()));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void logExtensionDisableReason(Logger customLogger, String customReason) {
         String reason = "Not Defined";
         if (customReason != null && !customReason.isEmpty()){
@@ -141,10 +126,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     private void configureExtension(MavenSession session, Configuration configuration) {
         logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        final File dumpedConfigFile = configuration.dump(Paths.get("").toFile());
         session.getAllProjects().forEach(mavenProject -> {
             mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            copyConfigurationFile(mavenProject.getModel(), dumpedConfigFile);
+            configuration.dump(mavenProject.getBasedir());
             if (isFailedStrategyUsed()) {
                 SurefireReportStorage.copySurefireReports(mavenProject.getModel());
             }

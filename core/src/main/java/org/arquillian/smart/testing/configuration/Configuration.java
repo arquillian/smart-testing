@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,11 @@ import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.yaml.snakeyaml.Yaml;
+
+import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 
 public class Configuration implements ConfigurationSection {
 
@@ -52,6 +57,8 @@ public class Configuration implements ConfigurationSection {
 
     private Report report;
     private Scm scm;
+
+    private List<StrategyConfiguration> strategiesConfiguration;
 
     public String[] getStrategies() {
         return strategies;
@@ -125,6 +132,14 @@ public class Configuration implements ConfigurationSection {
         return customStrategies;
     }
 
+    public List<StrategyConfiguration> getStrategiesConfiguration() {
+        return strategiesConfiguration;
+    }
+
+    public void setStrategiesConfiguration(List<StrategyConfiguration> strategiesConfiguration) {
+        this.strategiesConfiguration = strategiesConfiguration;
+    }
+
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
@@ -135,6 +150,24 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
         configItems.add(new ConfigurationItem("customStrategies", SMART_TESTING_CUSTOM_STRATEGIES_PATTERN));
         return configItems;
+    }
+
+    public List<StrategyConfiguration> strategyConfigurations(String[] strategies) {
+        List<StrategyConfiguration> convertedList = new ArrayList<>();
+
+        new JavaSPILoader().all(StrategyConfiguration.class,
+            strategyConfiguration -> Arrays.asList(strategies).contains(strategyConfiguration.name()))
+            .forEach(strategyConfiguration -> {
+                final Class<StrategyConfiguration> aClass1 =
+                    (Class<StrategyConfiguration>) strategyConfiguration.getClass();
+                convertedList.add(mapToObject(aClass1, new HashMap<>(0)));
+            });
+
+        if (convertedList.isEmpty()) {
+            return null;
+        }
+
+        return convertedList;
     }
 
     public static Configuration load() {
@@ -235,7 +268,7 @@ public class Configuration implements ConfigurationSection {
     }
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
-        return ObjectMapper.mapToObject(Configuration.class, yamlConfiguration);
+        return mapToObject(Configuration.class, yamlConfiguration);
     }
 
     public boolean isSelectingMode() {

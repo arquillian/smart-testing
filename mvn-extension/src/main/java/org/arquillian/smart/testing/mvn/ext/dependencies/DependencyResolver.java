@@ -68,6 +68,7 @@ public class DependencyResolver {
                 + "for the list of available strategies.");
         }
         configuration.setStrategies(strategies);
+        configuration.setStrategiesConfiguration(configuration.strategyConfigurations(strategies));
     }
 
     public void addAsPluginDependency(Plugin plugin) {

@@ -83,6 +83,18 @@ public class ObjectMapperTest {
     }
 
     @Test
+    public void should_set_list_of_string_as_string_to_object() {
+        // given
+        map.put("s", Arrays.asList("foo", "bar"));
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("s", "foo, bar");
+    }
+
+    @Test
     public void should_set_comma_separated_string_as_array_to_object() {
         // given
         map.put("as", "hello, bar");

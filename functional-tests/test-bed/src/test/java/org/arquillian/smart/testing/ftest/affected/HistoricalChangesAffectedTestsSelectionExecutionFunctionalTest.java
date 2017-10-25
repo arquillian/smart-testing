@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.ftest.affected;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.strategies.affected.AffectedConfiguration;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -98,6 +100,13 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
         configuration.setStrategies("affected");
         configuration.setMode(RunMode.SELECTING);
         configuration.getScm().setLastChanges("2");
+
+        final AffectedConfiguration affectedConfiguration = new AffectedConfiguration();
+        affectedConfiguration.setTransitivity(true);
+
+        configuration.setStrategiesConfiguration(Collections.singletonList(affectedConfiguration));
+
+        configuration.dump(project.getRoot().toFile());
         List<String> expectedTestClasses = expectedTestResults
             .stream()
             .map(TestResult::getClassName)

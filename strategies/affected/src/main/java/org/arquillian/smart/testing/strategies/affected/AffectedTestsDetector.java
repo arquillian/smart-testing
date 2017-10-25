@@ -96,6 +96,6 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     }
 
     private ClassDependenciesGraph configureTestClassDetector() {
-        return new ClassDependenciesGraph(testVerifier);
+        return new ClassDependenciesGraph(testVerifier, projectDir);
     }
 }

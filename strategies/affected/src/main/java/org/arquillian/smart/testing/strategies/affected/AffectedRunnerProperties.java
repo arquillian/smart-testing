@@ -1,17 +1,22 @@
 package org.arquillian.smart.testing.strategies.affected;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
+import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
 class AffectedRunnerProperties {
 
-    private static final String SMART_TESTING_AFFECTED_CONFIG = "smart.testing.affected.config";
+    static final String SMART_TESTING_AFFECTED_CONFIG = "smart.testing.affected.config";
 
     static final String SMART_TESTING_AFFECTED_TRANSITIVITY = "smart.testing.affected.transitivity";
+    @SuppressWarnings("unused")
     static final String DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE = "true";
 
     static final String SMART_TESTING_AFFECTED_EXCLUSIONS = "smart.testing.affected.exclusions";
@@ -20,9 +25,23 @@ class AffectedRunnerProperties {
     static final String EXCLUSIONS = "exclusions";
 
     private final Properties properties = new Properties();
+    private AffectedConfiguration affectedConfiguration;
 
-    AffectedRunnerProperties(){
-        readFile(System.getProperty(SMART_TESTING_AFFECTED_CONFIG));
+    AffectedRunnerProperties(File rootDirectory) {
+        final Configuration configuration = Configuration.loadPrecalculated(rootDirectory);
+        final List<StrategyConfiguration> strategyConfigurations = configuration.getStrategiesConfiguration();
+        if (strategyConfigurations == null) {
+            readFile(null);
+            return;
+        }
+
+        final StrategyConfiguration affectedConfig = strategyConfigurations.stream()
+            .filter(strategyConfiguration -> "affected".equals(strategyConfiguration.name()))
+            .findFirst()
+            .get();
+
+        affectedConfiguration = (AffectedConfiguration) affectedConfig;
+        readFile(affectedConfiguration.getConfig());
     }
 
     AffectedRunnerProperties(String csvLocation) {
@@ -42,19 +61,24 @@ class AffectedRunnerProperties {
     }
 
     boolean getSmartTestingAffectedTransitivity() {
-        return Boolean.parseBoolean(System.getProperty(SMART_TESTING_AFFECTED_TRANSITIVITY,
-            DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE));
+        return affectedConfiguration != null && affectedConfiguration.isTransitivity();
     }
 
     String getSmartTestingAffectedExclusions() {
-        String exclusions = System.getProperty(SMART_TESTING_AFFECTED_EXCLUSIONS);
+        if (affectedConfiguration == null) {
+            return null;
+        }
+        String exclusions = affectedConfiguration.getExclusions();
         String exclusionsFromFile = properties.getProperty(EXCLUSIONS);
 
         return resolve(exclusions, exclusionsFromFile);
     }
 
     String getSmartTestingAffectedInclusions() {
-        String inclusions = System.getProperty(SMART_TESTING_AFFECTED_INCLUSIONS);
+        if (affectedConfiguration == null) {
+            return null;
+        }
+        String inclusions = affectedConfiguration.getInclusions();
         String inclusionsFromFile = properties.getProperty(INCLUSIONS);
 
         return resolve(inclusions, inclusionsFromFile);
@@ -73,8 +97,7 @@ class AffectedRunnerProperties {
         return joiner.toString().trim();
     }
 
-    String getProperty(String key){
+    String getProperty(String key) {
         return properties.getProperty(key);
     }
-
 }

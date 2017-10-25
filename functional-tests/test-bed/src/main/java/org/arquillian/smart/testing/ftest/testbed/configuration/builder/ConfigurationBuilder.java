@@ -1,11 +1,13 @@
 package org.arquillian.smart.testing.ftest.testbed.configuration.builder;
 
 import java.util.Arrays;
+import java.util.List;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.Report;
 import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
+import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
 public class ConfigurationBuilder {
     private String[] strategies;
@@ -15,6 +17,7 @@ public class ConfigurationBuilder {
     private boolean debug;
     private Report report;
     private Scm scm;
+    private List<StrategyConfiguration> strategiesConfiguration;
 
     public ConfigurationBuilder strategies(String... strategies) {
         this.strategies = strategies;
@@ -59,6 +62,10 @@ public class ConfigurationBuilder {
         return new ScmBuilder(this);
     }
 
+    public StrategiesConfigurationBuilder strategiesConfiguration() {
+        return new StrategiesConfigurationBuilder(this);
+    }
+
     public ConfigurationBuilder setScm(Scm scm) {
         this.scm = scm;
         return this;
@@ -66,6 +73,12 @@ public class ConfigurationBuilder {
 
     public ConfigurationBuilder setReport(Report report) {
         this.report = report;
+        return this;
+    }
+
+    ConfigurationBuilder setStrategiesConfiguration(List<StrategyConfiguration> strategiesConfiguration) {
+        this.strategiesConfiguration = strategiesConfiguration;
+
         return this;
     }
 
@@ -79,6 +92,7 @@ public class ConfigurationBuilder {
         configuration.setDebug(this.debug);
         configuration.setReport(this.report);
         configuration.setScm(this.scm);
+        configuration.setStrategiesConfiguration(this.strategiesConfiguration);
 
         return configuration;
     }
