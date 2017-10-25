@@ -145,7 +145,7 @@ public class Configuration implements ConfigurationSection {
         } else {
             try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
                 final Yaml yaml = new Yaml();
-                yamlConfiguration = (Map<String, Object>) yaml.load(io);
+                yamlConfiguration = yaml.load(io);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }

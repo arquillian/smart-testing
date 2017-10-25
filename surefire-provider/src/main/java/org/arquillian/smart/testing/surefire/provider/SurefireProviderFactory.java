@@ -47,7 +47,6 @@ public class SurefireProviderFactory {
     private ProviderInfo autoDetectOneProvider(ProviderInfo[] wellKnownProviders) {
         for (ProviderInfo wellKnownProvider : wellKnownProviders) {
             if (wellKnownProvider.isApplicable()) {
-                System.out.println(wellKnownProvider.getProviderClassName());
                 return wellKnownProvider;
             }
         }

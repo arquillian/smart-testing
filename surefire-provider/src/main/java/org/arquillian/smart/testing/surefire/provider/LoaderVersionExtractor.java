@@ -93,7 +93,6 @@ public class LoaderVersionExtractor {
 
             while (manifests.hasMoreElements()) {
                 String manifestURL = manifests.nextElement().toString();
-                System.out.println(manifestURL);
 
                 Optional<MavenLibrary> matched =
                     librariesToFind.parallelStream()
