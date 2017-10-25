@@ -9,13 +9,14 @@ import java.util.Collection;
 import net.jcip.annotations.NotThreadSafe;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Parameterized.class)
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class LoaderVersionExtractorSurefireApiTest {
 
     private final String surefireBooterVersion;
