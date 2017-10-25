@@ -550,26 +550,34 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_running_examples">5.7. Running Examples</a></li>
 </ul>
 </li>
-<li><a href="#_reports">6. Reports</a>
+<li><a href="#_registering_custom_strategies">6. Registering Custom Strategies</a>
 <ul class="sectlevel2">
-<li><a href="#_build_artifacts">6.1. Build Artifacts</a></li>
-<li><a href="#_configuration_2">6.2. Configuration</a></li>
+<li><a href="#_implementing_testexecutionplannerfactory">6.1. Implementing TestExecutionPlannerFactory</a></li>
+<li><a href="#_implementing_testexecutionplanner">6.2. Implementing TestExecutionPlanner</a></li>
+<li><a href="#_registering_strategy">6.3. Registering strategy</a></li>
+<li><a href="#_alternative_approach">6.4. Alternative Approach</a></li>
 </ul>
 </li>
-<li><a href="#_jenkins">7. Jenkins</a>
+<li><a href="#_reports">7. Reports</a>
 <ul class="sectlevel2">
-<li><a href="#_jenkins_freestyle_project">7.1. Jenkins Freestyle project</a></li>
-<li><a href="#_jenkins_pipeline">7.2. Jenkins Pipeline</a></li>
+<li><a href="#_build_artifacts">7.1. Build Artifacts</a></li>
+<li><a href="#_configuration_2">7.2. Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_reference_card">8. Reference Card</a>
+<li><a href="#_jenkins">8. Jenkins</a>
 <ul class="sectlevel2">
-<li><a href="#_installation_2">8.1. Installation</a></li>
-<li><a href="#_configuration_3">8.2. Configuration</a></li>
-<li><a href="#_strategies_2">8.3. Strategies</a></li>
-<li><a href="#_getting_insights_of_the_execution">8.4. Getting insights of the execution</a></li>
-<li><a href="#_configuration_file_2">8.5. Configuration File</a></li>
-<li><a href="#_test_bed">8.6. Test Bed</a></li>
+<li><a href="#_jenkins_freestyle_project">8.1. Jenkins Freestyle project</a></li>
+<li><a href="#_jenkins_pipeline">8.2. Jenkins Pipeline</a></li>
+</ul>
+</li>
+<li><a href="#_reference_card">9. Reference Card</a>
+<ul class="sectlevel2">
+<li><a href="#_installation_2">9.1. Installation</a></li>
+<li><a href="#_configuration_3">9.2. Configuration</a></li>
+<li><a href="#_strategies_2">9.3. Strategies</a></li>
+<li><a href="#_getting_insights_of_the_execution">9.4. Getting insights of the execution</a></li>
+<li><a href="#_configuration_file_2">9.5. Configuration File</a></li>
+<li><a href="#_test_bed">9.6. Test Bed</a></li>
 </ul>
 </li>
 </ul>
@@ -1078,7 +1086,10 @@ All reports from previous local build are automatically copied by the maven exte
     <span class="key">range</span>:
       <span class="key">head</span>: <span class="string"><span class="content">HEAD </span></span><i class="conum" data-value="7"></i><b>(7)</b>
       <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span><i class="conum" data-value="8"></i><b>(8)</b>
-<span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span> <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+<span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="9"></i><b>(9)</b>
+<span class="key">customStrategies</span>:  <i class="conum" data-value="10"></i><b>(10)</b>
+    - <span class="string"><span class="content">smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0</span></span>
+    - <span class="string"><span class="content">smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1125,6 +1136,10 @@ All reports from previous local build are automatically copied by the maven exte
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>This defines if smart testing should auto correct misspelled strategies.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>This defines the pair key/value of custom strategies as list.</td>
 </tr>
 </table>
 </div>
@@ -1228,6 +1243,14 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>This configures Smart Testing to auto correct misspelled strategies to the closest one. For example in case of user set strategies to <code>nwe</code>, if <code>autocorrect</code> is enabled then it is automatically changed to <code>new</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>customStrategies</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A list of custom strategies in the form of key/value. It is important to notice that the <em>key</em> part must be prefixed with <code>smart.testing.strategy.</code>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1528,10 +1551,247 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reports"><a class="anchor" href="#_reports"></a>6. Reports</h2>
+<h2 id="_registering_custom_strategies"><a class="anchor" href="#_registering_custom_strategies"></a>6. Registering Custom Strategies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By default <strong>Smart Testing</strong> comes with a set of strategies such as <code>new</code>, <code>changed</code>, <code>affected</code> or <code>failed</code>, but you can implement your own strategies and registering them.</p>
+</div>
+<div class="paragraph">
+<p>To do it you just need to follow next four steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Implement <code>org.arquillian.smart.testing.spi.TestExecutionPlannerFactory</code> Java SPI and registering as such.</p>
+</li>
+<li>
+<p>Implement <code>org.arquillian.smart.testing.spi.TestExecutionPlanner</code> interface.</p>
+</li>
+<li>
+<p>Register strategy on Smart Testing configuration file (optional).</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_implementing_testexecutionplannerfactory"><a class="anchor" href="#_implementing_testexecutionplannerfactory"></a>6.1. Implementing TestExecutionPlannerFactory</h3>
+<div class="paragraph">
+<p><code>TestExecutionPlannerFactory</code> is a Java SPI interface that manages the creation of the strategy.
+You need to implement three simple methods, two related with the name of the strategy and one that generates the strategy class.</p>
+</div>
+<div class="paragraph">
+<p>As an example from <code>failed</code> strategy:</p>
+</div>
+<div class="listingblock">
+<div class="title">FailedTestsDetectorFactory.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.io.File</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.api.TestVerifier</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.configuration.Configuration</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlanner</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlannerFactory</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">FailedTestsDetectorFactory</span> <span class="directive">implements</span> TestExecutionPlannerFactory {
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> alias() {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
+    } <i class="conum" data-value="1"></i><b>(1)</b>
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="type">boolean</span> isFor(<span class="predefined-type">String</span> name) {
+        <span class="keyword">return</span> alias().equalsIgnoreCase(name);
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> TestExecutionPlanner create(<span class="predefined-type">File</span> projectDir, TestVerifier verifier, <span class="predefined-type">Configuration</span> configuration) {
+        <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector();
+    } <i class="conum" data-value="2"></i><b>(2)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Returns the alias of the strategy</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Returns an instance of <code>TestExecutionPlanner</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Of course as any other Java SPI, you need to register it in <code>META-INF/services</code>.</p>
+</div>
+<div class="listingblock">
+<div class="title">META-INF/services/org.arquillian.smart.testing.spi.TestExecutionPlannerFactory</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">org.arquillian.smart.testing.strategies.failed.FailedTestsDetectorFactory</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implementing_testexecutionplanner"><a class="anchor" href="#_implementing_testexecutionplanner"></a>6.2. Implementing TestExecutionPlanner</h3>
+<div class="paragraph">
+<p><code>TestExecutionPlanner</code> is the strategy implementation of the strategy.
+The important method there is <code>getTests()</code> which returns a collection of the tests that must be executed.
+You also need to set there the strategy name.</p>
+</div>
+<div class="paragraph">
+<p>For example, failed strategy is implemented as:</p>
+</div>
+<div class="listingblock">
+<div class="title">FailedTestsDetector.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.util.Collection</span>;
+<span class="keyword">import</span> <span class="include">java.util.LinkedHashSet</span>;
+<span class="keyword">import</span> <span class="include">java.util.stream.Collectors</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.TestSelection</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.JavaSPILoader</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlanner</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">FailedTestsDetector</span> <span class="directive">implements</span> TestExecutionPlanner {
+
+    <span class="directive">private</span> <span class="directive">final</span> TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader());
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; getTests() { <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="keyword">return</span> testReportLoader.loadTestResults()
+            .stream()
+            .map(result -&gt; <span class="keyword">new</span> TestSelection(result, getName())) <i class="conum" data-value="2"></i><b>(2)</b>
+            .collect(Collectors.toCollection(<span class="predefined-type">LinkedHashSet</span>::<span class="keyword">new</span>));
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
+        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Method that returns list of tests to execute</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>TestSelection</code> requires fully qualified test class name and the strategy where is calculated</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_changestorage_changeresolver_and_testresultparser"><a class="anchor" href="#_changestorage_changeresolver_and_testresultparser"></a>6.2.1. ChangeStorage, ChangeResolver and TestResultParser</h4>
+<div class="paragraph">
+<p><strong>Smart Testing</strong> provides some services to get some common operations.
+These services can be used to get information from current project.</p>
+</div>
+<div class="sect4">
+<h5 id="_changestorage"><a class="anchor" href="#_changestorage"></a>ChangeStorage</h5>
+<div class="paragraph">
+<p>Change Storage service is used to get the changes (from SCM perspective) that has occurred in current project.
+This service does not read changes from SCM directly but from a file that has precalculated all changes at the beginning of the Smart Testing process.</p>
+</div>
+<div class="paragraph">
+<p>Notice that in this way your strategy is more performant since, code does not need to calculate changes for each strategy.</p>
+</div>
+<div class="paragraph">
+<p>To get it you just need to call <code>new JavaSPILoader().onlyOne(ChangeStorage.class).get()</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_changeresolver"><a class="anchor" href="#_changeresolver"></a>ChangeResolver</h5>
+<div class="paragraph">
+<p>Change Resolver service is like <a href="#_changestorage">ChangeStorage</a> but in this case the changes are calculated directly from SCM.</p>
+</div>
+<div class="paragraph">
+<p>To get it you just need to call <code>new JavaSPILoader().onlyOne(ChangeResolver.class).get()</code>.</p>
+</div>
+<div class="paragraph">
+<p>This service is usually not used directly in strategies since we recommend using <a href="#_changestorage">ChangeStorage</a> service for this purposes and just fall back to this service in case of error.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">final</span> <span class="predefined-type">Collection</span>&lt;Change&gt; files = changeStorage.read(projectDir) <i class="conum" data-value="1"></i><b>(1)</b>
+    .orElseGet(() -&gt; {
+        logger.warn(<span class="string"><span class="delimiter">&quot;</span><span class="content">No cached changes detected... using direct resolution</span><span class="delimiter">&quot;</span></span>);
+        <span class="keyword">return</span> changeResolver.diff(projectDir, configuration, getName()); <i class="conum" data-value="2"></i><b>(2)</b>
+    });</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Changes are read from precalculated file</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Fallback to calculate directly from SCM</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_testresultparser"><a class="anchor" href="#_testresultparser"></a>TestResultParser</h5>
+<div class="paragraph">
+<p>Test Result Parser is a service that reads previous test results.
+Currently it behaves like a parser for <code>surefire</code> report file.</p>
+</div>
+<div class="paragraph">
+<p>To use it you just need to call <code>new JavaSPILoader().onlyOne(TestResultParser.class).get()</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registering_strategy"><a class="anchor" href="#_registering_strategy"></a>6.3. Registering strategy</h3>
+<div class="paragraph">
+<p>Finally you need to register strategy in Smart Testing configuration file where you set the strategy name as key and the Maven coordinates as value.
+This file is required so <strong>Smart Testing</strong> can automatically register the artifacts in build tool script.</p>
+</div>
+<div class="paragraph">
+<p>As an example of registering previous strategy:</p>
+</div>
+<div class="listingblock">
+<div class="title">smart-testing.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">customStrategies</span>:
+    - <span class="string"><span class="content">smart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It is important to notice that the <em>key</em> part must be prefixed with <code>smart.testing.strategy.</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alternative_approach"><a class="anchor" href="#_alternative_approach"></a>6.4. Alternative Approach</h3>
+<div class="paragraph">
+<p>You can still use another approach to register the pair <em>strategy.name</em>=<em>Maven:coordinates</em> without configuring them in Smart Testing configuration file and it is using a System property.</p>
+</div>
+<div class="paragraph">
+<p>For example <a href="#custom-strategy">previous example</a> would be equivalent as running <strong>Smart Testing</strong> with next System property:</p>
+</div>
+<div class="paragraph">
+<p><code>-Dsmart.testing.strategy.failed=org.arquillian.smart.testing:strategy-failed:1.0.0</code></p>
+</div>
+<div class="paragraph">
+<p>Notice again that it must be prefixed with <code>smart.testing.strategy.</code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reports"><a class="anchor" href="#_reports"></a>7. Reports</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>6.1. Build Artifacts</h3>
+<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>7.1. Build Artifacts</h3>
 <div class="paragraph">
 <p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
 most efficient way to get a quick answer to:</p>
@@ -1582,7 +1842,7 @@ most efficient way to get a quick answer to:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>6.2. Configuration</h3>
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>7.2. Configuration</h3>
 <div class="paragraph">
 <p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.
 If you use the property, then you get the generated reports in <code>target/smart-testing/reporting</code> for every module separately.</p>
@@ -1594,7 +1854,7 @@ If you use the property, then you get the generated reports in <code>target/smar
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>7. Jenkins</h2>
+<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>8. Jenkins</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>So far you&#8217;ve seen how to use Smart Testing from developer perspective (running on local machine).
@@ -1610,7 +1870,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p>Let&#8217;s see how to configure Smart Testing in Jenkins.</p>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>7.1. Jenkins Freestyle project</h3>
+<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>8.1. Jenkins Freestyle project</h3>
 <div class="paragraph">
 <p>Freestyle project is the most basic way of creating builds with Jenkins.</p>
 </div>
@@ -1643,7 +1903,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>7.2. Jenkins Pipeline</h3>
+<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>8.2. Jenkins Pipeline</h3>
 <div class="paragraph">
 <p>Jenkins Pipeline is a group of plugins which support implementing and integrating continuous delivery pipelines into Jenkins.</p>
 </div>
@@ -1695,10 +1955,10 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>8. Reference Card</h2>
+<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>9. Reference Card</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>8.1. Installation</h3>
+<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>9.1. Installation</h3>
 <div id="extension" class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
@@ -1721,7 +1981,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>8.2. Configuration</h3>
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>9.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1800,12 +2060,12 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>8.3. Strategies</h3>
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>9.3. Strategies</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
 <col style="width: 16.6666%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
 <col style="width: 16.6668%;">
 </colgroup>
 <thead>
@@ -1895,11 +2155,21 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p><code>affected</code></p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.strategy.&lt;strategyName&gt;</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Register custom strategies implementations</p></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Value is the Maven coordinates of the custom strategy</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>8.4. Getting insights of the execution</h3>
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>9.4. Getting insights of the execution</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 20%;">
@@ -1929,7 +2199,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>8.5. Configuration File</h3>
+<h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>9.5. Configuration File</h3>
 <div id="configuration-file" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering</span></span>
@@ -1969,7 +2239,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </div>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>8.6. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>9.6. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -2030,7 +2300,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>8.6.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>9.6.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -2218,7 +2488,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>8.6.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>9.6.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -2318,7 +2588,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-25 09:05:22 UTC
+Last updated 2017-10-25 15:53:54 UTC
 </div>
 </div>
 <script>
