@@ -108,23 +108,6 @@ public class SurefireApiDependencyTest {
 
     }
 
-    @Test
-    public void should_fail_when_strategy_is_repeated_by_autocorrect()
-        throws Exception {
-        // given
-        Model model = prepareModelWithSurefirePlugin("2.20");
-        final Configuration conf = configureWithAutocorrect("nwe", "new");
-        final DependencyResolver dependencyResolver = new DependencyResolver(conf);
-        model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
-
-        // when
-        final Throwable exception = catchThrowable(() -> dependencyResolver.addRequiredDependencies(model));
-
-        // then
-        assertThat(exception).isInstanceOf(IllegalStateException.class);
-
-    }
-
     private Configuration configureWithAutocorrect(String... strategies) {
         final Configuration conf = Configuration.load();
         conf.setAutocorrect(true);

@@ -54,7 +54,7 @@ public class NewTestsDetector implements TestExecutionPlanner {
         final Collection<Change> changes = changeStorage.read(projectDir)
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff(projectDir, configuration);
+                return changeResolver.diff(projectDir, configuration, getName());
         });
 
         return changes.stream()

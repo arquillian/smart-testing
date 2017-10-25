@@ -72,7 +72,7 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
         final Collection<Change> files = changeStorage.read(projectDir)
             .orElseGet(() -> {
                 logger.warn("No cached changes detected... using direct resolution");
-                return changeResolver.diff(projectDir, configuration);
+                return changeResolver.diff(projectDir, configuration, getName());
             });
 
         logger.debug("Time To Build Affected Dependencies Graph %d ms", (System.currentTimeMillis() - beforeDetection));
