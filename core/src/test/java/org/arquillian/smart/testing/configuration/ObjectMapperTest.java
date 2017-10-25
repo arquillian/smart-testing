@@ -9,15 +9,23 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEnum.FOO;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class ObjectMapperTest {
+
+    @Rule
+    public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     private Map<String, Object> map;
 
@@ -110,6 +118,43 @@ public class ObjectMapperTest {
     }
 
     @Test
+    public void should_read_multiple_system_properties_expression() {
+        // given
+        System.setProperty("my.property.x", "smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
+    }
+
+    @Test
+    public void should_set_multiple_property_to_object() {
+        // given
+        map.put("multiple", "my.property.x=smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
+    }
+
+    @Test
+    public void should_override_multiple_property_with_same_key_by_system_property_value() {
+        // given
+        map.put("multiple", "my.property.x=smart");
+        System.setProperty("my.property.x", "new-smart");
+
+        // when
+        final TestObject testObject = mapToObject(TestObject.class, map);
+
+        // then
+        assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=new-smart"});
+    }
+
+    @Test
     public void should_set_nested_object_to_object() {
         // given
         Map<String, Object> innerObjectMap = new HashMap<>();
@@ -187,6 +232,7 @@ public class ObjectMapperTest {
         private List<String> l;
         private Map<String, String> m;
         private TestEnum e;
+        private String[] multiple;
 
         private DummyObject dummyObject;
 
@@ -226,6 +272,10 @@ public class ObjectMapperTest {
             this.dummyObject = dummyObject;
         }
 
+        public void setMultiple(String[] multiple) {
+            this.multiple = multiple;
+        }
+
         @Override
         public List<ConfigurationItem> registerConfigurationItems() {
             List<ConfigurationItem> configItems = new ArrayList<>();
@@ -237,6 +287,7 @@ public class ObjectMapperTest {
             configItems.add(new ConfigurationItem("m", null, Collections.EMPTY_MAP));
             configItems.add(new ConfigurationItem("as", null, new String[0]));
             configItems.add(new ConfigurationItem("e", null, TestEnum.FOO));
+            configItems.add(new ConfigurationItem("multiple", "my.property.*"));
 
             final DummyObject dummyObject = new DummyObject();
             dummyObject.setB(false);

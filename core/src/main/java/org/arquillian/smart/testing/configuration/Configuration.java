@@ -30,6 +30,8 @@ public class Configuration implements ConfigurationSection {
 
     public static final String SMART_TESTING = "smart.testing";
     public static final String SMART_TESTING_MODE = "smart.testing.mode";
+    public static final String SMART_TESTING_CUSTOM_STRATEGIES = "smart.testing.strategy";
+    public static final String SMART_TESTING_CUSTOM_STRATEGIES_PATTERN = SMART_TESTING_CUSTOM_STRATEGIES + ".*";
     public static final String SMART_TESTING_APPLY_TO = "smart.testing.apply.to";
     public static final String SMART_TESTING_VERSION = "smart.testing.version";
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
@@ -40,6 +42,7 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
 
     private String[] strategies = new String[0];
+    private String[] customStrategies = new String[0];
     private RunMode mode;
     private String applyTo;
 
@@ -114,6 +117,14 @@ public class Configuration implements ConfigurationSection {
         this.autocorrect = autocorrect;
     }
 
+    public void setCustomStrategies(String[] customStrategies) {
+        this.customStrategies = customStrategies;
+    }
+
+    public String[] getCustomStrategies() {
+        return customStrategies;
+    }
+
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
@@ -122,6 +133,7 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
         configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
+        configItems.add(new ConfigurationItem("customStrategies", SMART_TESTING_CUSTOM_STRATEGIES_PATTERN));
         return configItems;
     }
 

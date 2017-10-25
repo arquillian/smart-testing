@@ -7,6 +7,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,12 +70,7 @@ class ObjectMapper {
             Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
 
-            if (configItem.getSystemProperty() != null) {
-                mappedValue = System.getProperty(configItem.getSystemProperty());
-            }
-            if (mappedValue == null) {
-                mappedValue = configFileValue;
-            }
+            mappedValue = getUserSetProperty(method, configItem, configFileValue);
             if (mappedValue == null && configItem.getDefaultValue() != null) {
                 mappedValue = configItem.getDefaultValue();
             }
@@ -83,6 +79,71 @@ class ObjectMapper {
             }
         }
         return null;
+    }
+
+    private static Object getUserSetProperty(Method method, ConfigurationItem configItem, Object configFileValue) {
+        if (configItem.getSystemProperty() != null) {
+            if (!configItem.getSystemProperty().endsWith(".*")) {
+                String sysPropertyValue = System.getProperty(configItem.getSystemProperty());
+                return sysPropertyValue != null ? sysPropertyValue : configFileValue;
+            } else {
+                return createMultipleOccurrenceProperty(method, configItem, configFileValue);
+            }
+        }
+        return configFileValue;
+    }
+
+    private static List<Object> createMultipleOccurrenceProperty(Method method, ConfigurationItem configItem,
+        Object configFileValue) {
+
+        String sysPropKey = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
+        Map<Object, Object> systemProperties =
+            System.getProperties().entrySet()
+                .stream()
+                .filter(prop -> prop.getKey().toString().startsWith(sysPropKey))
+                .collect(Collectors.toMap(prop -> prop.getKey(), prop -> prop.getValue()));
+
+        List<Object> multipleValue = new ArrayList<>();
+        if (configFileValue != null) {
+            multipleValue.addAll(getValuesFromFile(method, sysPropKey, configFileValue, systemProperties));
+        }
+
+        multipleValue.addAll(
+            systemProperties.entrySet()
+                .stream()
+                .map(e -> e.getKey().toString() + "=" + e.getValue().toString())
+                .collect(Collectors.toList()));
+
+        if (!multipleValue.isEmpty()) {
+            return multipleValue;
+        }
+        return null;
+    }
+
+    private static List<Object> getValuesFromFile(Method method, String sysPropKey, Object configFileValue,
+        Map<Object, Object> systemProperties) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        ArrayList<Object> fromFileParam = new ArrayList<>();
+        if (parameterType.isAssignableFrom(List.class)) {
+            fromFileParam.addAll((Collection<?>) handleList(method, configFileValue));
+        } else if (parameterType.isArray()) {
+            fromFileParam.addAll(Arrays.asList(handleArray(parameterType.getComponentType(), configFileValue)));
+        } else {
+            fromFileParam.add(configFileValue);
+        }
+        return fromFileParam
+            .stream()
+            .filter(param -> !isSetBySysProperty(param, sysPropKey, systemProperties))
+            .collect(Collectors.toList());
+    }
+
+    private static boolean isSetBySysProperty(Object param, String sysPropKey, Map<Object, Object> systemProperties) {
+        String[] paramSplit = String.valueOf(param).split("=");
+        if (paramSplit.length == 2) {
+            String key = paramSplit[0];
+            return systemProperties.containsKey(key) || systemProperties.containsKey(String.join(".", sysPropKey, key));
+        }
+        return false;
     }
 
     private static Object convert(Method method, Object mappedValue) {

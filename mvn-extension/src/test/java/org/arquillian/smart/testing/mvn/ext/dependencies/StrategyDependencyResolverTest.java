@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
-import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
@@ -56,46 +55,56 @@ public class StrategyDependencyResolverTest {
     }
 
     @Test
-    public void should_overwrite_default_versions_when_property_file_is_used() throws Exception {
+    public void should_register_custom_strategies_if_specified_as_array() {
         // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
-            get("src/test/resources", "strategies-test.properties"));
+        String[] customStrategies = new String[] { "smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0" };
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(customStrategies);
 
         // when
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
 
         // then
-        assertThat(dependencies.values()).hasSize(4)
+        assertThat(dependencies.values()).hasSize(5)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
-            .contains(
-                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-affected:0.0.12-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
+            .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-cool:1.0.0");
     }
 
     @Test
-    public void should_overwrite_default_properties_by_those_specified_in_the_file_and_then_those_in_system_properties()
-        throws Exception {
+    public void should_register_last_custom_strategy_with_same_name() {
         // given
-        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(
-            get("src/test/resources", "strategies-test.properties"));
-
-        System.setProperty("smart.testing.strategy.affected",
-            "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT");
+        String[] customStrategies =
+            new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
+                "smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.1"};
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(customStrategies);
 
         // when
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
 
         // then
-        assertThat(dependencies.values()).hasSize(4)
+        assertThat(dependencies.values()).hasSize(5)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
-            .contains(
-                "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
-                "org.arquillian.smart.testing:strategy-changed:0.0.11-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-affected:0.0.2-SNAPSHOT",
-                "org.arquillian.smart.testing:strategy-failed:0.0.13-SNAPSHOT");
+            .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-cool:1.0.1");
+    }
+
+    @Test
+    public void should_register_custom_strategies_if_specified_as_array_with_dots_as_name() {
+        // given
+        String[] customStrategies = new String[] { "smart.testing.strategy.my.cool=org.arquillian.smart.testing:strategy-cool:1.0.0" };
+        final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(customStrategies);
+
+        // when
+        Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
+
+        // then
+        assertThat(dependencies.keySet())
+            .containsExactlyInAnyOrder("affected", "changed", "my.cool", "new", "failed");
     }
 }

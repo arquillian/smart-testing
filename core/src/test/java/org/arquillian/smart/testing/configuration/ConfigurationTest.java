@@ -39,6 +39,9 @@ public class ConfigurationTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setAutocorrect(true);
+        expectedConfiguration.setCustomStrategies(
+            new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
+                "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});
 
         // when
         final Configuration actualConfiguration =
