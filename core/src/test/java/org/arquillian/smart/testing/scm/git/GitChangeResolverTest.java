@@ -89,7 +89,8 @@ public class GitChangeResolverTest {
 
         try (Git git = Git.init()
             .setDirectory(newGitFolder)
-            .call()) {}
+            .call()) {
+        }
 
         this.gitChangeResolver = new GitChangeResolver();
 
