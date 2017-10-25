@@ -1,15 +1,16 @@
 package org.arquillian.smart.testing.configuration;
 
-import java.nio.file.Paths;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
+import org.junit.experimental.categories.Category;
 
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
+import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsPath;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
@@ -18,7 +19,7 @@ import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEA
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_TAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@NotThreadSafe
+@Category(NotThreadSafe.class)
 public class ConfigurationUsingPropertyTest {
 
     @Rule
@@ -31,7 +32,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-with-lastChanges.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -42,7 +43,7 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_for_scmLastChanges_from_config_file() {
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing-with-lastChanges.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -53,7 +54,7 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_for_rangeHead_and_rangeTail_from_config_file() {
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -68,7 +69,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -106,7 +107,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(Paths.get("src/test/resources/configuration/smart-testing.yml"));
+            Configuration.load(getResourceAsPath("configuration/smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
