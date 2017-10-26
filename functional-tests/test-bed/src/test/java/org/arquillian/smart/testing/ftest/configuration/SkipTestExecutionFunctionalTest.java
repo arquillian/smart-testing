@@ -109,28 +109,6 @@ public class SkipTestExecutionFunctionalTest {
     }
 
     @Test
-    public void should_disable_smart_testing_and_execute_no_tests_when_skip_test_is_set_as_default_in_pom() throws Exception {
-        // given
-        final Project project = testBed.getProject();
-
-        project
-            .applyAsCommits("Configures skipTests as default property in pom");
-
-        project.configureSmartTesting()
-                .executionOrder(AFFECTED)
-                .inMode(ORDERING)
-            .enable();
-
-        // when
-        final TestResults actualTestResults = project.build(CORE_MODULES).run();
-
-        // then
-        String capturedMavenLog = project.getMavenLog();
-        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
-        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
-    }
-
-    @Test
     public void should_disable_smart_testing_and_execute_no_tests_when_skip_is_set_in_plugin_configuration_section_of_pom() throws Exception {
         // given
         final Project project = testBed.getProject();
