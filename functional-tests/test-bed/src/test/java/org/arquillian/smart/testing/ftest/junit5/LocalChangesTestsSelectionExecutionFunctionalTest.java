@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.ftest.junit5;
 
 import java.util.Collection;
-import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
