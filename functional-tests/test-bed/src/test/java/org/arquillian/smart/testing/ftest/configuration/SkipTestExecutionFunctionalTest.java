@@ -122,11 +122,17 @@ public class SkipTestExecutionFunctionalTest {
             .enable();
 
         // when
-        final TestResults actualTestResults = project.build(CORE_MODULES).run();
+        final TestResults actualTestResults = project
+            .build(CORE_MODULES)
+                .options()
+                    .withDebugOutput()
+                    .logBuildOutput(false)
+                .configure()
+            .run();
 
         // then
         String capturedMavenLog = project.getMavenLog();
-        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_DISABLED);
+        softly.assertThat(capturedMavenLog).contains("[DEBUG] Smart Testing Extension - Disabling Smart Testing ");
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
     }
 
@@ -153,12 +159,34 @@ public class SkipTestExecutionFunctionalTest {
     }
 
     @Test
+    public void should_execute_only_unit_tests_when_skipITs_is_set_as_custom_property_in_pom() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project
+            .applyAsCommits("Configure skipITs as custom default property in pom");
+
+        project.configureSmartTesting()
+                .executionOrder(AFFECTED)
+                .inMode(ORDERING)
+            .enable();
+
+        // when
+        final TestResults actualTestResults = project.build(CORE_MODULES).run("clean", "verify");
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(20);
+    }
+
+    @Test
     public void should_be_able_to_enable_tests_from_property_when_set_as_default_property_in_pom() throws Exception {
         // given
         final Project project = testBed.getProject();
 
         project
-            .applyAsCommits("Configure skipITs as default property in pom");
+            .applyAsCommits("Configure skipITs as custom default property in pom");
 
         project.configureSmartTesting()
                 .executionOrder(AFFECTED)
@@ -169,7 +197,7 @@ public class SkipTestExecutionFunctionalTest {
         final TestResults actualTestResults = project
             .build(CORE_MODULES)
                 .options()
-                    .withSystemProperties("skipITs", "false")
+                    .withSystemProperties("skip.integration.tests", "false")
                 .configure()
             .run("clean", "verify");
 
