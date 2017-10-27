@@ -19,10 +19,6 @@ abstract class JUnitProviderInfo implements ProviderInfo {
         return SurefireDependencyResolver.isWithinVersionSpec(junitDepVersion, "[4.0,5.0.0)");
     }
 
-    boolean isAnyJunit5() {
-        return SurefireDependencyResolver.isWithinVersionSpec(junitDepVersion, "[5.0.0,)");
-    }
-
     ArtifactVersion getJunitDepVersion() {
         return junitDepVersion;
     }

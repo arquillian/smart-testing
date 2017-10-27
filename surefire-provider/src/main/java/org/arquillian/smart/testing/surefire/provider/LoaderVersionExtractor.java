@@ -20,13 +20,15 @@ import static java.lang.Thread.currentThread;
  */
 public class LoaderVersionExtractor {
 
+    public static final String ARTIFACT_ID_MAVEN_FAILSAFE_PLUGIN = "maven-failsafe-plugin";
+    public static final String ARTIFACT_ID_MAVEN_SUREFIRE_PLUGIN = "maven-surefire-plugin";
+
     public static final MavenLibrary LIBRARY_SUREFIRE_API =
         new MavenLibrary("org.apache.maven.surefire", "surefire-api");
-    public static final MavenLibrary LIBRARY_SUREFIRE_JUNIT_5 =
-        new MavenLibrary("org.junit.platform", "junit-platform-surefire-provider");
+    public static final MavenLibrary LIBRARY_FAILSAFE_PLUGIN =
+        new MavenLibrary("org.apache.maven.plugins", ARTIFACT_ID_MAVEN_FAILSAFE_PLUGIN);
     public static final MavenLibrary LIBRARY_JUNIT = new MavenLibrary("junit", "junit");
     public static final MavenLibrary LIBRARY_TEST_NG = new MavenLibrary("org.testng", "testng");
-    public static final MavenLibrary LIBRARY_JUNIT_5 = new MavenLibrary("org.junit.jupiter", "junit-jupiter-api");
     private static final Logger logger = Log.getLogger();
     private static final Map<ClassLoader, Map<MavenLibrary, String>> loaderWithLibraryVersions = new HashMap<>();
     private static final List<MavenLibrary> initLibraries = new ArrayList<>();
@@ -35,29 +37,26 @@ public class LoaderVersionExtractor {
         initLibraries.add(LIBRARY_SUREFIRE_API);
         initLibraries.add(LIBRARY_JUNIT);
         initLibraries.add(LIBRARY_TEST_NG);
-        initLibraries.add(LIBRARY_JUNIT_5);
-        initLibraries.add(LIBRARY_SUREFIRE_JUNIT_5);
+        initLibraries.add(LIBRARY_FAILSAFE_PLUGIN);
     }
 
     public static String getSurefireApiVersion() {
         return getVersionFromClassLoader(LIBRARY_SUREFIRE_API, currentThread().getContextClassLoader());
     }
 
+    public static String getFailsafePluginVersion() {
+        return getVersionFromClassLoader(LIBRARY_FAILSAFE_PLUGIN, currentThread().getContextClassLoader());
+    }
+
     public static String getJunitVersion() {
         return getVersionFromClassLoader(LIBRARY_JUNIT, currentThread().getContextClassLoader());
-    }
-
-    public static String getJUnit5Version() {
-        return getVersionFromClassLoader(LIBRARY_JUNIT_5, currentThread().getContextClassLoader());
-    }
-
-    public static String getSurefireJUnit5Version() {
-        return getVersionFromClassLoader(LIBRARY_SUREFIRE_JUNIT_5, currentThread().getContextClassLoader());
     }
 
     public static String getTestNgVersion() {
         return getVersionFromClassLoader(LIBRARY_TEST_NG, currentThread().getContextClassLoader());
     }
+
+
 
     /**
      * In the given classloader finds manifest file on a path matching the given groupId and artifactId;

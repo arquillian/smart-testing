@@ -44,8 +44,7 @@ class MavenProjectConfigurator {
 
             dependencyResolver.addRequiredDependencies(model);
 
-
-            final LocalStorage localStorage = new LocalStorage(Paths.get("").toFile());
+            final LocalStorage localStorage = new LocalStorage(model.getProjectDirectory());
             effectiveTestRunnerPluginConfigurations
                 .forEach(plugin -> {
                     dependencyResolver.addAsPluginDependency(plugin);
@@ -55,7 +54,7 @@ class MavenProjectConfigurator {
                         try {
                             localStorage.duringExecution()
                                 .temporary()
-                                .file("junit5PlatformVersion")
+                                .file(plugin.getArtifactId() + "_" + LocalStorage.JUNIT_5_PLATFORM_VERSION)
                                 .create(d.getVersion().getBytes());
                             plugin.removeDependency(dependency.get());
                         } catch (IOException e) {

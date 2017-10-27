@@ -37,9 +37,10 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     public SmartTestingSurefireProvider(ProviderParameters bootParams) {
         this.bootParams = bootParams;
         this.paramParser = new ProviderParametersParser(this.bootParams);
-        this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser);
+        final File projectDir = getProjectDir();
+        this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser, projectDir);
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.configuration = Configuration.loadPrecalculated(getProjectDir());
+        this.configuration = Configuration.loadPrecalculated(projectDir);
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(getConsoleLogger(), isAnyDebugEnabled()));
     }
 

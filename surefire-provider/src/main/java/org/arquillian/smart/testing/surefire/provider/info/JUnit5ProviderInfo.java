@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,9 +12,9 @@ public class JUnit5ProviderInfo extends JUnitProviderInfo {
 
     private String junit5SurefirePlatformVersion;
 
-    public JUnit5ProviderInfo() {
-        super(LoaderVersionExtractor.getJUnit5Version());
-        junit5SurefirePlatformVersion = retrieveJunit5SurefirePlatformVersion();
+    public JUnit5ProviderInfo(File projectDir) {
+        super(null);
+        junit5SurefirePlatformVersion = retrieveJunit5SurefirePlatformVersion(projectDir, LoaderVersionExtractor.getFailsafePluginVersion());
     }
 
     public String getProviderClassName() {
@@ -21,18 +22,21 @@ public class JUnit5ProviderInfo extends JUnitProviderInfo {
     }
 
     public boolean isApplicable() {
-        return getJunitDepVersion() != null && isAnyJunit5() && junit5SurefirePlatformVersion != null;
+        return junit5SurefirePlatformVersion != null;
     }
 
     public String getDepCoordinates() {
         return "org.junit.platform:junit-platform-surefire-provider:" + junit5SurefirePlatformVersion;
     }
 
-    private String retrieveJunit5SurefirePlatformVersion() {
+    String retrieveJunit5SurefirePlatformVersion(File projectDir, String failsafePluginVersion) {
 
-        final Path junit5PlatformVersionFile = new LocalStorage(Paths.get("").toFile()).duringExecution()
+        final boolean isFailsafePlugin = failsafePluginVersion != null;
+        final String prefix = isFailsafePlugin ? LoaderVersionExtractor.ARTIFACT_ID_MAVEN_FAILSAFE_PLUGIN : LoaderVersionExtractor.ARTIFACT_ID_MAVEN_SUREFIRE_PLUGIN;
+
+        final Path junit5PlatformVersionFile = new LocalStorage(projectDir).duringExecution()
             .temporary()
-            .file("junit5PlatformVersion")
+            .file(prefix + "_" + LocalStorage.JUNIT_5_PLATFORM_VERSION)
             .getPath();
 
         if (Files.exists(junit5PlatformVersionFile)) {
