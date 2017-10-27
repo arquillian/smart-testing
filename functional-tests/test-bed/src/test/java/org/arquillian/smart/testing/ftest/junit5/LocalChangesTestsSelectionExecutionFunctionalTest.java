@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LocalChangesTestsSelectionExecutionFunctionalTest {
 
     @ClassRule
-    public static final GitClone GIT_CLONE = new GitClone("https://github.com/lordofthejars/junit5-demo.git");
+    public static final GitClone GIT_CLONE = new GitClone("https://github.com/arquillian/smart-testing-junit5-demo.git");
 
     @Rule
     public final TestBed testBed = new TestBed(GIT_CLONE);
