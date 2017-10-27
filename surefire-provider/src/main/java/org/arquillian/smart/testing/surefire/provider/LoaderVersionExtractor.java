@@ -56,8 +56,6 @@ public class LoaderVersionExtractor {
         return getVersionFromClassLoader(LIBRARY_TEST_NG, currentThread().getContextClassLoader());
     }
 
-
-
     /**
      * In the given classloader finds manifest file on a path matching the given groupId and artifactId;
      * when the file is matched, then it retrieves and returns a version.
