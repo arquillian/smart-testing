@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
@@ -22,6 +24,7 @@ import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
+import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
@@ -58,7 +61,12 @@ public class Configuration implements ConfigurationSection {
     private Report report;
     private Scm scm;
 
-    private List<StrategyConfiguration> strategiesConfiguration;
+    @SuppressWarnings("unused")
+    public List<StrategyConfiguration> getStrategiesConfiguration() {
+        return strategiesConfiguration;
+    }
+
+    private List<StrategyConfiguration> strategiesConfiguration = new ArrayList<>();
 
     public String[] getStrategies() {
         return strategies;
@@ -132,12 +140,12 @@ public class Configuration implements ConfigurationSection {
         return customStrategies;
     }
 
-    public List<StrategyConfiguration> getStrategiesConfiguration() {
-        return strategiesConfiguration;
-    }
-
     public void setStrategiesConfiguration(List<StrategyConfiguration> strategiesConfiguration) {
         this.strategiesConfiguration = strategiesConfiguration;
+    }
+
+    public void setStrategiesConfiguration() {
+        this.strategiesConfiguration = loadStrategyConfigurations();
     }
 
     public List<ConfigurationItem> registerConfigurationItems() {
@@ -152,20 +160,19 @@ public class Configuration implements ConfigurationSection {
         return configItems;
     }
 
-    public List<StrategyConfiguration> strategyConfigurations(String[] strategies) {
+    public List<StrategyConfiguration> loadStrategyConfigurations() {
         List<StrategyConfiguration> convertedList = new ArrayList<>();
 
-        new JavaSPILoader().all(StrategyConfiguration.class,
-            strategyConfiguration -> Arrays.asList(strategies).contains(strategyConfiguration.name()))
+        StreamSupport.stream(new JavaSPILoader().all(TestExecutionPlannerFactory.class).spliterator(), false)
+            .filter(
+                testExecutionPlannerFactory -> Arrays.asList(strategies).contains(testExecutionPlannerFactory.alias()))
+            .map(TestExecutionPlannerFactory::strategyConfiguration)
+            .filter(Objects::nonNull)
             .forEach(strategyConfiguration -> {
-                final Class<StrategyConfiguration> aClass1 =
+                final Class<StrategyConfiguration> strategyConfigurationClass =
                     (Class<StrategyConfiguration>) strategyConfiguration.getClass();
-                convertedList.add(mapToObject(aClass1, new HashMap<>(0)));
+                convertedList.add(mapToObject(strategyConfigurationClass, new HashMap<>(0)));
             });
-
-        if (convertedList.isEmpty()) {
-            return null;
-        }
 
         return convertedList;
     }
@@ -285,5 +292,12 @@ public class Configuration implements ConfigurationSection {
 
     public boolean isApplyToDefined() {
         return this.applyTo != null;
+    }
+
+    public StrategyConfiguration getStrategyConfiguration(String strategyName) {
+        return this.strategiesConfiguration.stream()
+            .filter(strategyConfiguration -> strategyName.equals(strategyConfiguration.name()))
+            .findFirst()
+            .orElse(null);
     }
 }

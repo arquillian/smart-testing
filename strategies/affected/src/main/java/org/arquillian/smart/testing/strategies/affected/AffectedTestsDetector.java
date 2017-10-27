@@ -6,12 +6,12 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.spi.ChangeResolver;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
@@ -96,6 +96,6 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     }
 
     private ClassDependenciesGraph configureTestClassDetector() {
-        return new ClassDependenciesGraph(testVerifier, projectDir);
+        return new ClassDependenciesGraph(testVerifier, configuration);
     }
 }

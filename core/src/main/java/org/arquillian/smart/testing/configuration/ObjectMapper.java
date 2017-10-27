@@ -69,7 +69,7 @@ class ObjectMapper {
                 return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
-            Object mappedValue = null;
+            Object mappedValue;
             ConfigurationItem configItem = foundConfigItem.get();
 
             mappedValue = getUserSetProperty(method, configItem, configFileValue);
@@ -227,25 +227,7 @@ class ObjectMapper {
                 convertedList.add((T) convertToType(parameterType, v));
             }
             return convertedList;
-        } else if (Map.class.isAssignableFrom(aClass) && StrategyConfiguration.class.isAssignableFrom(parameterType)) {
-            final Map<String, Object> objectMap = (Map<String, Object>) mappedValue;
-            List<T> convertedList = new ArrayList<>(objectMap.size());
-            objectMap.forEach((k, v) -> {
-                final JavaSPILoader javaSPILoader = new JavaSPILoader();
-                final Optional<StrategyConfiguration> strategyConfiguration =
-                    javaSPILoader.onlyOne(StrategyConfiguration.class, config -> config.name().equals(k));
-
-                final Map<String, Object> map = (Map<String, Object>) v;
-
-                final Class<StrategyConfiguration> aClass1 =
-                    (Class<StrategyConfiguration>) strategyConfiguration.get().getClass();
-
-                final T mapToObject = (T) mapToObject(aClass1, map);
-                convertedList.add(mapToObject);
-            });
-            return convertedList;
         }
-
         return null;
     }
 

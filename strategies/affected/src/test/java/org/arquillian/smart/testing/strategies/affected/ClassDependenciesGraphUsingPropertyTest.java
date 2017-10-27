@@ -39,7 +39,7 @@ public class ClassDependenciesGraphUsingPropertyTest {
         configuration.dump(temporaryFolder.getRoot());
 
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
@@ -69,7 +69,7 @@ public class ClassDependenciesGraphUsingPropertyTest {
         configuration.dump(temporaryFolder.getRoot());
 
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
@@ -99,7 +99,7 @@ public class ClassDependenciesGraphUsingPropertyTest {
         configuration.dump(temporaryFolder.getRoot());
 
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();

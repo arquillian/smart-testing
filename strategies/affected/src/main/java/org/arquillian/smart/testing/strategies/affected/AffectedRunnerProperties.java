@@ -1,11 +1,9 @@
 package org.arquillian.smart.testing.strategies.affected;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Properties;
 import java.util.StringJoiner;
 import org.arquillian.smart.testing.configuration.Configuration;
@@ -23,23 +21,16 @@ class AffectedRunnerProperties {
     static final String SMART_TESTING_AFFECTED_INCLUSIONS = "smart.testing.affected.inclusions";
     static final String INCLUSIONS = "inclusions";
     static final String EXCLUSIONS = "exclusions";
+    private static final String AFFECTED = "affected";
 
     private final Properties properties = new Properties();
     private AffectedConfiguration affectedConfiguration;
 
-    AffectedRunnerProperties(File rootDirectory) {
-        final Configuration configuration = Configuration.loadPrecalculated(rootDirectory);
-        final List<StrategyConfiguration> strategyConfigurations = configuration.getStrategiesConfiguration();
-        if (strategyConfigurations == null) {
-            readFile(null);
+    AffectedRunnerProperties(Configuration configuration) {
+        final StrategyConfiguration affectedConfig = configuration.getStrategyConfiguration(AFFECTED);
+        if (affectedConfig == null) {
             return;
         }
-
-        final StrategyConfiguration affectedConfig = strategyConfigurations.stream()
-            .filter(strategyConfiguration -> "affected".equals(strategyConfiguration.name()))
-            .findFirst()
-            .get();
-
         affectedConfiguration = (AffectedConfiguration) affectedConfig;
         readFile(affectedConfiguration.getConfig());
     }

@@ -7,6 +7,7 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.junit.Test;
@@ -111,6 +112,11 @@ public class TestExecutionPlannerLoaderTest {
                     return "static";
                 }
             };
+        }
+
+        @Override
+        public StrategyConfiguration strategyConfiguration() {
+            return null;
         }
     }
 }

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -52,10 +53,10 @@ public class ClassDependenciesGraph {
     private final TestVerifier testVerifier;
     private final boolean enableTransitivity;
 
-    ClassDependenciesGraph(TestVerifier testVerifier, File rootDirectory) {
+    ClassDependenciesGraph(TestVerifier testVerifier, Configuration configuration) {
         this.builder = new JavaClassBuilder();
         this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties(rootDirectory);
+        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties(configuration);
         this.filter = new Filter(affectedRunnerProperties.getSmartTestingAffectedInclusions(), affectedRunnerProperties.getSmartTestingAffectedExclusions());
         this.testVerifier = testVerifier;
         this.enableTransitivity = affectedRunnerProperties.getSmartTestingAffectedTransitivity();

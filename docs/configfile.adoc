@@ -21,7 +21,7 @@ copyToClipboard:config-file[]
 <8> This sets last commit sha or `HEAD` notation for inspecting changes.
 <9> This defines if smart testing should auto correct misspelled strategies.
 <10> This defines the pair key/value of custom strategies as list.
-<11> This defines list of strategies with it's configuration that you want to apply while applying strategy.
+<11> This defines list of strategy related configurations that you want to apply while applying strategy.
 <12> This gives a location for properties file containing inclusions & exclusions.
 <13> This enables transitivity.
 <14> This defines list packages to be excluded while applying transitivity.

@@ -25,12 +25,11 @@ public class ClassDependenciesGraphTest {
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-
     @Test
     public void should_detect_simple_test_to_execute() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         classDependenciesGraph.buildTestDependencyGraph(singletonList(new File(testLocation)));
@@ -50,7 +49,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_multiple_tests_to_execute_against_same_main_class() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -73,7 +72,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_test_with_multiple_main_classes() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -95,7 +94,7 @@ public class ClassDependenciesGraphTest {
     public void should_detect_multiple_tests_to_execute_against_same_main_class_avoiding_duplicates() {
         // given
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), Configuration.load());
 
         final String testLocation = MyBusinessObjectTest.class.getResource("MyBusinessObjectTest.class").getPath();
         final String testLocation2 = MyBusinessObjectTest.class.getResource("MySecondBusinessObjectTest.class").getPath();
@@ -128,7 +127,7 @@ public class ClassDependenciesGraphTest {
         configuration.dump(temporaryFolder.getRoot());
 
         final ClassDependenciesGraph
-            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), temporaryFolder.getRoot());
+            classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
 
         final String testLocation = ATest.class.getResource("ATest.class").getPath();
         final String testLocation2 = BTest.class.getResource("BTest.class").getPath();
