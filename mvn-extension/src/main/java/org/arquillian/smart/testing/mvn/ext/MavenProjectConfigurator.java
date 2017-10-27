@@ -1,10 +1,15 @@
 package org.arquillian.smart.testing.mvn.ext;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
@@ -39,8 +44,25 @@ class MavenProjectConfigurator {
 
             dependencyResolver.addRequiredDependencies(model);
 
+
+            final LocalStorage localStorage = new LocalStorage(Paths.get("").toFile());
             effectiveTestRunnerPluginConfigurations
-                .forEach(dependencyResolver::addAsPluginDependency);
+                .forEach(plugin -> {
+                    dependencyResolver.addAsPluginDependency(plugin);
+
+                    final Optional<Dependency> dependency = dependencyResolver.findJUnit5PlatformDependency(plugin);
+                    dependency.ifPresent(d -> {
+                        try {
+                            localStorage.duringExecution()
+                                .temporary()
+                                .file("junit5PlatformVersion")
+                                .create(d.getVersion().getBytes());
+                            plugin.removeDependency(dependency.get());
+                        } catch (IOException e) {
+                            throw new IllegalStateException(e);
+                        }
+                    });
+                });
         }
     }
 

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
+import java.util.Optional;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
@@ -75,7 +76,7 @@ public class SurefireApiDependencyTest {
         Model model = prepareModelWithSurefirePlugin("2.20");
         final Configuration conf = configureWithAutocorrect("nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
-        model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
+        model.addDependency(new DependencyResolver.SurefireApiDependency("2.20"));
 
         // when
         dependencyResolver.addRequiredDependencies(model);
@@ -98,13 +99,30 @@ public class SurefireApiDependencyTest {
         Model model = prepareModelWithSurefirePlugin("2.20");
         final Configuration conf = configureWithAutocorrect("new", "nwe");
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
-        model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
+        model.addDependency(new DependencyResolver.SurefireApiDependency("2.20"));
 
         // when
         final Throwable exception = catchThrowable(() -> dependencyResolver.addRequiredDependencies(model));
 
         // then
         assertThat(exception).isInstanceOf(IllegalStateException.class);
+
+    }
+
+    @Test
+    public void should_return_junit5_platform_dependency() {
+        // given
+        Model model = prepareModelWithSurefirePlugin("2.19.1");
+        final Configuration conf = configureWithAutocorrect("new");
+        final DependencyResolver dependencyResolver = new DependencyResolver(conf);
+        final Plugin plugin = model.getBuild().getPlugins().get(0);
+        plugin.addDependency(new DependencyResolver.JUnit5SurefireProviderDependency());
+
+        // when
+        final Optional<Dependency> jUnit5PlatformDependency = dependencyResolver.findJUnit5PlatformDependency(plugin);
+
+        // then
+        assertThat(jUnit5PlatformDependency).isPresent();
 
     }
 
@@ -124,6 +142,7 @@ public class SurefireApiDependencyTest {
         Plugin surefirePlugin = new Plugin();
         surefirePlugin.setArtifactId(ApplicablePlugins.SUREFIRE.getArtifactId());
         surefirePlugin.setVersion(version);
+
         Build build = new Build();
         build.addPlugin(surefirePlugin);
         model.setBuild(build);

@@ -74,6 +74,14 @@ public class DependencyResolver {
         plugin.addDependency(smartTestingProviderDependency());
     }
 
+    public Optional<Dependency> findJUnit5PlatformDependency(Plugin plugin) {
+       return plugin.getDependencies()
+            .stream()
+            .filter(JUnit5SurefireProviderDependency::matches)
+            .findFirst();
+    }
+
+
     private void addSurefireApiDependency(Model model) {
         boolean alreadyContains = model.getDependencies()
             .stream()
@@ -95,6 +103,20 @@ public class DependencyResolver {
         smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
         smartTestingSurefireProvider.setScope("runtime");
         return smartTestingSurefireProvider;
+    }
+
+    static class JUnit5SurefireProviderDependency extends Dependency {
+        private static final String GROUP_ID = "org.junit.platform";
+        private static final String ARTIFACT_ID = "junit-platform-surefire-provider";
+
+        JUnit5SurefireProviderDependency() {
+            setGroupId(GROUP_ID);
+            setArtifactId(ARTIFACT_ID);
+        }
+
+        public static boolean matches(Dependency dependency) {
+            return GROUP_ID.equals(dependency.getGroupId()) && ARTIFACT_ID.equals(dependency.getArtifactId());
+        }
     }
 
     static class SurefireApiDependency extends Dependency {
