@@ -2279,7 +2279,7 @@ This section will be improved as we continue with the SPI design to let you hook
             .hasSameSizeAs(expectedTestResults);
 
         softly.assertThat(project)
-            .doesNotContainDirectory(SMART_TESTING_SCM_CHANGES)
+            .doesNotContainDirectory(TemporaryInternalFiles.getScmChangesFileName())
             .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }</code></pre>
@@ -2588,7 +2588,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-27 06:00:39 UTC
+Last updated 2017-10-30 14:51:43 UTC
 </div>
 </div>
 <script>
