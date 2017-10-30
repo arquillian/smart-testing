@@ -61,6 +61,8 @@ public class Configuration implements ConfigurationSection {
     private Report report;
     private Scm scm;
 
+    private static Map<String, Object> strategiesConfig = new HashMap<>();
+
     @SuppressWarnings("unused")
     public List<StrategyConfiguration> getStrategiesConfiguration() {
         return strategiesConfiguration;
@@ -144,10 +146,6 @@ public class Configuration implements ConfigurationSection {
         this.strategiesConfiguration = strategiesConfiguration;
     }
 
-    public void setStrategiesConfiguration() {
-        this.strategiesConfiguration = loadStrategyConfigurations();
-    }
-
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
@@ -160,7 +158,7 @@ public class Configuration implements ConfigurationSection {
         return configItems;
     }
 
-    public List<StrategyConfiguration> loadStrategyConfigurations() {
+    public void loadStrategyConfigurations(String... strategies) {
         List<StrategyConfiguration> convertedList = new ArrayList<>();
 
         StreamSupport.stream(new JavaSPILoader().all(TestExecutionPlannerFactory.class).spliterator(), false)
@@ -171,10 +169,15 @@ public class Configuration implements ConfigurationSection {
             .forEach(strategyConfiguration -> {
                 final Class<StrategyConfiguration> strategyConfigurationClass =
                     (Class<StrategyConfiguration>) strategyConfiguration.getClass();
-                convertedList.add(mapToObject(strategyConfigurationClass, new HashMap<>(0)));
+                final Object strategyConfig = strategiesConfig.get(strategyConfiguration.name());
+                Map<String, Object> strategyConfigMap = new HashMap<>();
+                if (strategyConfig != null) {
+                    strategyConfigMap = (Map<String, Object>) strategyConfig;
+                }
+                convertedList.add(mapToObject(strategyConfigurationClass, strategyConfigMap));
             });
 
-        return convertedList;
+        this.strategiesConfiguration = convertedList;
     }
 
     public static Configuration load() {
@@ -203,7 +206,20 @@ public class Configuration implements ConfigurationSection {
             }
         }
 
+        final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
+
+        if ( strategiesConfiguration != null) {
+            strategiesConfig = (Map<String, Object>) strategiesConfiguration;
+        }
+
         return parseConfiguration(yamlConfiguration);
+    }
+
+    public static Configuration load(File projectDir, String... strategies) {
+        final Configuration configuration = load(projectDir);
+        configuration.loadStrategyConfigurations(strategies);
+
+        return configuration;
     }
 
     public static Configuration loadPrecalculated(File projectDir) {

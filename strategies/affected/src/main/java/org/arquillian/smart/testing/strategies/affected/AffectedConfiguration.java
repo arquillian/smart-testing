@@ -5,25 +5,15 @@ import java.util.List;
 import org.arquillian.smart.testing.configuration.ConfigurationItem;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
-import static org.arquillian.smart.testing.strategies.affected.AffectedRunnerProperties.SMART_TESTING_AFFECTED_CONFIG;
 import static org.arquillian.smart.testing.strategies.affected.AffectedRunnerProperties.SMART_TESTING_AFFECTED_EXCLUSIONS;
 import static org.arquillian.smart.testing.strategies.affected.AffectedRunnerProperties.SMART_TESTING_AFFECTED_INCLUSIONS;
 import static org.arquillian.smart.testing.strategies.affected.AffectedRunnerProperties.SMART_TESTING_AFFECTED_TRANSITIVITY;
 
 public class AffectedConfiguration implements StrategyConfiguration {
 
-    private String config;
     private boolean transitivity;
     private String exclusions;
     private String inclusions;
-
-    public String getConfig() {
-        return config;
-    }
-
-    public void setConfig(String config) {
-        this.config = config;
-    }
 
     public boolean isTransitivity() {
         return transitivity;
@@ -52,7 +42,6 @@ public class AffectedConfiguration implements StrategyConfiguration {
     @Override
     public List<ConfigurationItem> registerConfigurationItems() {
         List<ConfigurationItem> configItems = new ArrayList<>();
-        configItems.add(new ConfigurationItem("config", SMART_TESTING_AFFECTED_CONFIG));
         configItems.add(new ConfigurationItem("transitivity", SMART_TESTING_AFFECTED_TRANSITIVITY, true));
         configItems.add(new ConfigurationItem("exclusions", SMART_TESTING_AFFECTED_EXCLUSIONS));
         configItems.add(new ConfigurationItem("inclusions", SMART_TESTING_AFFECTED_INCLUSIONS));

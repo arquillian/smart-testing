@@ -9,7 +9,6 @@ public class StrategyConfigurationBuilder {
 
     final StrategiesConfigurationBuilder strategiesConfigurationBuilder;
     private String name;
-    private String config;
     private boolean transitivity = true;
     private String exclusions;
     private String inclusions;
@@ -25,11 +24,6 @@ public class StrategyConfigurationBuilder {
 
     public StrategyConfigurationBuilder name(String name) {
         this.name = name;
-        return this;
-    }
-
-    public StrategyConfigurationBuilder config(String config) {
-        this.config = config;
         return this;
     }
 
@@ -52,7 +46,6 @@ public class StrategyConfigurationBuilder {
         if (Objects.equals(this.name, "affected")) {
             AffectedConfiguration strategyConfiguration = new AffectedConfiguration();
             strategyConfiguration.setTransitivity(this.transitivity);
-            strategyConfiguration.setConfig(this.config);
             strategyConfiguration.setInclusions(this.inclusions);
             strategyConfiguration.setExclusions(this.exclusions);
             this.strategiesConfigurationBuilder.add(strategyConfiguration);

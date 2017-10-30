@@ -73,11 +73,6 @@ a|`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategi
 a|
 a|`affected`
 
-a|`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]`
-|Set location of affected configuration file
-a|
-a|`affected`
-
 a| `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"]`
 |Set transitivity enabled
 a|const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="DEFAULT_SMART_TESTING_AFFECTED_TRANSITIVITY_VALUE"]

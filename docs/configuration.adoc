@@ -113,19 +113,23 @@ By default this import transitivity is applied to all imports except the ones fr
 Sometimes you might want to stop this transitivity before reaching these imports, for example in case of developing an application with any third-party library, you'd probably want to *exclude* its imports.
 Or maybe just *include* imports from your business code, for example all imports from `org.superbiz`.
 
-*Affected* provides two ways to provide _inclusions_ and _exclusions_:
+*Affected* provides a way to provide _inclusions_ and _exclusions_ in smart-testing.yml:
 
-inclusions/exclusions system proeprty:: you can set inclusions and/or exclusions by using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`/`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]` which accepts comma-separated values.
+.smart-testing.yml
+----
+strategies: affected
+strategiesConfiguration:
+    affected:
+      transitivity: true
+      exclusions:
+         - org.springframework.*
+         - org.apache.commons.*
+      inclusions:
+         - org.mysuperbiz.*
+----
+
+You can overwrite inclusions/exclusions by using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`/`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]` which accepts comma-separated values.
 For example: `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]=org.mysuperbiz.*`.
-
-config properties file:: you can create a properties file containing inclusions and/or exclusions and set its location using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]` system property.
-For example `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_CONFIG"]=affected-configuration.properties`
-
-.affected-configuration.properties
-----
-inclusions=org.mysuperbiz.*
-exclusions=org.springframework.*, org.apache.commons.*
-----
 
 IMPORTANT: Exclusions has precedence over inclusions.
 

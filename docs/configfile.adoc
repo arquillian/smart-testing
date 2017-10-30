@@ -22,10 +22,9 @@ copyToClipboard:config-file[]
 <9> This defines if smart testing should auto correct misspelled strategies.
 <10> This defines the pair key/value of custom strategies as list.
 <11> This defines list of strategy related configurations that you want to apply while applying strategy.
-<12> This gives a location for properties file containing inclusions & exclusions.
-<13> This enables transitivity.
-<14> This defines list packages to be excluded while applying transitivity.
-<15> This defines list of packaged to be included while applying transitivity.
+<12> This enables transitivity.
+<13> This defines list of packages to be excluded while applying transitivity.
+<14> This defines list of packages to be included while applying transitivity.
 
 All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter.
 You can look at <<_reference_card, references>> for default value of parameter.
@@ -108,9 +107,6 @@ a| Sets last  sha or `HEAD` notation.
 [cols="2,6", options="header"]
 |===
 |Field | Description
-a| config
-a| Sets location for properties file containing inclusions & exclusions.
-
 a| transitivity
 a| Sets transitivity to find all affected tests.
 
