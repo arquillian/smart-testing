@@ -5,6 +5,7 @@ import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAsser
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
@@ -16,7 +17,6 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELE
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.AFFECTED;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
-import static org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage.SMART_TESTING_SCM_CHANGES;
 
 // tag::documentation[]
 public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
@@ -53,7 +53,7 @@ public class LocalChangesMixedStrategySelectionExecutionFunctionalTest {
             .hasSameSizeAs(expectedTestResults);
 
         softly.assertThat(project)
-            .doesNotContainDirectory(SMART_TESTING_SCM_CHANGES)
+            .doesNotContainDirectory(TemporaryInternalFiles.getScmChangesFileName())
             .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME);
     }
 }

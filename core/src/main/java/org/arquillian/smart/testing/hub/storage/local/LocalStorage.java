@@ -7,8 +7,6 @@ import java.io.File;
  */
 public class LocalStorage {
 
-    public static String JUNIT_5_PLATFORM_VERSION = "junit5PlatformVersion";
-
     private String rootDir;
 
     public LocalStorage(String rootDir) {

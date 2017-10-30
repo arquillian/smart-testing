@@ -4,9 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
+
+import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
 
 public class JUnit5ProviderInfo extends JUnitProviderInfo {
 
@@ -36,7 +37,7 @@ public class JUnit5ProviderInfo extends JUnitProviderInfo {
 
         final Path junit5PlatformVersionFile = new LocalStorage(projectDir).duringExecution()
             .temporary()
-            .file(prefix + "_" + LocalStorage.JUNIT_5_PLATFORM_VERSION)
+            .file(getJunit5PlatformVersionFileName(prefix))
             .getPath();
 
         if (Files.exists(junit5PlatformVersionFile)) {

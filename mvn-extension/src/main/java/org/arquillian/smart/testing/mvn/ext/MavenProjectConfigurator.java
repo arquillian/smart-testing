@@ -1,7 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -10,12 +9,13 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 
+import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
 import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
@@ -54,7 +54,7 @@ class MavenProjectConfigurator {
                         try {
                             localStorage.duringExecution()
                                 .temporary()
-                                .file(plugin.getArtifactId() + "_" + LocalStorage.JUNIT_5_PLATFORM_VERSION)
+                                .file(getJunit5PlatformVersionFileName(plugin.getArtifactId()))
                                 .create(d.getVersion().getBytes());
                             plugin.removeDependency(dependency.get());
                         } catch (IOException e) {

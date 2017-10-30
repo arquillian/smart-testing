@@ -13,11 +13,11 @@ import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.scm.Change;
 
+import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getScmChangesFileName;
+
 public class LocalChangeStorage implements ChangeStorage {
 
     private static final Logger LOGGER = Log.getLogger();
-
-    public static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
 
     @Override
     public void store(Collection<Change> changes, File projectDir) {
@@ -28,7 +28,7 @@ public class LocalChangeStorage implements ChangeStorage {
             new LocalStorage(projectDir)
                 .duringExecution()
                 .temporary()
-                .file(SMART_TESTING_SCM_CHANGES);
+                .file(getScmChangesFileName());
         try {
             scmChangesFile.create(fileContent.toString().getBytes());
         } catch (IOException e) {
@@ -39,7 +39,7 @@ public class LocalChangeStorage implements ChangeStorage {
     @Override
     public Optional<Collection<Change>> read(File projectDir) {
         final Optional<Path> smartTestingScmChangesOptional =
-            findFileInDirectoryOrParents(projectDir.getAbsoluteFile(), SMART_TESTING_SCM_CHANGES);
+            findFileInDirectoryOrParents(projectDir.getAbsoluteFile(), getScmChangesFileName());
 
         if (smartTestingScmChangesOptional.isPresent()) {
 

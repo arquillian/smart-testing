@@ -3,12 +3,12 @@ package org.arquillian.smart.testing.surefire.provider.info;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JUnit5ProviderInfoTest {
@@ -50,8 +50,7 @@ public class JUnit5ProviderInfoTest {
 
     private void createJUnit5PlatformVersion(String prefix) throws IOException {
         final File temporaryFolder = this.temporaryFolder.newFolder(".smart-testing", "temporary");
-        final File versionFile = new File(temporaryFolder,
-            prefix + "_" + LocalStorage.JUNIT_5_PLATFORM_VERSION);
+        final File versionFile = new File(temporaryFolder, getJunit5PlatformVersionFileName(prefix));
         Files.write(versionFile.toPath(), "1.0.1".getBytes());
     }
 
