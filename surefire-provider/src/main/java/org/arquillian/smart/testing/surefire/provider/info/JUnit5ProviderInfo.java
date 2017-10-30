@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 
 import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
 
-public class JUnit5ProviderInfo extends JUnitProviderInfo {
+public class JUnit5ProviderInfo implements ProviderInfo {
 
     private String junit5SurefirePlatformVersion;
 
     public JUnit5ProviderInfo(File projectDir) {
-        super(null);
         junit5SurefirePlatformVersion = retrieveJunit5SurefirePlatformVersion(projectDir, LoaderVersionExtractor.getFailsafePluginVersion());
     }
 
@@ -28,6 +28,10 @@ public class JUnit5ProviderInfo extends JUnitProviderInfo {
 
     public String getDepCoordinates() {
         return "org.junit.platform:junit-platform-surefire-provider:" + junit5SurefirePlatformVersion;
+    }
+
+    public ProviderParameters convertProviderParameters(ProviderParameters providerParameters) {
+        return providerParameters;
     }
 
     String retrieveJunit5SurefirePlatformVersion(File projectDir, String failsafePluginVersion) {
