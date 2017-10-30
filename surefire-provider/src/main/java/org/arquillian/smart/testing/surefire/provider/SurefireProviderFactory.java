@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider;
 
+import java.io.File;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.arquillian.smart.testing.surefire.provider.info.JUnit4ProviderInfo;
@@ -14,10 +15,10 @@ public class SurefireProviderFactory {
     private final ProviderParameters providerParameters;
     private final Class<SurefireProvider> surefireProviderClass;
 
-    SurefireProviderFactory(ProviderParametersParser paramParser) {
+    SurefireProviderFactory(ProviderParametersParser paramParser, File projectDir) {
         ProviderInfo[] wellKnownProviders = new ProviderInfo[] {
             new TestNgProviderInfo(),
-            new JUnit5ProviderInfo(),
+            new JUnit5ProviderInfo(projectDir),
             new JUnitCoreProviderInfo(paramParser),
             new JUnit4ProviderInfo()
             };
