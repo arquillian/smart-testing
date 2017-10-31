@@ -75,7 +75,7 @@ class MavenProjectConfigurator {
             })
             .filter(plugin -> {
                 if (configuration.isApplyToDefined()) {
-                    return configuration.getApplyTo().equals(plugin.getArtifactId());
+                    return plugin.getArtifactId().contains(configuration.getApplyTo());
                 }
                 // If not set the plugin is usable
                 return true;
