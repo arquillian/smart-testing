@@ -39,7 +39,7 @@ public class ChangesOnDifferentModulesAffectedTestsSelectionExecutionFunctionalT
         final TestResults actualTestResults = project
             .build("config/impl-base")
                 .options()
-                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~")
+                    .withSystemProperties("scm.range.head", "HEAD", "scm.range.tail", "HEAD~", "smart.testing.apply.to", "surefire")
                 .configure()
             .run();
 
