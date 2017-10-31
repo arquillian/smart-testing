@@ -1,9 +1,6 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -12,10 +9,10 @@ import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorageFileAction;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
@@ -77,7 +74,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
 
         File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
-        configuration = Configuration.load(projectDirectory);
+        configuration = ConfigurationLoader.load(projectDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
 

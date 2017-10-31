@@ -7,11 +7,13 @@ import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
+import static org.arquillian.smart.testing.vcs.git.NewConfiguration.NEW;
+
 public class NewTestsDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public String alias() {
-        return "new";
+        return NEW;
     }
 
     @Override
@@ -26,6 +28,6 @@ public class NewTestsDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public StrategyConfiguration strategyConfiguration() {
-        return null;
+        return new NewConfiguration();
     }
 }

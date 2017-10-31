@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.spi.JavaSPILoader;
-import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
 class ObjectMapper {
 
@@ -160,8 +158,6 @@ class ObjectMapper {
             return mappedValue;
         } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
             return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
-        } else if (parameterType.isAssignableFrom(String.class) && List.class.isAssignableFrom(mappedValue.getClass())) {
-            return ((List) mappedValue).stream().collect(Collectors.joining(", "));
         } else {
             return convertToType(parameterType, mappedValue.toString());
         }

@@ -7,11 +7,13 @@ import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
+import static org.arquillian.smart.testing.vcs.git.ChangedConfiguration.CHANGED;
+
 public class ChangedFilesDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public String alias() {
-        return "changed";
+        return CHANGED;
     }
 
     @Override
@@ -26,6 +28,6 @@ public class ChangedFilesDetectorFactory implements TestExecutionPlannerFactory 
 
     @Override
     public StrategyConfiguration strategyConfiguration() {
-        return null;
+        return new ChangedConfiguration();
     }
 }

@@ -33,7 +33,7 @@ However you can overwrite all configuration options using system properties supp
 You can look <<_reference_card, references>> for all supported system properties.
 
 === Configuration File Reference
-The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
+The `const:core/src/main/java/org/arquillian/smart/testing/configuration/ConfigurationLoader.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
 
 NOTE: You can use either a `.yml` or `.yaml` extension for this file.
 

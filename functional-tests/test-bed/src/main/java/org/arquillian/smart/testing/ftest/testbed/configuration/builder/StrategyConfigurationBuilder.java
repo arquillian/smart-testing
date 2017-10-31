@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.testbed.configuration.builder;
 
+import java.util.List;
 import java.util.Objects;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
@@ -10,8 +11,8 @@ public class StrategyConfigurationBuilder {
     final StrategiesConfigurationBuilder strategiesConfigurationBuilder;
     private String name;
     private boolean transitivity = true;
-    private String exclusions;
-    private String inclusions;
+    private List<String> exclusions;
+    private List<String> inclusions;
 
     public StrategyConfigurationBuilder(StrategiesConfigurationBuilder strategiesConfigurationBuilder) {
         this.strategiesConfigurationBuilder = strategiesConfigurationBuilder;
@@ -32,12 +33,12 @@ public class StrategyConfigurationBuilder {
         return this;
     }
 
-    public StrategyConfigurationBuilder exclusions(String exclusions) {
+    public StrategyConfigurationBuilder exclusions(List<String> exclusions) {
         this.exclusions = exclusions;
         return this;
     }
 
-    public StrategyConfigurationBuilder inclusions(String inclusions) {
+    public StrategyConfigurationBuilder inclusions(List<String> inclusions) {
         this.inclusions = inclusions;
         return this;
     }

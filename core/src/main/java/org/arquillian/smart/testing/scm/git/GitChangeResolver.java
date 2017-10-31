@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
@@ -55,7 +56,7 @@ public class GitChangeResolver implements ChangeResolver {
     public Set<Change> diff(File projectDir, Configuration configuration) {
         Scm scm;
         if (configuration == null){
-            scm = Configuration.loadPrecalculated(projectDir).getScm();
+            scm = ConfigurationLoader.loadPrecalculated(projectDir).getScm();
         } else {
             scm = configuration.getScm();
         }

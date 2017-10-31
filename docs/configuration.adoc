@@ -128,12 +128,12 @@ strategiesConfiguration:
          - org.mysuperbiz.*
 ----
 
-You can overwrite inclusions/exclusions by using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`/`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]` which accepts comma-separated values.
-For example: `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]=org.mysuperbiz.*`.
+You can overwrite inclusions/exclusions by using `const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedConfiguration.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]`/`const:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedConfiguration.java[name="SMART_TESTING_AFFECTED_EXCLUSIONS"]` which accepts comma-separated values.
+For example: `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedConfiguration.java[name="SMART_TESTING_AFFECTED_INCLUSIONS"]=org.mysuperbiz.*`.
 
 IMPORTANT: Exclusions has precedence over inclusions.
 
-You can also disable transitivity by setting `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedRunnerProperties.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"]` to `false`.
+You can also disable transitivity by setting `-Dconst:strategies/affected/src/main/java/org/arquillian/smart/testing/strategies/affected/AffectedConfiguration.java[name="SMART_TESTING_AFFECTED_TRANSITIVITY"]` to `false`.
 
 ****
 

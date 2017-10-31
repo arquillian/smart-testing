@@ -10,6 +10,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.scm.git.GitChangeResolver;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.junit.Before;
@@ -122,7 +123,7 @@ public class NewTestsGitBasedDetectorTest {
     }
 
     private Configuration createConfiguration(String tail, String head){
-        Configuration configuration = Configuration.load(gitFolder.getRoot());
+        Configuration configuration = ConfigurationLoader.load(gitFolder.getRoot());
         configuration.getScm().getRange().setTail(tail);
         configuration.getScm().getRange().setHead(head);
         return configuration;

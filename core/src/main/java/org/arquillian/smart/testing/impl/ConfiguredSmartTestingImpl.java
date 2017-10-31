@@ -7,6 +7,7 @@ import org.arquillian.smart.testing.api.ConfiguredSmartTesting;
 import org.arquillian.smart.testing.api.TestStrategyApplier;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 
 public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
@@ -58,7 +59,7 @@ public class ConfiguredSmartTestingImpl implements ConfiguredSmartTesting {
             projectDir = new File(basedir != null ? basedir : ".");
         }
         if (configuration == null) {
-            configuration = Configuration.loadPrecalculated(projectDir);
+            configuration = ConfigurationLoader.loadPrecalculated(projectDir);
         }
         if (testExecutionPlannerLoader == null) {
             testExecutionPlannerLoader =

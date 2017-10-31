@@ -17,6 +17,7 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 import static org.arquillian.smart.testing.scm.ChangeType.MODIFY;
 import static org.arquillian.smart.testing.scm.ChangeType.RENAME;
+import static org.arquillian.smart.testing.vcs.git.ChangedConfiguration.CHANGED;
 
 public class ChangedTestsDetector implements TestExecutionPlanner {
 
@@ -47,7 +48,7 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public String getName() {
-        return "changed";
+        return CHANGED;
     }
 
     @Override
