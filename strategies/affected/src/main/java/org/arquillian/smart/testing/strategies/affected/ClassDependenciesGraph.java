@@ -147,7 +147,7 @@ public class ClassDependenciesGraph {
     private List<String> getPackages(String testPackage, Tests tests) {
         List<String> packages = new ArrayList<>();
         if (tests.classes().length == 0 && tests.packages().length == 0 && tests.packagesOf().length == 0) {
-            packages.add(testPackage);
+            packages.add(testPackage + ".*");
         } else {
             packages.addAll(Arrays.asList(tests.packages()));
 
