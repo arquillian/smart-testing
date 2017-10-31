@@ -1,6 +1,9 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -25,6 +28,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 
 import static java.util.stream.StreamSupport.stream;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
+import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
+import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -74,7 +79,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
+        final File multiModuleProjectDirectory = session.getRequest().getMultiModuleProjectDirectory();
+        final File executionDir = session.getTopLevelProject().getModel().getProjectDirectory();
+        final File projectDirectory = findFirstDirectoryWithConfigFile(executionDir, multiModuleProjectDirectory);
+
         configuration = ConfigurationLoader.load(projectDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
@@ -155,5 +163,26 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
                 ModifiedPomExporter.exportModifiedPom(mavenProject.getModel());
             }
         });
+    }
+
+    private File findFirstDirectoryWithConfigFile(File projectDir, File multiModuleProjectDirectory) {
+        if (isSameFile(projectDir.toPath(), multiModuleProjectDirectory.toPath())) {
+            return projectDir;
+        }
+
+        if (projectDir.isDirectory() && new File(projectDir, "pom.xml").exists() &&
+            new File(projectDir, SMART_TESTING_YML).exists() || new File(projectDir, SMART_TESTING_YAML).exists()) {
+            return projectDir;
+        }
+
+        return findFirstDirectoryWithConfigFile(projectDir.getParentFile(), multiModuleProjectDirectory);
+    }
+
+    private boolean isSameFile(Path path1, Path path2) {
+        try {
+            return Files.isSameFile(path1, path2);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
