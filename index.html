@@ -985,28 +985,25 @@ If <code>B.java</code> is modified, then <code>ATest.java</code> is considered a
 Or maybe just <strong>include</strong> imports from your business code, for example all imports from <code>org.superbiz</code>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Affected</strong> provides two ways to provide <em>inclusions</em> and <em>exclusions</em>:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">inclusions/exclusions system proeprty</dt>
-<dd>
-<p>you can set inclusions and/or exclusions by using <code>smart.testing.affected.inclusions</code>/<code>smart.testing.affected.exclusions</code> which accepts comma-separated values.
-For example: <code>-Dsmart.testing.affected.inclusions=org.mysuperbiz.*</code>.</p>
-</dd>
-<dt class="hdlist1">config properties file</dt>
-<dd>
-<p>you can create a properties file containing inclusions and/or exclusions and set its location using <code>smart.testing.affected.config</code> system property.
-For example <code>-Dsmart.testing.affected.config=affected-configuration.properties</code></p>
-</dd>
-</dl>
+<p><strong>Affected</strong> provides a way to provide <em>inclusions</em> and <em>exclusions</em> in smart-testing.yml:</p>
 </div>
 <div class="listingblock">
-<div class="title">affected-configuration.properties</div>
+<div class="title">smart-testing.yml</div>
 <div class="content">
-<pre>inclusions=org.mysuperbiz.*
-exclusions=org.springframework.*, org.apache.commons.*</pre>
+<pre>strategies: affected
+strategiesConfiguration:
+    affected:
+      transitivity: true
+      exclusions:
+         - org.springframework.*
+         - org.apache.commons.*
+      inclusions:
+         - org.mysuperbiz.*</pre>
 </div>
+</div>
+<div class="paragraph">
+<p>You can overwrite inclusions/exclusions by using <code>smart.testing.affected.inclusions</code>/<code>smart.testing.affected.exclusions</code> which accepts comma-separated values.
+For example: <code>-Dsmart.testing.affected.inclusions=org.mysuperbiz.*</code>.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -1089,7 +1086,16 @@ All reports from previous local build are automatically copied by the maven exte
 <span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="9"></i><b>(9)</b>
 <span class="key">customStrategies</span>:  <i class="conum" data-value="10"></i><b>(10)</b>
     - <span class="string"><span class="content">smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0</span></span>
-    - <span class="string"><span class="content">smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0</span></span></code></pre>
+    - <span class="string"><span class="content">smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0</span></span>
+<span class="key">strategiesConfiguration</span>: <i class="conum" data-value="11"></i><b>(11)</b>
+    <span class="key">affected</span>:
+      <span class="key">transitivity</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="12"></i><b>(12)</b>
+      <span class="key">exclusions</span>: <i class="conum" data-value="13"></i><b>(13)</b>
+         - <span class="string"><span class="content">org.package.*</span></span>
+         - <span class="string"><span class="content">org.arquillian.package.*</span></span>
+      <span class="key">inclusions</span>: <i class="conum" data-value="14"></i><b>(14)</b>
+         - <span class="string"><span class="content">org.package.exclude.*</span></span>
+         - <span class="string"><span class="content">org.arquillian.package.exclude.*</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1140,6 +1146,22 @@ All reports from previous local build are automatically copied by the maven exte
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
 <td>This defines the pair key/value of custom strategies as list.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>This defines list of strategy related configurations that you want to apply while applying strategy.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>This enables transitivity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>This defines list of packages to be excluded while applying transitivity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td>This defines list of packages to be included while applying transitivity.</td>
 </tr>
 </table>
 </div>
@@ -1253,6 +1275,14 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 <p>A list of custom strategies in the form of key/value. It is important to notice that the <em>key</em> part must be prefixed with <code>smart.testing.strategy.</code>.</p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>strategiesConfiguration</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A list of strategies with it&#8217;s configuration.</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 <div class="sect3">
@@ -1341,6 +1371,47 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Sets last  sha or <code>HEAD</code> notation.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_affected_configuration_options"><a class="anchor" href="#_affected_configuration_options"></a>4.1.4. Affected Configuration Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>transitivity</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets transitivity to find all affected tests.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>exclusions</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets list of packages to be excluded while applying transitivity.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>inclusions</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets list of packages to be included while applying transitivity.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1587,14 +1658,17 @@ You need to implement three simple methods, two related with the name of the str
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.io.File</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.api.TestVerifier</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.configuration.Configuration</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.StrategyConfiguration</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlanner</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlannerFactory</span>;
+
+<span class="keyword">import</span> <span class="include">static</span> <span class="include">org.arquillian.smart.testing.strategies.failed.FailedTestsDetector.FAILED</span>;
 
 <span class="directive">public</span> <span class="type">class</span> <span class="class">FailedTestsDetectorFactory</span> <span class="directive">implements</span> TestExecutionPlannerFactory {
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="predefined-type">String</span> alias() {
-        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
+        <span class="keyword">return</span> FAILED;
     } <i class="conum" data-value="1"></i><b>(1)</b>
 
     <span class="annotation">@Override</span>
@@ -1607,6 +1681,10 @@ You need to implement three simple methods, two related with the name of the str
         <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector();
     } <i class="conum" data-value="2"></i><b>(2)</b>
 
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> StrategyConfiguration strategyConfiguration() {
+        <span class="keyword">return</span> <span class="keyword">new</span> FailedConfiguration();
+    }
 }</code></pre>
 </div>
 </div>
@@ -1654,6 +1732,8 @@ You also need to set there the strategy name.</p>
 
 <span class="directive">public</span> <span class="type">class</span> <span class="class">FailedTestsDetector</span> <span class="directive">implements</span> TestExecutionPlanner {
 
+    <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> FAILED = <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
+
     <span class="directive">private</span> <span class="directive">final</span> TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader());
 
     <span class="annotation">@Override</span>
@@ -1666,7 +1746,7 @@ You also need to set there the strategy name.</p>
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="predefined-type">String</span> getName() {
-        <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
+        <span class="keyword">return</span> FAILED;
     }
 }</code></pre>
 </div>
@@ -2135,16 +2215,6 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart.testing.affected.config</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Set location of affected configuration file</p></td>
-<td class="tableblock halign-left valign-top"><div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>affected</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>smart.testing.affected.transitivity</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set transitivity enabled</p></td>
@@ -2588,7 +2658,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-10-30 14:51:43 UTC
+Last updated 2017-11-01 14:52:14 UTC
 </div>
 </div>
 <script>
