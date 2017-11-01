@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.report;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -20,7 +20,8 @@ public class ExecutionReporterTest {
         final TestSelection testSelectionNew = new TestSelection(ExecutionReporterTest.class.getName(), "new");
         final TestSelection testSelectionChanged = new TestSelection(ExecutionReporterTest.class.getName(), "changed");
         final SmartTestingReportGenerator smartTestingReportGenerator =
-            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), Configuration.load(),  System.getProperty("user.dir"));
+            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), ConfigurationLoader.load(),
+                System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();

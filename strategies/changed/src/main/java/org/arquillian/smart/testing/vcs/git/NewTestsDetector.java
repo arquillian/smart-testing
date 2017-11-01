@@ -18,6 +18,8 @@ import static org.arquillian.smart.testing.scm.ChangeType.ADD;
 
 public class NewTestsDetector implements TestExecutionPlanner {
 
+    static final String NEW = "new";
+
     private static final Logger logger = Log.getLogger();
 
     private final ChangeResolver changeResolver;
@@ -46,7 +48,7 @@ public class NewTestsDetector implements TestExecutionPlanner {
 
     @Override
     public String getName() {
-        return "new";
+        return NEW;
     }
 
     @Override

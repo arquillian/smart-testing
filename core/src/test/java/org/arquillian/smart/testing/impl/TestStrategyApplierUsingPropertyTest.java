@@ -10,6 +10,7 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.TestSelectionTest;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.assertj.core.api.Assertions;
 import org.junit.Rule;
@@ -41,7 +42,8 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+                testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
@@ -65,7 +67,8 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+                testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
@@ -89,7 +92,8 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+                testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
@@ -114,7 +118,8 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, Configuration.load()).applyOnClasses(testsToRun);
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+                testsToRun);
 
         // then
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))

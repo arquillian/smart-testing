@@ -20,6 +20,8 @@ import static org.arquillian.smart.testing.scm.ChangeType.RENAME;
 
 public class ChangedTestsDetector implements TestExecutionPlanner {
 
+    static final String CHANGED = "changed";
+
     private static final Logger logger = Log.getLogger();
 
     private final ChangeResolver changeResolver;
@@ -47,7 +49,7 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public String getName() {
-        return "changed";
+        return CHANGED;
     }
 
     @Override

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class TestStrategyApplierTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(classes);
 
         final TestStrategyApplierImpl testStrategyApplier =
-            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."));
+            new TestStrategyApplierImpl(ConfigurationLoader.load(), testExecutionPlannerLoader, new File("."));
 
         // when
         final Collection<TestSelection> testSelections =
@@ -53,7 +53,7 @@ public class TestStrategyApplierTest {
         TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(classes);
 
         final TestStrategyApplierImpl testStrategyApplier =
-            new TestStrategyApplierImpl(Configuration.load(), testExecutionPlannerLoader, new File("."));
+            new TestStrategyApplierImpl(ConfigurationLoader.load(), testExecutionPlannerLoader, new File("."));
 
         // when
         final Collection<TestSelection> testSelections =

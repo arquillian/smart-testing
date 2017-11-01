@@ -30,21 +30,24 @@ package org.arquillian.smart.testing.strategies.affected;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassDependenciesGraph {
 
-    private static final Filter coreJava = new Filter("", "java.*");
+    private static final Filter coreJava = new Filter(Collections.singletonList(""), Collections.singletonList("java.*"));
 
     private final JavaClassBuilder builder;
     private final DirectedGraph<JavaElement, DefaultEdge> graph;
@@ -52,13 +55,14 @@ public class ClassDependenciesGraph {
     private final TestVerifier testVerifier;
     private final boolean enableTransitivity;
 
-    ClassDependenciesGraph(TestVerifier testVerifier) {
+    ClassDependenciesGraph(TestVerifier testVerifier, Configuration configuration) {
         this.builder = new JavaClassBuilder();
         this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-        AffectedRunnerProperties affectedRunnerProperties = new AffectedRunnerProperties();
-        this.filter = new Filter(affectedRunnerProperties.getSmartTestingAffectedInclusions(), affectedRunnerProperties.getSmartTestingAffectedExclusions());
+        final AffectedConfiguration affectedConfiguration =
+            (AffectedConfiguration) configuration.getStrategyConfiguration(AFFECTED);
+        this.filter = new Filter(affectedConfiguration.getInclusions(), affectedConfiguration.getExclusions());
         this.testVerifier = testVerifier;
-        this.enableTransitivity = affectedRunnerProperties.getSmartTestingAffectedTransitivity();
+        this.enableTransitivity = affectedConfiguration.isTransitivity();
     }
 
     void buildTestDependencyGraph(Collection<File> testJavaFiles) {

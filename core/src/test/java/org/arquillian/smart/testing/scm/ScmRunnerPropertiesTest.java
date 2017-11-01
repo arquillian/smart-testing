@@ -2,7 +2,7 @@ package org.arquillian.smart.testing.scm;
 
 import java.io.IOException;
 import net.jcip.annotations.NotThreadSafe;
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.configuration.Scm;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class ScmRunnerPropertiesTest {
         System.setProperty(SCM_LAST_CHANGES, "3");
 
         // when
-        final Scm scm = Configuration.load().getScm();
+        final Scm scm = ConfigurationLoader.load().getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("HEAD~3");
@@ -41,7 +41,7 @@ public class ScmRunnerPropertiesTest {
         System.setProperty(SCM_RANGE_HEAD, "07b181b");
 
         // when
-        final Scm scm = Configuration.load().getScm();
+        final Scm scm = ConfigurationLoader.load().getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("32bd752");
@@ -52,7 +52,7 @@ public class ScmRunnerPropertiesTest {
     public void should_get_head_as_previous_commit_and_commit_when_no_property_set() throws IOException {
 
         // when
-        final Scm scm = Configuration.load().getScm();
+        final Scm scm = ConfigurationLoader.load().getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("HEAD~0");

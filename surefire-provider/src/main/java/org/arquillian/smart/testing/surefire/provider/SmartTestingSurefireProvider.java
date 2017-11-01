@@ -17,6 +17,7 @@ import org.apache.maven.surefire.util.TestsToRun;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.logger.DefaultLoggerFactory;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.surefire.provider.logger.SurefireProviderLoggerFactory;
@@ -40,7 +41,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         final File projectDir = getProjectDir();
         this.surefireProviderFactory = new SurefireProviderFactory(this.paramParser, projectDir);
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.configuration = Configuration.loadPrecalculated(projectDir);
+        this.configuration = ConfigurationLoader.loadPrecalculated(projectDir);
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(getConsoleLogger(), isAnyDebugEnabled()));
     }
 
@@ -49,7 +50,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
         this.paramParser = new ProviderParametersParser(this.bootParams);
         this.surefireProviderFactory = surefireProviderFactory;
         this.surefireProvider = surefireProviderFactory.createInstance();
-        this.configuration = Configuration.loadPrecalculated(getProjectDir());
+        this.configuration = ConfigurationLoader.loadPrecalculated(getProjectDir());
         Log.setLoggerFactory(new SurefireProviderLoggerFactory(getConsoleLogger(), isAnyDebugEnabled()));
     }
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
-import static org.arquillian.smart.testing.configuration.Configuration.loadConfigurationFromFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationLoader.loadConfigurationFromFile;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsPath;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
@@ -45,7 +45,7 @@ public class ConfigurationTest {
 
         // when
         final Configuration actualConfiguration =
-            Configuration.load(getResourceAsPath("configuration/smart-testing.yml"));
+            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -75,7 +75,7 @@ public class ConfigurationTest {
         expectedConfiguration.setAutocorrect(false);
 
         // when
-        final Configuration defaultConfiguration = Configuration.load();
+        final Configuration defaultConfiguration = ConfigurationLoader.load();
 
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);

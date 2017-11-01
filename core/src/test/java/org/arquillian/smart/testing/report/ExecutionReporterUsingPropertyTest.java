@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ClearSystemProperties;
@@ -40,7 +40,9 @@ public class ExecutionReporterUsingPropertyTest {
         System.setProperty(SMART_TESTING_MODE, "selecting");
         final TestSelection newChangedTestSelection = new TestSelection(ExecutionReporterTest.class.getName(), "new", "changed");
         final TestSelection newTestSelection = new TestSelection(ExecutionReporterUsingPropertyTest.class.getName(), "new");
-        smartTestingReportGenerator = new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), Configuration.load(), System.getProperty("user.dir"));
+        smartTestingReportGenerator =
+            new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), ConfigurationLoader
+                .load(), System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();
