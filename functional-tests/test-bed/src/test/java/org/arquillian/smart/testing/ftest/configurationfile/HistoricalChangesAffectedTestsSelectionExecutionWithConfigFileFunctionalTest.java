@@ -2,8 +2,6 @@ package org.arquillian.smart.testing.ftest.configurationfile;
 
 import java.util.Collection;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.configuration.Range;
-import org.arquillian.smart.testing.configuration.Scm;
 import org.arquillian.smart.testing.ftest.testbed.configuration.builder.ConfigurationBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
