@@ -42,7 +42,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-import static org.arquillian.smart.testing.strategies.affected.AffectedConfiguration.AFFECTED;
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassDependenciesGraph {

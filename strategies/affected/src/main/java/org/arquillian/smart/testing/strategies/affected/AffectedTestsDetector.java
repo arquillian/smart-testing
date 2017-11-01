@@ -19,9 +19,9 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.strategies.affected.detector.FileSystemTestClassDetector;
 import org.arquillian.smart.testing.strategies.affected.detector.TestClassDetector;
 
-import static org.arquillian.smart.testing.strategies.affected.AffectedConfiguration.AFFECTED;
-
 public class AffectedTestsDetector implements TestExecutionPlanner {
+
+    static final String AFFECTED = "affected";
 
     private static final Logger logger = Log.getLogger();
 

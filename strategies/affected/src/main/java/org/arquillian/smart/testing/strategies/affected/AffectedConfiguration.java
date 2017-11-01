@@ -5,9 +5,10 @@ import java.util.List;
 import org.arquillian.smart.testing.configuration.ConfigurationItem;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
+
 public class AffectedConfiguration implements StrategyConfiguration {
 
-    static final String AFFECTED = "affected";
     private static final String SMART_TESTING_AFFECTED_TRANSITIVITY = "smart.testing.affected.transitivity";
     private static final String SMART_TESTING_AFFECTED_EXCLUSIONS = "smart.testing.affected.exclusions";
     private static final String SMART_TESTING_AFFECTED_INCLUSIONS = "smart.testing.affected.inclusions";

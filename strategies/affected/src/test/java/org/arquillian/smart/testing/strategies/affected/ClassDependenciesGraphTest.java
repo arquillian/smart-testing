@@ -17,7 +17,7 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.test.MyBusin
 import org.junit.Test;
 
 import static java.util.Collections.singletonList;
-import static org.arquillian.smart.testing.strategies.affected.AffectedConfiguration.AFFECTED;
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClassDependenciesGraphTest {

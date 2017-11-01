@@ -7,11 +7,13 @@ import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
+
 public class AffectedChangesDetectorFactory implements TestExecutionPlannerFactory {
 
     @Override
     public String alias() {
-        return "affected";
+        return AFFECTED;
     }
 
     @Override
