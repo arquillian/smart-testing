@@ -7,7 +7,7 @@ import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
-import static org.arquillian.smart.testing.strategies.failed.FailedConfiguration.FAILED;
+import static org.arquillian.smart.testing.strategies.failed.FailedTestsDetector.FAILED;
 
 public class FailedTestsDetectorFactory implements TestExecutionPlannerFactory {
 

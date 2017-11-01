@@ -17,9 +17,10 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 import static org.arquillian.smart.testing.scm.ChangeType.MODIFY;
 import static org.arquillian.smart.testing.scm.ChangeType.RENAME;
-import static org.arquillian.smart.testing.vcs.git.ChangedConfiguration.CHANGED;
 
 public class ChangedTestsDetector implements TestExecutionPlanner {
+
+    static final String CHANGED = "changed";
 
     private static final Logger logger = Log.getLogger();
 

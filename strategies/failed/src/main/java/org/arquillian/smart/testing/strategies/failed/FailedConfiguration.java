@@ -5,9 +5,9 @@ import java.util.List;
 import org.arquillian.smart.testing.configuration.ConfigurationItem;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
-public class FailedConfiguration implements StrategyConfiguration {
+import static org.arquillian.smart.testing.strategies.failed.FailedTestsDetector.FAILED;
 
-    static final String FAILED = "failed";
+public class FailedConfiguration implements StrategyConfiguration {
 
     @Override
     public String name() {

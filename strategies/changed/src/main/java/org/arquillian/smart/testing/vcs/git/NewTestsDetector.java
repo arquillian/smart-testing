@@ -15,9 +15,10 @@ import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 import static org.arquillian.smart.testing.scm.ChangeType.ADD;
-import static org.arquillian.smart.testing.vcs.git.NewConfiguration.NEW;
 
 public class NewTestsDetector implements TestExecutionPlanner {
+
+    static final String NEW = "new";
 
     private static final Logger logger = Log.getLogger();
 

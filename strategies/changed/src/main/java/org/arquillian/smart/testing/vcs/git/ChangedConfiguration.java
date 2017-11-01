@@ -5,9 +5,9 @@ import java.util.List;
 import org.arquillian.smart.testing.configuration.ConfigurationItem;
 import org.arquillian.smart.testing.spi.StrategyConfiguration;
 
-public class ChangedConfiguration implements StrategyConfiguration {
+import static org.arquillian.smart.testing.vcs.git.ChangedTestsDetector.CHANGED;
 
-    static final String CHANGED = "changed";
+public class ChangedConfiguration implements StrategyConfiguration {
 
     @Override
     public String name() {

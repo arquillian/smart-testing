@@ -9,6 +9,8 @@ import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
 public class FailedTestsDetector implements TestExecutionPlanner {
 
+    static final String FAILED = "failed";
+
     private final TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
 
     @Override
@@ -21,7 +23,7 @@ public class FailedTestsDetector implements TestExecutionPlanner {
 
     @Override
     public String getName() {
-        return "failed";
+        return FAILED;
     }
 }
 //end::documentation[]

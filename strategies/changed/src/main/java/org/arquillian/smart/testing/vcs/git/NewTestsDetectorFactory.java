@@ -7,7 +7,7 @@ import org.arquillian.smart.testing.spi.StrategyConfiguration;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 
-import static org.arquillian.smart.testing.vcs.git.NewConfiguration.NEW;
+import static org.arquillian.smart.testing.vcs.git.NewTestsDetector.NEW;
 
 public class NewTestsDetectorFactory implements TestExecutionPlannerFactory {
 
