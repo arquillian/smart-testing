@@ -87,7 +87,7 @@ public class ConfigurationLoader {
     }
 
     // testing
-    public static Configuration load(Path path) {
+    static Configuration load(Path path) {
         try (InputStream io = Files.newInputStream(path)) {
             final Yaml yaml = new Yaml();
             Map<String, Object> yamlConfiguration = (Map<String, Object>) yaml.load(io);

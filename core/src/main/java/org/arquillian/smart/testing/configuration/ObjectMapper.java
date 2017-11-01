@@ -67,7 +67,7 @@ class ObjectMapper {
                 return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
-            Object mappedValue;
+            Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
 
             mappedValue = getUserSetProperty(method, configItem, configFileValue);
@@ -224,6 +224,7 @@ class ObjectMapper {
             }
             return convertedList;
         }
+
         return null;
     }
 
