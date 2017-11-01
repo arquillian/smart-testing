@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
@@ -32,22 +32,16 @@ public class ConfigurationLoader {
         final File[] files =
             projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
-        Map<String, Object> yamlConfiguration = new LinkedHashMap<>();
-
         if (files == null) {
             throw new RuntimeException("I/O errors occurs while listing dir " + projectDir);
         }
 
+        Map<String, Object> yamlConfiguration = new HashMap<>(0);
         if (files.length == 0) {
             logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
                 + "Using system properties to load configuration for smart testing.");
         } else {
-            try (InputStream io = Files.newInputStream(getConfigurationFilePath(files))) {
-                final Yaml yaml = new Yaml();
-                yamlConfiguration = yaml.load(io);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(files));
         }
 
         final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
@@ -58,6 +52,21 @@ public class ConfigurationLoader {
         }
 
         return configuration;
+    }
+
+    private static Map<String, Object> getConfigParametersFromFile(Path filePath) {
+        try (InputStream io = Files.newInputStream(filePath)) {
+            final Yaml yaml = new Yaml();
+            Map<String, Object> yamlConfig = yaml.load(io);
+            if (yamlConfig == null) {
+                logger.warn(String.format("The configuration file %s is empty.", filePath));
+                return new HashMap<>();
+            } else {
+                return yamlConfig;
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     public static Configuration load(File projectDir, String... strategies) {
