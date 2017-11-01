@@ -22,6 +22,8 @@ public class ConfigurationLoader {
 
     public static final String SMART_TESTING_YML = "smart-testing.yml";
     public static final String SMART_TESTING_YAML = "smart-testing.yaml";
+    public static final String SMART_TESTING_CONFIG = "smart.testing.config";
+
     private static final Logger logger = Log.getLogger();
 
     public static Configuration load() {
@@ -29,19 +31,26 @@ public class ConfigurationLoader {
     }
 
     public static Configuration load(File projectDir) {
-        final File[] files =
-            projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
-
-        if (files == null) {
-            throw new RuntimeException("I/O errors occurs while listing dir " + projectDir);
-        }
-
+        String customConfigFile = System.getProperty(SMART_TESTING_CONFIG);
         Map<String, Object> yamlConfiguration = new HashMap<>(0);
-        if (files.length == 0) {
-            logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
-                + "Using system properties to load configuration for smart testing.");
+
+        if (customConfigFile != null) {
+            File file = Paths.get(customConfigFile).toAbsolutePath().toFile();
+            yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(file));
         } else {
-            yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(files));
+            final File[] files =
+                projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
+
+            if (files == null) {
+                throw new RuntimeException("I/O errors occurs while listing dir " + projectDir);
+            }
+
+            if (files.length == 0) {
+                logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
+                    + "Using system properties to load configuration for smart testing.");
+            } else {
+                yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(files));
+            }
         }
 
         final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
@@ -99,14 +108,20 @@ public class ConfigurationLoader {
     static Configuration load(Path path) {
         try (InputStream io = Files.newInputStream(path)) {
             final Yaml yaml = new Yaml();
-            Map<String, Object> yamlConfiguration = (Map<String, Object>) yaml.load(io);
+            Map<String, Object> yamlConfiguration = yaml.load(io);
             return parseConfiguration(yamlConfiguration);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
-    private static Path getConfigurationFilePath(File[] files) {
+    private static Path getConfigurationFilePath(File... files) {
+        if (files.length == 1) {
+            final File configFile = files[0];
+            logger.info("Using configuration from " + configFile.getName());
+            return configFile.toPath();
+        }
+
         if (files.length == 2) {
             logger.warn(
                 "Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);
