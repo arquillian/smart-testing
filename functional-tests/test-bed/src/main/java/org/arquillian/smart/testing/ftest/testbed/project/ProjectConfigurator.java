@@ -61,11 +61,15 @@ public class ProjectConfigurator {
         return this;
     }
 
-    public ProjectConfigurator createConfigFile(String... customConfigFile) {
+    public ProjectConfigurator createConfigFile() {
         this.createConfigFile = true;
-        if (customConfigFile.length > 0) {
-            this.customConfigFile = customConfigFile[0];
-        }
+        createConfigurationFile();
+        return this;
+    }
+
+    public ProjectConfigurator createConfigFile(String customConfigFile) {
+        this.createConfigFile = true;
+        this.customConfigFile = customConfigFile;
         createConfigurationFile(customConfigFile);
         return this;
     }
@@ -126,19 +130,19 @@ public class ProjectConfigurator {
        return Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
     }
 
-    private void createConfigurationFile(String... customConfigFile) {
-        Path configFilePath;
-        if (customConfigFile.length > 0) {
-            configFilePath = Paths.get(root.toString(), customConfigFile[0]);
-            if (!Files.exists(configFilePath)) {
-                try {
-                    Files.createFile(configFilePath);
-                } catch (IOException e) {
-                    throw new UncheckedIOException("Failed creating custom configuration file.", e);
-                }
+    private void createConfigurationFile() {
+        final Path configFilePath = Paths.get(root.toString(), "smart-testing.yml");
+        dumpConfiguration(configFilePath);
+    }
+
+    private void createConfigurationFile(String customConfigFile) {
+        Path configFilePath = Paths.get(root.toString(), customConfigFile);
+        if (!Files.exists(configFilePath)) {
+            try {
+                Files.createFile(configFilePath);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed creating custom configuration file.", e);
             }
-        } else {
-            configFilePath = Paths.get(root.toString(), "smart-testing.yml");
         }
         dumpConfiguration(configFilePath);
     }
