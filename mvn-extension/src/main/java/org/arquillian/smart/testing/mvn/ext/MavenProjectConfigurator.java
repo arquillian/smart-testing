@@ -68,22 +68,13 @@ class MavenProjectConfigurator {
     private List<Plugin> getEffectivePlugins(Model model) {
         final List<Plugin> testRunnerPluginConfigurations = model.getBuild().getPlugins()
             .stream()
-            .filter(plugin -> ApplicablePlugins.contains(plugin.getArtifactId()))
-            .filter(plugin -> {
-                Version version = Version.from(plugin.getVersion().trim());
-                return version.isGreaterOrEqualThan(MINIMUM_VERSION);
-            })
-            .filter(plugin -> {
-                if (configuration.isApplyToDefined()) {
-                    return plugin.getArtifactId().contains(configuration.getApplyTo());
-                }
-                // If not set the plugin is usable
-                return true;
-            })
+            .filter(
+                plugin -> ApplicablePlugins.contains(plugin.getArtifactId()) && hasMinimumVersionRequired(plugin, model))
+            .filter(this::hasPluginSelectionConfigured)
             .collect(Collectors.toList());
 
         if (areNotApplicableTestingPlugins(testRunnerPluginConfigurations) && isNotPomProject(model)) {
-            failBecauseOfPluginVersionMismatch(model);
+            failBecauseOfMissingApplicablePlugin(model);
         }
 
         return testRunnerPluginConfigurations.stream()
@@ -92,13 +83,35 @@ class MavenProjectConfigurator {
             .collect(Collectors.toList());
     }
 
-    private void failBecauseOfPluginVersionMismatch(Model model) {
-        logger.error(
-            "Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
-            ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION);
+    private boolean hasPluginSelectionConfigured(Plugin plugin) {
+        if (configuration.isApplyToDefined()) {
+            return plugin.getArtifactId().contains(configuration.getApplyTo());
+        }
+        // If not set the plugin is usable
+        return true;
+    }
+
+    private boolean hasMinimumVersionRequired(Plugin plugin, Model model) {
+        Version version = Version.from(plugin.getVersion().trim());
+        if (!version.isGreaterOrEqualThan(MINIMUM_VERSION)) {
+            failBecauseOfPluginVersionMismatch(model);
+        }
+        return true;
+    }
+
+    private void failBecauseOfMissingApplicablePlugin(Model model) {
+        String applicablePlugin = (configuration.isApplyToDefined()) ? configuration.getApplyTo()
+            : ApplicablePlugins.ARTIFACT_IDS_LIST.toString();
         logCurrentPlugins(model);
         throw new IllegalStateException(
-            String.format("Smart testing must be used with any of %s plugins with minimum version %s",
+            String.format("Smart testing must be used with any of %s plugin(s). Please verify <plugins> section in your pom.xml",
+                applicablePlugin));
+    }
+
+    private void failBecauseOfPluginVersionMismatch(Model model) {
+        logCurrentPlugins(model);
+        throw new IllegalStateException(
+            String.format("Smart testing must be used with any of %s plugins with minimum version %s. Please add or update one of the plugin in <plugins> section in your pom.xml",
                 ApplicablePlugins.ARTIFACT_IDS_LIST, MINIMUM_VERSION));
     }
 
