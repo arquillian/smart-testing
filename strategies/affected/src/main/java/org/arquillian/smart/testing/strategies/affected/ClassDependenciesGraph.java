@@ -91,12 +91,12 @@ public class ClassDependenciesGraph {
 
     private List<String> calculateManualAddedDependencies(JavaClass testJavaClass) {
         final List<String> manualDependencyClasses = new ArrayList<>();
-        final Tests[] allTestsAnnotation = getAllAnnotations(testJavaClass);
+        final ComponentUnderTest[] allTestsAnnotation = getAllAnnotations(testJavaClass);
 
-        for (Tests tests : allTestsAnnotation) {
+        for (ComponentUnderTest tests : allTestsAnnotation) {
             List<String> packages = getPackages(testJavaClass.packageName(), tests);
-            for (String packag : packages) {
-                final String trimmedPackage = packag.trim();
+            for (String pkg : packages) {
+                final String trimmedPackage = pkg.trim();
                 manualDependencyClasses.addAll(scanClassesFromPackage(trimmedPackage));
             }
         }
@@ -105,15 +105,15 @@ public class ClassDependenciesGraph {
 
     }
 
-    private Tests[] getAllAnnotations(JavaClass testJavaClass) {
+    private ComponentUnderTest[] getAllAnnotations(JavaClass testJavaClass) {
 
-        final Optional<TestsList> testsListOptional = testJavaClass.getAnnotationByType(TestsList.class);
+        final Optional<ComponentsUnderTest> testsListOptional = testJavaClass.getAnnotationByType(ComponentsUnderTest.class);
 
-        Tests[] tests = testsListOptional
-            .map(TestsList::value)
-            .orElseGet(() -> testJavaClass.getAnnotationByType(Tests.class)
-                .map(annotation -> new Tests[] {annotation})
-                .orElse(new Tests[0]));
+        ComponentUnderTest[] tests = testsListOptional
+            .map(ComponentsUnderTest::value)
+            .orElseGet(() -> testJavaClass.getAnnotationByType(ComponentUnderTest.class)
+                .map(annotation -> new ComponentUnderTest[] {annotation})
+                .orElse(new ComponentUnderTest[0]));
 
 
         return tests;
@@ -144,7 +144,7 @@ public class ClassDependenciesGraph {
         return manualDependencyClasses;
     }
 
-    private List<String> getPackages(String testPackage, Tests tests) {
+    private List<String> getPackages(String testPackage, ComponentUnderTest tests) {
         List<String> packages = new ArrayList<>();
         if (tests.classes().length == 0 && tests.packages().length == 0 && tests.packagesOf().length == 0) {
             packages.add(testPackage + ".*");

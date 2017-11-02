@@ -1,13 +1,12 @@
 package org.arquillian.smart.testing.strategies.affected.fakeproject.test;
 
-import org.arquillian.smart.testing.strategies.affected.Tests;
+import org.arquillian.smart.testing.strategies.affected.ComponentUnderTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
-// Test ignored because it is used internally
-@Ignore
+@Ignore("Test ignored because it is used internally")
 //tag::docs[]
-@Tests(packages = "org.arquillian.smart.testing.strategies.affected.fakeproject.main.superbiz.*")
+@ComponentUnderTest(packages = "org.arquillian.smart.testing.strategies.affected.fakeproject.main.superbiz.*")
 public class ZTest {
 //end::docs[]
     @Test

@@ -15,9 +15,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Repeatable(TestsList.class)
+@Repeatable(ComponentsUnderTest.class)
 @Documented
-public @interface Tests {
+public @interface ComponentUnderTest {
 
     /**
      * Packages of classes that needs to be added as tested classes in current test. You can set the package name "org.superbiz" which means only classes defined in this package,
