@@ -78,7 +78,7 @@ public class SkipTestExecutionFunctionalTest {
                 .options()
                     .skipTests(true)
                 .configure()
-            .run();
+            .run("clean", "verify");
 
         // then
         String capturedMavenLog = project.getMavenLog();
@@ -178,32 +178,5 @@ public class SkipTestExecutionFunctionalTest {
         String capturedMavenLog = project.getMavenLog();
         softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(20);
-    }
-
-    @Test
-    public void should_be_able_to_enable_tests_from_property_when_set_as_default_property_in_pom() throws Exception {
-        // given
-        final Project project = testBed.getProject();
-
-        project
-            .applyAsCommits("Configure skipITs as custom default property in pom");
-
-        project.configureSmartTesting()
-                .executionOrder(AFFECTED)
-                .inMode(ORDERING)
-            .enable();
-
-        // when
-        final TestResults actualTestResults = project
-            .build(CORE_MODULES)
-                .options()
-                    .withSystemProperties("skip.integration.tests", "false")
-                .configure()
-            .run("clean", "verify");
-
-        // then
-        String capturedMavenLog = project.getMavenLog();
-        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
-        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(21);
     }
 }
