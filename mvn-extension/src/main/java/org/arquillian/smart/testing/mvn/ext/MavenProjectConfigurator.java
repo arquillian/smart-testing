@@ -82,10 +82,10 @@ class MavenProjectConfigurator {
             failBecauseOfMissingApplicablePlugin(model);
         }
 
-        return removeAllPluginsIfSkipped(testRunnerPluginConfigurations, model);
+        return removePluginsThatAreSkipped(testRunnerPluginConfigurations, model);
     }
 
-    private List<Plugin> removeAllPluginsIfSkipped(List<Plugin> testRunnerPluginConfigurations, Model model) {
+    private List<Plugin> removePluginsThatAreSkipped(List<Plugin> testRunnerPluginConfigurations, Model model) {
         SkipModuleChecker skipModuleChecker = new SkipModuleChecker(model);
         if (skipModuleChecker.areAllTestsSkipped()) {
             return Collections.emptyList();

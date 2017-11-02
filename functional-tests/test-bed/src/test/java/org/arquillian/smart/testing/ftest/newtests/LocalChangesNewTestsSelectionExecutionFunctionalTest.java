@@ -65,6 +65,7 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+
     }
 
     @Test
@@ -95,7 +96,6 @@ public class LocalChangesNewTestsSelectionExecutionFunctionalTest {
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-
     }
 
 }
