@@ -14,7 +14,7 @@ import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.DefaultConsoleReporter;
 import org.apache.maven.surefire.testset.TestRequest;
 import org.apache.maven.surefire.util.TestsToRun;
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,7 +61,7 @@ public class SmartTestingProviderTest {
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
 
         temporaryFolder.newFile("pom.xml");
-        Configuration.load().dump(temporaryFolder.getRoot());
+        ConfigurationLoader.load().dump(temporaryFolder.getRoot());
         System.setProperty("basedir", temporaryFolder.getRoot().toString());
 
         when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));

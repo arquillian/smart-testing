@@ -7,6 +7,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 import org.assertj.core.groups.Tuple;
 import org.junit.Rule;
@@ -28,7 +29,7 @@ public class SurefireApiDependencyTest {
         throws Exception {
         // given
         Model model = prepareModelWithSurefirePlugin("2.20");
-        final DependencyResolver dependencyResolver = new DependencyResolver(Configuration.load());
+        final DependencyResolver dependencyResolver = new DependencyResolver(ConfigurationLoader.load());
 
         // when
         dependencyResolver.addRequiredDependencies(model);
@@ -50,7 +51,7 @@ public class SurefireApiDependencyTest {
         throws Exception {
         // given
         Model model = prepareModelWithSurefirePlugin("2.20");
-        final Configuration conf = Configuration.load();
+        final Configuration conf = ConfigurationLoader.load();
         final DependencyResolver dependencyResolver = new DependencyResolver(conf);
         model.addDependency(new DependencyResolver.SurefireApiDependency("2.19.1"));
 
@@ -127,7 +128,7 @@ public class SurefireApiDependencyTest {
     }
 
     private Configuration configureWithAutocorrect(String... strategies) {
-        final Configuration conf = Configuration.load();
+        final Configuration conf = ConfigurationLoader.load();
         conf.setAutocorrect(true);
         conf.setStrategies(strategies);
         return conf;

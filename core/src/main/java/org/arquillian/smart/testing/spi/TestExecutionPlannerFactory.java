@@ -13,4 +13,6 @@ public interface TestExecutionPlannerFactory {
 
     TestExecutionPlanner create(File projectDir, TestVerifier testVerifier, Configuration configuration);
 
+    StrategyConfiguration strategyConfiguration();
+
 }

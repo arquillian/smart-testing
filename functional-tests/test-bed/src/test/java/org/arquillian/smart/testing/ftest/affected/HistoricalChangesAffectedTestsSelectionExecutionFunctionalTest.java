@@ -9,6 +9,7 @@ import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
 import org.arquillian.smart.testing.ftest.newtests.HistoricalChangesNewTestsSelectionExecutionFunctionalTest;
 import org.arquillian.smart.testing.ftest.testbed.ProjectPersistTest;
@@ -94,10 +95,12 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
 
     private void verifySmartTestingAPI(Collection<TestResult> expectedTestResults, Project project) {
         // given
-        Configuration configuration = Configuration.load();
-        configuration.setStrategies("affected");
+        Configuration configuration = ConfigurationLoader.load();
+        configuration.setStrategies(AFFECTED.getName());
         configuration.setMode(RunMode.SELECTING);
         configuration.getScm().setLastChanges("2");
+        configuration.loadStrategyConfigurations(AFFECTED.getName());
+
         List<String> expectedTestClasses = expectedTestResults
             .stream()
             .map(TestResult::getClassName)
