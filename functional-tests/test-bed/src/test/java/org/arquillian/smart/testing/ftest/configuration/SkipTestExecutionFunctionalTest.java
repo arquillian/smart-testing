@@ -33,7 +33,7 @@ public class SkipTestExecutionFunctionalTest {
     public final SmartTestingSoftAssertions softly = new SmartTestingSoftAssertions();
 
     @Test
-    public void should_execute_all_unit_tests_when_integration_test_execution_is_skipped() throws Exception {
+    public void should_execute_only_unit_tests_when_integration_test_execution_is_skipped() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -42,13 +42,16 @@ public class SkipTestExecutionFunctionalTest {
                 .inMode(ORDERING)
             .enable();
 
+        project
+            .applyAsLocalChanges("Enable both surefire and failsafe plugin with sample integration test");
+
         // when
         final TestResults actualTestResults = project
             .build(CORE_MODULES)
                 .options()
                     .withSystemProperties("skipITs", "true")
                 .configure()
-            .run();
+            .run("clean", "verify");
 
         // then
         String capturedMavenLog = project.getMavenLog();
@@ -66,13 +69,16 @@ public class SkipTestExecutionFunctionalTest {
                 .inMode(ORDERING)
             .enable();
 
+        project
+            .applyAsLocalChanges("Enable both surefire and failsafe plugin with sample integration test");
+
         // when
         final TestResults actualTestResults = project
             .build(CORE_MODULES)
                 .options()
                     .skipTests(true)
                 .configure()
-            .run();
+            .run("clean", "verify");
 
         // then
         String capturedMavenLog = project.getMavenLog();
@@ -100,5 +106,77 @@ public class SkipTestExecutionFunctionalTest {
             .doesNotContainDirectory(TemporaryInternalFiles.getScmChangesFileName())
             .doesNotContainDirectory(SMART_TESTING_WORKING_DIRECTORY_NAME)
             .doesNotContainDirectory("target");
+    }
+
+    @Test
+    public void should_disable_smart_testing_and_execute_no_tests_when_skip_is_set_in_plugin_configuration_section_of_pom() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project
+            .applyAsCommits("Configure skipTests property in plugin configuration section of pom");
+
+        project.configureSmartTesting()
+                .executionOrder(AFFECTED)
+                .inMode(ORDERING)
+            .enable();
+
+        // when
+        final TestResults actualTestResults = project
+            .build(CORE_MODULES)
+                .options()
+                    .withDebugOutput()
+                    .logBuildOutput(false)
+                .configure()
+            .run();
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        softly.assertThat(capturedMavenLog).contains("[DEBUG] Smart Testing Extension - Disabling Smart Testing ");
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(0);
+    }
+
+    @Test
+    public void should_execute_only_unit_tests_when_skipITs_is_set_in_pom() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project
+            .applyAsCommits("Configure skipITs as default property in pom");
+
+        project.configureSmartTesting()
+                .executionOrder(AFFECTED)
+                .inMode(ORDERING)
+            .enable();
+
+        // when
+        final TestResults actualTestResults = project.build(CORE_MODULES).run("clean", "verify");
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(20);
+    }
+
+    @Test
+    public void should_execute_only_unit_tests_when_skipITs_is_set_as_custom_property_in_pom() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project
+            .applyAsCommits("Configure skipITs as custom default property in pom");
+
+        project.configureSmartTesting()
+                .executionOrder(AFFECTED)
+                .inMode(ORDERING)
+            .enable();
+
+        // when
+        final TestResults actualTestResults = project.build(CORE_MODULES).run("clean", "verify");
+
+        // then
+        String capturedMavenLog = project.getMavenLog();
+        softly.assertThat(capturedMavenLog).contains(SMART_TESTING_EXTENSION_ENABLED);
+        softly.assertThat(actualTestResults.accumulatedPerTestClass()).size().isEqualTo(20);
     }
 }

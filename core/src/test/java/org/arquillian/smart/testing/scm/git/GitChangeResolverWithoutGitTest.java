@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.scm.git;
 
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class GitChangeResolverWithoutGitTest {
         thrown.expect(IllegalStateException.class);
 
         // when
-        gitChangeResolver.diff(gitFolder.getRoot(), Configuration.load(), "custom");
+        gitChangeResolver.diff(gitFolder.getRoot(), ConfigurationLoader.load(), "custom");
     }
 
 }

@@ -11,6 +11,7 @@ import java.util.Set;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
 import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.scm.ChangeType;
@@ -23,8 +24,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -53,13 +54,15 @@ public class AffectedTestsDetectorTest {
     public void should_get_affected_tests_by_a_main_class_change() {
 
         // given
+        final Configuration configuration = ConfigurationLoader.load();
+        configuration.loadStrategyConfigurations(AFFECTED);
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);
         when(changeStorage.read(new File("."))).thenReturn(Optional.of(Collections.singletonList(change)));
 
         final AffectedTestsDetector affectedTestsDetector =
             new AffectedTestsDetector(fileSystemTestClassDetector, changeStorage, changeResolver, new File("."),
-                new CustomTestVerifier(), mock(Configuration.class));
+                new CustomTestVerifier(), configuration);
 
         // when
         final Collection<TestSelection> tests = affectedTestsDetector.getTests();

@@ -1,0 +1,11 @@
+strategies: affected
+strategiesConfiguration:
+  affected:
+    transitivity: true
+    exclusions:
+       - a
+       - b
+       - c
+    inclusions:
+       - d
+       - e

@@ -2,18 +2,14 @@ package org.arquillian.smart.testing.strategies.affected;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 class Filter {
 
     private final List<String> inclusions = new ArrayList<>();
     private final List<String> exclusions = new ArrayList<>();
 
-    /**
-     * @param inclusions in CSV format
-     * @param exclusions in CSV format
-     */
-    Filter(String inclusions, String exclusions) {
+    Filter(List<String> inclusions, List<String> exclusions) {
 
         if (inclusions != null && !inclusions.isEmpty()) {
             this.inclusions.addAll(parse(inclusions));
@@ -25,22 +21,15 @@ class Filter {
 
     }
 
-    private List<String> parse(String expression) {
-
-        final List<String> tokens = new ArrayList<>();
-        final StringTokenizer stringTokenizer = new StringTokenizer(expression, ",");
-        while(stringTokenizer.hasMoreTokens()) {
-            final String preProcessedToken = stringTokenizer.nextToken().trim();
-
-            if (preProcessedToken.endsWith("*")) {
-                tokens.add(preProcessedToken.substring(0, preProcessedToken.length() - 1));
-            } else {
-                tokens.add(preProcessedToken);
-            }
-
-        }
-
-        return tokens;
+    private List<String> parse(List<String> expressions) {
+        return expressions.stream()
+            .map(preProcessedToken -> {
+                if (preProcessedToken.endsWith("*")) {
+                    return preProcessedToken.substring(0, preProcessedToken.length() - 1);
+                } else {
+                    return preProcessedToken;
+                }
+            }).collect(Collectors.toList());
     }
 
     boolean shouldBeIncluded(String element) {

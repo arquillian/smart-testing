@@ -13,3 +13,12 @@ autocorrect: true #<!--9-->
 customStrategies:  #<!--10-->
     - smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0
     - smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0
+strategiesConfiguration: #<!--11-->
+    affected:
+      transitivity: true #<!--12-->
+      exclusions: #<!--13-->
+         - org.package.*
+         - org.arquillian.package.*
+      inclusions: #<!--14-->
+         - org.package.exclude.*
+         - org.arquillian.package.exclude.*
