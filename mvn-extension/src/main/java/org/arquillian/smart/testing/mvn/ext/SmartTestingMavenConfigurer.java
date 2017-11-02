@@ -48,7 +48,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger));
 
         loadConfigAndCheckIfInstallationShouldBeSkipped(session);
-        if (skipExtensionInstallation){
+        if (skipExtensionInstallation) {
             return;
         }
 
@@ -57,6 +57,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
         File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
         if (configuration.areStrategiesDefined()) {
+            logger.info("Enabling extension.");
             configureExtension(session, configuration);
             calculateChanges(projectDirectory, configuration);
             Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
@@ -65,7 +66,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         }
     }
 
-    private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session){
+    private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session) {
         SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(session);
         skipExtensionInstallation = skipInstallationChecker.shouldSkip();
         if (skipExtensionInstallation) {
@@ -87,7 +88,7 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void logExtensionDisableReason(Logger customLogger, String customReason) {
         String reason = "Not Defined";
-        if (customReason != null && !customReason.isEmpty()){
+        if (customReason != null && !customReason.isEmpty()) {
             reason = customReason;
         }
         customLogger.info("Smart Testing is disabled. Reason: %s", reason);
@@ -121,18 +122,19 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
-        logger.info("Enabling extension.");
         final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
         session.getAllProjects().forEach(mavenProject -> {
-            mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            configuration.dump(mavenProject.getBasedir());
-            if (isFailedStrategyUsed()) {
-                SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+            boolean wasConfigured = mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+            if (wasConfigured) {
+                configuration.dump(mavenProject.getBasedir());
+                if (isFailedStrategyUsed()) {
+                    SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+                }
             }
         });
     }
 
-    private boolean isFailedStrategyUsed(){
+    private boolean isFailedStrategyUsed() {
         return Arrays.asList(configuration.getStrategies()).contains("failed");
     }
 

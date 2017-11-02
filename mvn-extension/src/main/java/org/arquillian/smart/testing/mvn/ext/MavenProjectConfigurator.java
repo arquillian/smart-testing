@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -16,7 +17,6 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
 
 import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipITs;
 
 class MavenProjectConfigurator {
 
@@ -33,7 +33,7 @@ class MavenProjectConfigurator {
         this.dependencyResolver = new DependencyResolver(configuration);
     }
 
-    void configureTestRunner(Model model) {
+    boolean configureTestRunner(Model model) {
         final List<Plugin> effectiveTestRunnerPluginConfigurations = getEffectivePlugins(model);
 
         if (!effectiveTestRunnerPluginConfigurations.isEmpty()) {
@@ -62,6 +62,11 @@ class MavenProjectConfigurator {
                         }
                     });
                 });
+            return true;
+        } else {
+            logger.debug("Disabling Smart Testing %s in %s module. Reason: No executable test plugin is set.",
+                ExtensionVersion.version().toString(), model.getArtifactId());
+            return false;
         }
     }
 
@@ -77,9 +82,19 @@ class MavenProjectConfigurator {
             failBecauseOfMissingApplicablePlugin(model);
         }
 
+        return removePluginsThatAreSkipped(testRunnerPluginConfigurations, model);
+    }
+
+    private List<Plugin> removePluginsThatAreSkipped(List<Plugin> testRunnerPluginConfigurations, Model model) {
+        SkipModuleChecker skipModuleChecker = new SkipModuleChecker(model);
+        if (skipModuleChecker.areAllTestsSkipped()) {
+            return Collections.emptyList();
+        }
         return testRunnerPluginConfigurations.stream()
-            .filter(
-                testRunnerPlugin -> !(testRunnerPlugin.getArtifactId().equals("maven-failsafe-plugin") && isSkipITs()))
+            .filter(testRunnerPlugin -> !(ApplicablePlugins.FAILSAFE.hasSameArtifactId(testRunnerPlugin.getArtifactId())
+                && skipModuleChecker.areIntegrationTestsSkipped()))
+            .filter(testRunnerPlugin -> !(ApplicablePlugins.SUREFIRE.hasSameArtifactId(testRunnerPlugin.getArtifactId())
+                && skipModuleChecker.areUnitTestsSkipped()))
             .collect(Collectors.toList());
     }
 
@@ -100,12 +115,10 @@ class MavenProjectConfigurator {
     }
 
     private void failBecauseOfMissingApplicablePlugin(Model model) {
-        String applicablePlugin = (configuration.isApplyToDefined()) ? configuration.getApplyTo()
-            : ApplicablePlugins.ARTIFACT_IDS_LIST.toString();
         logCurrentPlugins(model);
         throw new IllegalStateException(
             String.format("Smart testing must be used with any of %s plugin(s). Please verify <plugins> section in your pom.xml",
-                applicablePlugin));
+                (configuration.isApplyToDefined()) ? configuration.getApplyTo() : ApplicablePlugins.ARTIFACT_IDS_LIST.toString()));
     }
 
     private void failBecauseOfPluginVersionMismatch(Model model) {

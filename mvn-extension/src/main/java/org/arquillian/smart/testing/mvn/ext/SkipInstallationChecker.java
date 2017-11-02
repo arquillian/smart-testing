@@ -2,10 +2,12 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.maven.execution.MavenSession;
 
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSkipTestExecutionSet;
-import static org.arquillian.smart.testing.mvn.ext.MavenPropertyResolver.isSpecificTestClassSet;
+import static org.arquillian.smart.testing.mvn.ext.SkipModuleChecker.MAVEN_TEST_SKIP;
+import static org.arquillian.smart.testing.mvn.ext.SkipModuleChecker.SKIP_TESTS;
 
 class SkipInstallationChecker {
 
@@ -18,6 +20,8 @@ class SkipInstallationChecker {
         "None of the goals specified for the build will invoke the tests. Any of the following goals are expected: ";
     static final String TEST_SKIPPED_REASON = "Test Execution has been skipped.";
     static final String SPECIFIC_CLASSES_REASON = "Specific Test Class execution is set.";
+
+    private final Pattern TEST_CLASS_PATTERN = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE);
 
     private final MavenSession session;
     private String reason;
@@ -50,6 +54,29 @@ class SkipInstallationChecker {
         }
 
         return reason != null;
+    }
+
+    private boolean isSkipTestExecutionSet() {
+        return isSkipTests() || isSkip();
+    }
+
+    private boolean isSkipTests() {
+        return Boolean.valueOf(System.getProperty(SKIP_TESTS));
+    }
+
+    private boolean isSkip() {
+        return Boolean.valueOf(System.getProperty(MAVEN_TEST_SKIP));
+    }
+
+    private boolean isSpecificTestClassSet() {
+        String testClasses = System.getProperty("test");
+        return testClasses != null && !containsPattern(testClasses);
+    }
+
+    private boolean containsPattern(String testClasses) {
+        return Arrays.stream(testClasses.split(","))
+            .map(TEST_CLASS_PATTERN::matcher)
+            .anyMatch(Matcher::find);
     }
 
     String getReason(){
