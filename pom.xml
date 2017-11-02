@@ -47,6 +47,7 @@
     <version.assertj-core>3.8.0</version.assertj-core>
     <version.system-rules>1.16.1</version.system-rules>
     <version.javassist>3.21.0-GA</version.javassist>
+    <version.fast-classpath-scanner>2.7.4</version.fast-classpath-scanner>
     <version.jgrapht>1.0.1</version.jgrapht>
     <version.shrinkwrap.resolver>3.0.0-beta-2</version.shrinkwrap.resolver>
     <version.snakeyaml>1.19</version.snakeyaml>
@@ -70,6 +71,7 @@
 
   <modules>
     <module>core</module>
+    <module>api</module>
     <module>surefire-provider</module>
     <module>junit-test-result-parser</module>
     <module>strategies/affected</module>
@@ -126,6 +128,11 @@
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${version.snakeyaml}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.lukehutch</groupId>
+        <artifactId>fast-classpath-scanner</artifactId>
+        <version>${version.fast-classpath-scanner}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
