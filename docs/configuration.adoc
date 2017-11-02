@@ -142,6 +142,36 @@ IMPORTANT: This strategy is currently only applicable for _white box_ testing ap
 
 WARNING: At this moment, this strategy does not work with Java 9.
 
+===== Explicitly Set
+
+By default affected strategy uses _imports_ of tests to build the graph of collaborators.
+This approach is fine for unit tests (white box tests) but might not work in all cases of high level tests (black box test).
+
+There are some test technologies that allows you to deploy an application locally and then run tests against it.
+For example Wildfly Swarm has `@DefaultDeployment` annotation or Spring (Boot) deploys all application automatically.
+
+This means that production classes are not directly imported into the test, so there is no way to get a relationship between test and production classes.
+For this reason `affected` provides an annotation to set package(s) of production classes that are deployed by the test.
+
+The first thing you need to do is register following artifact into your build script: `org.arquillian.smart.testing:api:<version>`.
+
+Then you can annotate your test with `org.arquillian.smart.testing.strategies.affected.ComponentUnderTest` annotation.
+
+For example:
+
+[source, java]
+----
+include::../strategies/affected/src/test/java/org/arquillian/smart/testing/strategies/affected/fakeproject/test/ZTest.java[tag=docs]
+----
+
+In previous example all classes belonging to packages and subpackages specified at `packages` attribute are considered as classes used by the test.
+
+You can also use `packageOf` attribute to set a reference class.
+With this attribute all classes that are placed in the same package as the reference class are considered as classes used by the test.
+With this approach your tests are resilient to package name changes.
+
+If none of the attributes are set, then all production classes with same package as test and its subpackages are added automatically as classes used by the test.
+
 ==== Failed
 
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
