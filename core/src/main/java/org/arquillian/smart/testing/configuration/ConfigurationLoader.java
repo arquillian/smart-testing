@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
@@ -31,13 +32,13 @@ public class ConfigurationLoader {
     }
 
     public static Configuration load(File projectDir) {
-        Map<String, Object> yamlConfiguration = new HashMap<>(0);
+        Map<String, Object> yamlConfiguration;
 
         final String customConfigFile = System.getProperty(SMART_TESTING_CONFIG);
         if (customConfigFile != null) {
-            yamlConfiguration = getConfigurationFromCustomConfigFile(customConfigFile, yamlConfiguration);
+            yamlConfiguration = getConfigurationFromCustomConfigFile(customConfigFile);
         } else {
-            yamlConfiguration = getConfigurationFromDefaultConfigFile(projectDir, yamlConfiguration);
+            yamlConfiguration = getConfigurationFromDefaultConfigFile(projectDir);
         }
 
         final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
@@ -50,7 +51,7 @@ public class ConfigurationLoader {
         return configuration;
     }
 
-    private static Map<String, Object> getConfigurationFromDefaultConfigFile(File projectDir, Map<String, Object> yamlConfiguration) {
+    private static Map<String, Object> getConfigurationFromDefaultConfigFile(File projectDir) {
         final File[] files =
             projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
@@ -62,20 +63,20 @@ public class ConfigurationLoader {
             logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
                 + "Using system properties to load configuration for smart testing.");
         } else {
-            yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(files));
+            return getConfigParametersFromFile(getConfigurationFilePath(files));
         }
-        return yamlConfiguration;
+        return Collections.EMPTY_MAP;
     }
 
-    private static Map<String, Object> getConfigurationFromCustomConfigFile(String customConfigFile, Map<String, Object> yamlConfiguration) {
+    private static Map<String, Object> getConfigurationFromCustomConfigFile(String customConfigFile) {
         final File file = Paths.get(customConfigFile).toAbsolutePath().toFile();
         if (!file.exists()) {
-            logger.info("Config file `" + file.getName() + "` is not found. "
-                + "Using system properties to load configuration for smart testing.");
+            logger.warn("Config file `" + file.getName() + "` is not found. "
+                + "Checking for config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML);
         } else {
-            yamlConfiguration = getConfigParametersFromFile(getConfigurationFilePath(file));
+            return getConfigParametersFromFile(getConfigurationFilePath(file));
         }
-        return yamlConfiguration;
+        return Collections.EMPTY_MAP;
     }
 
     private static Map<String, Object> getConfigParametersFromFile(Path filePath) {

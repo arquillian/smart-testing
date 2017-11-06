@@ -22,6 +22,8 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
+import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
+
 public class ProjectConfigurator {
 
     private static final String SMART_TESTING = "smart.testing";
@@ -63,7 +65,7 @@ public class ProjectConfigurator {
 
     public ProjectConfigurator createConfigFile() {
         this.createConfigFile = true;
-        createConfigurationFile();
+        createConfigurationFile(SMART_TESTING_YML);
         return this;
     }
 
@@ -120,7 +122,7 @@ public class ProjectConfigurator {
             } else {
                 this.project.configureSmartTesting()
                     .withConfiguration(configuration)
-                    .createConfigFile();
+                    .createConfigFile(SMART_TESTING_YML);
             }
         }
         return this.project;
@@ -128,11 +130,6 @@ public class ProjectConfigurator {
 
     public String strategies() {
        return Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
-    }
-
-    private void createConfigurationFile() {
-        final Path configFilePath = Paths.get(root.toString(), "smart-testing.yml");
-        dumpConfiguration(configFilePath);
     }
 
     private void createConfigurationFile(String customConfigFile) {
