@@ -107,20 +107,20 @@ public class ConfigurationLoader {
     }
 
     private static Path getConfigurationFilePath(File[] files) {
-        if (files.length == 1) {
-            final File configFile = files[0];
-            logger.info("Using configuration from " + configFile.getName());
-            return configFile.toPath();
+        if (files.length == 2) {
+            logger.warn(
+                "Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);
         }
 
-        logger.warn("Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);
-        logger.warn("Using configuration from " + SMART_TESTING_YML);
-
-        return Arrays.stream(files)
-            .filter(file -> file.getName().equals(SMART_TESTING_YML))
+        final Path configFilePath = Arrays.stream(files)
+            .filter(file -> file.getName().equals(SMART_TESTING_YML) || file.getName().equals(SMART_TESTING_YAML))
             .map(File::toPath)
-            .findFirst()
+            .findAny()
             .get();
+
+        logger.info("Using configuration from " + configFilePath);
+
+        return configFilePath;
     }
 
     private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {

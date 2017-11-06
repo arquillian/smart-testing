@@ -24,7 +24,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
+    public void should_load_configuration_from_parent_dir_if_not_present_in_current_execution_dir() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -38,7 +38,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
             .applyAsLocalChanges("Adds new unit test");
 
         // when
-        final TestResults actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build("config/impl-base").run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
