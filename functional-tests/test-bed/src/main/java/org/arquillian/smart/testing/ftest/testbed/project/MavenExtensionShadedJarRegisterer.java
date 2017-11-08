@@ -51,7 +51,8 @@ class MavenExtensionShadedJarRegisterer {
     }
 
     private File retrieveShadedExtensionJar(String stVersion){
-        return Maven.configureResolver().workOffline()
+        return Maven.configureResolver()
+            .withClassPathResolution(false)
             .resolve("org.arquillian.smart.testing:maven-lifecycle-extension:jar:shaded:" + stVersion)
             .withoutTransitivity()
             .asSingleFile();
