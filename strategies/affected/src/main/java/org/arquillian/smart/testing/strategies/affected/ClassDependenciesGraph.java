@@ -86,16 +86,16 @@ public class ClassDependenciesGraph {
             JavaClass testJavaClass = builder.getClassDescription(changedTestClassNames);
             if (testJavaClass != null) {
                 final String[] imports = testJavaClass.getImports();
-                final List<String> manualProductionClasses = calculateManualAddedDependencies(testJavaClass);
+                final List<String> manualProductionClasses = calculateManuallyAddedDependencies(testJavaClass);
                 manualProductionClasses.addAll(Arrays.asList(imports));
                 addToIndex(new JavaElement(testJavaClass), manualProductionClasses);
             }
         }
     }
 
-    private List<String> calculateManualAddedDependencies(JavaClass testJavaClass) {
+    private List<String> calculateManuallyAddedDependencies(JavaClass testJavaClass) {
         final List<String> manualDependencyClasses = new ArrayList<>();
-        final ComponentUnderTest[] allTestsAnnotation = getAllAnnotations(testJavaClass);
+        final ComponentUnderTest[] allTestsAnnotation = findComponentsUnderTests(testJavaClass);
 
         for (ComponentUnderTest tests : allTestsAnnotation) {
             List<String> packages = getPackages(testJavaClass.packageName(), tests);
@@ -109,7 +109,7 @@ public class ClassDependenciesGraph {
 
     }
 
-    private ComponentUnderTest[] getAllAnnotations(JavaClass testJavaClass) {
+    private ComponentUnderTest[] findComponentsUnderTests(JavaClass testJavaClass) {
 
         final Optional<ComponentsUnderTest> testsListOptional = testJavaClass.getAnnotationByType(ComponentsUnderTest.class);
 

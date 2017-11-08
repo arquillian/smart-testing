@@ -57,8 +57,8 @@ public class JavaAssistClass extends AbstractJavaClass {
     private final CtClass classReference;
 
     JavaAssistClass(CtClass classReference) {
-        imports = findImports(classReference);
-        className = classReference.getName();
+        this.imports = findImports(classReference);
+        this.className = classReference.getName();
         this.classReference = classReference;
     }
 
