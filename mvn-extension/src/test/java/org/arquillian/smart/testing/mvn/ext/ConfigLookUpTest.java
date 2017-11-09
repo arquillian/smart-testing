@@ -3,14 +3,17 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import net.jcip.annotations.NotThreadSafe;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class ConfigLookUpTest {
 
     @Rule

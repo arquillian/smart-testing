@@ -46,6 +46,7 @@ public class BuildConfigurator {
     private String mavenOpts = "-Xms512m -Xmx1024m";
     private String mavenVersion;
     private Using usingInstallation;
+    private String executionDir;
 
     BuildConfigurator(ProjectBuilder projectBuilder) {
         systemProperties.put("surefire.exitTimeout", "-1"); // see http://bit.ly/2vARQ5p
@@ -206,6 +207,11 @@ public class BuildConfigurator {
         return this;
     }
 
+    BuildConfigurator executionDir(String executionDir) {
+        this.executionDir = executionDir;
+        return this;
+    }
+
     void enableDebugOptions() {
         if (isRemoteDebugEnabled()) {
             final String debugOptions = String.format(MVN_DEBUG_AGENT, shouldSuspend(), getRemotePort());
@@ -252,6 +258,10 @@ public class BuildConfigurator {
 
     File getWorkingDirectory() {
         return workingDirectory;
+    }
+
+    String getExecutionDir() {
+        return executionDir;
     }
 
     private boolean isRemoteDebugEnabled() {

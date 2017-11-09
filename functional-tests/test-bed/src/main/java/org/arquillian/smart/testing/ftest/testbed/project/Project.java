@@ -61,4 +61,9 @@ public class Project implements AutoCloseable {
         projectBuilder.options().projects(projects);
         return projectBuilder;
     }
+
+    public ProjectBuilder build(Path executionDir) {
+        projectBuilder.options().executionDir(executionDir.toString());
+        return projectBuilder;
+    }
 }

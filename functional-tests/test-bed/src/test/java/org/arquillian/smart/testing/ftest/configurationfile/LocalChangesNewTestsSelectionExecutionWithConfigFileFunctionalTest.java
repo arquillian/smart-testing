@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.configurationfile;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -37,12 +38,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
-        // when // TODO: 11/9/17 Replace project.build("config/impl-base") with project.build() after new release of shrinkwrap-resolver-impl-maven-embedded
-        final TestResults actualTestResults = project.build("config/impl-base")
-                .options()
-                    .withWorkingDirectory("config/impl-base")
-                .configure()
-            .run();
+        final TestResults actualTestResults = project.build(Paths.get("config","impl-base")).run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
