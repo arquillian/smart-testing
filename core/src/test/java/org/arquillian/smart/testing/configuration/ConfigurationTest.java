@@ -89,7 +89,9 @@ public class ConfigurationTest {
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
         assertThat(systemErrOut.getLog())
-            .contains("WARN: Smart Testing Extension - The configuration file " + temporaryFolder.getRoot().getPath() + File.separator + "smart-testing.yaml is empty");
+            .contains("WARN: Smart Testing Extension - The configuration file "
+                + temporaryFolder.getRoot().getPath() + File.separator + ConfigurationLoader.SMART_TESTING_YAML
+                + " is empty");
     }
 
     @Test

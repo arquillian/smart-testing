@@ -2,77 +2,63 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-import org.apache.maven.execution.DefaultMavenExecutionRequest;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
-import org.assertj.core.api.Assertions;
+import java.nio.file.Paths;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.EnvironmentVariables;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigLookUpTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
-    @Mock
-    MavenSession mavenSession;
-
-    private MavenExecutionRequest mavenExecutionRequest;
+    @Rule
+    public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     @Before
     public void configureMavenExecutionRequest() {
-        mavenExecutionRequest = new DefaultMavenExecutionRequest();
-        Properties properties = new Properties();
-        properties.put("env.MAVEN_PROJECTBASEDIR", temporaryFolder.getRoot().toString());
-        mavenExecutionRequest.setSystemProperties(properties);
+        environmentVariables.set("MAVEN_PROJECTBASEDIR", temporaryFolder.getRoot().toString());
     }
 
     @Test
     public void should_return_first_dir_with_config_file() throws IOException {
+        // given
         temporaryFolder.newFolder("parent", "config");
-        temporaryFolder.newFile("parent" + File.separator + "pom.xml");
-        temporaryFolder.newFile("parent" + File.separator + "smart-testing.yml");
-        temporaryFolder.newFile(String.join(File.separator, "parent", "config", "pom.xml"));
+        temporaryFolder.newFile(Paths.get("parent", "pom.xml").toString());
+        temporaryFolder.newFile(Paths.get("parent", "smart-testing.yml").toString());
+        temporaryFolder.newFile(Paths.get("parent", "config", "pom.xml").toString());
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        when(mavenSession.getExecutionRootDirectory()).thenReturn(
-            String.join(File.separator, rootPath, "parent", "config"));
-        when(mavenSession.getRequest()).thenReturn(mavenExecutionRequest);
+        final ConfigLookUp configLookUp = new ConfigLookUp(Paths.get(rootPath, "parent", "config").toString());
 
-        final ConfigLookUp configLookUp = new ConfigLookUp(mavenSession);
-
+        // when
         final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
 
-        Assertions.assertThat(firstDirWithConfigOrProjectRootDir)
-            .isEqualTo(new File(rootPath + File.separator + "parent"));
+        // then
+        assertThat(firstDirWithConfigOrProjectRootDir)
+            .isEqualTo(Paths.get(rootPath, "parent").toFile());
     }
 
     @Test
     public void should_return_parent_dir_if_config_file_is_not_present() throws IOException {
+        // given
         temporaryFolder.newFolder("parent", "config");
-        temporaryFolder.newFile(String.join(File.separator, "parent", "pom.xml"));
-        temporaryFolder.newFile(String.join(File.separator, "parent", "config", "pom.xml"));
+        temporaryFolder.newFile(Paths.get("parent", "pom.xml").toString());
+        temporaryFolder.newFile(Paths.get("parent", "config", "pom.xml").toString());
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        when(mavenSession.getExecutionRootDirectory()).thenReturn(
-            String.join(File.separator, rootPath, "parent", "config"));
-        when(mavenSession.getRequest()).thenReturn(mavenExecutionRequest);
+        final ConfigLookUp configLookUp = new ConfigLookUp(Paths.get(rootPath, "parent", "config").toString());
 
-        final ConfigLookUp configLookUp = new ConfigLookUp(mavenSession);
-
+        // when
         final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
 
-        Assertions.assertThat(firstDirWithConfigOrProjectRootDir).isEqualTo(temporaryFolder.getRoot());
+        // then
+        assertThat(firstDirWithConfigOrProjectRootDir).isEqualTo(temporaryFolder.getRoot());
     }
 }

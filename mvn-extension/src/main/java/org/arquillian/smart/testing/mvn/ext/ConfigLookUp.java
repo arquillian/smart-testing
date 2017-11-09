@@ -4,25 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.maven.execution.MavenExecutionRequest;
-import org.apache.maven.execution.MavenSession;
 
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 
 class ConfigLookUp {
 
-    private final MavenExecutionRequest mavenExecutionRequest;
-    private final File executionDir;
+    private final File executionRootDir;
 
-    ConfigLookUp(MavenSession session) {
-        this.mavenExecutionRequest = session.getRequest();
-        this.executionDir = new File(session.getExecutionRootDirectory());
+    ConfigLookUp(String executionRootDir) {
+        this.executionRootDir = new File(executionRootDir);
     }
 
     File getFirstDirWithConfigOrProjectRootDir() {
-        return getFirstDirWithConfigOrProjectRootDir(executionDir,
-            new File(mavenExecutionRequest.getSystemProperties().getProperty("env.MAVEN_PROJECTBASEDIR")));
+        return getFirstDirWithConfigOrProjectRootDir(executionRootDir, new File(System.getenv("MAVEN_PROJECTBASEDIR")));
     }
 
     private File getFirstDirWithConfigOrProjectRootDir(File projectDir, File multiModuleProjectDirectory) {

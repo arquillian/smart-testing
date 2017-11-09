@@ -74,10 +74,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        final ConfigLookUp configLookUp = new ConfigLookUp(session);
-        final File projectDirectory = configLookUp.getFirstDirWithConfigOrProjectRootDir();
+        final ConfigLookUp configLookUp = new ConfigLookUp(session.getExecutionRootDirectory());
+        final File firstDirWithConfig = configLookUp.getFirstDirWithConfigOrProjectRootDir();
 
-        configuration = ConfigurationLoader.load(projectDirectory);
+        configuration = ConfigurationLoader.load(firstDirWithConfig);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
 
