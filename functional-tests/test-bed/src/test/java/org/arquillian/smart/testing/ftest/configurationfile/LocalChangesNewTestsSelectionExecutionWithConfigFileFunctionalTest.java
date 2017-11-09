@@ -25,7 +25,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_load_configuration_from_parent_dir_if_not_present_in_current_execution_dir() throws Exception {
+    public void should_only_execute_new_tests_related_to_single_local_change() throws Exception {
         // given
         final Project project = testBed.getProject();
 
@@ -38,7 +38,8 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         final Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Adds new unit test");
 
-        final TestResults actualTestResults = project.build(Paths.get("config","impl-base")).run();
+        // when
+        final TestResults actualTestResults = project.build().run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
@@ -68,5 +69,26 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
+    }
+
+    @Test
+    public void should_load_configuration_from_parent_dir_if_not_present_in_current_execution_dir() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+                .executionOrder(NEW)
+                .inMode(SELECTING)
+                .createConfigFile()
+            .enable();
+
+        final Collection<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("Enable both surefire and failsafe plugin with sample integration test");
+
+        // when
+        final TestResults actualTestResults = project.build(Paths.get("core")).run("clean", "verify");
+
+        // then
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 }
