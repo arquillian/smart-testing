@@ -113,9 +113,14 @@ public class ConfigurationLoader {
         }
 
         final Path configFilePath = Arrays.stream(files)
-            .filter(file -> file.getName().equals(SMART_TESTING_YML) || file.getName().equals(SMART_TESTING_YAML))
+            .filter(file -> {
+                if (files.length == 2) {
+                    return file.getName().equals(SMART_TESTING_YML);
+                }
+                return file.getName().equals(SMART_TESTING_YAML) || file.getName().equals(SMART_TESTING_YML);
+            })
             .map(File::toPath)
-            .findAny()
+            .findFirst()
             .get();
 
         logger.info("Using configuration from " + configFilePath);
