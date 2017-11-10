@@ -14,7 +14,7 @@ import org.junit.rules.TemporaryFolder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class LookupTest {
+public class ConfigLookupTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
@@ -37,7 +37,7 @@ public class LookupTest {
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        final Lookup configLookUp = new Lookup(Paths.get(rootPath, "parent", "config").toString());
+        final ConfigLookup configLookUp = new ConfigLookup(Paths.get(rootPath, "parent", "config").toString());
 
         // when
         final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
@@ -56,7 +56,7 @@ public class LookupTest {
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        final Lookup configLookUp = new Lookup(Paths.get(rootPath, "parent", "config").toString());
+        final ConfigLookup configLookUp = new ConfigLookup(Paths.get(rootPath, "parent", "config").toString());
 
         // when
         final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();

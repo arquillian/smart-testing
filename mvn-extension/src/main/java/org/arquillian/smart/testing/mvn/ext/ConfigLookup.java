@@ -8,11 +8,11 @@ import java.nio.file.Path;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 
-class Lookup {
+class ConfigLookup {
 
     private final File executionRootDir;
 
-    Lookup(String executionRootDir) {
+    ConfigLookup(String executionRootDir) {
         this.executionRootDir = new File(executionRootDir);
     }
 
