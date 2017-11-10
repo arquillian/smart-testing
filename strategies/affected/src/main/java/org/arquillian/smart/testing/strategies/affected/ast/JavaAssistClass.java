@@ -31,6 +31,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javassist.CtClass;
 import javassist.CtField;
@@ -53,10 +54,12 @@ public class JavaAssistClass extends AbstractJavaClass {
     private final String[] imports;
     private final String className;
     private File classFile;
+    private final CtClass classReference;
 
     JavaAssistClass(CtClass classReference) {
-        imports = findImports(classReference);
-        className = classReference.getName();
+        this.imports = findImports(classReference);
+        this.className = classReference.getName();
+        this.classReference = classReference;
     }
 
     @Override
@@ -164,6 +167,11 @@ public class JavaAssistClass extends AbstractJavaClass {
     }
 
     @Override
+    public String packageName() {
+        return classReference.getPackageName();
+    }
+
+    @Override
     public String toString() {
         return getName();
     }
@@ -175,5 +183,14 @@ public class JavaAssistClass extends AbstractJavaClass {
     @Override
     public File getClassFile() {
         return classFile;
+    }
+
+    @Override
+    public <T> Optional<T> getAnnotationByType(Class<T> type) {
+        try {
+            return Optional.ofNullable((T) this.classReference.getAnnotation(type));
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

@@ -28,10 +28,12 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
 import java.io.File;
+import java.util.Optional;
 
 public interface JavaClass {
     String getName();
 
+    String packageName();
     /**
      * Gets the collection on classes that this class depends on. i.e. the list
      * of this classes children.
@@ -39,4 +41,7 @@ public interface JavaClass {
     String[] getImports();
 
     File getClassFile();
+
+    <T> Optional<T> getAnnotationByType(Class<T> type);
+
 }
