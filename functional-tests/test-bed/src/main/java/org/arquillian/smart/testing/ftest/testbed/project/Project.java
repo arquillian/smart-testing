@@ -61,4 +61,17 @@ public class Project implements AutoCloseable {
         projectBuilder.options().projects(projects);
         return projectBuilder;
     }
+
+    /**
+     *
+     * Build relative path from project root to required submodule
+     *
+     * @param executionDir it is relative dir path from project root to submodule's pom.xml which you want to build
+     * @return instance of {@link ProjectBuilder}
+     *
+     */
+    public ProjectBuilder build(Path executionDir) {
+        projectBuilder.options().executionDir(executionDir.toString());
+        return projectBuilder;
+    }
 }

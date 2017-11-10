@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.configuration;
 
+import java.io.File;
 import java.io.IOException;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
@@ -88,7 +89,9 @@ public class ConfigurationTest {
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
         assertThat(systemErrOut.getLog())
-            .containsPattern("WARN: Smart Testing Extension - The configuration file .+/smart-testing.yaml is empty");
+            .contains("WARN: Smart Testing Extension - The configuration file "
+                + temporaryFolder.getRoot().getPath() + File.separator + ConfigurationLoader.SMART_TESTING_YAML
+                + " is empty");
     }
 
     @Test

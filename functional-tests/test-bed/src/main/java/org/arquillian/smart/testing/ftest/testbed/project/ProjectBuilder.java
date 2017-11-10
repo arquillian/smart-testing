@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,6 +31,7 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 public class ProjectBuilder {
 
     public static final String TEST_REPORT_PREFIX = "TEST-";
+    private static final String POM_XML = "pom.xml";
 
     private static final Logger LOGGER = Log.getLogger();
 
@@ -59,8 +61,11 @@ public class ProjectBuilder {
     }
 
     private BuiltProject executeGoals(String... goals) {
-        final PomEquippedEmbeddedMaven embeddedMaven =
-            EmbeddedMaven.forProject(root.toAbsolutePath().toString() + "/pom.xml");
+        final String executionDir = buildConfigurator.getExecutionDir();
+        final String rootPath = root.toAbsolutePath().toString();
+        Path pomFile = executionDir != null ? Paths.get(rootPath, executionDir, POM_XML)
+            : Paths.get(rootPath, POM_XML);
+        final PomEquippedEmbeddedMaven embeddedMaven = EmbeddedMaven.forProject(pomFile.toString());
 
         buildConfigurator.enableDebugOptions();
         setCustomMavenInstallation(embeddedMaven);

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.ftest.configurationfile;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
@@ -45,28 +46,23 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
     }
 
     @Test
-    public void should_only_execute_new_tests_related_to_single_local_change_using_failsafe() {
-
+    public void should_load_configuration_from_parent_dir_if_not_present_in_current_execution_dir() throws Exception {
         // given
         final Project project = testBed.getProject();
 
         project.configureSmartTesting()
-                    .executionOrder(NEW)
-                    .inMode(SELECTING)
+                .executionOrder(NEW)
+                .inMode(SELECTING)
                 .createConfigFile()
             .enable();
 
-        project
-            .applyAsCommits("Disable surefire and enable just failsafe plugin");
-
         final Collection<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Adds new unit test");
+            .applyAsLocalChanges("Enable both surefire and failsafe plugin with sample integration test");
 
         // when
-        final TestResults actualTestResults = project.build().run("clean", "verify");
+        final TestResults actualTestResults = project.build(Paths.get("core")).run("clean", "verify");
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-
     }
 }
