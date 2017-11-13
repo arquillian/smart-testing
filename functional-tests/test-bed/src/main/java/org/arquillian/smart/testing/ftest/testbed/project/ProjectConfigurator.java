@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -20,6 +22,8 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
+import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
+
 public class ProjectConfigurator {
 
     private static final String SMART_TESTING = "smart.testing";
@@ -34,6 +38,7 @@ public class ProjectConfigurator {
     private final Project project;
     private final Path root;
     private boolean createConfigFile;
+    private String customConfigFile;
 
     ProjectConfigurator(Project project, Path root) {
         this.project = project;
@@ -60,7 +65,14 @@ public class ProjectConfigurator {
 
     public ProjectConfigurator createConfigFile() {
         this.createConfigFile = true;
-        createConfigurationFile();
+        createConfigurationFile(SMART_TESTING_YML);
+        return this;
+    }
+
+    public ProjectConfigurator createConfigFile(String customConfigFile) {
+        this.createConfigFile = true;
+        this.customConfigFile = customConfigFile;
+        createConfigurationFile(customConfigFile);
         return this;
     }
 
@@ -105,7 +117,8 @@ public class ProjectConfigurator {
 
             this.project.configureSmartTesting()
                 .withConfiguration(configuration)
-                .createConfigFile();
+                .createConfigFile(customConfigFile != null ? customConfigFile : SMART_TESTING_YML);
+
         }
         return this.project;
     }
@@ -114,8 +127,15 @@ public class ProjectConfigurator {
        return Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
     }
 
-    private void createConfigurationFile() {
-        final Path configFilePath = Paths.get(root.toString(), "smart-testing.yml");
+    private void createConfigurationFile(String customConfigFile) {
+        Path configFilePath = Paths.get(root.toString(), customConfigFile);
+        if (!Files.exists(configFilePath)) {
+            try {
+                Files.createFile(configFilePath);
+            } catch (IOException e) {
+                throw new UncheckedIOException("Failed creating custom configuration file.", e);
+            }
+        }
         dumpConfiguration(configFilePath);
     }
 
