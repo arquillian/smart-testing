@@ -115,15 +115,10 @@ public class ProjectConfigurator {
                     .build();
             }
 
-            if (customConfigFile != null) {
-                this.project.configureSmartTesting()
-                    .withConfiguration(configuration)
-                    .createConfigFile(customConfigFile);
-            } else {
-                this.project.configureSmartTesting()
-                    .withConfiguration(configuration)
-                    .createConfigFile(SMART_TESTING_YML);
-            }
+            this.project.configureSmartTesting()
+                .withConfiguration(configuration)
+                .createConfigFile(customConfigFile != null ? customConfigFile : SMART_TESTING_YML);
+
         }
         return this.project;
     }

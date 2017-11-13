@@ -32,29 +32,27 @@ public class ConfigurationLoader {
     }
 
     public static Configuration load(File projectDir) {
-        File configFile = projectDir;
-
-        final String customConfigFile = System.getProperty(SMART_TESTING_CONFIG);
-        if (customConfigFile != null) {
-            configFile = Paths.get(customConfigFile).toAbsolutePath().toFile();
-            if (!isCustomConfigFileValid(configFile)) {
-                configFile = projectDir;
-            }
+        File configFile;
+        final String customConfigFilePath = System.getProperty(SMART_TESTING_CONFIG);
+        if (isCustomConfigFileValid(customConfigFilePath)) {
+            configFile = Paths.get(customConfigFilePath).toAbsolutePath().toFile();
+        } else {
+            configFile = projectDir;
         }
         Map<String, Object> yamlConfiguration = readConfiguration(configFile);
         return parseConfiguration(yamlConfiguration);
     }
 
-    private static Map<String, Object> readConfiguration(File projectDir) {
-        if (!projectDir.isDirectory()) {
-            return getConfigParametersFromFile(getConfigurationFilePath(projectDir));
+    private static Map<String, Object> readConfiguration(File configPath) {
+        if (!configPath.isDirectory()) {
+            return getConfigParametersFromFile(getConfigurationFilePath(configPath));
         }
 
         final File[] files =
-            projectDir.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
+            configPath.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
 
         if (files == null) {
-            throw new RuntimeException("I/O errors occurs while listing dir " + projectDir);
+            throw new RuntimeException("I/O errors occurs while listing dir " + configPath);
         }
 
         if (files.length == 0) {
@@ -119,12 +117,17 @@ public class ConfigurationLoader {
     }
 
     private static Path getConfigurationFilePath(File... files) {
+        Path configPath;
         if (files.length == 1) {
-            final File configFile = files[0];
-            logger.info("Using configuration from " + configFile.getName());
-            return configFile.toPath();
+            configPath = files[0].toPath();
+        } else {
+            configPath = getDefaultConfigFile(files);
         }
+        logger.info("Using configuration from " + configPath);
+        return configPath;
+    }
 
+    private static Path getDefaultConfigFile(File... files) {
         if (files.length == 2) {
             logger.warn(
                 "Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);
@@ -141,8 +144,6 @@ public class ConfigurationLoader {
             .findFirst()
             .get();
 
-        logger.info("Using configuration from " + configFilePath);
-
         return configFilePath;
     }
 
@@ -155,15 +156,19 @@ public class ConfigurationLoader {
         return configuration;
     }
 
-    private static Boolean isCustomConfigFileValid(File customConfigFile) {
+    private static Boolean isCustomConfigFileValid(String customConfigFilePath) {
+        if (customConfigFilePath == null) {
+            return false;
+        }
+        File customConfigFile = Paths.get(customConfigFilePath).toAbsolutePath().toFile();
         if (!customConfigFile.exists()) {
-            logger.warn("Config file `" + customConfigFile.getName() + "` is not found. "
-                + "Checking for config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML);
+            logger.warn("Config file `" + customConfigFile + "` is not found. "
+                + "Using the default configuration file resolution.");
             return false;
         }
         if (customConfigFile.isDirectory()) {
             logger.warn(customConfigFile.getName()
-                + " is a directory. Using the default configuration or please specify a `yaml` configuration file.");
+                + " is a directory. Using the default configuration file resolution.");
             return false;
         }
         return true;

@@ -260,7 +260,7 @@ public class ConfigurationUsingPropertyTest {
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
         assertThat(systemErrOut.getLog())
-            .contains("WARN: Smart Testing Extension - " + tempConfigFile.getName() + " is a directory. Using the default configuration or please specify a `yaml` configuration file.");
+            .contains("WARN: Smart Testing Extension - " + tempConfigFile.getName() + " is a directory. Using the default configuration file resolution.");
     }
 
     private File getCustomConfigFile() throws IOException {
