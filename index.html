@@ -1109,6 +1109,9 @@ All reports from previous local build are automatically copied by the maven exte
 <p>You can use smart-testing <code>YAML</code> file at <code>${project.dir}/smart-testing.yml</code> or at <code>${project.dir}/smart-testing.yaml</code>.</p>
 </div>
 <div class="paragraph">
+<p>You can also point to a custom configuration file from a different project by setting the <code>smart.testing.config</code> property.</p>
+</div>
+<div class="paragraph">
 <p>Configuration file looks as follows:</p>
 </div>
 <div id="config-file" class="listingblock">
@@ -2177,6 +2180,18 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p><code>true</code>, <code>false</code></p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.config</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set custom configuration file</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>custom configuration <code>yml</code> file</p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -2699,7 +2714,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-10 17:49:56 UTC
+Last updated 2017-11-14 07:18:06 UTC
 </div>
 </div>
 <script>
