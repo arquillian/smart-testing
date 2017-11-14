@@ -29,6 +29,8 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
         // given
         final Project project = testBed.getProject();
 
+        final String customConfigFile = "core/custom-config-file.yml";
+
         final Configuration configuration = new ConfigurationBuilder()
                 .mode(SELECTING)
                 .strategies(AFFECTED.getName())
@@ -41,14 +43,18 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
 
         project.configureSmartTesting()
                     .withConfiguration(configuration)
-                .createConfigFile()
+                .createConfigFile(customConfigFile)
             .enable();
 
         final Collection<TestResult> expectedTestResults = project
             .applyAsCommits("Single method body modification - sysout");
 
         // when
-        final TestResults actualTestResults = project.build().run();
+        final TestResults actualTestResults = project.build("config/impl-base")
+                .options()
+                    .withSystemProperties("smart.testing.config", customConfigFile)
+                .configure()
+            .run();
 
         // then
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);

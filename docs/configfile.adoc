@@ -2,6 +2,8 @@
 
 You can use smart-testing `YAML` file at `${project.dir}/smart-testing.yml` or at `${project.dir}/smart-testing.yaml`.
 
+You can also point to a custom configuration file from a different project by setting the `const:core/src/main/java/org/arquillian/smart/testing/configuration/ConfigurationLoader.java[name="SMART_TESTING_CONFIG"]` property.
+
 Configuration file looks as follows:
 
 [[config-file]]

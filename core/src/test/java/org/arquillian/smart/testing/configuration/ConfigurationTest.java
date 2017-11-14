@@ -2,6 +2,8 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,6 +11,7 @@ import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
+import static java.util.Arrays.asList;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.loadConfigurationFromFile;
@@ -44,6 +47,14 @@ public class ConfigurationTest {
         final Scm scm = new Scm();
         scm.setRange(range);
 
+        Map<String, Object> affectedStrategiesConfig = new HashMap<>();
+        affectedStrategiesConfig.put("exclusions", asList("org.package.*", "org.arquillian.package.*"));
+        affectedStrategiesConfig.put("inclusions", asList("org.package.exclude.*", "org.arquillian.package.exclude.*"));
+        affectedStrategiesConfig.put("transitivity", true);
+
+        Map<String, Object> strategiesConfig = new HashMap<>();
+        strategiesConfig.put("affected", affectedStrategiesConfig);
+
         final Configuration expectedConfiguration = new Configuration();
         expectedConfiguration.setMode(ORDERING);
         expectedConfiguration.setStrategies("new", "changed", "affected");
@@ -53,6 +64,7 @@ public class ConfigurationTest {
         expectedConfiguration.setScm(scm);
         expectedConfiguration.setReport(report);
         expectedConfiguration.setAutocorrect(true);
+        expectedConfiguration.setStrategiesConfig(strategiesConfig);
         expectedConfiguration.setCustomStrategies(
             new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
                 "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});

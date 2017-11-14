@@ -40,6 +40,11 @@ a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/Configura
 |Enable auto correct of misspelled strategies
 a|`false`
 a|`true`, `false`
+
+a|`const:core/src/main/java/org/arquillian/smart/testing/configuration/ConfigurationLoader.java[name="SMART_TESTING_CONFIG"]`
+|Set custom configuration file
+a| -
+a|custom configuration `yml` file
 |===
 
 === Strategies
