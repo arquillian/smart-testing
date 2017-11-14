@@ -57,18 +57,21 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     private Set<TestSelection> selectTests(Configuration configuration) {
-
-        final List<String> strategies = Arrays.asList(configuration.getStrategies());
-        if (strategies.isEmpty()) {
+        if (configuration.getStrategies().length == 0) {
             logger.warn(
                 "Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
                     + "For details on how to configure it head over to http://bit.ly/st-config");
             return Collections.emptySet();
         }
 
+        List<String> errorMessages = new ArrayList<>();
+        configuration.autocorrectStrategies(testExecutionPlannerLoader.getAvailableStrategyNames(), errorMessages);
+        errorMessages.forEach(msg -> logger.error(msg));
+
+        List<String> strategies = Arrays.asList(configuration.getStrategies());
         final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
-            final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy, configuration.isAutocorrect());
+            final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
             selectedTests.addAll(plannerForStrategy.getTests());
         }
         logger.info("Applied strategies: %s", strategies);
