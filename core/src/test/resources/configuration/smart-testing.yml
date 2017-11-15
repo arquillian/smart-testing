@@ -1,24 +1,25 @@
-mode: ordering #<!--1-->
-strategies: new, changed, affected #<!--2-->
-applyTo: surefire #<!--3-->
-debug: true #<!--4-->
-disable: false #<!--5-->
+inherit: ../smart-testing.yml #<!--1-->
+mode: ordering #<!--2-->
+strategies: new, changed, affected #<!--3-->
+applyTo: surefire #<!--4-->
+debug: true #<!--5-->
+disable: false #<!--6-->
 report:
-    enable: true #<!--6-->
+    enable: true #<!--7-->
 scm:
     range:
-      head: HEAD #<!--7-->
-      tail: HEAD~2 #<!--8-->
-autocorrect: true #<!--9-->
-customStrategies:  #<!--10-->
+      head: HEAD #<!--8-->
+      tail: HEAD~2 #<!--9-->
+autocorrect: true #<!--10-->
+customStrategies:  #<!--11-->
     - smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0
     - smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0
-strategiesConfiguration: #<!--11-->
+strategiesConfiguration: #<!--12-->
     affected:
-      transitivity: true #<!--12-->
-      exclusions: #<!--13-->
+      transitivity: true #<!--13-->
+      exclusions: #<!--14-->
          - org.package.*
          - org.arquillian.package.*
-      inclusions: #<!--14-->
+      inclusions: #<!--15-->
          - org.package.exclude.*
          - org.arquillian.package.exclude.*

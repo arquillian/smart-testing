@@ -36,10 +36,14 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
     public static final String SMART_TESTING_AUTOCORRECT = "smart.testing.autocorrect";
 
+    static final String DISABLE = "disable";
+    static final String INHERIT = "inherit";
+
     private String[] strategies = new String[0];
     private String[] customStrategies = new String[0];
     private RunMode mode;
     private String applyTo;
+    private String inherit;
 
     private boolean disable;
     private boolean debug;
@@ -79,6 +83,14 @@ public class Configuration implements ConfigurationSection {
 
     public void setApplyTo(String applyTo) {
         this.applyTo = applyTo;
+    }
+
+    public String getInherit() {
+        return inherit;
+    }
+
+    public void setInherit(String inherit) {
+        this.inherit = inherit;
     }
 
     public boolean isDisable() {
@@ -142,10 +154,11 @@ public class Configuration implements ConfigurationSection {
         configItems.add(new ConfigurationItem("strategies", SMART_TESTING, new String[0]));
         configItems.add(new ConfigurationItem("mode", SMART_TESTING_MODE, RunMode.valueOf(DEFAULT_MODE.toUpperCase())));
         configItems.add(new ConfigurationItem("applyTo", SMART_TESTING_APPLY_TO));
-        configItems.add(new ConfigurationItem("disable", SMART_TESTING_DISABLE, false));
+        configItems.add(new ConfigurationItem(DISABLE, SMART_TESTING_DISABLE, false));
         configItems.add(new ConfigurationItem("debug", SMART_TESTING_DEBUG, false));
         configItems.add(new ConfigurationItem("autocorrect", SMART_TESTING_AUTOCORRECT, false));
         configItems.add(new ConfigurationItem("customStrategies", SMART_TESTING_CUSTOM_STRATEGIES_PATTERN));
+        configItems.add(new ConfigurationItem(INHERIT, null));
         return configItems;
     }
 

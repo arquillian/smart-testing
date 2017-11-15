@@ -32,7 +32,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         project.configureSmartTesting()
                     .executionOrder(NEW)
                     .inMode(SELECTING)
-                .createConfigFile()
+                .withConfigFile()
             .enable();
 
         final Collection<TestResult> expectedTestResults = project
@@ -53,7 +53,7 @@ public class LocalChangesNewTestsSelectionExecutionWithConfigFileFunctionalTest 
         project.configureSmartTesting()
                 .executionOrder(NEW)
                 .inMode(SELECTING)
-                .createConfigFile()
+                .withConfigFile()
             .enable();
 
         final Collection<TestResult> expectedTestResults = project

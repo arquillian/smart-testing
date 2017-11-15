@@ -1,11 +1,10 @@
 package org.arquillian.smart.testing.ftest.testbed.project;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -38,7 +37,7 @@ public class ProjectConfigurator {
     private final Project project;
     private final Path root;
     private boolean createConfigFile;
-    private String customConfigFile;
+    private Path configFilePath;
 
     ProjectConfigurator(Project project, Path root) {
         this.project = project;
@@ -63,16 +62,19 @@ public class ProjectConfigurator {
         return this;
     }
 
-    public ProjectConfigurator createConfigFile() {
+    public ProjectConfigurator withConfigFile() {
         this.createConfigFile = true;
         createConfigurationFile(SMART_TESTING_YML);
         return this;
     }
 
-    public ProjectConfigurator createConfigFile(String customConfigFile) {
+    public ProjectConfigurator withConfigFileIn(String path) {
+        return withConfigFile(path + File.separator + SMART_TESTING_YML);
+    }
+
+    public ProjectConfigurator withConfigFile(String configFile) {
         this.createConfigFile = true;
-        this.customConfigFile = customConfigFile;
-        createConfigurationFile(customConfigFile);
+        createConfigurationFile(configFile);
         return this;
     }
 
@@ -113,12 +115,8 @@ public class ProjectConfigurator {
                     .strategies(strategies().split("\\s*,\\s*"))
                     .mode(RunMode.valueOf(getMode().getName().toUpperCase()))
                     .build();
+                dumpConfiguration(this.configFilePath);
             }
-
-            this.project.configureSmartTesting()
-                .withConfiguration(configuration)
-                .createConfigFile(customConfigFile != null ? customConfigFile : SMART_TESTING_YML);
-
         }
         return this.project;
     }
@@ -127,16 +125,11 @@ public class ProjectConfigurator {
        return Arrays.stream(getStrategies()).map(Strategy::getName).collect(Collectors.joining(","));
     }
 
-    private void createConfigurationFile(String customConfigFile) {
-        Path configFilePath = Paths.get(root.toString(), customConfigFile);
-        if (!Files.exists(configFilePath)) {
-            try {
-                Files.createFile(configFilePath);
-            } catch (IOException e) {
-                throw new UncheckedIOException("Failed creating custom configuration file.", e);
-            }
+    private void createConfigurationFile(String configFilePath) {
+        this.configFilePath = Paths.get(root.toString(), configFilePath);
+        if (configuration != null) {
+            dumpConfiguration(this.configFilePath);
         }
-        dumpConfiguration(configFilePath);
     }
 
     private void dumpConfiguration(Path configFilePath) {

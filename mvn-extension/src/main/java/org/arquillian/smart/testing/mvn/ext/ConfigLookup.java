@@ -2,8 +2,11 @@ package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
@@ -11,13 +14,15 @@ import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMA
 class ConfigLookup {
 
     private final File executionRootDir;
+    private final File mavenProjectBaseDir;
 
     ConfigLookup(String executionRootDir) {
         this.executionRootDir = new File(executionRootDir);
+        this.mavenProjectBaseDir = new File(System.getenv("MAVEN_PROJECTBASEDIR"));
     }
 
     File getFirstDirWithConfigOrProjectRootDir() {
-        return getFirstDirWithConfigOrProjectRootDir(executionRootDir, new File(System.getenv("MAVEN_PROJECTBASEDIR")));
+        return getFirstDirWithConfigOrProjectRootDir(executionRootDir, mavenProjectBaseDir);
     }
 
     private File getFirstDirWithConfigOrProjectRootDir(File projectDir, File multiModuleProjectDirectory) {
@@ -39,5 +44,24 @@ class ConfigLookup {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    boolean isConfigFromProjectRootDir() {
+        final File configOrProjectRootDir = getFirstDirWithConfigOrProjectRootDir();
+        return isSameFile(configOrProjectRootDir.toPath(), mavenProjectBaseDir.toPath());
+    }
+
+    boolean hasMoreThanOneConfigFile(String... fileNames){
+        final long count;
+        try {
+            count = Files.walk(Paths.get(mavenProjectBaseDir.getAbsolutePath()))
+                .parallel()
+                .filter(p -> Arrays.asList(fileNames).contains(p.toFile().getName()))
+                .count();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+
+        return count > 1;
     }
 }

@@ -39,8 +39,17 @@ public class ConfigurationLoader {
         } else {
             configFile = projectDir;
         }
+
+       return readParseOverWriteConfiguration(configFile);
+    }
+
+    private static Configuration readParseOverWriteConfiguration(File configFile) {
+        Path configFileDir = configFile.isFile()? configFile.getParentFile().toPath(): configFile.toPath();
         Map<String, Object> yamlConfiguration = readConfiguration(configFile);
-        return parseConfiguration(yamlConfiguration);
+        final Configuration configuration = parseConfiguration(yamlConfiguration);
+        final ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper.overWriteDefaultPropertiesFromParent(configuration, configFileDir);
     }
 
     private static Map<String, Object> readConfiguration(File configPath) {
@@ -64,13 +73,17 @@ public class ConfigurationLoader {
         return Collections.emptyMap();
     }
 
-    private static Map<String, Object> getConfigParametersFromFile(Path filePath) {
+    static Map<String, Object> getConfigParametersFromFile(Path filePath) {
+        if (!filePath.toFile().exists()) {
+            logger.warn(String.format("The configuration file %s is not exists.", filePath));
+            return new HashMap<>(0);
+        }
         try (InputStream io = Files.newInputStream(filePath)) {
             final Yaml yaml = new Yaml();
             Map<String, Object> yamlConfig = yaml.load(io);
             if (yamlConfig == null) {
                 logger.warn(String.format("The configuration file %s is empty.", filePath));
-                return new HashMap<>();
+                return new HashMap<>(0);
             } else {
                 return yamlConfig;
             }
@@ -107,13 +120,7 @@ public class ConfigurationLoader {
 
     // testing
     static Configuration load(Path path) {
-        try (InputStream io = Files.newInputStream(path)) {
-            final Yaml yaml = new Yaml();
-            Map<String, Object> yamlConfiguration = yaml.load(io);
-            return parseConfiguration(yamlConfiguration);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        return readParseOverWriteConfiguration(path.toFile());
     }
 
     private static Path getConfigurationFilePath(File... files) {
