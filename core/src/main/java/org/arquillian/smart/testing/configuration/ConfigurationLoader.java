@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
@@ -27,11 +28,24 @@ public class ConfigurationLoader {
 
     private static final Logger logger = Log.getLogger();
 
+    /**
+     * Do not use - only for test purposes
+     *
+     * @return A {@link Configuration} instance
+     */
     public static Configuration load() {
         return load(Paths.get("").toAbsolutePath().toFile());
     }
 
     public static Configuration load(File projectDir) {
+        return load(projectDir, null);
+    }
+
+    public static Configuration load(File projectDir, Function<File, Boolean> stopRecursiveLookup) {
+        if (stopRecursiveLookup != null) {
+             projectDir = new ConfigLookup(projectDir, stopRecursiveLookup).getFirstDirWithConfigOrProjectRootDir();
+        }
+
         final File configFile;
         final String customConfigFilePath = System.getProperty(SMART_TESTING_CONFIG);
         if (isCustomConfigFileValid(customConfigFilePath)) {
@@ -41,6 +55,23 @@ public class ConfigurationLoader {
         }
         Map<String, Object> yamlConfiguration = readConfiguration(configFile);
         return parseConfiguration(yamlConfiguration);
+    }
+
+    public static Configuration load(File projectDir, Function<File, Boolean> stopRecursiveLookup, String... strategies) {
+        final Configuration configuration = load(projectDir, stopRecursiveLookup);
+        configuration.loadStrategyConfigurations(strategies);
+
+        return configuration;
+    }
+
+    public static Configuration loadPrecalculated(File projectDir) {
+        final File configFile =
+            new LocalStorage(projectDir).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
+        if (configFile.exists()) {
+            return loadConfigurationFromFile(configFile);
+        } else {
+            return load(projectDir);
+        }
     }
 
     private static Map<String, Object> readConfiguration(File configPath) {
@@ -76,23 +107,6 @@ public class ConfigurationLoader {
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        }
-    }
-
-    public static Configuration load(File projectDir, String... strategies) {
-        final Configuration configuration = load(projectDir);
-        configuration.loadStrategyConfigurations(strategies);
-
-        return configuration;
-    }
-
-    public static Configuration loadPrecalculated(File projectDir) {
-        final File configFile =
-            new LocalStorage(projectDir).duringExecution().temporary().file(SMART_TESTING_YML).getFile();
-        if (configFile.exists()) {
-            return loadConfigurationFromFile(configFile);
-        } else {
-            return load(projectDir);
         }
     }
 
