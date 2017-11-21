@@ -2,12 +2,11 @@ package org.arquillian.smart.testing.strategies.affected;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
+import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.D;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.MyBusinessObject;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.MyControllerObject;
@@ -154,7 +153,7 @@ public class ClassDependenciesGraphTest {
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
 
         final String testLocation = getClassLocation(ZTest.class);
-        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+        classDependenciesGraph.buildTestDependencyGraph(singletonList(new File(testLocation)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
@@ -177,7 +176,7 @@ public class ClassDependenciesGraphTest {
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
 
         final String testLocation = getClassLocation(YTest.class);
-        classDependenciesGraph.buildTestDependencyGraph(Arrays.asList(new File(testLocation)));
+        classDependenciesGraph.buildTestDependencyGraph(singletonList(new File(testLocation)));
 
         // when
         Set<File> mainObjectsChanged = new HashSet<>();
@@ -198,7 +197,7 @@ public class ClassDependenciesGraphTest {
         affectedConfiguration.setTransitivity(false);
 
         final Configuration configuration = ConfigurationLoader.load();
-        configuration.setStrategiesConfiguration(Collections.singletonList(affectedConfiguration));
+        configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
@@ -220,10 +219,10 @@ public class ClassDependenciesGraphTest {
         // given
         final AffectedConfiguration affectedConfiguration = new AffectedConfiguration();
         affectedConfiguration.setExclusions(
-            Arrays.asList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.B"));
+            singletonList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.B"));
 
         final Configuration configuration = ConfigurationLoader.load();
-        configuration.setStrategiesConfiguration(Collections.singletonList(affectedConfiguration));
+        configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
@@ -245,10 +244,10 @@ public class ClassDependenciesGraphTest {
         // given
         final AffectedConfiguration affectedConfiguration = new AffectedConfiguration();
         affectedConfiguration.setInclusions(
-            Collections.singletonList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.A"));
+            singletonList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.A"));
 
         final Configuration configuration = ConfigurationLoader.load();
-        configuration.setStrategiesConfiguration(Collections.singletonList(affectedConfiguration));
+        configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration);
