@@ -93,7 +93,7 @@ public class SurefireProviderLoggerFactory implements LoggerFactory {
         private boolean isPublicConsoleLogMethod(Method method){
             return method.getParameterCount() == 1
                 && method.getParameterTypes()[0] == String.class
-                && Arrays.asList(method.getModifiers()).contains(Modifier.PUBLIC);
+                && method.getModifiers() == Modifier.PUBLIC;
         }
 
         private String getFormattedMsg(String level, String msg, Object... args) {
