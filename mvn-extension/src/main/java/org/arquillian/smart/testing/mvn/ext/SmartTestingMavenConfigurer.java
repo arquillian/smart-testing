@@ -1,6 +1,8 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -74,10 +76,8 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        final ConfigLookup configLookUp = new ConfigLookup(session.getExecutionRootDirectory());
-        final File firstDirWithConfig = configLookUp.getFirstDirWithConfigOrProjectRootDir();
-
-        configuration = ConfigurationLoader.load(firstDirWithConfig);
+        File executionRootDirectory = new File(session.getExecutionRootDirectory());
+        configuration = ConfigurationLoader.load(executionRootDirectory, this::isProjectRootDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
 
@@ -85,6 +85,15 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             skipExtensionInstallation = true;
             logExtensionDisableReason(logger, "System Property " + SMART_TESTING_DISABLE + " is set.");
             return;
+        }
+    }
+
+    private boolean isProjectRootDirectory(File file) {
+        try {
+            return file.isDirectory()
+                && Files.isSameFile(file.toPath(), new File(System.getenv("MAVEN_PROJECTBASEDIR")).toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

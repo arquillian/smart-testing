@@ -1,7 +1,8 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Before;
@@ -37,10 +38,11 @@ public class ConfigLookupTest {
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        final ConfigLookup configLookUp = new ConfigLookup(Paths.get(rootPath, "parent", "config").toString());
+        File dirToStart = Paths.get(rootPath, "parent", "config").toFile();
+        final ConfigLookup configLookUp = new ConfigLookup(dirToStart, this::isProjectRootDirectory);
 
         // when
-        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
+        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrWithStopCondition();
 
         // then
         assertThat(firstDirWithConfigOrProjectRootDir)
@@ -56,12 +58,22 @@ public class ConfigLookupTest {
 
         final String rootPath = temporaryFolder.getRoot().getPath();
 
-        final ConfigLookup configLookUp = new ConfigLookup(Paths.get(rootPath, "parent", "config").toString());
+        File dirToStart = Paths.get(rootPath, "parent", "config").toFile();
+        final ConfigLookup configLookUp = new ConfigLookup(dirToStart, this::isProjectRootDirectory);
 
         // when
-        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
+        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrWithStopCondition();
 
         // then
         assertThat(firstDirWithConfigOrProjectRootDir).isEqualTo(temporaryFolder.getRoot());
+    }
+
+
+    private boolean isProjectRootDirectory(File dir) {
+        try {
+            return Files.isSameFile(dir.toPath(), temporaryFolder.getRoot().toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
