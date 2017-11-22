@@ -2,8 +2,6 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,15 +11,15 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
+import static org.arquillian.smart.testing.configuration.ConfigurationFile.SmartTestingConfigurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
-import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheretTest.CONFIG;
-import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheretTest.dumpData;
+import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheritTest.CONFIG;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class ConfigurationOverWriteUsingInheretWithSystemPropertyTest {
+public class ConfigurationOverWriteUsingInheritWithSystemPropertyTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
@@ -37,15 +35,15 @@ public class ConfigurationOverWriteUsingInheretWithSystemPropertyTest {
 
         temporaryFolder.newFolder(CONFIG);
         final String root = temporaryFolder.getRoot().toString();
-        Map<String, Object> child = new HashMap<>();
-        child.put("mode", "ordering");
-        child.put("inherit", "../smart-testing.yml");
 
-        dumpData(Paths.get(root, CONFIG, SMART_TESTING_YML), child);
+        SmartTestingConfigurationFile()
+            .inherit("../smart-testing.yml")
+            .mode("ordering")
+            .create(Paths.get(root, CONFIG, SMART_TESTING_YML));
 
-        Map<String, Object> parent = new HashMap<>();
-        parent.put("strategies", "new, changed, affected");
-        dumpData(Paths.get(root, SMART_TESTING_YML), parent);
+        SmartTestingConfigurationFile()
+            .strategies("new, changed, affected")
+            .create(Paths.get(root, SMART_TESTING_YML));
 
         final Range range = new Range();
         range.setHead(HEAD);

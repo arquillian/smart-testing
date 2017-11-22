@@ -49,11 +49,11 @@ public class ConfigurationFilePerModuleTest {
 
         project.configureSmartTesting()
                 .withConfiguration(parentConfiguration)
-                    .withConfigFile()
+                    .createConfigFile()
                 .withConfiguration(newConfiguration)
-                    .withConfigFileIn("config/impl-base")
+                    .createConfigFileIn("config/impl-base")
                 .withConfiguration(changedConfiguration)
-                    .withConfigFileIn("junit/core")
+                    .createConfigFileIn("junit/core")
             .enable();
 
         final Collection<TestResult> expectedTestResults = project

@@ -3,21 +3,13 @@ package org.arquillian.smart.testing.configuration;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.yaml.snakeyaml.Yaml;
-
-import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 
 public class ConfigurationLoader {
 
@@ -40,56 +32,19 @@ public class ConfigurationLoader {
             configFile = projectDir;
         }
 
-       return readParseOverWriteConfiguration(configFile);
+       return loadInheritedConfiguration(configFile);
     }
 
-    private static Configuration readParseOverWriteConfiguration(File configFile) {
+    private static Configuration loadInheritedConfiguration(File configFile) {
         Path configFileDir = configFile.isFile()? configFile.getParentFile().toPath(): configFile.toPath();
-        Map<String, Object> yamlConfiguration = readConfiguration(configFile);
-        final Configuration configuration = parseConfiguration(yamlConfiguration);
-        final ObjectMapper objectMapper = new ObjectMapper();
 
-        return objectMapper.overWriteDefaultPropertiesFromParent(configuration, configFileDir);
-    }
+        final ConfigurationReader configurationReader = new ConfigurationReader();
+        final Map<String, Object> yamlConfiguration = configurationReader.readConfiguration(configFile);
 
-    private static Map<String, Object> readConfiguration(File configPath) {
-        if (!configPath.isDirectory()) {
-            return getConfigParametersFromFile(getConfigurationFilePath(configPath));
-        }
+        final Configuration configuration = ConfigurationLoader.loadAsConfiguration(yamlConfiguration);
 
-        final File[] files =
-            configPath.listFiles((dir, name) -> name.equals(SMART_TESTING_YML) || name.equals(SMART_TESTING_YAML));
-
-        if (files == null) {
-            throw new RuntimeException("I/O errors occurs while listing dir " + configPath);
-        }
-
-        if (files.length == 0) {
-            logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
-                + "Using system properties to load configuration for smart testing.");
-        } else {
-            return getConfigParametersFromFile(getConfigurationFilePath(files));
-        }
-        return Collections.emptyMap();
-    }
-
-    static Map<String, Object> getConfigParametersFromFile(Path filePath) {
-        if (!filePath.toFile().exists()) {
-            logger.warn(String.format("The configuration file %s is not exists.", filePath));
-            return new HashMap<>(0);
-        }
-        try (InputStream io = Files.newInputStream(filePath)) {
-            final Yaml yaml = new Yaml();
-            Map<String, Object> yamlConfig = yaml.load(io);
-            if (yamlConfig == null) {
-                logger.warn(String.format("The configuration file %s is empty.", filePath));
-                return new HashMap<>(0);
-            } else {
-                return yamlConfig;
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final ConfigurationInheriter inheriter = new ConfigurationInheriter();
+        return inheriter.overWriteNotDefinedValuesFromInherit(configuration, configFileDir);
     }
 
     public static Configuration load(File projectDir, String... strategies) {
@@ -120,43 +75,13 @@ public class ConfigurationLoader {
 
     // testing
     static Configuration load(Path path) {
-        return readParseOverWriteConfiguration(path.toFile());
+        return loadInheritedConfiguration(path.toFile());
     }
 
-    private static Path getConfigurationFilePath(File... files) {
-        Path configPath;
-        if (files.length == 1) {
-            configPath = files[0].toPath();
-        } else {
-            configPath = getDefaultConfigFile(files);
-        }
-        logger.info("Using configuration from " + configPath);
-        return configPath;
-    }
-
-    private static Path getDefaultConfigFile(File... files) {
-        if (files.length == 2) {
-            logger.warn(
-                "Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);
-        }
-
-        final Path configFilePath = Arrays.stream(files)
-            .filter(file -> {
-                if (files.length == 2) {
-                    return file.getName().equals(SMART_TESTING_YML);
-                }
-                return file.getName().equals(SMART_TESTING_YAML) || file.getName().equals(SMART_TESTING_YML);
-            })
-            .map(File::toPath)
-            .findFirst()
-            .get();
-
-        return configFilePath;
-    }
-
-    private static Configuration parseConfiguration(Map<String, Object> yamlConfiguration) {
+    private static Configuration loadAsConfiguration(Map<String, Object> yamlConfiguration) {
         final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
-        final Configuration configuration = mapToObject(Configuration.class, yamlConfiguration);
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Configuration configuration = objectMapper.readValue(Configuration.class, yamlConfiguration);
         if (strategiesConfiguration != null) {
             configuration.setStrategiesConfig((Map<String, Object>) strategiesConfiguration);
         }

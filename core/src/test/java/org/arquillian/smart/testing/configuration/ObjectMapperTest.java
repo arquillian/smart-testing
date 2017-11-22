@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
-import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 import static org.arquillian.smart.testing.configuration.ObjectMapperTest.TestEnum.FOO;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +27,8 @@ public class ObjectMapperTest {
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
     private Map<String, Object> map;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Before
     public void initMap() {
@@ -40,7 +41,7 @@ public class ObjectMapperTest {
         map.put("i", 10);
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("i", 10);
@@ -52,7 +53,7 @@ public class ObjectMapperTest {
         map.put("d", 10.0);
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("d", 10.0);
@@ -64,7 +65,7 @@ public class ObjectMapperTest {
         map.put("b", true);
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("b", true);
@@ -76,7 +77,7 @@ public class ObjectMapperTest {
         map.put("s", "Hello");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("s", "Hello");
@@ -88,7 +89,7 @@ public class ObjectMapperTest {
         map.put("as", "hello, bar");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("as", new String[] {"hello", "bar"});
@@ -100,7 +101,7 @@ public class ObjectMapperTest {
         map.put("l", Arrays.asList("foo", "bar"));
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         assertThat(testObject).hasFieldOrPropertyWithValue("l", Arrays.asList("foo", "bar"));
     }
@@ -111,7 +112,7 @@ public class ObjectMapperTest {
         map.put("e", "foo");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("e", FOO);
@@ -123,7 +124,7 @@ public class ObjectMapperTest {
         System.setProperty("my.property.x", "smart");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
@@ -135,7 +136,7 @@ public class ObjectMapperTest {
         map.put("multiple", "my.property.x=smart");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=smart"});
@@ -148,7 +149,7 @@ public class ObjectMapperTest {
         System.setProperty("my.property.x", "new-smart");
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("multiple", new String[]{"my.property.x=new-smart"});
@@ -169,7 +170,7 @@ public class ObjectMapperTest {
         dummyObject.setL(Arrays.asList("foo", "bar"));
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).isNotNull();
@@ -185,7 +186,7 @@ public class ObjectMapperTest {
         map.put("m", stringMap);
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, map);
+        final TestObject testObject = MAPPER.readValue(TestObject.class, map);
 
         // then
         assertThat(testObject).hasFieldOrPropertyWithValue("m", stringMap);
@@ -212,7 +213,7 @@ public class ObjectMapperTest {
         expected.setDummyObject(dummyObject);
 
         // when
-        final TestObject testObject = mapToObject(TestObject.class, Collections.emptyMap());
+        final TestObject testObject = MAPPER.readValue(TestObject.class, Collections.emptyMap());
 
         // then
         assertThat(testObject).isEqualToComparingFieldByFieldRecursively(expected);

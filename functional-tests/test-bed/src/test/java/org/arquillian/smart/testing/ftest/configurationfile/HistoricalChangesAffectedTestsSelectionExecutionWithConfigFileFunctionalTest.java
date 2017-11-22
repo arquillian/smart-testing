@@ -43,7 +43,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
 
         project.configureSmartTesting()
                     .withConfiguration(configuration)
-                .withConfigFile(customConfigFile)
+                .createConfigFile(customConfigFile)
             .enable();
 
         final Collection<TestResult> expectedTestResults = project
@@ -78,7 +78,7 @@ public class HistoricalChangesAffectedTestsSelectionExecutionWithConfigFileFunct
         // tag::documentation[]
         project.configureSmartTesting()
                     .withConfiguration(configuration)
-                .withConfigFile()
+                .createConfigFile()
             .enable();
         // end::documentation[]
 

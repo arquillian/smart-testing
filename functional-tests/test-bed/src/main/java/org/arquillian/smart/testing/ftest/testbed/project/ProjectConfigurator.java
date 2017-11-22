@@ -62,17 +62,17 @@ public class ProjectConfigurator {
         return this;
     }
 
-    public ProjectConfigurator withConfigFile() {
+    public ProjectConfigurator createConfigFile() {
         this.createConfigFile = true;
         createConfigurationFile(SMART_TESTING_YML);
         return this;
     }
 
-    public ProjectConfigurator withConfigFileIn(String path) {
-        return withConfigFile(path + File.separator + SMART_TESTING_YML);
+    public ProjectConfigurator createConfigFileIn(String path) {
+        return createConfigFile(path + File.separator + SMART_TESTING_YML);
     }
 
-    public ProjectConfigurator withConfigFile(String configFile) {
+    public ProjectConfigurator createConfigFile(String configFile) {
         this.createConfigFile = true;
         createConfigurationFile(configFile);
         return this;

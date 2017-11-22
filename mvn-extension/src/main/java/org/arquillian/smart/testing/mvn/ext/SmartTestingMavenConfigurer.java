@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.mvn.ext;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
@@ -127,36 +128,44 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
-        final ConfigLookup lookUp = new ConfigLookup(session.getExecutionRootDirectory());
-        final boolean moreThanOneConfigFile = lookUp.hasMoreThanOneConfigFile(SMART_TESTING_YML, SMART_TESTING_YAML);
-        if (moreThanOneConfigFile && System.getProperty(SMART_TESTING_CONFIG) == null) {
-            session.getAllProjects().forEach(mavenProject -> {
-                ConfigLookup configLookup = new ConfigLookup(mavenProject.getBasedir().toString());
-                final File dirWithConfig = configLookup.getFirstDirWithConfigOrProjectRootDir();
-                Configuration mavenProjectConfiguration = configLookup.isConfigFromProjectRootDir() ? configuration :
-                    ConfigurationLoader.load(dirWithConfig);
-                if (mavenProjectConfiguration.isDisable()) {
-                    logExtensionDisableReason(logger,
-                        SMART_TESTING_DISABLE + " is set for module " + mavenProject.getArtifactId());
-                    return;
-                }
-                if (mavenProjectConfiguration.areStrategiesDefined()) {
-                    final MavenProjectConfigurator mavenProjectConfigurator =
-                        new MavenProjectConfigurator(mavenProjectConfiguration);
-                    configureMavenProject(mavenProjectConfigurator, mavenProject, mavenProjectConfiguration);
-                } else {
-                    logger.warn(
-                        "Smart Testing Extension is installed but no strategies are provided for %s module. It won't influence the way how your tests are executed. "
-                            + "For details on how to configure it head over to http://bit.ly/st-config",
-                        mavenProject.getArtifactId());
-                }
-            });
+        final Consumer<MavenProject> configureSmartTestingExtensionAction;
+        if (hasModuleSpecificConfigurations(session)) {
+            configureSmartTestingExtensionAction = applyModuleSpecificConfiguration(configuration);
         } else {
             final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-            session.getAllProjects().forEach(mavenProject -> {
-                configureMavenProject(mavenProjectConfigurator, mavenProject, configuration);
-            });
+            configureSmartTestingExtensionAction = mavenProject -> configureMavenProject(mavenProjectConfigurator, mavenProject, configuration);
         }
+        session.getAllProjects().forEach(configureSmartTestingExtensionAction);
+    }
+
+    private boolean hasModuleSpecificConfigurations(MavenSession session) {
+        final ConfigLookup lookUp = new ConfigLookup(session.getExecutionRootDirectory());
+        final boolean moreThanOneConfigFile = lookUp.hasMoreThanOneConfigFile(SMART_TESTING_YML, SMART_TESTING_YAML);
+        return moreThanOneConfigFile && System.getProperty(SMART_TESTING_CONFIG) == null;
+    }
+
+    private Consumer<MavenProject> applyModuleSpecificConfiguration(Configuration configuration) {
+        return mavenProject -> {
+            final ConfigLookup configLookup = new ConfigLookup(mavenProject.getBasedir().toString());
+            final File dirWithConfig = configLookup.getFirstDirWithConfigOrProjectRootDir();
+            final Configuration mavenProjectConfiguration = configLookup.isConfigFromProjectRootDir() ? configuration :
+                ConfigurationLoader.load(dirWithConfig);
+            if (mavenProjectConfiguration.isDisable()) {
+                logExtensionDisableReason(logger,
+                    SMART_TESTING_DISABLE + " is set for module " + mavenProject.getArtifactId());
+                return;
+            }
+            if (mavenProjectConfiguration.areStrategiesDefined()) {
+                final MavenProjectConfigurator mavenProjectConfigurator =
+                    new MavenProjectConfigurator(mavenProjectConfiguration);
+                configureMavenProject(mavenProjectConfigurator, mavenProject, mavenProjectConfiguration);
+            } else {
+                logger.warn(
+                    "Smart Testing Extension is installed but no strategies are provided for %s module. It won't influence the way how your tests are executed. "
+                        + "For details on how to configure it head over to http://bit.ly/st-config",
+                    mavenProject.getArtifactId());
+            }
+        };
     }
 
     private void configureMavenProject(MavenProjectConfigurator mavenProjectConfigurator, MavenProject mavenProject,

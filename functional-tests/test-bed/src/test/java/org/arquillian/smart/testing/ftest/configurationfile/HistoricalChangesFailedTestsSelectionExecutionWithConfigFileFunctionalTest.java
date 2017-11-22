@@ -44,7 +44,7 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
         project.configureSmartTesting()
                     .executionOrder(FAILED)
                     .inMode(SELECTING)
-                .withConfigFile()
+                .createConfigFile()
             .enable();
         // end::documentation[]
 

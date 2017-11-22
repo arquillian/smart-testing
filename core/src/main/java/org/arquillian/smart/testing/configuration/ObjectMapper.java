@@ -1,63 +1,20 @@
 package org.arquillian.smart.testing.configuration;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.arquillian.smart.testing.configuration.Configuration.DISABLE;
-import static org.arquillian.smart.testing.configuration.Configuration.INHERIT;
-import static org.arquillian.smart.testing.configuration.ConfigurationLoader.getConfigParametersFromFile;
-
 class ObjectMapper {
-
-    private boolean userSetProperty = true;
-
-    static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(aClass, map);
-    }
-
-    Configuration overWriteDefaultPropertiesFromParent(Configuration configuration, Path currentDir) {
-        final String inherit = configuration.getInherit();
-        if (inherit == null) {
-            return configuration;
-        } else {
-            List<String> fieldNamesWithDefaultValue = fieldNamesWithDefaultValues(configuration);
-
-            final Path inheritPath = currentDir.resolve(inherit);
-            final Map<String, Object> parameters = getConfigParametersFromFile(inheritPath);
-            if (parameters.isEmpty()) {
-                configuration.setInherit(null);
-                return configuration;
-            }
-            final Map<String, Object> map = parameters.entrySet().stream()
-                .filter(entry -> fieldNamesWithDefaultValue.contains(entry.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-            List<ConfigurationItem> configItems = configuration.registerConfigurationItems();
-
-            Arrays.stream(configuration.getClass().getMethods())
-                .filter(method -> fieldNamesWithDefaultValue.contains(fieldName(method)) && isSetter(method))
-                .forEach(method -> invokeMethodWithMappedValue(configItems, method, configuration, map));
-
-            configuration.setInherit((String) parameters.get(INHERIT));
-
-            return overWriteDefaultPropertiesFromParent(configuration, inheritPath.getParent());
-        }
-    }
 
     <T extends ConfigurationSection> T readValue(Class<T> aClass, Map<String, Object> map) {
         T instance;
@@ -75,54 +32,7 @@ class ObjectMapper {
         return instance;
     }
 
-    private List<String> fieldNamesWithDefaultValues(Configuration configuration) {
-        List<Field> fieldsWithDefaultValue = new ArrayList<>();
-        Arrays.stream(configuration.getClass().getDeclaredFields())
-            .filter(field -> !Modifier.isStatic(field.getModifiers()))
-            .forEach(field -> addConfigurationFieldsWithDefaultValue(field, configuration, fieldsWithDefaultValue));
-
-        return fieldsWithDefaultValue.stream().map(Field::getName).collect(Collectors.toList());
-    }
-
-    private void addConfigurationFieldsWithDefaultValue(Field field, Configuration configuration,
-        List<Field> defaultValues) {
-        if (field.getName().equals(DISABLE) || field.getName().equals(INHERIT)) {
-            return;
-        }
-        final ConfigurationSection defaultConfiguration = mapToDefaultObject(Configuration.class, new HashMap<>(0));
-        field.setAccessible(true);
-        try {
-            final Object actualValue = field.get(configuration);
-            final Object defaultValue = field.get(defaultConfiguration);
-            if (actualValue == null && defaultValue == null) {
-                defaultValues.add(field);
-                return;
-            }
-            if (field.getType().isArray() && Arrays.equals(((Object[]) actualValue), ((Object[]) defaultValue))) {
-                defaultValues.add(field);
-                return;
-            }
-            if (actualValue != null && actualValue.equals(defaultValue)) {
-                defaultValues.add(field);
-            }
-        } catch (IllegalAccessException e) {
-            throw new IllegalStateException("Failed to access fieldName: " + field, e);
-        }
-    }
-
-    private String fieldName(Method method) {
-        final String field = method.getName().substring(3);
-        return Character.toLowerCase(field.charAt(0)) + field.substring(1);
-    }
-
-    private <T extends ConfigurationSection> T mapToDefaultObject(Class<T> aClass, Map<String, Object> map) {
-        this.userSetProperty = false;
-        final T defaultObject = readValue(aClass, map);
-        this.userSetProperty = true;
-        return defaultObject;
-    }
-
-    private <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
+    <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
         Map<String, Object> map) {
         method.setAccessible(true);
         if (method.getParameterTypes().length != 1) {
@@ -132,10 +42,7 @@ class ObjectMapper {
         final String property = Character.toLowerCase(field.charAt(0)) + field.substring(1);
         Object configFileValue = map.get(property);
 
-        Optional<ConfigurationItem> foundConfigItem =
-            configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
-
-        Object converted = getConvertedObject(method, configFileValue, foundConfigItem);
+        Object converted = getConvertedObject(method, configFileValue, property, configItems);
 
         try {
             if (converted != null) {
@@ -147,22 +54,23 @@ class ObjectMapper {
     }
 
     private Object getConvertedObject(Method method, Object configFileValue,
-        Optional<ConfigurationItem> foundConfigItem) {
+        String property, List<ConfigurationItem> configItems) {
+        Optional<ConfigurationItem> foundConfigItem =
+            configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
+
         if (!foundConfigItem.isPresent()) {
             Class<?> parameterType = method.getParameterTypes()[0];
             if (!ConfigurationSection.class.isAssignableFrom(parameterType)) {
                 return null;
             } else if (configFileValue == null) {
-                return readValue((Class<ConfigurationSection>) parameterType, new HashMap<>(0));
+                return readValue((Class<ConfigurationSection>) parameterType, Collections.emptyMap());
             } else {
                 return readValue((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
-            Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
-            if (this.userSetProperty) {
-                mappedValue = getUserSetProperty(method, configItem, configFileValue);
-            }
+            Object mappedValue = getUserSetProperty(method, configItem, configFileValue);
+
             if (mappedValue == null && configItem.getDefaultValue() != null) {
                 mappedValue = configItem.getDefaultValue();
             }
@@ -193,7 +101,7 @@ class ObjectMapper {
             System.getProperties().entrySet()
                 .stream()
                 .filter(prop -> prop.getKey().toString().startsWith(sysPropKey))
-                .collect(Collectors.toMap(prop -> prop.getKey(), prop -> prop.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         List<Object> multipleValue = new ArrayList<>();
         if (configFileValue != null) {
@@ -320,7 +228,7 @@ class ObjectMapper {
         return null;
     }
 
-    private boolean isSetter(Method candidate) {
+    boolean isSetter(Method candidate) {
         return candidate.getName().matches("^(set|add)[A-Z].*")
             && (candidate.getReturnType().equals(Void.TYPE) || candidate.getReturnType()
             .equals(candidate.getDeclaringClass()))

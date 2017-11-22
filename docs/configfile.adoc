@@ -48,8 +48,9 @@ If config file doesn't contain `inherit` parameter. Then Smart Testing won't inh
 === Configuration File per Maven Module:
 You can define configuration file per maven module. However it's not mandatory to define configuration per each module.
 
-NOTE: Whenever you are using configuration file per maven module, make sure to define strategies & scm properties
-in project's parent config file or using system property which are required to enable Smart Testing.
+NOTE: Whenever you are using configuration file per maven module, make sure to define strategies in project's
+parent configuration file or using system property. If you are running tests against range of commits, you need to define scm properties in project's parent config file or using system property.
+It won't work if you define scm properties in any module's config file and not in parent config file.
 
 e.g.
 ```xml
@@ -59,12 +60,33 @@ parent
    - api
    - impl-base
    - spi
-     - smart-testing.yml
+     - smart-testing.yml #<!--2-->
  - container
     - api
     - impl-base
- - smart-testing.yml #<!--2-->
+ - smart-testing.yml #<!--3-->
 ```
+
+<1>
+.parent/config/smart-testing.yml
+----
+inherit: ../smart-testing.yml
+strategies: affected
+----
+
+<2>
+parent/config/spi/smart-testing.yml
+----
+strategies: affected,new
+----
+
+<3>
+.parent/smart-testing.yml
+----
+strategies: new
+scm:
+  lastChanges: 1
+----
 
 Configuration file selection for the above example will be as follows:
 
@@ -74,8 +96,8 @@ Configuration file selection for the above example will be as follows:
 * container/api - parent/smart-testing.yml
 * container/impl-base - parent/smart-testing.yml
 
-<1> inside this file we have inherit: ``../smart-testing.yml`, so it will take all undefined properties in this file from the one in `parent/smart-testing.yml`.
-<2> inside this file we have `strategies: new` & `scm: lastChanges: 1` defined.(You can set it using respective system property also).
+<1> inside this file we have inherit: ../smart-testing.yml`, so it will take all undefined properties in this file from the one in `parent/smart-testing.yml`.
+<3> inside this file we have `strategies: new` & `scm: lastChanges: 1` defined.(You can set it using respective system property also).
 
 === Configuration File Reference
 The `const:core/src/main/java/org/arquillian/smart/testing/configuration/ConfigurationLoader.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
