@@ -29,10 +29,12 @@ public class ConfigurationLoader {
     private static final Logger logger = Log.getLogger();
 
     /**
-     * Do not use - only for test purposes
+     * @deprecated Will be removed as it is only for test purposes: https://github.com/arquillian/smart-testing/issues/267.
+     * Use {@link ConfigurationLoader#load(Path)} instead.
      *
      * @return A {@link Configuration} instance
      */
+    @Deprecated
     public static Configuration load() {
         return load(Paths.get("").toAbsolutePath().toFile());
     }
