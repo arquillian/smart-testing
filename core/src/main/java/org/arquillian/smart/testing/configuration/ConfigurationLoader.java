@@ -39,10 +39,26 @@ public class ConfigurationLoader {
         return load(Paths.get("").toAbsolutePath().toFile());
     }
 
+    /**
+     * Loads a configuration from a config file in the given directory or from a file set by {@link SMART_TESTING_CONFIG}
+     * system property. If the file is not present there, then it loads the default configuration.
+     *
+     * @param projectDir Directory the configuration file should be located in
+     * @return An instance of {@link Configuration}
+     */
     public static Configuration load(File projectDir) {
         return load(projectDir, null);
     }
 
+    /**
+     * Loads a configuration from a config file in the given directory or from a file set by {@link SMART_TESTING_CONFIG}
+     * system property. If the file is not present in the given directory, and the stop condition is provided, then it
+     * starts looking for the config file in all parent directories until the stop condition returns true.
+     *
+     * @param projectDir Directory the configuration file should be located in or the lookup should start from
+     * @param stopCondition Should return true for a directory where the loader should stop looking for a configuration file
+     * @return An instance of {@link Configuration}
+     */
     public static Configuration load(File projectDir, Function<File, Boolean> stopCondition) {
         final File configFile;
         final String customConfigFilePath = System.getProperty(SMART_TESTING_CONFIG);
@@ -60,6 +76,18 @@ public class ConfigurationLoader {
         return parseConfiguration(yamlConfiguration);
     }
 
+    /**
+     * Loads a configuration from a config file in the given directory or from a file set by {@link SMART_TESTING_CONFIG}
+     * system property. If the file is not present in the given directory, and the stop condition is provided, then it
+     * starts looking for the config file in all parent directories until the stop condition returns true.
+     * When the configuration is loaded and any strategy is provided, then it loads also a configuration for the provided
+     * strategies.
+     *
+     * @param projectDir Directory the configuration file should be located in or the lookup should start from
+     * @param stopCondition Should return true for a directory where the loader should stop looking for a configuration file
+     * @param strategies Strategies a configuration should be loaded for
+     * @return An instance of {@link Configuration}
+     */
     public static Configuration load(File projectDir, Function<File, Boolean> stopCondition, String... strategies) {
         final Configuration configuration = load(projectDir, stopCondition);
         configuration.loadStrategyConfigurations(strategies);
