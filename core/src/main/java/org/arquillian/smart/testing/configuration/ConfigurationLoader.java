@@ -43,24 +43,25 @@ public class ConfigurationLoader {
         return load(projectDir, null);
     }
 
-    public static Configuration load(File projectDir, Function<File, Boolean> stopRecursiveLookup) {
-        if (stopRecursiveLookup != null) {
-             projectDir = new ConfigLookup(projectDir, stopRecursiveLookup).getFirstDirWithConfigOrProjectRootDir();
-        }
-
+    public static Configuration load(File projectDir, Function<File, Boolean> stopCondition) {
         final File configFile;
         final String customConfigFilePath = System.getProperty(SMART_TESTING_CONFIG);
+
         if (isCustomConfigFileValid(customConfigFilePath)) {
             configFile = Paths.get(customConfigFilePath).toAbsolutePath().toFile();
         } else {
+            if (stopCondition != null) {
+                projectDir = new ConfigLookup(projectDir, stopCondition).getFirstDirWithConfigOrWithStopCondition();
+            }
             configFile = projectDir;
         }
+
         Map<String, Object> yamlConfiguration = readConfiguration(configFile);
         return parseConfiguration(yamlConfiguration);
     }
 
-    public static Configuration load(File projectDir, Function<File, Boolean> stopRecursiveLookup, String... strategies) {
-        final Configuration configuration = load(projectDir, stopRecursiveLookup);
+    public static Configuration load(File projectDir, Function<File, Boolean> stopCondition, String... strategies) {
+        final Configuration configuration = load(projectDir, stopCondition);
         configuration.loadStrategyConfigurations(strategies);
 
         return configuration;

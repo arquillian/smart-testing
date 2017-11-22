@@ -9,19 +9,19 @@ import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMA
 class ConfigLookup {
 
     private final File executionRootDir;
-    private final Function<File, Boolean> stopRecursiveLookup;
+    private final Function<File, Boolean> stopCondition;
 
-    ConfigLookup(File executionRootDir, Function<File, Boolean> stopRecursiveLookup) {
+    ConfigLookup(File executionRootDir, Function<File, Boolean> stopCondition) {
         this.executionRootDir = executionRootDir;
-        this.stopRecursiveLookup = stopRecursiveLookup;
+        this.stopCondition = stopCondition;
     }
 
-    File getFirstDirWithConfigOrProjectRootDir() {
-        return getFirstDirWithConfigOrProjectRootDir(executionRootDir);
+    File getFirstDirWithConfigOrWithStopCondition() {
+        return getFirstDirWithConfigOrWithStopCondition(executionRootDir);
     }
 
-    private File getFirstDirWithConfigOrProjectRootDir(File projectDir) {
-        if (stopRecursiveLookup.apply(projectDir)) {
+    private File getFirstDirWithConfigOrWithStopCondition(File projectDir) {
+        if (stopCondition.apply(projectDir)) {
             return projectDir;
         }
 
@@ -30,6 +30,6 @@ class ConfigLookup {
             return projectDir;
         }
 
-        return getFirstDirWithConfigOrProjectRootDir(projectDir.getParentFile());
+        return getFirstDirWithConfigOrWithStopCondition(projectDir.getParentFile());
     }
 }

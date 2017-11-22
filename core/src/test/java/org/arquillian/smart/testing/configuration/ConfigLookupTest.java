@@ -42,7 +42,7 @@ public class ConfigLookupTest {
         final ConfigLookup configLookUp = new ConfigLookup(dirToStart, this::isProjectRootDirectory);
 
         // when
-        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
+        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrWithStopCondition();
 
         // then
         assertThat(firstDirWithConfigOrProjectRootDir)
@@ -62,7 +62,7 @@ public class ConfigLookupTest {
         final ConfigLookup configLookUp = new ConfigLookup(dirToStart, this::isProjectRootDirectory);
 
         // when
-        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrProjectRootDir();
+        final File firstDirWithConfigOrProjectRootDir = configLookUp.getFirstDirWithConfigOrWithStopCondition();
 
         // then
         assertThat(firstDirWithConfigOrProjectRootDir).isEqualTo(temporaryFolder.getRoot());
