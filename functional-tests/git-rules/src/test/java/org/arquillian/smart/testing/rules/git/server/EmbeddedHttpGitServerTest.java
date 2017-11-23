@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.rules.git.server;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,13 +124,13 @@ public class EmbeddedHttpGitServerTest {
     public void should_be_able_to_serve_multiple_repositories() throws Exception {
         // given
         gitServer = EmbeddedHttpGitServer.fromBundle("das-repo","repo.bundle")
-                                         .fromBundle("launchpad", "saas-launchpad.bundle")
+                                         .fromPath(Paths.get("src/test/resources/saas-launchpad.bundle"))
                                          .usingPort(5433)
                                          .create();
         gitServer.start();
 
         final GitCloner dasRepoCloner = new GitCloner("http://localhost:5433/das-repo");
-        final GitCloner launchpadCloner = new GitCloner("http://localhost:5433/launchpad");
+        final GitCloner launchpadCloner = new GitCloner("http://localhost:5433/saas-launchpad.bundle");
 
         // when
         final Repository dasRepo = dasRepoCloner.cloneRepositoryToTempFolder();

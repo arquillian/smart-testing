@@ -126,7 +126,7 @@ public class SmartTestingSurefireProvider implements SurefireProvider {
     private boolean isGetConsoleLoggerMethod(Method method) {
         return method.getName().equals("getConsoleLogger")
             && method.getParameterCount() == 0
-            && Arrays.asList(method.getModifiers()).contains(Modifier.PUBLIC)
+            && method.getModifiers() == Modifier.PUBLIC
             && method.getReturnType() != Void.class;
     }
 }

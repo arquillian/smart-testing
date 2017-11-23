@@ -164,7 +164,7 @@ public class EmbeddedHttpGitServer {
      * Creates {@link EmbeddedHttpGitServer} serving repository imported from a bundle file located on the class path.
      * See <a href="https://git-scm.com/docs/git-bundle">git-bundle</a> documentation for details how to create bundle file.
      *
-     * Takes bundle name  as a name under which the repository will be served
+     * Takes bundle name as a name under which the repository will be served
      *
      * @param bundleFile bundle file name. should be present on the classpath
      */
@@ -181,7 +181,7 @@ public class EmbeddedHttpGitServer {
      * @param path Path to git repository or bundle file.
      */
     public static EmbeddedHttpGitServerBuilder fromPath(Path path) {
-        return fromPath(path);
+        return fromFile(path.toFile());
     }
 
     /**

@@ -1,15 +1,19 @@
 package org.arquillian.smart.testing.mvn.ext;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.arquillian.smart.testing.configuration.ConfigLookup;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
@@ -79,16 +83,23 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
             return;
         }
 
-        final ConfigLookup configLookUp = new ConfigLookup(session.getExecutionRootDirectory());
-        final File firstDirWithConfig = configLookUp.getFirstDirWithConfigOrProjectRootDir();
-
-        configuration = ConfigurationLoader.load(firstDirWithConfig);
+        File executionRootDirectory = new File(session.getExecutionRootDirectory());
+        configuration = ConfigurationLoader.load(executionRootDirectory, this::isProjectRootDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
 
         if (configuration.isDisable()) {
             skipExtensionInstallation = true;
             logExtensionDisableReason(logger, SMART_TESTING_DISABLE + " is set.");
+        }
+    }
+
+    private boolean isProjectRootDirectory(File file) {
+        try {
+            return file.isDirectory()
+                && Files.isSameFile(file.toPath(), new File(System.getenv("MAVEN_PROJECTBASEDIR")).toPath());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -129,7 +140,8 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final Consumer<MavenProject> configureSmartTestingExtensionAction;
-        if (hasModuleSpecificConfigurations(session)) {
+        final File executionRootDirectory = new File(session.getExecutionRootDirectory());
+        if (hasModuleSpecificConfigurations(executionRootDirectory, this::isProjectRootDirectory)) {
             configureSmartTestingExtensionAction = applyModuleSpecificConfiguration(configuration);
         } else {
             final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
@@ -138,16 +150,16 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         session.getAllProjects().forEach(configureSmartTestingExtensionAction);
     }
 
-    private boolean hasModuleSpecificConfigurations(MavenSession session) {
-        final ConfigLookup lookUp = new ConfigLookup(session.getExecutionRootDirectory());
+    private boolean hasModuleSpecificConfigurations(File projectDir, Function<File, Boolean> stopCondition) {
+        final ConfigLookup lookUp = new ConfigLookup(projectDir, stopCondition);
         final boolean moreThanOneConfigFile = lookUp.hasMoreThanOneConfigFile(SMART_TESTING_YML, SMART_TESTING_YAML);
         return moreThanOneConfigFile && System.getProperty(SMART_TESTING_CONFIG) == null;
     }
 
     private Consumer<MavenProject> applyModuleSpecificConfiguration(Configuration configuration) {
         return mavenProject -> {
-            final ConfigLookup configLookup = new ConfigLookup(mavenProject.getBasedir().toString());
-            final File dirWithConfig = configLookup.getFirstDirWithConfigOrProjectRootDir();
+            final ConfigLookup configLookup = new ConfigLookup(mavenProject.getBasedir(), this::isProjectRootDirectory);
+            final File dirWithConfig = configLookup.getFirstDirWithConfigOrWithStopCondition();
             final Configuration mavenProjectConfiguration = configLookup.isConfigFromProjectRootDir() ? configuration :
                 ConfigurationLoader.load(dirWithConfig);
             if (mavenProjectConfiguration.isDisable()) {
