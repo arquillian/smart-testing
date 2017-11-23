@@ -3,9 +3,9 @@ package org.arquillian.smart.testing.impl;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.arquillian.smart.testing.api.TestVerifier;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.configuration.StringSimilarityCalculator;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
@@ -26,30 +26,22 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
         this.projectDir = projectDir;
     }
 
-    public TestExecutionPlanner getPlannerForStrategy(String strategy, boolean autocorrect) {
-
-        if (availableStrategies.isEmpty()) {
-            loadStrategies();
-        }
+    public TestExecutionPlanner getPlannerForStrategy(String strategy) {
+        loadStrategies();
 
         if (availableStrategies.containsKey(strategy)) {
             return availableStrategies.get(strategy).create(projectDir, verifier, configuration);
         } else {
-            if (autocorrect) {
-                final StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
-                final String closestMatch =
-                    stringSimilarityCalculator.findClosestMatch(strategy, availableStrategies.keySet());
-                if (availableStrategies.containsKey(closestMatch)) {
-                    return availableStrategies.get(closestMatch).create(projectDir, verifier, configuration);
-                }
-            }
+            throw new IllegalArgumentException(
+                "No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()
+                    + "]. Please make sure you have corresponding dependency defined.");
         }
-
-        throw new IllegalArgumentException("No strategy found for [" + strategy + "]. Available strategies are: [" + availableStrategies.keySet()
-            + "]. Please make sure you have corresponding dependency defined.");
     }
 
     private void loadStrategies() {
+        if (!availableStrategies.isEmpty()) {
+            return;
+        }
         final Iterable<TestExecutionPlannerFactory> loadedStrategies = spiLoader.all(TestExecutionPlannerFactory.class);
         for (final TestExecutionPlannerFactory testExecutionPlannerFactory : loadedStrategies) {
             availableStrategies.put(testExecutionPlannerFactory.alias(), testExecutionPlannerFactory);
@@ -63,5 +55,10 @@ class TestExecutionPlannerLoaderImpl implements TestExecutionPlannerLoader {
 
     public TestVerifier getVerifier() {
         return verifier;
+    }
+
+    public Set<String> getAvailableStrategyNames() {
+        loadStrategies();
+        return availableStrategies.keySet();
     }
 }
