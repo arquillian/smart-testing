@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
@@ -237,5 +238,37 @@ public class Configuration implements ConfigurationSection {
                     .orElseThrow(() ->
                         new RuntimeException("The configuration class of strategy " + strategyName
                             + " is not available. Make sure you have correct dependencies on you classpath.")));
+    }
+
+    public void autocorrectStrategies(Set<String> availableStrategies, List<String> errorMessages) {
+        StringSimilarityCalculator stringSimilarityCalculator = new StringSimilarityCalculator();
+        List<String> registeredStrategies = new ArrayList<>();
+
+        for (int i = 0; i < strategies.length; i++) {
+            String definedStrategy = strategies[i];
+
+            if (!availableStrategies.contains(definedStrategy)) {
+                String closestMatch = stringSimilarityCalculator.findClosestMatch(definedStrategy, availableStrategies);
+
+                if (isAutocorrect()) {
+                    if (registeredStrategies.contains(closestMatch)) {
+                        errorMessages.add(
+                            String.format("Autocorrected [%s] strategy to [%s] but it was already registered",
+                                closestMatch, definedStrategy));
+                    }
+                    strategies[i] = closestMatch;
+                    registeredStrategies.add(closestMatch);
+                } else {
+                    errorMessages.add(
+                        String.format("Unable to find strategy [%s]. Did you mean [%s]?", definedStrategy, closestMatch));
+                }
+            } else {
+                if (registeredStrategies.contains(definedStrategy)) {
+                    errorMessages.add(
+                        String.format("Strategy [%s] was already registered or autocorrected", definedStrategy));
+                }
+                registeredStrategies.add(definedStrategy);
+            }
+        }
     }
 }
