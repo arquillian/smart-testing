@@ -47,4 +47,27 @@ public class LocalChangesAffectedAnnotationTestsSelectionExecutionFunctionalTest
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
     }
 
+    @Test
+    public void should_only_execute_tests_with_affected_changes_annotated_for_files() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+
+        project.configureSmartTesting()
+            .executionOrder(AFFECTED)
+            .inMode(SELECTING)
+            .enable();
+
+        final Collection<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("use watchfiles to detect affected files");
+
+        // when
+        final TestResults actualTestResults = project.build("config/impl-base")
+            .options().withSystemProperties("smart.testing.version", ExtensionVersion.version().toString())
+            .configure()
+            .run();
+
+        // then
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+    }
+
 }

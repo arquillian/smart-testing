@@ -29,6 +29,8 @@ package org.arquillian.smart.testing.strategies.affected;
 
 import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,9 +40,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.api.TestVerifier;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
-import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.scm.Change;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClassBuilder;
 import org.jgrapht.DirectedGraph;
@@ -56,12 +59,13 @@ public class ClassDependenciesGraph {
     private static final Filter coreJava = new Filter(Collections.singletonList(""), Collections.singletonList("java.*"));
 
     private final JavaClassBuilder builder;
-    private final DirectedGraph<JavaElement, DefaultEdge> graph;
+    private final DirectedGraph<Element, DefaultEdge> graph;
     private final Filter filter;
     private final TestVerifier testVerifier;
     private final boolean enableTransitivity;
+    private final Path projectDir;
 
-    ClassDependenciesGraph(TestVerifier testVerifier, Configuration configuration) {
+    ClassDependenciesGraph(TestVerifier testVerifier, Configuration configuration, File projectDir) {
         this.builder = new JavaClassBuilder();
         this.graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         final AffectedConfiguration affectedConfiguration =
@@ -69,13 +73,15 @@ public class ClassDependenciesGraph {
         this.filter = new Filter(affectedConfiguration.getInclusions(), affectedConfiguration.getExclusions());
         this.testVerifier = testVerifier;
         this.enableTransitivity = affectedConfiguration.isTransitivity();
+        this.projectDir = projectDir.toPath();
     }
 
-    void buildTestDependencyGraph(Collection<File> testJavaFiles) {
+    void buildTestDependencyGraph(Collection<File> modifiedJavaFiles) {
         // First update class index
         List<String> testClassesNames = new ArrayList<>();
-        for (File testJavaFile : testJavaFiles) {
-            String changedTestClassClassname = builder.getClassName(JavaToClassLocation.transform(testJavaFile, testVerifier));
+        for (File testJavaFile : modifiedJavaFiles) {
+            String changedTestClassClassname =
+                builder.getClassName(JavaToClassLocation.transform(testJavaFile, testVerifier));
             if (changedTestClassClassname != null) {
                 testClassesNames.add(changedTestClassClassname);
             }
@@ -86,11 +92,26 @@ public class ClassDependenciesGraph {
             JavaClass testJavaClass = builder.getClassDescription(changedTestClassNames);
             if (testJavaClass != null) {
                 final String[] imports = testJavaClass.getImports();
+
                 final List<String> manualProductionClasses = calculateManuallyAddedDependencies(testJavaClass);
                 manualProductionClasses.addAll(Arrays.asList(imports));
-                addToIndex(new JavaElement(testJavaClass), manualProductionClasses);
+
+                final List<Path> files = calculateWatchedFiles(testJavaClass);
+
+                addToIndex(new JavaElement(testJavaClass), manualProductionClasses, files);
             }
         }
+    }
+
+    private List<Path> calculateWatchedFiles(JavaClass testJavaClass) {
+        final List<Path> files = new ArrayList<>();
+        final WatchFile[] allTestsAnnotation = findWatchFiles(testJavaClass);
+
+        for (WatchFile file : allTestsAnnotation) {
+            files.add(projectDir.resolve(file.value()).normalize());
+        }
+
+        return files;
     }
 
     private List<String> calculateManuallyAddedDependencies(JavaClass testJavaClass) {
@@ -106,19 +127,31 @@ public class ClassDependenciesGraph {
         }
 
         return manualDependencyClasses;
+    }
 
+    private WatchFile[] findWatchFiles(JavaClass testJavaClass) {
+
+        final Optional<WatchFiles> testsListOptional = testJavaClass.getAnnotationByType(WatchFiles.class);
+
+        WatchFile[] tests = testsListOptional
+            .map(WatchFiles::value)
+            .orElseGet(() -> testJavaClass.getAnnotationByType(WatchFile.class)
+                .map(annotation -> new WatchFile[] {annotation})
+                .orElse(new WatchFile[0]));
+
+        return tests;
     }
 
     private ComponentUnderTest[] findComponentsUnderTests(JavaClass testJavaClass) {
 
-        final Optional<ComponentsUnderTest> testsListOptional = testJavaClass.getAnnotationByType(ComponentsUnderTest.class);
+        final Optional<ComponentsUnderTest> testsListOptional =
+            testJavaClass.getAnnotationByType(ComponentsUnderTest.class);
 
         ComponentUnderTest[] tests = testsListOptional
             .map(ComponentsUnderTest::value)
             .orElseGet(() -> testJavaClass.getAnnotationByType(ComponentUnderTest.class)
                 .map(annotation -> new ComponentUnderTest[] {annotation})
                 .orElse(new ComponentUnderTest[0]));
-
 
         return tests;
     }
@@ -142,7 +175,9 @@ public class ClassDependenciesGraph {
         }
 
         if (manualDependencyClasses.isEmpty()) {
-            logger.warn("You set %s package as reference classes to run tests, but no classes found. Maybe a package refactor?", trimmedPackage);
+            logger.warn(
+                "You set %s package as reference classes to run tests, but no classes found. Maybe a package refactor?",
+                trimmedPackage);
         }
 
         return manualDependencyClasses;
@@ -162,9 +197,24 @@ public class ClassDependenciesGraph {
         return packages;
     }
 
-    private void addToIndex(JavaElement javaElement, List<String> imports) {
+    private void addToIndex(JavaElement javaElement, List<String> imports, List<Path> files) {
         addToGraph(javaElement);
         updateJavaElementWithImportReferences(javaElement, imports);
+        updateJavaElementWithFiles(javaElement, files);
+    }
+
+    private void updateJavaElementWithFiles(JavaElement javaElement, List<Path> files) {
+        for (Path file : files) {
+            final FileElement fileElement = new FileElement(file);
+
+            if (!graph.containsVertex(fileElement)) {
+                graph.addVertex(fileElement);
+            }
+
+            if (!graph.containsEdge(javaElement, fileElement)) {
+                graph.addEdge(javaElement, fileElement);
+            }
+        }
     }
 
     private void addToGraph(JavaElement newClass) {
@@ -174,11 +224,11 @@ public class ClassDependenciesGraph {
     }
 
     private void replaceVertex(JavaElement newClass) {
-        List<JavaElement> incomingEdges = getParents(newClass);
+        List<Element> incomingEdges = getParents(newClass);
 
         graph.removeVertex(newClass);
         graph.addVertex(newClass);
-        for (JavaElement each : incomingEdges) {
+        for (Element each : incomingEdges) {
             graph.addEdge(each, newClass);
         }
     }
@@ -187,7 +237,9 @@ public class ClassDependenciesGraph {
 
         for (String importz : imports) {
 
-            if (addImport(javaElementParentClass, importz) && filter.shouldBeIncluded(importz) && this.enableTransitivity) {
+            if (addImport(javaElementParentClass, importz)
+                && filter.shouldBeIncluded(importz)
+                && this.enableTransitivity) {
                 JavaClass javaClass = builder.getClassDescription(importz);
                 if (javaClass != null) {
                     updateJavaElementWithImportReferences(javaElementParentClass, Arrays.asList(javaClass.getImports()));
@@ -217,24 +269,41 @@ public class ClassDependenciesGraph {
         return false;
     }
 
+    Set<String> findTestsDependingOn(Collection<Change> files) {
 
-    Set<String> findTestsDependingOn(Set<File> classes) {
-        return classes.stream()
-            .map( javaClass -> {
-                final File classLocation = JavaToClassLocation.transform(javaClass, testVerifier);
-                final String className = this.builder.getClassName(classLocation);
-                return this.builder.getClassDescription(className);
-            })
-            .map(JavaElement::new)
+        return files.stream()
+            .map(Change::getLocation)
+            .map(this::transformToElement)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
             .filter(graph::containsVertex)
             .map(this::getParents)
             .flatMap(Collection::stream)
+            .map(e -> (JavaElement) e)
             .map(JavaElement::getClassName)
             .collect(Collectors.toSet());
     }
 
-    private List<JavaElement> getParents(JavaElement childClass) {
+    private Optional<Element> transformToElement(Path element) {
+
+        if (testVerifier.isCore(element)) {
+
+            final File classLocation = JavaToClassLocation.transform(element.toFile(), testVerifier);
+            final String className = this.builder.getClassName(classLocation);
+            return Optional.of(new JavaElement(this.builder.getClassDescription(className)));
+        } else {
+            if (!testVerifier.isJavaFile(element)) {
+                return Optional.of(
+                    new FileElement(element));
+            } else {
+                return Optional.empty();
+            }
+        }
+    }
+
+    private List<Element> getParents(Element childClass) {
         return predecessorListOf(graph, childClass);
+
     }
 
     @Override
@@ -246,5 +315,4 @@ public class ClassDependenciesGraph {
 
         return s.toString();
     }
-
 }

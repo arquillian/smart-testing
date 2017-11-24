@@ -27,6 +27,8 @@
  */
 package org.arquillian.smart.testing.strategies.affected.ast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -61,10 +63,13 @@ class JavaAssistClassParser {
                 Arrays.stream(getLoadedClasses()).map(URL::toExternalForm).forEach(
                     s -> {
                         try {
-                            classPool.appendClassPath(s.replace("file:", "")); // removes file prefix, as JavaAssist doesn't like it
+                            final String jarLocation = s.replace("file:", "");
+                            classPool.appendClassPath(URLDecoder.decode(jarLocation, "UTF-8")); // removes file prefix, as JavaAssist doesn't like it
                         } catch (NotFoundException e) {
                             throw new RuntimeException("Failed configuring JavaAssist ClassPool" +
                                 " while loading resources from Context Class Loader", e);
+                        } catch (UnsupportedEncodingException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 );
