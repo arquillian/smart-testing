@@ -64,19 +64,14 @@ public class ConfigurationLoader {
             configFile = projectDir;
         }
 
-       return loadInheritedConfiguration(configFile);
+        return loadEffectiveConfiguration(configFile);
     }
 
-    private static Configuration loadInheritedConfiguration(File configFile) {
-        Path configFileDir = configFile.isFile()? configFile.getParentFile().toPath(): configFile.toPath();
+    private static Configuration loadEffectiveConfiguration(File configFile) {
+        ConfigurationReader configurationReader = new ConfigurationReader();
+        final Map<String, Object> effectiveConfig = configurationReader.readConfiguration(configFile);
 
-        final ConfigurationReader configurationReader = new ConfigurationReader();
-        final Map<String, Object> yamlConfiguration = configurationReader.readConfiguration(configFile);
-
-        final Configuration configuration = ConfigurationLoader.loadAsConfiguration(yamlConfiguration);
-
-        final ConfigurationInheriter inheriter = new ConfigurationInheriter();
-        return inheriter.overWriteNotDefinedValuesFromInherit(configuration, configFileDir);
+        return ConfigurationLoader.loadAsConfiguration(effectiveConfig);
     }
 
     /**
@@ -115,11 +110,6 @@ public class ConfigurationLoader {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load configuration from file " + configFile, e);
         }
-    }
-
-    // testing
-    static Configuration load(Path path) {
-        return loadInheritedConfiguration(path.toFile());
     }
 
     private static Configuration loadAsConfiguration(Map<String, Object> yamlConfiguration) {

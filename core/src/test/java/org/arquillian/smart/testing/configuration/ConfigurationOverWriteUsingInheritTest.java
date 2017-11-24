@@ -8,7 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
-import static org.arquillian.smart.testing.configuration.ConfigurationFile.SmartTestingConfigurationFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.SmartTestingConfigurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,7 +66,7 @@ public class ConfigurationOverWriteUsingInheritTest {
             .create(Paths.get(root, SMART_TESTING_YML));
 
         // when
-        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG, IMPL_BASE));
+        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG, IMPL_BASE).toFile());
 
         // then
         assertThat(configuration.getMode()).isEqualTo(SELECTING);
@@ -92,7 +92,7 @@ public class ConfigurationOverWriteUsingInheritTest {
             .create(Paths.get(root, SMART_TESTING_YML));
 
         // when
-        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG));
+        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG).toFile());
 
         // then
         assertThat(configuration.getMode()).isEqualTo(ORDERING);

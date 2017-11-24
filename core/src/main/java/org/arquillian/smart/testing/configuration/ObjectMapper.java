@@ -32,7 +32,7 @@ class ObjectMapper {
         return instance;
     }
 
-    <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
+    private <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
         Map<String, Object> map) {
         method.setAccessible(true);
         if (method.getParameterTypes().length != 1) {
@@ -228,7 +228,7 @@ class ObjectMapper {
         return null;
     }
 
-    boolean isSetter(Method candidate) {
+    private boolean isSetter(Method candidate) {
         return candidate.getName().matches("^(set|add)[A-Z].*")
             && (candidate.getReturnType().equals(Void.TYPE) || candidate.getReturnType()
             .equals(candidate.getDeclaringClass()))

@@ -71,7 +71,7 @@ public class ConfigurationTest {
 
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);

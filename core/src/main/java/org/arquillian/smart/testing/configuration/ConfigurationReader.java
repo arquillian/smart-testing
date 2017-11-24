@@ -6,13 +6,16 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.arquillian.smart.testing.configuration.Configuration.INHERIT;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 
@@ -22,7 +25,7 @@ class ConfigurationReader {
 
     Map<String, Object> readConfiguration(File configPath) {
         if (!configPath.isDirectory()) {
-            return getConfigParametersFromFile(getConfigurationFilePath(configPath));
+            return readEffectiveConfig(getConfigurationFilePath(configPath));
         }
 
         final File[] files =
@@ -36,12 +39,12 @@ class ConfigurationReader {
             logger.info("Config file `" + SMART_TESTING_YAML + "` OR `" + SMART_TESTING_YML + "` is not found. "
                 + "Using system properties to load configuration for smart testing.");
         } else {
-            return getConfigParametersFromFile(getConfigurationFilePath(files));
+            return readEffectiveConfig(getConfigurationFilePath(files));
         }
         return Collections.emptyMap();
     }
 
-    Map<String, Object> getConfigParametersFromFile(Path filePath) {
+    private Map<String, Object> getConfigParametersFromFile(Path filePath) {
         if (!filePath.toFile().exists()) {
             logger.warn(String.format("The configuration file %s is not exists.", filePath));
             return Collections.emptyMap();
@@ -87,5 +90,28 @@ class ConfigurationReader {
             .map(File::toPath)
             .findFirst()
             .get();
+    }
+
+    private Map<String, Object> readEffectiveConfig(Path filePath){
+        Map<String, Object> config = getConfigParametersFromFile(filePath);
+
+        List<Map<String, Object>> configs = new ArrayList<>();
+        configs.add(config);
+        while (config.get(INHERIT) != null) {
+            String inherit = String.valueOf(config.get(INHERIT));
+            filePath = filePath.getParent().resolve(inherit);
+            config = getConfigParametersFromFile(filePath);
+            if (!config.isEmpty()) {
+                configs.add(0, config);
+            }
+        }
+        Map<String, Object> effectiveConfig = configs.get(0);
+        for (int i = 1; i < configs.size(); i++){
+            effectiveConfig.putAll(configs.get(i));
+        }
+
+        effectiveConfig.remove(INHERIT);
+
+        return effectiveConfig;
     }
 }

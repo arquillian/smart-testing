@@ -11,7 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
-import static org.arquillian.smart.testing.configuration.ConfigurationFile.SmartTestingConfigurationFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.SmartTestingConfigurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheritTest.CONFIG;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
@@ -50,7 +50,7 @@ public class ConfigurationOverWriteUsingInheritWithSystemPropertyTest {
         range.setTail(HEAD + "~3");
 
         // when
-        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG));
+        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG).toFile());
 
         // then
         assertThat(configuration.getStrategies()).isEqualTo(new String[] {"changed"});

@@ -7,44 +7,44 @@ import java.util.HashMap;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-class ConfigurationFile {
+class ConfigurationFileBuilder {
 
     private HashMap<String, Object> properties;
 
-    private ConfigurationFile() {
+    private ConfigurationFileBuilder() {
         properties = new HashMap<>();
     }
 
-    static ConfigurationFile SmartTestingConfigurationFile() {
-        return new ConfigurationFile();
+    static ConfigurationFileBuilder SmartTestingConfigurationFile() {
+        return new ConfigurationFileBuilder();
     }
 
-    ConfigurationFile inherit(String inherit) {
+    ConfigurationFileBuilder inherit(String inherit) {
         properties.put("inherit", inherit);
         return this;
     }
 
-    ConfigurationFile mode(String mode) {
+    ConfigurationFileBuilder mode(String mode) {
         properties.put("mode", mode);
         return this;
     }
 
-    ConfigurationFile applyTo(String applyTo) {
+    ConfigurationFileBuilder applyTo(String applyTo) {
         properties.put("applyTo", applyTo);
         return this;
     }
 
-    ConfigurationFile strategies(String strategies) {
+    ConfigurationFileBuilder strategies(String strategies) {
         properties.put("strategies", strategies);
         return this;
     }
 
-    ConfigurationFile debug(boolean debug) {
+    ConfigurationFileBuilder debug(boolean debug) {
         properties.put("debug", debug);
         return this;
     }
 
-    ConfigurationFile disable(boolean disable) {
+    ConfigurationFileBuilder disable(boolean disable) {
         properties.put("disable", disable);
         return this;
     }

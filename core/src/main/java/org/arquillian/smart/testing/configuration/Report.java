@@ -45,23 +45,4 @@ public class Report implements ConfigurationSection {
         configItems.add(new ConfigurationItem("dir", null, TARGET));
         return configItems;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Report report = (Report) o;
-
-        return enable == report.enable;
-    }
-
-    @Override
-    public int hashCode() {
-        return (enable ? 1 : 0);
-    }
 }

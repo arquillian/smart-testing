@@ -46,27 +46,4 @@ public class Range implements ConfigurationSection {
 
         return configItems;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Range range = (Range) o;
-
-        return (head != null ? head.equals(range.head) : range.head == null)
-            && (tail != null ? tail.equals(range.tail) : range.tail == null);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = head != null ? head.hashCode() : 0;
-        result = 31 * result + (tail != null ? tail.hashCode() : 0);
-
-        return result;
-    }
 }

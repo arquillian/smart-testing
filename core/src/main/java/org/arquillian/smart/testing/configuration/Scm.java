@@ -41,23 +41,4 @@ public class Scm implements ConfigurationSection {
 
         return configItems;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        final Scm scm = (Scm) o;
-
-        return range != null ? range.equals(scm.range) : scm.range == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return range != null ? range.hashCode() : 0;
-    }
 }
