@@ -5,6 +5,7 @@ import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAsser
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
 import org.junit.ClassRule;
@@ -14,7 +15,6 @@ import org.junit.Test;
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.FAILED;
-import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctionalTest {
 
@@ -62,6 +62,6 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
             .containsAll(expectedTestResults)
             .hasSameSizeAs(expectedTestResults);
 
-        softly.assertThat(project).doesNotContainDirectory(TEMP_REPORT_DIR);
+        softly.assertThat(project).doesNotContainDirectory(new TemporaryInternalFiles().getTestReportDirectoryName());
     }
 }
