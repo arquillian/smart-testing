@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.failed;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -19,15 +20,15 @@ import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 public class InProjectTestReportLoader implements TestReportLoader {
 
     private final JavaSPILoader javaSPILoader;
-    private String rootDirectory;
+    private File rootDirectory;
 
-    InProjectTestReportLoader(JavaSPILoader javaSPILoader) {
-        this(javaSPILoader, ".");
+    public InProjectTestReportLoader(JavaSPILoader javaSPILoader, File projectDir) {
+        this.javaSPILoader = javaSPILoader;
+        this.rootDirectory = projectDir;
     }
 
     InProjectTestReportLoader(JavaSPILoader javaSPILoader, String rootDirectory) {
-        this.javaSPILoader = javaSPILoader;
-        this.rootDirectory = rootDirectory;
+        this(javaSPILoader, new File(rootDirectory));
     }
 
     @Override
