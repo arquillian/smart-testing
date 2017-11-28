@@ -33,7 +33,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
         final Set<String> testResults = new HashSet<>();
 
-        final Path reportDir = new TemporaryInternalFiles().getTestReportDirectoryAction(rootDirectory).getPath();
+        final Path reportDir = new TemporaryInternalFiles().createTestReportDirectoryAction(rootDirectory).getPath();
 
         if (Files.exists(reportDir)) {
 

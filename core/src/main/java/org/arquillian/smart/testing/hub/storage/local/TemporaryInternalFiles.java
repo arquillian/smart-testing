@@ -20,11 +20,11 @@ public class TemporaryInternalFiles {
         return TEMP_REPORT_DIR;
     }
 
-    public LocalStorageDirectoryAction getTestReportDirectoryAction(String rootDir){
-        return getTestReportDirectoryAction(new File(rootDir));
+    public LocalStorageDirectoryAction createTestReportDirectoryAction(String rootDir){
+        return createTestReportDirectoryAction(new File(rootDir));
     }
 
-    public LocalStorageDirectoryAction getTestReportDirectoryAction(File rootDir){
+    public LocalStorageDirectoryAction createTestReportDirectoryAction(File rootDir){
         return new LocalStorage(rootDir)
             .duringExecution()
             .temporary()
