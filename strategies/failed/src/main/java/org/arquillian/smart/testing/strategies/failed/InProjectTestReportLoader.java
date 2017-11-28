@@ -10,12 +10,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestResult;
 import org.arquillian.smart.testing.spi.TestResultParser;
-
-import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class InProjectTestReportLoader implements TestReportLoader {
 
@@ -36,7 +34,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
         final Set<String> testResults = new HashSet<>();
 
-        final Path reportDir = new LocalStorage(rootDirectory).duringExecution().temporary().directory(TEMP_REPORT_DIR).getPath();
+        final Path reportDir = new TemporaryInternalFiles().createTestReportDirectoryAction(rootDirectory).getPath();
 
         if (Files.exists(reportDir)) {
 

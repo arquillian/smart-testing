@@ -11,6 +11,7 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,7 +21,6 @@ import org.junit.rules.TemporaryFolder;
 import static java.util.Collections.singletonList;
 import static org.arquillian.smart.testing.mvn.ext.SurefireReportStorage.SUREFIRE_REPORTS_DIR_NAME;
 import static org.arquillian.smart.testing.mvn.ext.SurefireReportStorage.copySurefireReports;
-import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,7 +58,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
         softly.assertThat(reportsDir).exists();
 
         Arrays.stream(reportsDir.listFiles()).forEach(file -> {
@@ -75,7 +75,7 @@ public class SurefireReportStorageTest {
         MavenProject mavenProject = mock(MavenProject.class);
         when(mavenProject.getModel()).thenReturn(project);
         when(mavenSession.getAllProjects()).thenReturn(singletonList(mavenProject));
-        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
 
         // when
         new LocalStorage(projectDir).duringExecution().purge(null);
@@ -93,7 +93,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new LocalStorage(projectDir).duringExecution().temporary().directory(TEMP_REPORT_DIR).getFile();
+        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
         softly.assertThat(reportsDir).doesNotExist();
     }
 
