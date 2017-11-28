@@ -9,11 +9,19 @@ public class TestResult {
     private final Float testDuration;
     private Result result;
 
-    public TestResult(String className, String testMethod, Float testDuration) {
+    public TestResult(String className, String testMethod, Float testDuration, Result result) {
         this.className = className;
         this.testMethod = testMethod;
         this.testDuration = testDuration;
-        this.result = Result.PASSED;
+        this.result = result;
+    }
+
+    public TestResult(String className, Result result) {
+        this(className, "", 0f, result);
+    }
+
+    public TestResult(String className, String testMethod, Float testDuration) {
+        this(className, testMethod, testDuration, Result.PASSED);
     }
 
     public String getClassName() {
