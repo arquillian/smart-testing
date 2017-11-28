@@ -6,9 +6,11 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import org.arquillian.smart.testing.logger.Log;
@@ -94,20 +96,20 @@ class ConfigurationReader {
 
     private Map<String, Object> readEffectiveConfig(Path filePath){
         Map<String, Object> config = getConfigParametersFromFile(filePath);
-
-        List<Map<String, Object>> configs = new ArrayList<>();
+        Deque<Map<String, Object>> configs = new ArrayDeque<>();
         configs.add(config);
         while (config.get(INHERIT) != null) {
             String inherit = String.valueOf(config.get(INHERIT));
             filePath = filePath.getParent().resolve(inherit);
             config = getConfigParametersFromFile(filePath);
             if (!config.isEmpty()) {
-                configs.add(0, config);
+                configs.addFirst(config);
             }
         }
-        Map<String, Object> effectiveConfig = configs.get(0);
-        for (int i = 1; i < configs.size(); i++){
-            effectiveConfig.putAll(configs.get(i));
+
+        Map<String, Object> effectiveConfig = configs.pollFirst();
+        while (!configs.isEmpty()) {
+            effectiveConfig.putAll(configs.pollFirst());
         }
 
         effectiveConfig.remove(INHERIT);
