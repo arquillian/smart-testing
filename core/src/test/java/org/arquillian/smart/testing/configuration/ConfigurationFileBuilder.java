@@ -15,7 +15,7 @@ class ConfigurationFileBuilder {
         properties = new HashMap<>();
     }
 
-    static ConfigurationFileBuilder SmartTestingConfigurationFile() {
+    static ConfigurationFileBuilder configurationFile() {
         return new ConfigurationFileBuilder();
     }
 
@@ -49,7 +49,7 @@ class ConfigurationFileBuilder {
         return this;
     }
 
-    void create(Path filePath) {
+    void writeTo(Path filePath) {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setPrettyFlow(true);

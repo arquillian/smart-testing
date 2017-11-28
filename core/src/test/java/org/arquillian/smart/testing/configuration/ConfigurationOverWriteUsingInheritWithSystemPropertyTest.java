@@ -11,7 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
-import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.SmartTestingConfigurationFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.configurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheritTest.CONFIG;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
@@ -36,14 +36,14 @@ public class ConfigurationOverWriteUsingInheritWithSystemPropertyTest {
         temporaryFolder.newFolder(CONFIG);
         final String root = temporaryFolder.getRoot().toString();
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .inherit("../smart-testing.yml")
             .mode("ordering")
-            .create(Paths.get(root, CONFIG, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .strategies("new, changed, affected")
-            .create(Paths.get(root, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, SMART_TESTING_YML));
 
         final Range range = new Range();
         range.setHead(HEAD);

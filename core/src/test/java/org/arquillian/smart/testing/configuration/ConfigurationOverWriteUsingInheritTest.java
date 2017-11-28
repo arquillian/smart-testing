@@ -8,7 +8,7 @@ import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
-import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.SmartTestingConfigurationFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.configurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,15 +26,15 @@ public class ConfigurationOverWriteUsingInheritTest {
         // given
         final String root = temporaryFolder.getRoot().toString();
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .mode("ordering")
             .applyTo("surefire")
             .inherit(Paths.get(root, SMART_TESTING_YAML).toString())
-            .create(Paths.get(root, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, SMART_TESTING_YML));
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .strategies("new, changed, affected")
-            .create(Paths.get(root, SMART_TESTING_YAML));
+            .writeTo(Paths.get(root, SMART_TESTING_YAML));
 
         // when
         final Configuration configuration = ConfigurationLoader.load(temporaryFolder.getRoot());
@@ -51,19 +51,19 @@ public class ConfigurationOverWriteUsingInheritTest {
         temporaryFolder.newFolder(CONFIG, IMPL_BASE);
         final String root = temporaryFolder.getRoot().toString();
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .inherit("../smart-testing.yml")
-            .create(Paths.get(root, CONFIG, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .inherit("../smart-testing.yml")
             .mode("selecting")
             .debug(true)
-            .create(Paths.get(root, CONFIG, IMPL_BASE, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, CONFIG, IMPL_BASE, SMART_TESTING_YML));
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .strategies("new, changed, affected")
-            .create(Paths.get(root, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, SMART_TESTING_YML));
 
         // when
         final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG, IMPL_BASE).toFile());
@@ -80,16 +80,16 @@ public class ConfigurationOverWriteUsingInheritTest {
         temporaryFolder.newFolder(CONFIG);
         final String root = temporaryFolder.getRoot().toString();
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .inherit("../smart-testing.yml")
             .mode("ordering")
             .disable(true)
-            .create(Paths.get(root, CONFIG, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
 
-        SmartTestingConfigurationFile()
+        configurationFile()
             .strategies("new, changed, affected")
             .disable(false)
-            .create(Paths.get(root, SMART_TESTING_YML));
+            .writeTo(Paths.get(root, SMART_TESTING_YML));
 
         // when
         final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG).toFile());
