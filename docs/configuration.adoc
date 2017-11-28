@@ -18,7 +18,7 @@ and then the rest.
 
 The `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="DEFAULT_MODE"]` is the **default** mode.
 
-In order to define the mode use `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_BODE"]` Java system property with either one.
+In order to define the mode use `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_MODE"]` Java system property with either one.
 
 [NOTE]
 ====
