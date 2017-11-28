@@ -91,6 +91,17 @@ public class LocalStorageTest {
     }
 
     @Test
+    public void should_create_directory_and_file_with_content_in_it() throws IOException {
+        // when
+        localStorage.duringExecution().temporary().directory("directory")
+            .createWithFile("file", "content".getBytes());
+
+        // then
+        softly.assertThat(getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "directory").resolve("file"))
+            .hasContent("content");
+    }
+
+    @Test
     public void should_copy_directory() throws IOException {
         //given
         Path toCopy = folder.newFolder().toPath();
