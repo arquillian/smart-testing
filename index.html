@@ -1722,7 +1722,7 @@ You need to implement three simple methods, two related with the name of the str
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> TestExecutionPlanner create(<span class="predefined-type">File</span> projectDir, TestVerifier verifier, <span class="predefined-type">Configuration</span> configuration) {
-        <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector();
+        <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector(projectDir);
     } <i class="conum" data-value="2"></i><b>(2)</b>
 
     <span class="annotation">@Override</span>
@@ -1767,7 +1767,8 @@ You also need to set there the strategy name.</p>
 <div class="listingblock">
 <div class="title">FailedTestsDetector.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.util.Collection</span>;
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.io.File</span>;
+<span class="keyword">import</span> <span class="include">java.util.Collection</span>;
 <span class="keyword">import</span> <span class="include">java.util.LinkedHashSet</span>;
 <span class="keyword">import</span> <span class="include">java.util.stream.Collectors</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.TestSelection</span>;
@@ -1778,10 +1779,15 @@ You also need to set there the strategy name.</p>
 
     <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> FAILED = <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
 
-    <span class="directive">private</span> <span class="directive">final</span> TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader());
+    <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">File</span> projectDir;
+
+    <span class="directive">public</span> FailedTestsDetector(<span class="predefined-type">File</span> projectDir) {
+        <span class="local-variable">this</span>.projectDir = projectDir;
+    }
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; getTests() { <i class="conum" data-value="1"></i><b>(1)</b>
+        TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader(), projectDir);
         <span class="keyword">return</span> testReportLoader.loadTestResults()
             .stream()
             .map(result -&gt; <span class="keyword">new</span> TestSelection(result, getName())) <i class="conum" data-value="2"></i><b>(2)</b>
@@ -2714,7 +2720,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-27 22:26:59 UTC
+Last updated 2017-11-28 14:28:10 UTC
 </div>
 </div>
 <script>
