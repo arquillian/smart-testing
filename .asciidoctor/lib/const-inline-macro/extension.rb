@@ -20,7 +20,6 @@ class ConstBlockMacro < Extensions::InlineMacroProcessor
   def process parent, target, attrs
 
     data_path = parent.normalize_asset_path(target, 'target')
-    puts "Reading #{data_path}"
     const_value = nil
 
     if attrs.has_key? 'name'
@@ -48,6 +47,10 @@ class ConstBlockMacro < Extensions::InlineMacroProcessor
           end
         end
       end
+    end
+    if const_value[0][0].nil?
+        missing_attr = if attrs.has_key? 'tag' then attrs['tag'] else attrs['name'] end
+        raise "Failed reading '#{data_path}'. Check if constant '#{missing_attr}' exists"
     end
     return const_value[0][0].chomp
   end
