@@ -20,6 +20,7 @@ class ConstBlockMacro < Extensions::InlineMacroProcessor
   def process parent, target, attrs
 
     data_path = parent.normalize_asset_path(target, 'target')
+    puts "Reading #{data_path}"
     const_value = nil
 
     if attrs.has_key? 'name'
