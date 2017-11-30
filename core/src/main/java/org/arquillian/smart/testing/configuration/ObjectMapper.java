@@ -16,6 +16,11 @@ import java.util.stream.Collectors;
 
 class ObjectMapper {
 
+    static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(aClass, map);
+    }
+
     <T extends ConfigurationSection> T readValue(Class<T> aClass, Map<String, Object> map) {
         T instance;
         try {

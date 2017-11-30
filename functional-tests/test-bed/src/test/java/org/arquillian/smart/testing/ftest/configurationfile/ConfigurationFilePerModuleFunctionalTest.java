@@ -18,7 +18,7 @@ import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Strategy.NEW;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigurationFilePerModuleTest {
+public class ConfigurationFilePerModuleFunctionalTest {
     @ClassRule
     public static final GitClone GIT_CLONE = new GitClone(testRepository());
 
@@ -26,21 +26,49 @@ public class ConfigurationFilePerModuleTest {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_load_configuration_from_module_if_it_has_config_file() {
+    public void should_load_configuration_from_modules_config_file_for_local_changes_where_parent_config_file_has_only_strategies_defined() {
         // given
         final Project project = testBed.getProject();
 
         final Configuration parentConfiguration = new ConfigurationBuilder()
-                .strategies(NEW, CHANGED)
-                .scm()
-                    .lastChanges("2")
-                .build()
+                .strategies(CHANGED)
             .build();
 
         final Configuration newConfiguration = new ConfigurationBuilder()
                 .strategies(NEW)
                 .mode(SELECTING)
             .build();
+
+        project.configureSmartTesting()
+                .withConfiguration(parentConfiguration)
+                    .createConfigFile()
+                .withConfiguration(newConfiguration)
+                    .createConfigFileIn("config/impl-base")
+            .enable();
+
+        final Collection<TestResult> expectedTestResults = project
+            .applyAsLocalChanges("Adds new unit test");
+
+
+        // when
+        final TestResults actualTestResults = project.build("config/impl-base").run();
+
+        // then
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+    }
+
+    @Test
+    public void should_load_configuration_from_modules_config_file_for_scm_changes_where_parent_config_file_has_scm_snd_strategies_defined() {
+        // given
+        final Project project = testBed.getProject();
+
+        final Configuration parentConfiguration = new ConfigurationBuilder()
+                .strategies(NEW)
+                .scm()
+                    .lastChanges("2")
+                .build()
+            .build();
+
 
         final Configuration changedConfiguration = new ConfigurationBuilder()
                 .strategies(CHANGED)
@@ -50,22 +78,19 @@ public class ConfigurationFilePerModuleTest {
         project.configureSmartTesting()
                 .withConfiguration(parentConfiguration)
                     .createConfigFile()
-                .withConfiguration(newConfiguration)
-                    .createConfigFileIn("config/impl-base")
                 .withConfiguration(changedConfiguration)
                     .createConfigFileIn("junit/core")
             .enable();
 
-        final Collection<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Adds new unit test");
 
-        expectedTestResults.addAll(project.applyAsCommits("Deletes one test", "Renames unit test"));
+        final Collection<TestResult> expectedTestResults = project.applyAsCommits("Deletes one test", "Renames unit test");
 
         // when
         final TestResults actualTestResults =
-            project.build("junit/core", "config/impl-base").run();
+            project.build("junit/core").run();
 
         // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
+        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults)
+            .hasSameSizeAs(expectedTestResults);
     }
 }

@@ -13,7 +13,7 @@ import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMA
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigurationOverWriteUsingInheritTest {
+public class ConfigurationOverwriteUsingInheritTest {
 
     private static final String IMPL_BASE = "impl-base";
     static final String CONFIG = "config";
@@ -22,7 +22,7 @@ public class ConfigurationOverWriteUsingInheritTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void should_load_configuration_properties_from_absolute_inherit_if_not_defined_in_child() throws IOException {
+    public void should_load_configuration_properties_from_absolute_inherit_path_if_not_defined_in_child() throws IOException {
         // given
         final String root = temporaryFolder.getRoot().toString();
 
@@ -46,20 +46,20 @@ public class ConfigurationOverWriteUsingInheritTest {
     }
 
     @Test
-    public void should_load_configuration_properties_from_relative_inherit_if_not_defined_in_child () throws IOException {
+    public void should_load_configuration_properties_from_relative_inherit_path_if_not_defined_in_child () throws IOException {
         // given
         temporaryFolder.newFolder(CONFIG, IMPL_BASE);
         final String root = temporaryFolder.getRoot().toString();
 
         configurationFile()
             .inherit("../smart-testing.yml")
-            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
-
-        configurationFile()
-            .inherit("../smart-testing.yml")
             .mode("selecting")
             .debug(true)
             .writeTo(Paths.get(root, CONFIG, IMPL_BASE, SMART_TESTING_YML));
+
+        configurationFile()
+            .inherit("../smart-testing.yml")
+            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
 
         configurationFile()
             .strategies("new, changed, affected")
@@ -75,7 +75,7 @@ public class ConfigurationOverWriteUsingInheritTest {
     }
 
     @Test
-    public void should_not_overwrite_disable_parameter_from_inherit() throws IOException {
+    public void should_not_overwrite_disable_parameter_from_inherit_path() throws IOException {
         // given
         temporaryFolder.newFolder(CONFIG);
         final String root = temporaryFolder.getRoot().toString();

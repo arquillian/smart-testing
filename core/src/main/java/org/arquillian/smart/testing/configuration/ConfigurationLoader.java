@@ -12,6 +12,8 @@ import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
+
 public class ConfigurationLoader {
 
     public static final String SMART_TESTING_YML = "smart-testing.yml";
@@ -69,9 +71,9 @@ public class ConfigurationLoader {
 
     private static Configuration loadEffectiveConfiguration(File configFile) {
         ConfigurationReader configurationReader = new ConfigurationReader();
-        final Map<String, Object> effectiveConfig = configurationReader.readConfiguration(configFile);
+        final Map<String, Object> effectiveConfig = configurationReader.readEffectiveConfiguration(configFile);
 
-        return ConfigurationLoader.loadAsConfiguration(effectiveConfig);
+        return loadAsConfiguration(effectiveConfig);
     }
 
     /**
@@ -114,8 +116,8 @@ public class ConfigurationLoader {
 
     private static Configuration loadAsConfiguration(Map<String, Object> yamlConfiguration) {
         final Object strategiesConfiguration = yamlConfiguration.get("strategiesConfiguration");
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final Configuration configuration = objectMapper.readValue(Configuration.class, yamlConfiguration);
+
+        final Configuration configuration = mapToObject(Configuration.class, yamlConfiguration);
         if (strategiesConfiguration != null) {
             configuration.setStrategiesConfig((Map<String, Object>) strategiesConfiguration);
         }

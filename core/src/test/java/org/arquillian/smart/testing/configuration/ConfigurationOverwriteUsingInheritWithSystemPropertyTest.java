@@ -13,13 +13,13 @@ import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.configurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
-import static org.arquillian.smart.testing.configuration.ConfigurationOverWriteUsingInheritTest.CONFIG;
+import static org.arquillian.smart.testing.configuration.ConfigurationOverwriteUsingInheritTest.CONFIG;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)
-public class ConfigurationOverWriteUsingInheritWithSystemPropertyTest {
+public class ConfigurationOverwriteUsingInheritWithSystemPropertyTest {
 
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
