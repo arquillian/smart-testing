@@ -11,6 +11,7 @@ import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilder.configurationFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
+import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigurationOverwriteUsingInheritTest {
@@ -98,5 +99,40 @@ public class ConfigurationOverwriteUsingInheritTest {
         assertThat(configuration.getMode()).isEqualTo(ORDERING);
         assertThat(configuration.isDisable()).isTrue();
         assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
+    }
+
+    @Test
+    public void should_aggregate_nested_parameters_from_inherit_path() throws IOException {
+        // given
+        temporaryFolder.newFolder(CONFIG);
+        final String root = temporaryFolder.getRoot().toString();
+
+        configurationFile()
+            .inherit("../smart-testing.yml")
+            .mode("ordering")
+            .disable(true)
+            .scm()
+                .range()
+                .head(HEAD)
+            .writeTo(Paths.get(root, CONFIG, SMART_TESTING_YML));
+
+        configurationFile()
+            .strategies("new, changed, affected")
+            .disable(false)
+            .scm()
+                .range()
+                .tail(HEAD + "~1")
+            .writeTo(Paths.get(root, SMART_TESTING_YML));
+
+        // when
+        final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG).toFile());
+
+        // then
+        final Range range = configuration.getScm().getRange();
+        assertThat(configuration.getMode()).isEqualTo(ORDERING);
+        assertThat(configuration.isDisable()).isTrue();
+        assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
+        assertThat(range.getHead()).isEqualTo(HEAD);
+        assertThat(range.getTail()).isEqualTo(HEAD + "~1");
     }
 }

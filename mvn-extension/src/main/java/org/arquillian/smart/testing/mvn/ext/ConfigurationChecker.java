@@ -10,11 +10,11 @@ import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMA
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 
-class ModuleConfigurationChecker {
+class ConfigurationChecker {
 
     private final String projectDir;
 
-    ModuleConfigurationChecker(String projectDir) {
+    ConfigurationChecker(String projectDir) {
         this.projectDir = projectDir;
     }
 

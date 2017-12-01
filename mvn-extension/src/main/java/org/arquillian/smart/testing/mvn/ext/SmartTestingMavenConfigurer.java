@@ -135,9 +135,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
 
     private void configureExtension(MavenSession session, Configuration configuration) {
         final Consumer<MavenProject> configureSmartTestingExtensionAction;
-        final ModuleConfigurationChecker moduleConfigurationChecker =
-            new ModuleConfigurationChecker(session.getExecutionRootDirectory());
-        if (moduleConfigurationChecker.hasModuleSpecificConfigurations()) {
+        final ConfigurationChecker configurationChecker =
+            new ConfigurationChecker(session.getExecutionRootDirectory());
+        if (configurationChecker.hasModuleSpecificConfigurations()) {
             configureSmartTestingExtensionAction = applyModuleSpecificConfiguration();
         } else {
             configureSmartTestingExtensionAction = mavenProject -> configureMavenProject(mavenProject, configuration);
@@ -149,19 +149,12 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         return mavenProject -> {
             Configuration mavenProjectConfiguration =
                 ConfigurationLoader.load(mavenProject.getBasedir(), this::isProjectRootDirectory);
-            if (mavenProjectConfiguration.isDisable()) {
-                logger.info("Disabling Smart Testing %s in %s module. Reason: " + SMART_TESTING_DISABLE + " is set.",
-                    ExtensionVersion.version().toString(), mavenProject.getArtifactId());
-
-                return;
-            }
-            if (mavenProjectConfiguration.areStrategiesDefined()) {
-                configureMavenProject(mavenProject, mavenProjectConfiguration);
+            final ModuleSTInstallationChecker moduleSTInstallationChecker =
+                new ModuleSTInstallationChecker(mavenProjectConfiguration, mavenProject);
+            if (moduleSTInstallationChecker.shouldSkip()) {
+                logger.info(moduleSTInstallationChecker.getReason());
             } else {
-                logger.warn(
-                    "Smart Testing Extension is installed but no strategies are provided for %s module. It won't influence the way how your tests are executed. "
-                        + "For details on how to configure it head over to http://bit.ly/st-config",
-                    mavenProject.getArtifactId());
+                configureMavenProject(mavenProject, mavenProjectConfiguration);
             }
         };
     }

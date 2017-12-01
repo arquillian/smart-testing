@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -46,6 +47,35 @@ class ConfigurationFileBuilder {
 
     ConfigurationFileBuilder disable(boolean disable) {
         properties.put("disable", disable);
+        return this;
+    }
+
+    ConfigurationFileBuilder scm() {
+        properties.put("scm", new HashMap<>(0));
+        return this;
+    }
+
+    ConfigurationFileBuilder range() {
+        Map<String, Object> scm = new HashMap<>();
+        scm.put("range", new HashMap<>(0));
+
+        properties.put("scm", scm);
+        return this;
+    }
+
+    ConfigurationFileBuilder head(String head) {
+        final Map<String, Object> scm = (Map<String, Object>) properties.get("scm");
+        final Map<String, String> range = (Map<String, String>) scm.get("range");
+        range.put("head", head);
+
+        return this;
+    }
+
+    ConfigurationFileBuilder tail(String tail) {
+        final Map<String, Object> scm = (Map<String, Object>) properties.get("scm");
+        final Map<String, String> range = (Map<String, String>) scm.get("range");
+        range.put("tail", tail);
+
         return this;
     }
 

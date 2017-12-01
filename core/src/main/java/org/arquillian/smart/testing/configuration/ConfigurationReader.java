@@ -59,12 +59,27 @@ class ConfigurationReader {
 
         Map<String, Object> effectiveConfig = configs.pollFirst();
         while (!configs.isEmpty()) {
-            effectiveConfig.putAll(configs.pollFirst());
+            effectiveConfig = overwriteInnerProperties(effectiveConfig, configs.pollFirst());
         }
 
         effectiveConfig.remove(INHERIT);
 
         return effectiveConfig;
+    }
+
+    private Map<String, Object> overwriteInnerProperties(Map<String, Object> effective, Map<String, Object> inner) {
+        for (String key: inner.keySet()) {
+            if (!Map.class.isAssignableFrom(inner.get(key).getClass()) || !effective.containsKey(key)){
+                effective.put(key, inner.get(key));
+                continue;
+            }
+
+            final Map<String, Object> effectiveValue = ((Map<String, Object>) effective.get(key));
+            final Map<String, Object> innerValue = ((Map<String, Object>) inner.get(key));
+            effective.put(key, overwriteInnerProperties(effectiveValue, innerValue));
+        }
+
+        return effective;
     }
 
     private Map<String, Object> getConfigParametersFromFile(Path filePath) {
