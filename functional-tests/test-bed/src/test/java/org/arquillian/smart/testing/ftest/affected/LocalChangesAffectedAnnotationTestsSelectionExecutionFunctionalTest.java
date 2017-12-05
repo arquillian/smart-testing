@@ -58,7 +58,7 @@ public class LocalChangesAffectedAnnotationTestsSelectionExecutionFunctionalTest
             .enable();
 
         final Collection<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("use watchfiles to detect affected files");
+            .applyAsLocalChanges("Uses annotation to detect affected classes", "Uses watchfiles to detect affected files");
 
         // when
         final TestResults actualTestResults = project.build("config/impl-base")
