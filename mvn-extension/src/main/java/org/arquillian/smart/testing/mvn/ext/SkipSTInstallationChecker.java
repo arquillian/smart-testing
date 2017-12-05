@@ -6,14 +6,14 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
 
-class ModuleSTInstallationChecker {
+class SkipSTInstallationChecker {
 
     private final Configuration configuration;
     private final MavenProject mavenProject;
 
     private String reason;
 
-    ModuleSTInstallationChecker(Configuration configuration, MavenProject mavenProject) {
+    SkipSTInstallationChecker(Configuration configuration, MavenProject mavenProject) {
         this.configuration = configuration;
         this.mavenProject = mavenProject;
     }

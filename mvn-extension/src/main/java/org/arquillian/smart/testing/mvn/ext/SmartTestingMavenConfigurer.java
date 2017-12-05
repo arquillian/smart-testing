@@ -149,10 +149,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         return mavenProject -> {
             Configuration mavenProjectConfiguration =
                 ConfigurationLoader.load(mavenProject.getBasedir(), this::isProjectRootDirectory);
-            final ModuleSTInstallationChecker moduleSTInstallationChecker =
-                new ModuleSTInstallationChecker(mavenProjectConfiguration, mavenProject);
-            if (moduleSTInstallationChecker.shouldSkip()) {
-                logger.info(moduleSTInstallationChecker.getReason());
+            final SkipSTInstallationChecker skipSTInstallationChecker =
+                new SkipSTInstallationChecker(mavenProjectConfiguration, mavenProject);
+            if (skipSTInstallationChecker.shouldSkip()) {
+                logger.info(skipSTInstallationChecker.getReason());
             } else {
                 configureMavenProject(mavenProject, mavenProjectConfiguration);
             }

@@ -26,7 +26,7 @@ public class ConfigurationFilePerModuleFunctionalTest {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_load_configuration_from_modules_config_file_for_local_changes_where_parent_config_file_has_only_strategies_defined() {
+    public void should_load_config_from_module_config_file_for_local_changes_instead_of_parent_config_with_strategy() {
         // given
         final Project project = testBed.getProject();
 
@@ -58,7 +58,7 @@ public class ConfigurationFilePerModuleFunctionalTest {
     }
 
     @Test
-    public void should_load_configuration_from_modules_config_file_for_scm_changes_where_parent_config_file_has_scm_snd_strategies_defined() {
+    public void should_load_config_from_module_config_file_for_local_changes_instead_of_parent_config_with_scm_and_strategy() {
         // given
         final Project project = testBed.getProject();
 

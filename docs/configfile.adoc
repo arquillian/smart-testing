@@ -37,7 +37,7 @@ You can look <<_reference_card, references>> for all supported system properties
 
 === How configuration is applying to each module?
 Smart Testing is looking in each module's root dir for configuration file. If it didn't find config file there, it'll look recursively for the first config file in
-the parent dir containing pom.xml.
+it's parent dir.
 
 === How Configuration parameters are inherited?
 If config file has `inherit` defined with absolute or relative path of config file, then Smart Testing will
@@ -56,15 +56,15 @@ e.g.
 ```xml
 parent
  - config
-   - smart-testing.yml #<!--1-->
+   - smart-testing.yml      #<!--1-->
    - api
    - impl-base
    - spi
-     - smart-testing.yml #<!--2-->
+     - smart-testing.yml    #<!--2-->
  - container
     - api
     - impl-base
- - smart-testing.yml #<!--3-->
+ - smart-testing.yml        #<!--3-->
 ```
 
 <1>
@@ -75,7 +75,7 @@ strategies: affected
 ----
 
 <2>
-parent/config/spi/smart-testing.yml
+.parent/config/spi/smart-testing.yml
 ----
 strategies: affected,new
 ----
@@ -97,6 +97,7 @@ Configuration file selection for the above example will be as follows:
 * container/impl-base - parent/smart-testing.yml
 
 <1> inside this file we have inherit: ../smart-testing.yml`, so it will take all undefined properties in this file from the one in `parent/smart-testing.yml`.
+<2> inside this file we have only `strategies: affected,new`, so it won't inherit from any other configuration file.
 <3> inside this file we have `strategies: new` & `scm: lastChanges: 1` defined.(You can set it using respective system property also).
 
 === Configuration File Reference
@@ -109,7 +110,7 @@ NOTE: You can use either a `.yml` or `.yaml` extension for this file.
 |Field | Description
 
 a| inherit
-a| This is used to define absolute or relative path for configuration file from where you want to overwrite paremeters not defined in current config file.
+a| This is used to define absolute or relative path to parent configuration file
 
 a| strategies
 a| This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.

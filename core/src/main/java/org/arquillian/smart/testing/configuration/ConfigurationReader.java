@@ -59,7 +59,7 @@ class ConfigurationReader {
 
         Map<String, Object> effectiveConfig = configs.pollFirst();
         while (!configs.isEmpty()) {
-            effectiveConfig = overwriteInnerProperties(effectiveConfig, configs.pollFirst());
+            overwriteInnerProperties(effectiveConfig, configs.pollFirst());
         }
 
         effectiveConfig.remove(INHERIT);
@@ -67,19 +67,22 @@ class ConfigurationReader {
         return effectiveConfig;
     }
 
-    private Map<String, Object> overwriteInnerProperties(Map<String, Object> effective, Map<String, Object> inner) {
+    private void overwriteInnerProperties(Map<String, Object> effective, Map<String, Object> inner) {
         for (String key: inner.keySet()) {
-            if (!Map.class.isAssignableFrom(inner.get(key).getClass()) || !effective.containsKey(key)){
+            if (isNonTrivialPropertyContainedInMap(key, inner, effective)) {
                 effective.put(key, inner.get(key));
-                continue;
+            } else {
+                final Map<String, Object> effectiveValue = ((Map<String, Object>) effective.get(key));
+                final Map<String, Object> innerValue = ((Map<String, Object>) inner.get(key));
+                overwriteInnerProperties(effectiveValue, innerValue);
+                effective.put(key, effectiveValue);
             }
-
-            final Map<String, Object> effectiveValue = ((Map<String, Object>) effective.get(key));
-            final Map<String, Object> innerValue = ((Map<String, Object>) inner.get(key));
-            effective.put(key, overwriteInnerProperties(effectiveValue, innerValue));
         }
+    }
 
-        return effective;
+    private boolean isNonTrivialPropertyContainedInMap(String key, Map<String, Object> inner,
+        Map<String, Object> effective) {
+        return !Map.class.isAssignableFrom(inner.get(key).getClass()) || !effective.containsKey(key);
     }
 
     private Map<String, Object> getConfigParametersFromFile(Path filePath) {

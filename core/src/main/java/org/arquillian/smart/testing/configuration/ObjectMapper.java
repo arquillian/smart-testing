@@ -21,7 +21,7 @@ class ObjectMapper {
         return objectMapper.readValue(aClass, map);
     }
 
-    <T extends ConfigurationSection> T readValue(Class<T> aClass, Map<String, Object> map) {
+    private <T extends ConfigurationSection> T readValue(Class<T> aClass, Map<String, Object> map) {
         T instance;
         try {
             instance = aClass.newInstance();
