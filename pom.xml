@@ -45,14 +45,14 @@
     <version.surefire>2.19.1</version.surefire>
     <version.maven>3.3.9</version.maven>
     <version.assertj-core>3.8.0</version.assertj-core>
-    <version.system-rules>1.16.1</version.system-rules>
+    <version.system-rules>1.17.0</version.system-rules>
     <version.javassist>3.21.0-GA</version.javassist>
-    <version.fast-classpath-scanner>2.7.4</version.fast-classpath-scanner>
-    <version.jgrapht>1.0.1</version.jgrapht>
-    <version.shrinkwrap.resolver>3.0.0-beta-2</version.shrinkwrap.resolver>
+    <version.fast-classpath-scanner>2.9.3</version.fast-classpath-scanner>
+    <version.jgrapht>1.1.0</version.jgrapht>
+    <version.shrinkwrap.resolver>3.0.0</version.shrinkwrap.resolver>
     <version.snakeyaml>1.19</version.snakeyaml>
-    <version.mockito>2.11.0</version.mockito>
-    <version.jgit>4.8.0.201706111038-r</version.jgit>
+    <version.mockito>2.12.0</version.mockito>
+    <version.jgit>4.9.1.201712030800-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
     <version.findbugs.annotations>3.0.1</version.findbugs.annotations>
 
