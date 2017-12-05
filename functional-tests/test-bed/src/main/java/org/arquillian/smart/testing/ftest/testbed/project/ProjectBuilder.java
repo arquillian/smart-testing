@@ -15,10 +15,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.logger.Log;
+import org.arquillian.smart.testing.logger.Logger;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.BuiltProject;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.EmbeddedMaven;
 import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquippedEmbeddedMaven;
@@ -26,7 +27,6 @@ import org.jboss.shrinkwrap.resolver.api.maven.embedded.pom.equipped.PomEquipped
 import static java.util.Map.Entry.comparingByKey;
 import static java.util.stream.Collectors.toMap;
 import static org.arquillian.smart.testing.ftest.testbed.testresults.SurefireReportReader.loadTestResults;
-import static org.arquillian.smart.testing.spi.TestResult.TEMP_REPORT_DIR;
 
 public class ProjectBuilder {
 
@@ -146,9 +146,7 @@ public class ProjectBuilder {
     private TestResults accumulatedTestResults() {
         try {
             final List<TestResult> collect = Files.walk(root)
-                .filter(path -> !path.toFile().getAbsolutePath().contains(File.separator + TEMP_REPORT_DIR) && path.getFileName()
-                    .toString()
-                    .startsWith(TEST_REPORT_PREFIX))
+                .filter(this::isSurefireReportFile)
                 .map(path -> {
                     try {
                         return Lists.newArrayList(loadTestResults(new FileInputStream(path.toFile())));
@@ -163,5 +161,11 @@ public class ProjectBuilder {
         } catch (IOException e) {
             throw new RuntimeException("Failed extracting test results", e);
         }
+    }
+
+    private boolean isSurefireReportFile(Path path) {
+        return !path.toFile().getAbsolutePath()
+            .contains(File.separator + new TemporaryInternalFiles().getTestReportDirectoryName()) && path.getFileName()
+            .toString().startsWith(TEST_REPORT_PREFIX);
     }
 }

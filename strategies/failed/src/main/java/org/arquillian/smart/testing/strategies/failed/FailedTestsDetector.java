@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.failed;
 //tag::documentation[]
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.stream.Collectors;
@@ -11,10 +12,15 @@ public class FailedTestsDetector implements TestExecutionPlanner {
 
     static final String FAILED = "failed";
 
-    private final TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader());
+    private final File projectDir;
+
+    public FailedTestsDetector(File projectDir) {
+        this.projectDir = projectDir;
+    }
 
     @Override
     public Collection<TestSelection> getTests() { // <1>
+        TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader(), projectDir);
         return testReportLoader.loadTestResults()
             .stream()
             .map(result -> new TestSelection(result, getName())) // <2>

@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.hub.storage.local;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 
@@ -39,5 +40,24 @@ public class LocalStorageDirectoryAction extends LocalStorageAction {
         return FileSystemOperations.copyDirectory(directoryToCopy, path, fileFilter, catchFileCopyException);
     }
 
+    /**
+     * Creates the directory set in previous steps and inside of this directory creates a file with the given name and the
+     * given content.
+     *
+     * @param fileName
+     *     A name of the file that should be created
+     * @param bytes
+     *     An array of bytes to store as a content of the file
+     * @param options
+     *     {@link OpenOption}s to be used for storing
+     *
+     * @return A path to the created file
+     *
+     * @throws IOException
+     *     If anything bad happens
+     */
+    public Path createWithFile(String fileName, byte[] bytes, OpenOption... options) throws IOException {
+        return new LocalStorageFileAction(path.resolve(fileName), false).create(bytes, options);
+    }
 
 }

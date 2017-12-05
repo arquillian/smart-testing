@@ -11,7 +11,7 @@
 
   <groupId>org.arquillian.smart.testing</groupId>
   <artifactId>smart-testing-parent</artifactId>
-  <version>0.0.5-SNAPSHOT</version>
+  <version>0.0.6-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Smart Testing</name>
