@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.checker;
 
 import org.apache.maven.project.MavenProject;
 import org.arquillian.smart.testing.configuration.Configuration;
@@ -6,23 +6,23 @@ import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
 
-class SkipSTInstallationChecker {
+public class SkipSTInstallationChecker {
 
     private final Configuration configuration;
     private final MavenProject mavenProject;
 
     private String reason;
 
-    SkipSTInstallationChecker(Configuration configuration, MavenProject mavenProject) {
+    public SkipSTInstallationChecker(Configuration configuration, MavenProject mavenProject) {
         this.configuration = configuration;
         this.mavenProject = mavenProject;
     }
 
-    String getReason() {
+    public String getReason() {
         return reason;
     }
 
-    boolean shouldSkip() {
+    public boolean shouldSkip() {
         if (configuration.isDisable()) {
             reason = String.format("Disabling Smart Testing %s in %s module. Reason: " + SMART_TESTING_DISABLE + " is set.",
                 ExtensionVersion.version().toString(), mavenProject.getArtifactId());

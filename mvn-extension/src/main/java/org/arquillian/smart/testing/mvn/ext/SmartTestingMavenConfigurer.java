@@ -19,6 +19,8 @@ import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker;
+import org.arquillian.smart.testing.mvn.ext.checker.SkipSTInstallationChecker;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.logger.MavenExtensionLoggerFactory;
 import org.arquillian.smart.testing.scm.Change;

@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.checker;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,14 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.maven.execution.MavenSession;
 
-import static org.arquillian.smart.testing.mvn.ext.SkipModuleChecker.MAVEN_TEST_SKIP;
-import static org.arquillian.smart.testing.mvn.ext.SkipModuleChecker.SKIP_TESTS;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipModuleChecker.MAVEN_TEST_SKIP;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipModuleChecker.SKIP_TESTS;
 
-class SkipInstallationChecker {
+public class SkipInstallationChecker {
 
     private static final List<String> EXPECTED_GOALS = Arrays.asList(
-        new String[] {"test", "prepare-package", "package", "pre-integration-test", "integration-test",
-            "post-integration-test", "verify", "install", "deploy", "pre-site", "site", "post-site", "site-deploy"});
+        "test", "prepare-package", "package", "pre-integration-test", "integration-test",
+        "post-integration-test", "verify", "install", "deploy", "pre-site", "site", "post-site", "site-deploy");
 
     static final String NO_GOAL_REASON = "No goals have been specified for the build.";
     static final String NO_TEST_GOAL_REASON =
@@ -26,11 +26,11 @@ class SkipInstallationChecker {
     private final MavenSession session;
     private String reason;
 
-    SkipInstallationChecker(MavenSession session) {
+    public SkipInstallationChecker(MavenSession session) {
         this.session = session;
     }
 
-    boolean shouldSkip() {
+    public boolean shouldSkip() {
         List<String> goals = session.getGoals();
         String defaultGoal = session.getTopLevelProject().getBuild().getDefaultGoal();
         if (goals.isEmpty() && (defaultGoal == null || defaultGoal.isEmpty())) {
@@ -79,7 +79,7 @@ class SkipInstallationChecker {
             .anyMatch(Matcher::find);
     }
 
-    String getReason(){
+    public String getReason(){
         return reason;
     }
 
