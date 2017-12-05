@@ -37,7 +37,7 @@ fi
 
 echo "Generating doc in $TARGET_FOLDER"
 
-docker run -v ${WORKING_DIR}:/docs/ --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor \
+docker run -v ${WORKING_DIR}:/docs/:Z --name adoc-to-html rochdev/alpine-asciidoctor:mini asciidoctor \
     -r /docs/.asciidoctor/lib/const-inline-macro.rb \
     -r /docs/.asciidoctor/lib/copy-to-clipboard-inline-macro.rb \
     -a generated-doc=true -a asciidoctor-source=/docs/docs \
