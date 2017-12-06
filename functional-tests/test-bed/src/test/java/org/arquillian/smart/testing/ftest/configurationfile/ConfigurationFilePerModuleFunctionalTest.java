@@ -26,38 +26,6 @@ public class ConfigurationFilePerModuleFunctionalTest {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_load_config_from_module_config_file_for_local_changes_instead_of_parent_config_with_strategy() {
-        // given
-        final Project project = testBed.getProject();
-
-        final Configuration parentConfiguration = new ConfigurationBuilder()
-                .strategies(CHANGED)
-            .build();
-
-        final Configuration newConfiguration = new ConfigurationBuilder()
-                .strategies(NEW)
-                .mode(SELECTING)
-            .build();
-
-        project.configureSmartTesting()
-                .withConfiguration(parentConfiguration)
-                    .createConfigFile()
-                .withConfiguration(newConfiguration)
-                    .createConfigFileIn("config/impl-base")
-            .enable();
-
-        final Collection<TestResult> expectedTestResults = project
-            .applyAsLocalChanges("Adds new unit test");
-
-
-        // when
-        final TestResults actualTestResults = project.build("config/impl-base").run();
-
-        // then
-        assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
-    }
-
-    @Test
     public void should_load_config_from_module_config_file_for_local_changes_instead_of_parent_config_with_scm_and_strategy() {
         // given
         final Project project = testBed.getProject();
