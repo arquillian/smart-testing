@@ -62,14 +62,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         logger.debug("Applied user properties: %s", session.getUserProperties());
 
         File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
-        if (configuration.areStrategiesDefined()) {
-            logger.info("Enabling extension.");
-            configureExtension(session, configuration);
-            calculateChanges(projectDirectory, configuration);
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
-        } else {
-            logStrategiesNotDefined();
-        }
+        logger.info("Enabling extension.");
+        configureExtension(session, configuration);
+        calculateChanges(projectDirectory, configuration);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
     }
 
     private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session) {
@@ -84,10 +80,11 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = ConfigurationLoader.load(executionRootDirectory, this::isProjectRootDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
-
-        if (configuration.isDisable()) {
+        final SkipSTInstallationChecker skipSTInstallationChecker =
+            new SkipSTInstallationChecker(configuration, session.getTopLevelProject());
+        if (skipSTInstallationChecker.shouldSkip()) {
             skipExtensionInstallation = true;
-            logExtensionDisableReason(logger, SMART_TESTING_DISABLE + " is set.");
+            logExtensionDisableReason(logger, skipSTInstallationChecker.getReason());
         }
     }
 
