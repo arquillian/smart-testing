@@ -12,6 +12,7 @@ import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.yaml.snakeyaml.Yaml;
 
+import static org.arquillian.smart.testing.configuration.ConfigurationReader.readEffectiveConfiguration;
 import static org.arquillian.smart.testing.configuration.ObjectMapper.mapToObject;
 
 public class ConfigurationLoader {
@@ -70,8 +71,7 @@ public class ConfigurationLoader {
     }
 
     private static Configuration loadEffectiveConfiguration(File configFile) {
-        ConfigurationReader configurationReader = new ConfigurationReader();
-        final Map<String, Object> effectiveConfig = configurationReader.readEffectiveConfiguration(configFile);
+        final Map<String, Object> effectiveConfig = readEffectiveConfiguration(configFile);
 
         return loadAsConfiguration(effectiveConfig);
     }

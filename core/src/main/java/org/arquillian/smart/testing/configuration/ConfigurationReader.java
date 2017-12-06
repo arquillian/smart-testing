@@ -23,7 +23,7 @@ class ConfigurationReader {
 
     private static final Logger logger = Log.getLogger();
 
-    Map<String, Object> readEffectiveConfiguration(File configPath) {
+    static Map<String, Object> readEffectiveConfiguration(File configPath) {
         if (!configPath.isDirectory()) {
             return readEffectiveConfig(getConfigurationFilePath(configPath));
         }
@@ -44,7 +44,7 @@ class ConfigurationReader {
         return Collections.emptyMap();
     }
 
-    private Map<String, Object> readEffectiveConfig(Path filePath){
+    private static Map<String, Object> readEffectiveConfig(Path filePath){
         Map<String, Object> config = getConfigParametersFromFile(filePath);
         Deque<Map<String, Object>> configs = new ArrayDeque<>();
         configs.add(config);
@@ -67,7 +67,7 @@ class ConfigurationReader {
         return effectiveConfig;
     }
 
-    private void overwriteInnerProperties(Map<String, Object> effective, Map<String, Object> inner) {
+    private static void overwriteInnerProperties(Map<String, Object> effective, Map<String, Object> inner) {
         for (String key: inner.keySet()) {
             if (isNonTrivialPropertyContainedInMap(key, inner, effective)) {
                 effective.put(key, inner.get(key));
@@ -80,12 +80,12 @@ class ConfigurationReader {
         }
     }
 
-    private boolean isNonTrivialPropertyContainedInMap(String key, Map<String, Object> inner,
+    private static boolean isNonTrivialPropertyContainedInMap(String key, Map<String, Object> inner,
         Map<String, Object> effective) {
         return !Map.class.isAssignableFrom(inner.get(key).getClass()) || !effective.containsKey(key);
     }
 
-    private Map<String, Object> getConfigParametersFromFile(Path filePath) {
+    private static Map<String, Object> getConfigParametersFromFile(Path filePath) {
         if (!filePath.toFile().exists()) {
             logger.warn(String.format("The configuration file %s is not exists.", filePath));
             return Collections.emptyMap();
@@ -104,7 +104,7 @@ class ConfigurationReader {
         }
     }
 
-    private Path getConfigurationFilePath(File... files) {
+    private static Path getConfigurationFilePath(File... files) {
         Path configPath;
         if (files.length == 1) {
             configPath = files[0].toPath();
@@ -115,7 +115,7 @@ class ConfigurationReader {
         return configPath;
     }
 
-    private Path getDefaultConfigFile(File... files) {
+    private static Path getDefaultConfigFile(File... files) {
         if (files.length == 2) {
             logger.warn(
                 "Found multiple config files with supported names: " + SMART_TESTING_YAML + ", " + SMART_TESTING_YML);

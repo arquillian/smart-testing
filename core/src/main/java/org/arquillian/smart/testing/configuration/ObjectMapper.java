@@ -17,11 +17,6 @@ import java.util.stream.Collectors;
 class ObjectMapper {
 
     static <T extends ConfigurationSection> T mapToObject(Class<T> aClass, Map<String, Object> map) {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(aClass, map);
-    }
-
-    private <T extends ConfigurationSection> T readValue(Class<T> aClass, Map<String, Object> map) {
         T instance;
         try {
             instance = aClass.newInstance();
@@ -31,13 +26,13 @@ class ObjectMapper {
 
         List<ConfigurationItem> configItems = instance.registerConfigurationItems();
 
-        Arrays.stream(aClass.getMethods()).filter(this::isSetter)
+        Arrays.stream(aClass.getMethods()).filter(ObjectMapper::isSetter)
             .forEach(method -> invokeMethodWithMappedValue(configItems, method, instance, map));
 
         return instance;
     }
 
-    private <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
+    private static <T> void invokeMethodWithMappedValue(List<ConfigurationItem> configItems, Method method, T instance,
         Map<String, Object> map) {
         method.setAccessible(true);
         if (method.getParameterTypes().length != 1) {
@@ -58,7 +53,7 @@ class ObjectMapper {
         }
     }
 
-    private Object getConvertedObject(Method method, Object configFileValue,
+    private static Object getConvertedObject(Method method, Object configFileValue,
         String property, List<ConfigurationItem> configItems) {
         Optional<ConfigurationItem> foundConfigItem =
             configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
@@ -68,9 +63,9 @@ class ObjectMapper {
             if (!ConfigurationSection.class.isAssignableFrom(parameterType)) {
                 return null;
             } else if (configFileValue == null) {
-                return readValue((Class<ConfigurationSection>) parameterType, Collections.emptyMap());
+                return mapToObject((Class<ConfigurationSection>) parameterType, Collections.emptyMap());
             } else {
-                return readValue((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
+                return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
             ConfigurationItem configItem = foundConfigItem.get();
@@ -86,7 +81,7 @@ class ObjectMapper {
         return null;
     }
 
-    private Object getUserSetProperty(Method method, ConfigurationItem configItem, Object configFileValue) {
+    private static Object getUserSetProperty(Method method, ConfigurationItem configItem, Object configFileValue) {
         if (configItem.getSystemProperty() != null) {
             if (!configItem.getSystemProperty().endsWith(".*")) {
                 String sysPropertyValue = System.getProperty(configItem.getSystemProperty());
@@ -98,7 +93,7 @@ class ObjectMapper {
         return configFileValue;
     }
 
-    private List<Object> createMultipleOccurrenceProperty(Method method, ConfigurationItem configItem,
+    private static List<Object> createMultipleOccurrenceProperty(Method method, ConfigurationItem configItem,
         Object configFileValue) {
 
         String sysPropKey = configItem.getSystemProperty().substring(0, configItem.getSystemProperty().lastIndexOf('.'));
@@ -125,7 +120,7 @@ class ObjectMapper {
         return null;
     }
 
-    private List<Object> getValuesFromFile(Method method, String sysPropKey, Object configFileValue,
+    private static List<Object> getValuesFromFile(Method method, String sysPropKey, Object configFileValue,
         Map<Object, Object> systemProperties) {
         Class<?> parameterType = method.getParameterTypes()[0];
         ArrayList<Object> fromFileParam = new ArrayList<>();
@@ -142,7 +137,7 @@ class ObjectMapper {
             .collect(Collectors.toList());
     }
 
-    private boolean isSetBySysProperty(Object param, String sysPropKey, Map<Object, Object> systemProperties) {
+    private static boolean isSetBySysProperty(Object param, String sysPropKey, Map<Object, Object> systemProperties) {
         String[] paramSplit = String.valueOf(param).split("=");
         if (paramSplit.length == 2) {
             String key = paramSplit[0];
@@ -151,7 +146,7 @@ class ObjectMapper {
         return false;
     }
 
-    private Object convert(Method method, Object mappedValue) {
+    private static Object convert(Method method, Object mappedValue) {
         Class<?> parameterType = method.getParameterTypes()[0];
         if (parameterType.isArray()) {
             return handleArray(parameterType.getComponentType(), mappedValue);
@@ -162,13 +157,13 @@ class ObjectMapper {
         } else if (parameterType.isAssignableFrom(mappedValue.getClass())) {
             return mappedValue;
         } else if (ConfigurationSection.class.isAssignableFrom(parameterType)) {
-            return readValue((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
+            return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) mappedValue);
         } else {
             return convertToType(parameterType, mappedValue.toString());
         }
     }
 
-    private Enum handleEnum(Method method, Object mapValue) {
+    private static Enum handleEnum(Method method, Object mapValue) {
         if (mapValue.getClass().isEnum()) {
             return (Enum) mapValue;
         }
@@ -177,7 +172,7 @@ class ObjectMapper {
         return Enum.valueOf((Class<Enum>) parameterTypes[0], value.toUpperCase());
     }
 
-    private <T> T[] handleArray(Class<T> parameterType, Object mapValue) {
+    private static <T> T[] handleArray(Class<T> parameterType, Object mapValue) {
         if (mapValue != null && mapValue.getClass().isArray() && ((Object[]) mapValue).length == 0) {
             return (T[]) mapValue;
         }
@@ -186,7 +181,7 @@ class ObjectMapper {
         return convertedList.toArray(array);
     }
 
-    private Object handleList(Method method, Object mappedValue) {
+    private static Object handleList(Method method, Object mappedValue) {
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         if (genericParameterTypes.length == 1) {
             Type type = genericParameterTypes[0];
@@ -201,7 +196,7 @@ class ObjectMapper {
         return null;
     }
 
-    private <T> Object convertToType(Class<T> clazz, String mappedValue) {
+    private static <T> Object convertToType(Class<T> clazz, String mappedValue) {
         if (Integer.class.equals(clazz) || int.class.equals(clazz)) {
             return Integer.valueOf(mappedValue);
         } else if (Double.class.equals(clazz) || double.class.equals(clazz)) {
@@ -216,7 +211,7 @@ class ObjectMapper {
         return null;
     }
 
-    private <T> List<T> getConvertedList(Class<T> parameterType, Object mappedValue) {
+    private static <T> List<T> getConvertedList(Class<T> parameterType, Object mappedValue) {
         final Class<?> aClass = mappedValue.getClass();
         if (List.class.isAssignableFrom(aClass)) {
             return (List<T>) mappedValue;
@@ -233,7 +228,7 @@ class ObjectMapper {
         return null;
     }
 
-    private boolean isSetter(Method candidate) {
+    private static boolean isSetter(Method candidate) {
         return candidate.getName().matches("^(set|add)[A-Z].*")
             && (candidate.getReturnType().equals(Void.TYPE) || candidate.getReturnType()
             .equals(candidate.getDeclaringClass()))
