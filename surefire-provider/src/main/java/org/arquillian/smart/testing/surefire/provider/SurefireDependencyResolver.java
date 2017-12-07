@@ -3,11 +3,11 @@ package org.arquillian.smart.testing.surefire.provider;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
+import shaded.org.apache.maven.artifact.versioning.ArtifactVersion;
+import shaded.org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import shaded.org.apache.maven.artifact.versioning.VersionRange;
 import org.arquillian.smart.testing.surefire.provider.info.ProviderInfo;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import shaded.org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 public class SurefireDependencyResolver {
 
