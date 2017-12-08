@@ -9,10 +9,6 @@
 
   <artifactId>maven-lifecycle-extension</artifactId>
 
-  <properties>
-    <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.arquillian.smart.testing.configuration.Configuration;
 
 /**
@@ -38,10 +39,9 @@ class StrategyDependencyResolver {
     }
 
     Map<String, Dependency> resolveDependencies() {
-        final Properties properties = new Properties();
-        properties.putAll(loadDefaultMapping());
-        properties.putAll(loadCustomStrategies());
-        return transformToDependencies(properties);
+        Map<String, Dependency> strategyDeps = transformToDependencies(loadDefaultMapping(), true);
+        strategyDeps.putAll(transformToDependencies(loadCustomStrategies(), false));
+        return strategyDeps;
     }
 
     private Properties loadCustomStrategies() {
@@ -67,26 +67,46 @@ class StrategyDependencyResolver {
         return properties;
     }
 
-    private Map<String, Dependency> transformToDependencies(Properties properties) {
+    private Map<String, Dependency> transformToDependencies(Properties properties, boolean excludeTrainsitive) {
         return properties
             .stringPropertyNames()
             .stream()
             .filter(key -> key.startsWith(SMART_TESTING_STRATEGY_PREFIX))
             .map(String::valueOf)
             .collect(Collectors.toMap(this::filterPrefix,
-                key -> {
-                    final String[] gav = ((String) properties.get(key)).split(":");
-                    final Dependency dependency = new Dependency();
-                    dependency.setGroupId(gav[0]);
-                    dependency.setArtifactId(gav[1]);
-                    String version = ExtensionVersion.version().toString();
-                    if (gav.length == 3) {
-                        version = gav[2];
-                    }
-                    dependency.setVersion(version);
-                    dependency.setScope("runtime");
-                    return dependency;
-                }));
+                key -> createDependency((String) properties.get(key), excludeTrainsitive)));
+    }
+
+    private Dependency createDependency(String coordinatesString, boolean excludeTrainsitive) {
+        final String[] coordinates = coordinatesString.split(":");
+        int number = coordinates.length;
+        if (number < 2) {
+            throw new IllegalArgumentException(
+                "Coordinates of the specified strategy [" + coordinatesString + "] doesn't have the correct format.");
+        }
+        final Dependency dependency = new Dependency();
+        dependency.setGroupId(coordinates[0]);
+        dependency.setArtifactId(coordinates[1]);
+        if (number == 3) {
+            dependency.setVersion(coordinates[2]);
+        } else if (number > 4) {
+            dependency.setType(coordinates[2].isEmpty() ? "jar" : coordinates[2]);
+            dependency.setClassifier(coordinates[3]);
+            dependency.setVersion(coordinates[4]);
+        }
+        if (number == 6) {
+            dependency.setScope(coordinates[5]);
+        }
+        if (dependency.getVersion() == null || dependency.getVersion().isEmpty()) {
+            dependency.setVersion(ExtensionVersion.version().toString());
+        }
+        if (excludeTrainsitive) {
+            Exclusion exclusion = new Exclusion();
+            exclusion.setGroupId("*");
+            exclusion.setArtifactId("*");
+            dependency.setExclusions(Arrays.asList(exclusion));
+        }
+        return dependency;
     }
 
     private String filterPrefix(String key) {
