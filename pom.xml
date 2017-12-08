@@ -81,6 +81,7 @@
     <module>mvn-extension</module>
     <module>functional-tests/git-rules</module>
     <module>functional-tests/test-bed</module>
+    <module>known-surefire-providers</module>
   </modules>
 
   <dependencyManagement>

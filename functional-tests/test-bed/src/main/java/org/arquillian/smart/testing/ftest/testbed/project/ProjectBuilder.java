@@ -165,7 +165,7 @@ public class ProjectBuilder {
 
     private boolean isSurefireReportFile(Path path) {
         return !path.toFile().getAbsolutePath()
-            .contains(File.separator + new TemporaryInternalFiles().getTestReportDirectoryName()) && path.getFileName()
+            .contains(File.separator + TemporaryInternalFiles.getTestReportDirName()) && path.getFileName()
             .toString().startsWith(TEST_REPORT_PREFIX);
     }
 }

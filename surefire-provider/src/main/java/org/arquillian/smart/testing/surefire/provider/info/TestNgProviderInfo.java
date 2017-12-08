@@ -5,6 +5,7 @@ import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 
 import static org.apache.maven.surefire.booter.ProviderParameterNames.THREADCOUNT_PROP;
+import static org.arquillian.smart.testing.known.surefire.providers.KnownProvider.TESTNG;
 
 public class TestNgProviderInfo implements ProviderInfo {
 
@@ -13,7 +14,7 @@ public class TestNgProviderInfo implements ProviderInfo {
     }
 
     public String getProviderClassName() {
-        return "org.apache.maven.surefire.testng.TestNGProvider";
+        return TESTNG.getProviderClassName();
     }
 
     public boolean isApplicable() {
@@ -22,7 +23,8 @@ public class TestNgProviderInfo implements ProviderInfo {
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-testng:" + LoaderVersionExtractor.getSurefireApiVersion();
+        return String.join(":", TESTNG.getGroupId(), TESTNG.getArtifactId(),
+            LoaderVersionExtractor.getSurefireApiVersion());
     }
 
     @Override

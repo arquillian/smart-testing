@@ -20,6 +20,11 @@
       <artifactId>junit-test-result-parser</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>known-surefire-providers</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
