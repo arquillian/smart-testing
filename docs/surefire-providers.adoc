@@ -33,10 +33,11 @@ When one of these providers is specified inside of the Surefire's dependencies, 
 
 If some unknown provider (or some other `SurefireProvider` implementation) is used then it is necessary to set this provider either in the configuration file or using system properties.
 The format is a pair of groupId and artifactId with a fully qualified name of the class that implements `SurefireProvider` interface and that should be loaded. For JUnit 5 provider it would look like this (in case of configuration file):
-```yaml
+[source, yaml]
+----
 customProviders:
     - org.junit.platform:junit-platform-surefire-provider=org.junit.platform.surefire.provider.JUnitPlatformProvider
-```
+----
 If this is specified then Smart Testing will detect the dependency and delegate the test execution to it.
 System property dedicated for this usage is `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_PROVIDERS"]`
 
