@@ -18,7 +18,7 @@ import static org.arquillian.smart.testing.known.surefire.providers.KnownProvide
 
 class SurefireProviderResolver {
 
-    private final Logger log = Log.getLogger();
+    private static final Logger log = Log.getLogger();
     private final List<SurefireProviderDefinition> providers = new ArrayList<>();
 
     SurefireProviderResolver(Configuration configuration) {
