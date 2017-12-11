@@ -40,6 +40,3 @@ customProviders:
 If this is specified then Smart Testing will detect the dependency and delegate the test execution to it.
 System property dedicated for this usage is `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_PROVIDERS"]`
 
-For now, only one custom provider is supported. In next releases, we will bring you a support for more custom providers.
-
-
