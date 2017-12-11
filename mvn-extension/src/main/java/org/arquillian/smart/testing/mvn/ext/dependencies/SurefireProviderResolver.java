@@ -27,12 +27,10 @@ class SurefireProviderResolver {
         providers.add(createKnownProviderDependency(JUNIT_5));
         providers.add(createKnownProviderDependency(TESTNG));
 
-        if (configuration.getCustomProviders().length != 0) {
-            List<SurefireProviderDefinition> configuredProviders = Arrays.stream(configuration.getCustomProviders())
-                .flatMap(this::createCustomSurefireProvider)
-                .collect(Collectors.toList());
-            providers.addAll(configuredProviders);
-        }
+        List<SurefireProviderDefinition> configuredProviders = Arrays.stream(configuration.getCustomProviders())
+            .flatMap(this::createCustomSurefireProvider)
+            .collect(Collectors.toList());
+        providers.addAll(configuredProviders);
     }
 
     private SurefireProviderDefinition createKnownProviderDependency(KnownProvider knownProvider) {
