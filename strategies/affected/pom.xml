@@ -14,6 +14,7 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
+      <classifier>shaded</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -79,6 +80,28 @@
               </excludes>
             </filter>
           </filters>
+          <relocations>
+            <relocation>
+              <pattern>org.jgrapht.</pattern>
+              <shadedPattern>shaded.org.jgrapht.</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.eclipse.</pattern>
+              <shadedPattern>shaded.org.eclipse.</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.apache.</pattern>
+              <shadedPattern>shaded.org.apache.</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>javassist.</pattern>
+              <shadedPattern>shaded.javassist.</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>io.github.lukehutch.fastclasspathscanner.</pattern>
+              <shadedPattern>shaded.io.github.lukehutch.fastclasspathscanner.</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
         <executions>
           <execution>

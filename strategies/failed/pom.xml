@@ -14,6 +14,7 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
+      <classifier>shaded</classifier>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -58,6 +59,16 @@
               </excludes>
             </filter>
           </filters>
+          <relocations>
+            <relocation>
+              <pattern>org.eclipse.</pattern>
+              <shadedPattern>shaded.org.eclipse.</shadedPattern>
+            </relocation>
+            <relocation>
+              <pattern>org.apache.</pattern>
+              <shadedPattern>shaded.org.apache.</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
         <executions>
           <execution>
