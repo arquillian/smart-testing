@@ -51,7 +51,7 @@
     <version.jgrapht>1.1.0</version.jgrapht>
     <version.shrinkwrap.resolver>3.0.0</version.shrinkwrap.resolver>
     <version.snakeyaml>1.19</version.snakeyaml>
-    <version.mockito>2.12.0</version.mockito>
+    <version.mockito>2.13.0</version.mockito>
     <version.jgit>4.9.1.201712030800-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
     <version.findbugs.annotations>3.0.1</version.findbugs.annotations>
