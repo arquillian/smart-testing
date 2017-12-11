@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import org.apache.commons.lang.StringUtils;
+import shaded.org.apache.commons.lang.StringUtils;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 

@@ -9,50 +9,29 @@
 
   <artifactId>surefire-provider</artifactId>
 
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${version.shrinkwrap.resolver}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>junit-test-result-parser</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-impl-maven</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${version.maven}</version>
+      <version>${version.shrinkwrap.resolver}</version>
+      <classifier>shaded</classifier>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.surefire</groupId>
       <artifactId>surefire-api</artifactId>
       <version>${version.surefire}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.surefire</groupId>
-      <artifactId>maven-surefire-common</artifactId>
-      <version>${version.surefire}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.arquillian.smart.testing</groupId>
-      <artifactId>junit-test-result-parser</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -83,6 +62,34 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>2.19.1</version>
+      </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${version.maven.plugin.shade}</version>
+        <configuration>
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+          <shadedArtifactAttached>true</shadedArtifactAttached>
+          <shadedClassifierName>shaded</shadedClassifierName>
+          <minimizeJar>true</minimizeJar>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

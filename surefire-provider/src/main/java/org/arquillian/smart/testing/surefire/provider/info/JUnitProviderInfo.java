@@ -1,7 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import shaded.org.apache.maven.artifact.versioning.ArtifactVersion;
+import shaded.org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.arquillian.smart.testing.surefire.provider.SurefireDependencyResolver;
 

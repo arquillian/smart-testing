@@ -49,13 +49,14 @@
     <version.javassist>3.21.0-GA</version.javassist>
     <version.fast-classpath-scanner>2.9.3</version.fast-classpath-scanner>
     <version.jgrapht>1.1.0</version.jgrapht>
-    <version.shrinkwrap.resolver>3.0.0</version.shrinkwrap.resolver>
+    <version.shrinkwrap.resolver>3.0.1</version.shrinkwrap.resolver>
     <version.snakeyaml>1.19</version.snakeyaml>
     <version.mockito>2.13.0</version.mockito>
     <version.jgit>4.9.1.201712030800-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
     <version.findbugs.annotations>3.0.1</version.findbugs.annotations>
 
+    <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
     <version.maven.plugin.deploy>2.8.2</version.maven.plugin.deploy>
 
     <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
