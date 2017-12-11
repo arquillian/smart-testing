@@ -23,7 +23,7 @@ public class JUnitCoreProviderInfo extends JUnitProviderInfo {
     }
 
     private boolean is47CompatibleJunitDep() {
-        return getJunitDepVersion() != null && isJunit47Compatible( getJunitDepVersion());
+        return getJunitDepVersion() != null && isJunit47Compatible(getJunitDepVersion());
     }
 
     public boolean isApplicable() {
