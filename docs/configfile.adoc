@@ -76,7 +76,7 @@ a| strategiesConfiguration
 a| A list of strategies with it's configuration.
 
 a| customProviders
-a| A custom provider test execution should be delegated to.
+a| A pair of groupId and artifactId with fully qualified name of `SurefireProvider` implementation the test execution should be delegated to. For more information see <<_custom_surefire_providers, Custom Surefire Providers>>
 |===
 
 ==== Report Options
