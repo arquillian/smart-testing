@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.arquillian.smart.testing.TestSelection;
@@ -35,16 +36,28 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
     }
 
     public Set<TestSelection> applyOnNames(Iterable<String> testsToRun) {
-        return apply(testsToRun, className -> className);
+        return apply(testsToRun, className -> className, this::selectTestsFromNames);
+    }
+
+    private Collection<TestSelection> selectTestsFromNames(TestExecutionPlanner testExecutionPlanner,
+        Iterable<String> testsToRun) {
+        return testExecutionPlanner.selectTestsFromNames(testsToRun);
     }
 
     public Set<TestSelection> applyOnClasses(Iterable<Class<?>> testsToRun) {
-        return apply(testsToRun, Class::getName);
+        return apply(testsToRun, Class::getName, this::selectTestsFromClasses);
+    }
+
+    private Collection<TestSelection> selectTestsFromClasses(TestExecutionPlanner testExecutionPlanner,
+        Iterable<Class<?>> testsToRun) {
+        return testExecutionPlanner.selectTestsFromClasses(testsToRun);
     }
 
     private <TESTCLASS> Set<TestSelection> apply(Iterable<TESTCLASS> testsToRun,
-        Function<TESTCLASS, String> mapperToName) {
-        final Set<TestSelection> selectedTests = selectTests(configuration);
+        Function<TESTCLASS, String> mapperToName,
+        BiFunction<TestExecutionPlanner, Iterable<TESTCLASS>, Collection<TestSelection>> selectionFunction) {
+
+        final Set<TestSelection> selectedTests = selectTests(configuration, testsToRun, selectionFunction);
         if (testSelectionWithAnyStrategyIsChosen(configuration)) {
             return selectedTests;
         } else {
@@ -56,7 +69,8 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
         }
     }
 
-    private Set<TestSelection> selectTests(Configuration configuration) {
+    private <TESTCLASS> Set<TestSelection> selectTests(Configuration configuration, Iterable<TESTCLASS> testsToRun,
+        BiFunction<TestExecutionPlanner, Iterable<TESTCLASS>, Collection<TestSelection>> selectionFunction) {
         if (configuration.getStrategies().length == 0) {
             logger.warn(
                 "Smart Testing Extension is installed but no strategies are provided. It won't influence the way how your tests are executed. "
@@ -72,7 +86,7 @@ class TestStrategyApplierImpl implements TestStrategyApplier {
         final List<TestSelection> selectedTests = new ArrayList<>();
         for (final String strategy : strategies) {
             final TestExecutionPlanner plannerForStrategy = testExecutionPlannerLoader.getPlannerForStrategy(strategy);
-            selectedTests.addAll(plannerForStrategy.getTests());
+            selectedTests.addAll(selectionFunction.apply(plannerForStrategy, testsToRun));
         }
         logger.info("Applied strategies: %s", strategies);
         logger.info("Applied usage: [%s]", configuration.getMode().getName());

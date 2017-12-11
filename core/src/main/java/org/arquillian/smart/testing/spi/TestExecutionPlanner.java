@@ -5,7 +5,9 @@ import org.arquillian.smart.testing.TestSelection;
 
 public interface TestExecutionPlanner {
 
-    Collection<TestSelection> getTests();
+    Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun);
+
+    Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun);
 
     String getName();
 

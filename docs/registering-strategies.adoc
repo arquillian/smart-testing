@@ -33,9 +33,17 @@ include::../strategies/failed/src/main/resources/META-INF/services/org.arquillia
 
 === Implementing TestExecutionPlanner
 
-`TestExecutionPlanner` is the strategy implementation of the strategy.
-The important method there is `getTests()` which returns a collection of the tests that must be executed.
-You also need to set there the strategy name.
+`TestExecutionPlanner` is the implementation of the strategy.
+Apart from the method `getName()` that returns a name of the strategy there are two important methods:
+
+[source, java]
+----
+selectTestsFromNames(Iterable<String> testsToRun)
+selectTestsFromClasses(Iterable<Class<?>> testsToRun)
+----
+
+These methods return a collection of the tests that must be executed.
+There is only one call of one of these two methods - it won't happen that both methods are called at once. The reason for the existence of these two methods is that in some environments there aren't available `Classes` for the tests, but just the names.
 
 For example, failed strategy is implemented as:
 
@@ -44,8 +52,9 @@ For example, failed strategy is implemented as:
 ----
 include::../strategies/failed/src/main/java/org/arquillian/smart/testing/strategies/failed/FailedTestsDetector.java[tag=documentation]
 ----
-<1> Method that returns list of tests to execute
-<2> `TestSelection` requires fully qualified test class name and the strategy where is calculated
+<1> Method that returns list of tests to execute based on the provided set of fully qualified class names of tests that were previously selected to be executed.
+<2> Method that returns list of tests to execute based on the provided set of tests classes that were previously selected to be executed.
+<3> `TestSelection` requires fully qualified test class name and the strategy where is calculated
 
 ==== ChangeStorage, ChangeResolver and TestResultParser
 

@@ -36,7 +36,7 @@ public class TestExecutionPlannerLoaderTest {
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy("dummy");
 
         // then
-        assertThat(testExecutionPlanner.getTests()).isEmpty();
+        assertThat(testExecutionPlanner.selectTestsFromClasses(Collections.emptyList())).isEmpty();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class TestExecutionPlannerLoaderTest {
         final TestExecutionPlanner testExecutionPlanner = testExecutionPlannerLoader.getPlannerForStrategy(configuration.getStrategies()[0]);
 
         // then
-        assertThat(testExecutionPlanner.getTests()).isEmpty();
+        assertThat(testExecutionPlanner.selectTestsFromClasses(Collections.emptyList())).isEmpty();
     }
 
     @Test
@@ -107,8 +107,14 @@ public class TestExecutionPlannerLoaderTest {
         @Override
         public TestExecutionPlanner create(File projectDir, TestVerifier verifier, Configuration configuration) {
             return new TestExecutionPlanner() {
+
                 @Override
-                public Collection<TestSelection> getTests() {
+                public Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun) {
+                    return Collections.emptyList();
+                }
+
+                @Override
+                public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) {
                     return Collections.emptyList();
                 }
 

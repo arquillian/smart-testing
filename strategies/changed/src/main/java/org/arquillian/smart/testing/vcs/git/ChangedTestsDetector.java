@@ -53,6 +53,15 @@ public class ChangedTestsDetector implements TestExecutionPlanner {
     }
 
     @Override
+    public Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun) {
+        return getTests();
+    }
+
+    @Override
+    public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) {
+        return getTests();
+    }
+
     public Collection<TestSelection> getTests() {
         //tag::read_changes[]
         final Collection<Change> files = changeStorage.read(projectDir) // <1>
