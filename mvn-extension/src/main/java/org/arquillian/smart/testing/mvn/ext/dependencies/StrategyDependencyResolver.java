@@ -7,8 +7,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Exclusion;
 import org.arquillian.smart.testing.configuration.Configuration;
+
+import static org.arquillian.smart.testing.mvn.ext.dependencies.MavenCoordinatesResolver.createDependencyFromCoordinates;
 
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
@@ -74,39 +75,7 @@ class StrategyDependencyResolver {
             .filter(key -> key.startsWith(SMART_TESTING_STRATEGY_PREFIX))
             .map(String::valueOf)
             .collect(Collectors.toMap(this::filterPrefix,
-                key -> createDependency((String) properties.get(key), excludeTrainsitive)));
-    }
-
-    private Dependency createDependency(String coordinatesString, boolean excludeTrainsitive) {
-        final String[] coordinates = coordinatesString.split(":");
-        int number = coordinates.length;
-        if (number < 2) {
-            throw new IllegalArgumentException(
-                "Coordinates of the specified strategy [" + coordinatesString + "] doesn't have the correct format.");
-        }
-        final Dependency dependency = new Dependency();
-        dependency.setGroupId(coordinates[0]);
-        dependency.setArtifactId(coordinates[1]);
-        if (number == 3) {
-            dependency.setVersion(coordinates[2]);
-        } else if (number > 4) {
-            dependency.setType(coordinates[2].isEmpty() ? "jar" : coordinates[2]);
-            dependency.setClassifier(coordinates[3]);
-            dependency.setVersion(coordinates[4]);
-        }
-        if (number == 6) {
-            dependency.setScope(coordinates[5]);
-        }
-        if (dependency.getVersion() == null || dependency.getVersion().isEmpty()) {
-            dependency.setVersion(ExtensionVersion.version().toString());
-        }
-        if (excludeTrainsitive) {
-            Exclusion exclusion = new Exclusion();
-            exclusion.setGroupId("*");
-            exclusion.setArtifactId("*");
-            dependency.setExclusions(Arrays.asList(exclusion));
-        }
-        return dependency;
+                key -> createDependencyFromCoordinates((String) properties.get(key), excludeTrainsitive)));
     }
 
     private String filterPrefix(String key) {
