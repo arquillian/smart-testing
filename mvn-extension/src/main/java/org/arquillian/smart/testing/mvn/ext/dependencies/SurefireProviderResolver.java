@@ -40,7 +40,7 @@ class SurefireProviderResolver {
             knownProvider.getProviderClassName());
     }
 
-    SurefireProviderDependency createSurefireProviderDepIfMathes(Dependency dependency) {
+    SurefireProviderDependency createSurefireProviderDepIfMatches(Dependency dependency) {
         return providers.stream()
             .filter(provider -> provider.matches(dependency))
             .map(provider -> new SurefireProviderDependency(dependency, provider))

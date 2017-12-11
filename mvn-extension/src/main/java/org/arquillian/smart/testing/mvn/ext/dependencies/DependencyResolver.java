@@ -74,7 +74,7 @@ public class DependencyResolver {
         SurefireProviderResolver surefireProviderResolver = new SurefireProviderResolver(configuration);
         return plugin.getDependencies()
             .stream()
-            .map(surefireProviderResolver::createSurefireProviderDepIfMathes)
+            .map(surefireProviderResolver::createSurefireProviderDepIfMatches)
             .collect(Collectors.toList());
     }
 
