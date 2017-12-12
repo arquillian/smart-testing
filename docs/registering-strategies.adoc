@@ -38,8 +38,7 @@ Apart from the method `getName()` that returns a name of the strategy there are 
 
 [source, java]
 ----
-selectTestsFromNames(Iterable<String> testsToRun)
-selectTestsFromClasses(Iterable<Class<?>> testsToRun)
+include::../core/src/main/java/org/arquillian/smart/testing/spi/TestExecutionPlanner.java[tag=documentation]
 ----
 
 These methods return a collection of the tests that must be executed.
