@@ -20,7 +20,6 @@ import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker;
-import org.arquillian.smart.testing.mvn.ext.checker.SkipSTInstallationChecker;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.logger.MavenExtensionLoggerFactory;
 import org.arquillian.smart.testing.scm.Change;
@@ -30,7 +29,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -80,11 +78,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = ConfigurationLoader.load(executionRootDirectory, this::isProjectRootDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
-        final SkipSTInstallationChecker skipSTInstallationChecker =
-            new SkipSTInstallationChecker(configuration, session.getTopLevelProject());
-        if (skipSTInstallationChecker.shouldSkip()) {
+        if (skipInstallationChecker.shouldSkipForConfiguration(configuration)) {
             skipExtensionInstallation = true;
-            logExtensionDisableReason(logger, skipSTInstallationChecker.getReason());
+            logExtensionDisableReason(logger, skipInstallationChecker.getReason());
         }
     }
 
@@ -148,10 +144,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         return mavenProject -> {
             Configuration mavenProjectConfiguration =
                 ConfigurationLoader.load(mavenProject.getBasedir(), this::isProjectRootDirectory);
-            final SkipSTInstallationChecker skipSTInstallationChecker =
-                new SkipSTInstallationChecker(mavenProjectConfiguration, mavenProject);
-            if (skipSTInstallationChecker.shouldSkip()) {
-                logger.info(skipSTInstallationChecker.getReason());
+            final SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenProject);
+            if (skipInstallationChecker.shouldSkipForConfiguration(mavenProjectConfiguration)) {
+                logger.info(skipInstallationChecker.getReason());
             } else {
                 configureMavenProject(mavenProject, mavenProjectConfiguration);
             }
