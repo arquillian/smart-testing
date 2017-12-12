@@ -2,6 +2,8 @@ package org.arquillian.smart.testing.surefire.provider.info;
 
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
 
+import static org.arquillian.smart.testing.known.surefire.providers.KnownProvider.JUNIT_4;
+
 public class JUnit4ProviderInfo extends JUnitProviderInfo {
 
     public JUnit4ProviderInfo() {
@@ -9,7 +11,7 @@ public class JUnit4ProviderInfo extends JUnitProviderInfo {
     }
 
     public String getProviderClassName() {
-        return "org.apache.maven.surefire.junit4.JUnit4Provider";
+        return JUNIT_4.getProviderClassName();
     }
 
     public boolean isApplicable() {
@@ -17,6 +19,7 @@ public class JUnit4ProviderInfo extends JUnitProviderInfo {
     }
 
     public String getDepCoordinates() {
-        return "org.apache.maven.surefire:surefire-junit4:" + LoaderVersionExtractor.getSurefireApiVersion();
+        return String.join(":", JUNIT_4.getGroupId(), JUNIT_4.getArtifactId(),
+            LoaderVersionExtractor.getSurefireApiVersion());
     }
 }

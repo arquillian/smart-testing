@@ -62,6 +62,6 @@ public class HistoricalChangesFailedTestsSelectionExecutionWithConfigFileFunctio
             .containsAll(expectedTestResults)
             .hasSameSizeAs(expectedTestResults);
 
-        softly.assertThat(project).doesNotContainDirectory(new TemporaryInternalFiles().getTestReportDirectoryName());
+        softly.assertThat(project).doesNotContainDirectory(TemporaryInternalFiles.getTestReportDirName());
     }
 }

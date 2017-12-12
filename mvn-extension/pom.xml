@@ -21,6 +21,11 @@
       <artifactId>core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>known-surefire-providers</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!--
       This explicit include prevents us from adding new implementations dynamically,
