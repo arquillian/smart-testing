@@ -78,6 +78,7 @@
     <module>strategies/affected</module>
     <module>strategies/changed</module>
     <module>strategies/failed</module>
+    <module>strategies/categorized</module>
     <module>mvn-extension</module>
     <module>functional-tests/git-rules</module>
     <module>functional-tests/test-bed</module>

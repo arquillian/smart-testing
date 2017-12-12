@@ -5,6 +5,7 @@ public class Strategy {
     public static final Strategy NEW = new Strategy("new");
     public static final Strategy CHANGED = new Strategy("changed");
     public static final Strategy FAILED = new Strategy("failed");
+    public static final Strategy CATEGORIZED = new Strategy("categorized");
 
     private final String name;
 
