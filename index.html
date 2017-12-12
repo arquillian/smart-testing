@@ -1781,9 +1781,19 @@ You need to implement three simple methods, two related with the name of the str
 <div class="sect2">
 <h3 id="_implementing_testexecutionplanner"><a class="anchor" href="#_implementing_testexecutionplanner"></a>6.2. Implementing TestExecutionPlanner</h3>
 <div class="paragraph">
-<p><code>TestExecutionPlanner</code> is the strategy implementation of the strategy.
-The important method there is <code>getTests()</code> which returns a collection of the tests that must be executed.
-You also need to set there the strategy name.</p>
+<p><code>TestExecutionPlanner</code> is the implementation of the strategy.
+Apart from the method <code>getName()</code> that returns a name of the strategy there are two important methods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java">    <span class="predefined-type">Collection</span>&lt;TestSelection&gt; selectTestsFromNames(<span class="predefined-type">Iterable</span>&lt;<span class="predefined-type">String</span>&gt; testsToRun);
+
+    <span class="predefined-type">Collection</span>&lt;TestSelection&gt; selectTestsFromClasses(<span class="predefined-type">Iterable</span>&lt;<span class="predefined-type">Class</span>&lt;?&gt;&gt; testsToRun);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These methods return a collection of the tests that must be executed.
+There is only one call of one of these two methods - it won&#8217;t happen that both methods are called at once. The reason for the existence of these two methods is that in some environments there aren&#8217;t available <code>Classes</code> for the tests, but just the names.</p>
 </div>
 <div class="paragraph">
 <p>For example, failed strategy is implemented as:</p>
@@ -1810,11 +1820,20 @@ You also need to set there the strategy name.</p>
     }
 
     <span class="annotation">@Override</span>
-    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; getTests() { <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; selectTestsFromNames(<span class="predefined-type">Iterable</span>&lt;<span class="predefined-type">String</span>&gt; testsToRun) { <i class="conum" data-value="1"></i><b>(1)</b>
+        <span class="keyword">return</span> getTests();
+    }
+
+    <span class="annotation">@Override</span>
+    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; selectTestsFromClasses(<span class="predefined-type">Iterable</span>&lt;<span class="predefined-type">Class</span>&lt;?&gt;&gt; testsToRun) { <i class="conum" data-value="2"></i><b>(2)</b>
+        <span class="keyword">return</span> getTests();
+    }
+
+    <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; getTests() {
         TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader(), projectDir);
         <span class="keyword">return</span> testReportLoader.loadTestResults()
             .stream()
-            .map(result -&gt; <span class="keyword">new</span> TestSelection(result, getName())) <i class="conum" data-value="2"></i><b>(2)</b>
+            .map(result -&gt; <span class="keyword">new</span> TestSelection(result, getName())) <i class="conum" data-value="3"></i><b>(3)</b>
             .collect(Collectors.toCollection(<span class="predefined-type">LinkedHashSet</span>::<span class="keyword">new</span>));
     }
 
@@ -1829,10 +1848,14 @@ You also need to set there the strategy name.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Method that returns list of tests to execute</td>
+<td>Method that returns list of tests to execute based on the provided set of fully qualified class names of tests that were previously selected to be executed.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Method that returns list of tests to execute based on the provided set of tests classes that were previously selected to be executed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td><code>TestSelection</code> requires fully qualified test class name and the strategy where is calculated</td>
 </tr>
 </table>
@@ -1922,6 +1945,10 @@ This file is required so <strong>Smart Testing</strong> can automatically regist
 </div>
 <div class="paragraph">
 <p>It is important to notice that the <em>key</em> part must be prefixed with <code>smart.testing.strategy.</code>.</p>
+</div>
+<div class="paragraph">
+<p>If you need to specify any additional coordinate (such as type or classifier), you have to use the whole coordinates format:
+<code>groupId:artifactId:packaging:classifier:version:scope</code></p>
 </div>
 </div>
 <div class="sect2">
@@ -2851,7 +2878,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-12 06:15:23 UTC
+Last updated 2017-12-12 09:25:23 UTC
 </div>
 </div>
 <script>
