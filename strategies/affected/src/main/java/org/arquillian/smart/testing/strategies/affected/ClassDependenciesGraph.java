@@ -27,10 +27,8 @@
  */
 package org.arquillian.smart.testing.strategies.affected;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,7 +53,6 @@ import static org.jgrapht.Graphs.predecessorListOf;
 
 public class ClassDependenciesGraph {
 
-    private static final Logger logger = Log.getLogger();
     private static final Filter coreJava = new Filter(Collections.singletonList(""), Collections.singletonList("java.*"));
 
     private final JavaClassBuilder builder;
@@ -64,6 +61,9 @@ public class ClassDependenciesGraph {
     private final TestVerifier testVerifier;
     private final boolean enableTransitivity;
     private final Path projectDir;
+    private ElementAdapter elementAdapter;
+    private final WatchFilesResolver watchFilesResolver;
+    private final ComponentUnderTestResolver componentUnderTestResolver;
 
     ClassDependenciesGraph(TestVerifier testVerifier, Configuration configuration, File projectDir) {
         this.builder = new JavaClassBuilder();
@@ -74,6 +74,9 @@ public class ClassDependenciesGraph {
         this.testVerifier = testVerifier;
         this.enableTransitivity = affectedConfiguration.isTransitivity();
         this.projectDir = projectDir.toPath();
+        this.watchFilesResolver = new WatchFilesResolver(this.projectDir);
+        this.componentUnderTestResolver = new ComponentUnderTestResolver();
+        this.elementAdapter = new ElementAdapter(this.testVerifier, this.builder);
     }
 
     void buildTestDependencyGraph(Collection<File> modifiedJavaFiles) {
@@ -93,117 +96,23 @@ public class ClassDependenciesGraph {
             if (testJavaClass != null) {
                 final String[] imports = testJavaClass.getImports();
 
-                final List<String> manualProductionClasses = calculateManuallyAddedDependencies(testJavaClass);
+                final List<String> manualProductionClasses = this.componentUnderTestResolver.resolve(testJavaClass);
                 manualProductionClasses.addAll(Arrays.asList(imports));
 
-                final List<Path> files = calculateWatchedFiles(testJavaClass);
+                final List<Path> files = this.watchFilesResolver.resolve(testJavaClass);
 
                 addToIndex(new JavaElement(testJavaClass), manualProductionClasses, files);
             }
         }
     }
 
-    private List<Path> calculateWatchedFiles(JavaClass testJavaClass) {
-        final List<Path> files = new ArrayList<>();
-        final WatchFile[] allTestsAnnotation = findWatchFiles(testJavaClass);
-
-        for (WatchFile file : allTestsAnnotation) {
-            files.add(projectDir.resolve(file.value()).normalize());
-        }
-
-        return files;
-    }
-
-    private List<String> calculateManuallyAddedDependencies(JavaClass testJavaClass) {
-        final List<String> manualDependencyClasses = new ArrayList<>();
-        final ComponentUnderTest[] allTestsAnnotation = findComponentsUnderTests(testJavaClass);
-
-        for (ComponentUnderTest tests : allTestsAnnotation) {
-            List<String> packages = getPackages(testJavaClass.packageName(), tests);
-            for (String pkg : packages) {
-                final String trimmedPackage = pkg.trim();
-                manualDependencyClasses.addAll(scanClassesFromPackage(trimmedPackage));
-            }
-        }
-
-        return manualDependencyClasses;
-    }
-
-    private WatchFile[] findWatchFiles(JavaClass testJavaClass) {
-
-        final Optional<WatchFiles> testsListOptional = testJavaClass.getAnnotationByType(WatchFiles.class);
-
-        WatchFile[] tests = testsListOptional
-            .map(WatchFiles::value)
-            .orElseGet(() -> testJavaClass.getAnnotationByType(WatchFile.class)
-                .map(annotation -> new WatchFile[] {annotation})
-                .orElse(new WatchFile[0]));
-
-        return tests;
-    }
-
-    private ComponentUnderTest[] findComponentsUnderTests(JavaClass testJavaClass) {
-
-        final Optional<ComponentsUnderTest> testsListOptional =
-            testJavaClass.getAnnotationByType(ComponentsUnderTest.class);
-
-        ComponentUnderTest[] tests = testsListOptional
-            .map(ComponentsUnderTest::value)
-            .orElseGet(() -> testJavaClass.getAnnotationByType(ComponentUnderTest.class)
-                .map(annotation -> new ComponentUnderTest[] {annotation})
-                .orElse(new ComponentUnderTest[0]));
-
-        return tests;
-    }
-
-    private List<String> scanClassesFromPackage(String trimmedPackage) {
-        final List<String> manualDependencyClasses = new ArrayList<>();
-        if (trimmedPackage.endsWith(".*")) {
-            String realPackage = trimmedPackage.substring(0, trimmedPackage.indexOf(".*"));
-            final List<String> classesOfPackage =
-                new FastClasspathScanner(realPackage).scan()
-                    .getNamesOfAllClasses();
-
-            manualDependencyClasses.addAll(
-                classesOfPackage);
-        } else {
-            final List<String> classesOfPackage =
-                new FastClasspathScanner(trimmedPackage).disableRecursiveScanning().scan()
-                    .getNamesOfAllClasses();
-            manualDependencyClasses.addAll(
-                classesOfPackage);
-        }
-
-        if (manualDependencyClasses.isEmpty()) {
-            logger.warn(
-                "You set %s package as reference classes to run tests, but no classes found. Maybe a package refactor?",
-                trimmedPackage);
-        }
-
-        return manualDependencyClasses;
-    }
-
-    private List<String> getPackages(String testPackage, ComponentUnderTest tests) {
-        List<String> packages = new ArrayList<>();
-        if (tests.classes().length == 0 && tests.packages().length == 0 && tests.packagesOf().length == 0) {
-            packages.add(testPackage + ".*");
-        } else {
-            packages.addAll(Arrays.asList(tests.packages()));
-
-            packages.addAll(Arrays.stream(tests.packagesOf())
-                .map(clazz -> clazz.getPackage().getName())
-                .collect(Collectors.toList()));
-        }
-        return packages;
-    }
-
     private void addToIndex(JavaElement javaElement, List<String> imports, List<Path> files) {
         addToGraph(javaElement);
-        updateJavaElementWithImportReferences(javaElement, imports);
-        updateJavaElementWithFiles(javaElement, files);
+        createOrUpdateJavaElementWithImportDependencies(javaElement, imports);
+        createOrUpdateJavaElementWithDependencies(javaElement, files);
     }
 
-    private void updateJavaElementWithFiles(JavaElement javaElement, List<Path> files) {
+    private void createOrUpdateJavaElementWithDependencies(JavaElement javaElement, List<Path> files) {
         for (Path file : files) {
             final FileElement fileElement = new FileElement(file);
 
@@ -233,7 +142,7 @@ public class ClassDependenciesGraph {
         }
     }
 
-    private void updateJavaElementWithImportReferences(JavaElement javaElementParentClass, List<String> imports) {
+    private void createOrUpdateJavaElementWithImportDependencies(JavaElement javaElementParentClass, List<String> imports) {
 
         for (String importz : imports) {
 
@@ -242,7 +151,7 @@ public class ClassDependenciesGraph {
                 && this.enableTransitivity) {
                 JavaClass javaClass = builder.getClassDescription(importz);
                 if (javaClass != null) {
-                    updateJavaElementWithImportReferences(javaElementParentClass, Arrays.asList(javaClass.getImports()));
+                    createOrUpdateJavaElementWithImportDependencies(javaElementParentClass, Arrays.asList(javaClass.getImports()));
                 }
             }
         }
@@ -272,33 +181,17 @@ public class ClassDependenciesGraph {
     Set<String> findTestsDependingOn(Collection<Change> files) {
 
         return files.stream()
-            .map(Change::getLocation)
-            .map(this::transformToElement)
+            .map(change -> this.elementAdapter.tranform(change))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .filter(graph::containsVertex)
             .map(this::getParents)
             .flatMap(Collection::stream)
-            .map(e -> (JavaElement) e)
-            .map(JavaElement::getClassName)
+            .map(e -> {
+                JavaElement javaElement = (JavaElement) e;
+                return javaElement.getClassName();
+            })
             .collect(Collectors.toSet());
-    }
-
-    private Optional<Element> transformToElement(Path element) {
-
-        if (testVerifier.isCore(element)) {
-
-            final File classLocation = JavaToClassLocation.transform(element.toFile(), testVerifier);
-            final String className = this.builder.getClassName(classLocation);
-            return Optional.of(new JavaElement(this.builder.getClassDescription(className)));
-        } else {
-            if (!testVerifier.isJavaFile(element)) {
-                return Optional.of(
-                    new FileElement(element));
-            } else {
-                return Optional.empty();
-            }
-        }
     }
 
     private List<Element> getParents(Element childClass) {
