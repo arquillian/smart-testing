@@ -9,10 +9,6 @@
 
   <artifactId>maven-lifecycle-extension</artifactId>
 
-  <properties>
-    <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -23,6 +19,11 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>known-surefire-providers</artifactId>
       <version>${project.version}</version>
     </dependency>
 

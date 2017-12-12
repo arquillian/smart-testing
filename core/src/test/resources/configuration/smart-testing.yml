@@ -22,3 +22,5 @@ strategiesConfiguration: #<!--11-->
       inclusions: #<!--14-->
          - org.package.exclude.*
          - org.arquillian.package.exclude.*
+customProviders: #<!--15-->
+    - org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl

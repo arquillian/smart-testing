@@ -109,3 +109,4 @@ a|`false`
 include::../core/src/test/resources/configuration/smart-testing-with-lastChanges.yml[]
 ----
 copyToClipboard:configuration-file[]
+

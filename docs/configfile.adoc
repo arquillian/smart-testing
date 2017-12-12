@@ -27,6 +27,7 @@ copyToClipboard:config-file[]
 <12> This enables transitivity.
 <13> This defines list of packages to be excluded while applying transitivity.
 <14> This defines list of packages to be included while applying transitivity.
+<15> GroupId and artifactId with fully qualified name of the implementation of SurefireProvider the execution should be delegated to.
 
 All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter.
 You can look at <<_reference_card, references>> for default value of parameter.
@@ -73,6 +74,9 @@ a| A list of custom strategies in the form of key/value. It is important to noti
 
 a| strategiesConfiguration
 a| A list of strategies with it's configuration.
+
+a| customProviders
+a| A pair of groupId and artifactId with fully qualified name of `SurefireProvider` implementation the test execution should be delegated to. For more information see <<_custom_surefire_providers, Custom Surefire Providers>>
 |===
 
 ==== Report Options
@@ -118,3 +122,5 @@ a| Sets list of packages to be excluded while applying transitivity.
 a| inclusions
 a| Sets list of packages to be included while applying transitivity.
 |===
+
+

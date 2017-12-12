@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
 import org.arquillian.smart.testing.configuration.Configuration;
 
+import static org.arquillian.smart.testing.mvn.ext.dependencies.MavenCoordinatesResolver.createDependencyFromCoordinates;
+
 /**
  * Resolves dependencies for strategies defined by keywords (e.g. new, changed, affected)
  * <p>
@@ -38,10 +40,9 @@ class StrategyDependencyResolver {
     }
 
     Map<String, Dependency> resolveDependencies() {
-        final Properties properties = new Properties();
-        properties.putAll(loadDefaultMapping());
-        properties.putAll(loadCustomStrategies());
-        return transformToDependencies(properties);
+        Map<String, Dependency> strategyDeps = transformToDependencies(loadDefaultMapping(), true);
+        strategyDeps.putAll(transformToDependencies(loadCustomStrategies(), false));
+        return strategyDeps;
     }
 
     private Properties loadCustomStrategies() {
@@ -67,26 +68,14 @@ class StrategyDependencyResolver {
         return properties;
     }
 
-    private Map<String, Dependency> transformToDependencies(Properties properties) {
+    private Map<String, Dependency> transformToDependencies(Properties properties, boolean excludeTrainsitive) {
         return properties
             .stringPropertyNames()
             .stream()
             .filter(key -> key.startsWith(SMART_TESTING_STRATEGY_PREFIX))
             .map(String::valueOf)
             .collect(Collectors.toMap(this::filterPrefix,
-                key -> {
-                    final String[] gav = ((String) properties.get(key)).split(":");
-                    final Dependency dependency = new Dependency();
-                    dependency.setGroupId(gav[0]);
-                    dependency.setArtifactId(gav[1]);
-                    String version = ExtensionVersion.version().toString();
-                    if (gav.length == 3) {
-                        version = gav[2];
-                    }
-                    dependency.setVersion(version);
-                    dependency.setScope("runtime");
-                    return dependency;
-                }));
+                key -> createDependencyFromCoordinates((String) properties.get(key), excludeTrainsitive)));
     }
 
     private String filterPrefix(String key) {

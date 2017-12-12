@@ -6,11 +6,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.arquillian.smart.testing.scm.Change;
-import org.arquillian.smart.testing.scm.ChangeType;
-import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
+import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
+import org.arquillian.smart.testing.scm.Change;
+import org.arquillian.smart.testing.scm.ChangeType;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.D;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.MyBusinessObject;
@@ -27,11 +27,13 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.test.XTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.YTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.ZTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static java.util.Collections.singletonList;
 import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class ClassDependenciesGraphTest {
 
     @Test

@@ -54,11 +54,20 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     }
 
     @Override
+    public Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun) {
+        return getTests();
+    }
+
+    @Override
+    public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) {
+        return getTests();
+    }
+
+    @Override
     public String getName() {
         return AFFECTED;
     }
 
-    @Override
     public Collection<TestSelection> getTests() {
         ClassDependenciesGraph classDependenciesGraph = configureTestClassDetector();
 

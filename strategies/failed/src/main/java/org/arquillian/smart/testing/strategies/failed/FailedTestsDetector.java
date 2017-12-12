@@ -19,11 +19,20 @@ public class FailedTestsDetector implements TestExecutionPlanner {
     }
 
     @Override
-    public Collection<TestSelection> getTests() { // <1>
+    public Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun) { // <1>
+        return getTests();
+    }
+
+    @Override
+    public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) { // <2>
+        return getTests();
+    }
+
+    public Collection<TestSelection> getTests() {
         TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader(), projectDir);
         return testReportLoader.loadTestResults()
             .stream()
-            .map(result -> new TestSelection(result, getName())) // <2>
+            .map(result -> new TestSelection(result, getName())) // <3>
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
