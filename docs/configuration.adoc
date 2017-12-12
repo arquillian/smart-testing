@@ -172,6 +172,28 @@ With this approach your tests are resilient to package name changes.
 
 If none of the attributes are set, then all production classes with same package as test and its subpackages are added automatically as classes used by the test.
 
+===== Regular Files
+
+By default affected strategy uses _imports_ of tests to build the graph of collaborators or if you use the <<Explicitly Set>>, you can explicitly set class dependencies from an annotation.
+This approach is fine for Java classes, but a project usually contains another kind of files such as configuration files like `persistence.xml`, deployment files like `kubernetes.json` or build tool like `pom.xml`.
+
+You can react to these file changes as well and execute some specific tests in these cases by using a special annotation provided by `affected` strategy.
+
+The first thing you need to do is register following artifact into your build script: `org.arquillian.smart.testing:api:<version>`.
+
+Then you can annotate your test with `org.arquillian.smart.testing.strategies.affected.WatchFile` annotation.
+
+For example:
+
+[source, java]
+----
+include::../strategies/affected/src/test/java/org/arquillian/smart/testing/strategies/affected/fakeproject/test/XTest.java[tag=docs]
+----
+
+In previous example when `src/main/resources/META-INF/persistence.xml` file is added or modified, then the test is eligible to be run.
+
+IMPORTANT: Location is relative to current project/module. This means that if you want to refer to a file that it is in another module, you need to navigate to parent folder by using `..` symbol. For example: `../myothermodule/src/main/resources/applicationcontext.xml`.
+
 ==== Failed
 
 `Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
