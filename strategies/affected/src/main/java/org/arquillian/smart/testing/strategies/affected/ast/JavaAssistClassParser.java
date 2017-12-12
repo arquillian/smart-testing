@@ -46,10 +46,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-class JavaAssistClassParser {
+public class JavaAssistClassParser {
     private ClassPool classPool;
 
-    JavaAssistClassParser() {
+    public JavaAssistClassParser() {
     }
 
     private ClassPool getClassPool() {
@@ -90,7 +90,7 @@ class JavaAssistClassParser {
 
     private final static Map<String, JavaClass> CLASSES_BY_NAME = new HashMap<>();
 
-    JavaClass getClass(String className) {
+    public JavaClass getClass(String className) {
         JavaClass clazz = CLASSES_BY_NAME.get(className);
         if (clazz == null) {
             CtClass ctClass = getCachedClass(className);

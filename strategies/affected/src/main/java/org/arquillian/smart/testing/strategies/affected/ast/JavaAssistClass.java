@@ -36,6 +36,7 @@ import java.util.Set;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.AttributeInfo;
 import javassist.bytecode.ConstPool;
@@ -188,9 +189,26 @@ public class JavaAssistClass extends AbstractJavaClass {
     @Override
     public <T> Optional<T> getAnnotationByType(Class<T> type) {
         try {
-            return Optional.ofNullable((T) this.classReference.getAnnotation(type));
+            Object annotation = this.classReference.getAnnotation(type);
+
+            if (annotation == null) {
+                CtClass superclass = this.classReference.getSuperclass();
+
+                // We need a string representation because if not JavaAssist throws an exception
+                String superClassClass = superclass.getName();
+                while (annotation == null && !Object.class.getName().equals(superClassClass)) {
+                    annotation = superclass.getAnnotation(type);
+                    superclass = superclass.getSuperclass();
+                    superClassClass = superclass.getName();
+                }
+
+            }
+
+            return Optional.ofNullable((T) annotation);
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
+        } catch (NotFoundException e) {
+            throw new IllegalArgumentException(e);
         }
     }
 }

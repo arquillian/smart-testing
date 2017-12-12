@@ -24,6 +24,11 @@ class ComponentUnderTestResolver {
                 final String trimmedPackage = pkg.trim();
                 manualDependencyClasses.addAll(scanClassesFromPackage(trimmedPackage));
             }
+
+            final Class[] classes = tests.classes();
+            for (Class clazz : classes) {
+                manualDependencyClasses.add(clazz.getName());
+            }
         }
 
         return manualDependencyClasses;
