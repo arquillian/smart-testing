@@ -558,30 +558,36 @@ table.CodeRay td.code>pre{padding:0}
 <li><a href="#_alternative_approach">6.4. Alternative Approach</a></li>
 </ul>
 </li>
-<li><a href="#_reports">7. Reports</a>
+<li><a href="#_surefire_providers">7. Surefire Providers</a>
 <ul class="sectlevel2">
-<li><a href="#_build_artifacts">7.1. Build Artifacts</a></li>
-<li><a href="#_configuration_2">7.2. Configuration</a></li>
+<li><a href="#_known_surefire_providers">7.1. Known Surefire Providers</a></li>
+<li><a href="#_custom_surefire_providers">7.2. Custom Surefire Providers</a></li>
 </ul>
 </li>
-<li><a href="#_jenkins">8. Jenkins</a>
+<li><a href="#_reports">8. Reports</a>
 <ul class="sectlevel2">
-<li><a href="#_jenkins_freestyle_project">8.1. Jenkins Freestyle project</a></li>
-<li><a href="#_jenkins_pipeline">8.2. Jenkins Pipeline</a></li>
+<li><a href="#_build_artifacts">8.1. Build Artifacts</a></li>
+<li><a href="#_configuration_2">8.2. Configuration</a></li>
 </ul>
 </li>
-<li><a href="#_reference_card">9. Reference Card</a>
+<li><a href="#_jenkins">9. Jenkins</a>
 <ul class="sectlevel2">
-<li><a href="#_installation_2">9.1. Installation</a></li>
-<li><a href="#_configuration_3">9.2. Configuration</a></li>
-<li><a href="#_strategies_2">9.3. Strategies</a></li>
-<li><a href="#_getting_insights_of_the_execution">9.4. Getting insights of the execution</a></li>
-<li><a href="#_configuration_file_2">9.5. Configuration File</a></li>
+<li><a href="#_jenkins_freestyle_project">9.1. Jenkins Freestyle project</a></li>
+<li><a href="#_jenkins_pipeline">9.2. Jenkins Pipeline</a></li>
 </ul>
 </li>
-<li><a href="#_developing">10. Developing</a>
+<li><a href="#_reference_card">10. Reference Card</a>
 <ul class="sectlevel2">
-<li><a href="#_test_bed">10.1. Test Bed</a></li>
+<li><a href="#_installation_2">10.1. Installation</a></li>
+<li><a href="#_configuration_3">10.2. Configuration</a></li>
+<li><a href="#_strategies_2">10.3. Strategies</a></li>
+<li><a href="#_getting_insights_of_the_execution">10.4. Getting insights of the execution</a></li>
+<li><a href="#_configuration_file_2">10.5. Configuration File</a></li>
+</ul>
+</li>
+<li><a href="#_developing">11. Developing</a>
+<ul class="sectlevel2">
+<li><a href="#_test_bed">11.1. Test Bed</a></li>
 </ul>
 </li>
 </ul>
@@ -1143,7 +1149,9 @@ All reports from previous local build are automatically copied by the maven exte
          - <span class="string"><span class="content">org.arquillian.package.*</span></span>
       <span class="key">inclusions</span>: <i class="conum" data-value="14"></i><b>(14)</b>
          - <span class="string"><span class="content">org.package.exclude.*</span></span>
-         - <span class="string"><span class="content">org.arquillian.package.exclude.*</span></span></code></pre>
+         - <span class="string"><span class="content">org.arquillian.package.exclude.*</span></span>
+<span class="key">customProviders</span>: <i class="conum" data-value="15"></i><b>(15)</b>
+    - <span class="string"><span class="content">org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1210,6 +1218,10 @@ All reports from previous local build are automatically copied by the maven exte
 <tr>
 <td><i class="conum" data-value="14"></i><b>14</b></td>
 <td>This defines list of packages to be included while applying transitivity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td>GroupId and artifactId with fully qualified name of the implementation of SurefireProvider the execution should be delegated to.</td>
 </tr>
 </table>
 </div>
@@ -1329,6 +1341,14 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>A list of strategies with it&#8217;s configuration.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>customProviders</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A pair of groupId and artifactId with fully qualified name of <code>SurefireProvider</code> implementation the test execution should be delegated to. For more information see <a href="#_custom_surefire_providers">Custom Surefire Providers</a></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1922,10 +1942,113 @@ This file is required so <strong>Smart Testing</strong> can automatically regist
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reports"><a class="anchor" href="#_reports"></a>7. Reports</h2>
+<h2 id="_surefire_providers"><a class="anchor" href="#_surefire_providers"></a>7. Surefire Providers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Internally, Smart Testing uses its own implementation of <code>SurefireProvider</code> where calls Smart Testing API. Then, based on the information retrieved from the classpath, it decides which provider should be used for a delegation of the test execution - eg. JUnit4 or TestNG (in the same way as it is done inside of the Surefire plugin itself).
+But some projects may use their own surefire provider implementations or can specify one specific known provider that should scan the classpath and execute the test suite.</p>
+</div>
+<div class="sect2">
+<h3 id="_known_surefire_providers"><a class="anchor" href="#_known_surefire_providers"></a>7.1. Known Surefire Providers</h3>
+<div class="paragraph">
+<p>Known Surefire Providers are those implementations that are part of the Surefire project itself plus one implementation distributed as part of JUnit 5. The complete list of known providers:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>JUnit 4</p>
+<div class="ulist">
+<ul>
+<li>
+<p>groupId: <code>org.apache.maven.surefire</code></p>
+</li>
+<li>
+<p>artifactId: <code>surefire-junit4</code></p>
+</li>
+<li>
+<p>provider implementation: <code>org.apache.maven.surefire.junit4.JUnit4Provider</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>JUnit 47 and above</p>
+<div class="ulist">
+<ul>
+<li>
+<p>groupId: <code>org.apache.maven.surefire</code></p>
+</li>
+<li>
+<p>artifactId: <code>surefire-junit47</code></p>
+</li>
+<li>
+<p>provider implementation: <code>org.apache.maven.surefire.junitcore.JUnitCoreProvider</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>JUnit 5</p>
+<div class="ulist">
+<ul>
+<li>
+<p>groupId: <code>org.junit.platform</code></p>
+</li>
+<li>
+<p>artifactId: <code>junit-platform-surefire-provider</code></p>
+</li>
+<li>
+<p>provider implementation: <code>org.junit.platform.surefire.provider.JUnitPlatformProvider</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>TestNG</p>
+<div class="ulist">
+<ul>
+<li>
+<p>groupId: <code>org.apache.maven.surefire</code></p>
+</li>
+<li>
+<p>artifactId: <code>surefire-testng</code></p>
+</li>
+<li>
+<p>provider implementation: <code>org.apache.maven.surefire.testng.TestNGProvider</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When one of these providers is specified inside of the Surefire&#8217;s dependencies, then Smart Testing is able to automatically detect it and delegate the execution to it.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_custom_surefire_providers"><a class="anchor" href="#_custom_surefire_providers"></a>7.2. Custom Surefire Providers</h3>
+<div class="paragraph">
+<p>If some unknown provider (or some other <code>SurefireProvider</code> implementation) is used then it is necessary to set this provider either in the configuration file or using system properties.
+The format is a pair of groupId and artifactId with a fully qualified name of the class that implements <code>SurefireProvider</code> interface and that should be loaded. For JUnit 5 provider it would look like this (in case of configuration file):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">customProviders</span>:
+    - <span class="string"><span class="content">org.junit.platform:junit-platform-surefire-provider=org.junit.platform.surefire.provider.JUnitPlatformProvider</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If this is specified then Smart Testing will detect the dependency and delegate the test execution to it.
+System property dedicated for this usage is <code>smart.testing.custom.providers</code></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reports"><a class="anchor" href="#_reports"></a>8. Reports</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>7.1. Build Artifacts</h3>
+<h3 id="_build_artifacts"><a class="anchor" href="#_build_artifacts"></a>8.1. Build Artifacts</h3>
 <div class="paragraph">
 <p>To identify which tests were selected to run looking in the logs (or even using some CLI tricks with <code>grep</code>) is not the
 most efficient way to get a quick answer to:</p>
@@ -1976,7 +2099,7 @@ most efficient way to get a quick answer to:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>7.2. Configuration</h3>
+<h3 id="_configuration_2"><a class="anchor" href="#_configuration_2"></a>8.2. Configuration</h3>
 <div class="paragraph">
 <p>By default this feature is disabled. You can enable it by setting property <code>smart.testing.report.enable</code> to <code>true</code>.
 If you use the property, then you get the generated reports in <code>target/smart-testing/reporting</code> for every module separately.</p>
@@ -1988,7 +2111,7 @@ If you use the property, then you get the generated reports in <code>target/smar
 </div>
 </div>
 <div class="sect1">
-<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>8. Jenkins</h2>
+<h2 id="_jenkins"><a class="anchor" href="#_jenkins"></a>9. Jenkins</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>So far you&#8217;ve seen how to use Smart Testing from developer perspective (running on local machine).
@@ -2004,7 +2127,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p>Let&#8217;s see how to configure Smart Testing in Jenkins.</p>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>8.1. Jenkins Freestyle project</h3>
+<h3 id="_jenkins_freestyle_project"><a class="anchor" href="#_jenkins_freestyle_project"></a>9.1. Jenkins Freestyle project</h3>
 <div class="paragraph">
 <p>Freestyle project is the most basic way of creating builds with Jenkins.</p>
 </div>
@@ -2037,7 +2160,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>8.2. Jenkins Pipeline</h3>
+<h3 id="_jenkins_pipeline"><a class="anchor" href="#_jenkins_pipeline"></a>9.2. Jenkins Pipeline</h3>
 <div class="paragraph">
 <p>Jenkins Pipeline is a group of plugins which support implementing and integrating continuous delivery pipelines into Jenkins.</p>
 </div>
@@ -2089,10 +2212,10 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect1">
-<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>9. Reference Card</h2>
+<h2 id="_reference_card"><a class="anchor" href="#_reference_card"></a>10. Reference Card</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>9.1. Installation</h3>
+<h3 id="_installation_2"><a class="anchor" href="#_installation_2"></a>10.1. Installation</h3>
 <div id="extension" class="listingblock">
 <div class="title">${maven.projectBasedir}/.mvn/extensions.xml</div>
 <div class="content">
@@ -2115,7 +2238,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>9.2. Configuration</h3>
+<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>10.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -2206,7 +2329,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>9.3. Strategies</h3>
+<h3 id="_strategies_2"><a class="anchor" href="#_strategies_2"></a>10.3. Strategies</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2305,7 +2428,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>9.4. Getting insights of the execution</h3>
+<h3 id="_getting_insights_of_the_execution"><a class="anchor" href="#_getting_insights_of_the_execution"></a>10.4. Getting insights of the execution</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 20%;">
@@ -2335,7 +2458,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </table>
 </div>
 <div class="sect2">
-<h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>9.5. Configuration File</h3>
+<h3 id="_configuration_file_2"><a class="anchor" href="#_configuration_file_2"></a>10.5. Configuration File</h3>
 <div id="configuration-file" class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering</span></span>
@@ -2364,7 +2487,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect1">
-<h2 id="_developing"><a class="anchor" href="#_developing"></a>10. Developing</h2>
+<h2 id="_developing"><a class="anchor" href="#_developing"></a>11. Developing</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -2379,7 +2502,7 @@ This section will be improved as we continue with the SPI design to let you hook
 </table>
 </div>
 <div class="sect2">
-<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>10.1. Test Bed</h3>
+<h3 id="_test_bed"><a class="anchor" href="#_test_bed"></a>11.1. Test Bed</h3>
 <div class="paragraph">
 <p><strong>Test Bed</strong> brings a convenient way of writing functional tests. Here’s how the sample test looks like:</p>
 </div>
@@ -2440,7 +2563,7 @@ This section will be improved as we continue with the SPI design to let you hook
 <p>or define system property <code>test.bed.repo</code> which will replace the default repository for all the tests which are relying on it.</p>
 </div>
 <div class="sect3">
-<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>10.1.1. Design Idea</h4>
+<h4 id="_design_idea"><a class="anchor" href="#_design_idea"></a>11.1.1. Design Idea</h4>
 <div class="paragraph">
 <p>The main goal of <strong>Test Bed</strong> module is to automate this process and simplify functional testing of our test optimization tool by providing a programmatic way for these activities.</p>
 </div>
@@ -2628,7 +2751,7 @@ In addition, after the build is finished, it returns actual test results so we c
 </div>
 </div>
 <div class="sect3">
-<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>10.1.2. Troubleshooting tests</h4>
+<h4 id="_troubleshooting_tests"><a class="anchor" href="#_troubleshooting_tests"></a>11.1.2. Troubleshooting tests</h4>
 <div class="paragraph">
 <p>You can execute embedded build in Test Bed in the debug mode.
 This gives better analysis of the build execution, as it lets us connect to the build execution to analyze behaviour of our extension in the runtime by debugging both Maven execution as well as Surefire Provider.</p>
@@ -2728,7 +2851,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-11 13:08:25 UTC
+Last updated 2017-12-12 06:15:23 UTC
 </div>
 </div>
 <script>
