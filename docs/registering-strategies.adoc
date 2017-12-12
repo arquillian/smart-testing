@@ -101,6 +101,8 @@ customStrategies:
 
 It is important to notice that the _key_ part must be prefixed with `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING_CUSTOM_STRATEGIES"].`.
 
+If you need to specify any additional coordinate (such as type or classifier), you have to use the whole coordinates format:
+`groupId:artifactId:packaging:classifier:version:scope`
 
 === Alternative Approach
 
