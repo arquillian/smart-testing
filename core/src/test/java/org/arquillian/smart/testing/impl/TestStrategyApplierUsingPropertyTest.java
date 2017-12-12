@@ -17,6 +17,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
+import org.mockito.Mockito;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -129,7 +130,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
     private TestExecutionPlannerLoader prepareLoader(final Set<Class<?>> testsToRun, Set<TestSelection> strategyTests) {
         TestExecutionPlanner testExecutionPlanner = mock(TestExecutionPlanner.class);
-        when(testExecutionPlanner.getTests()).thenReturn(strategyTests);
+        when(testExecutionPlanner.selectTestsFromClasses(Mockito.anyCollection())).thenReturn(strategyTests);
 
         TestExecutionPlannerLoader testExecutionPlannerLoader = mock(TestExecutionPlannerLoader.class);
         when(testExecutionPlannerLoader.getPlannerForStrategy("static")).thenReturn(testExecutionPlanner);
