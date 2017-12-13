@@ -1,9 +1,6 @@
 package org.arquillian.smart.testing.strategies.affected;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.main.A;
@@ -20,11 +17,18 @@ import org.arquillian.smart.testing.strategies.affected.fakeproject.test.MySecon
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.YTest;
 import org.arquillian.smart.testing.strategies.affected.fakeproject.test.ZTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Category(NotThreadSafe.class)
 public class ClassDependenciesGraphTest {
 
     @Test

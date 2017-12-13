@@ -6,25 +6,32 @@ public class TemporaryInternalFiles {
 
     private static final String TEMP_REPORT_DIR = "reports";
     private static final String SMART_TESTING_SCM_CHANGES = "scm-changes";
-    private static final String JUNIT_5_PLATFORM_VERSION = "junit5PlatformVersion";
+    private static final String CUSTOM_PROVIDERS_DIRECTORY = "customProviders";
+
+    private TemporaryInternalFiles() {
+    }
 
     public static String getScmChangesFileName(){
         return SMART_TESTING_SCM_CHANGES;
     }
 
-    public static String getJunit5PlatformVersionFileName(String pluginArtifactId){
-        return pluginArtifactId + "_" + JUNIT_5_PLATFORM_VERSION;
+    public static String getCustomProvidersDirName(String pluginArtifactId) {
+        return pluginArtifactId + "_" + CUSTOM_PROVIDERS_DIRECTORY;
     }
 
-    public String getTestReportDirectoryName(){
+    public static LocalStorageDirectoryAction createCustomProvidersDirAction(File rootDir,
+        String pluginArtifactId) {
+        return new LocalStorage(rootDir)
+            .duringExecution()
+            .temporary()
+            .directory(getCustomProvidersDirName(pluginArtifactId));
+    }
+
+    public static String getTestReportDirName() {
         return TEMP_REPORT_DIR;
     }
 
-    public LocalStorageDirectoryAction createTestReportDirectoryAction(String rootDir){
-        return createTestReportDirectoryAction(new File(rootDir));
-    }
-
-    public LocalStorageDirectoryAction createTestReportDirectoryAction(File rootDir){
+    public static LocalStorageDirectoryAction createTestReportDirAction(File rootDir) {
         return new LocalStorage(rootDir)
             .duringExecution()
             .temporary()

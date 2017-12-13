@@ -1,23 +1,17 @@
 package org.arquillian.smart.testing.mvn.ext;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 import org.arquillian.smart.testing.mvn.ext.checker.SkipModuleChecker;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;
-
-import static org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles.getJunit5PlatformVersionFileName;
 
 class MavenProjectConfigurator {
 
@@ -45,23 +39,10 @@ class MavenProjectConfigurator {
 
             dependencyResolver.addRequiredDependencies(model);
 
-            final LocalStorage localStorage = new LocalStorage(model.getProjectDirectory());
             effectiveTestRunnerPluginConfigurations
                 .forEach(plugin -> {
+                    dependencyResolver.removeAndRegisterFirstCustomProvider(model, plugin);
                     dependencyResolver.addAsPluginDependency(plugin);
-
-                    final Optional<Dependency> dependency = dependencyResolver.findJUnit5PlatformDependency(plugin);
-                    dependency.ifPresent(d -> {
-                        try {
-                            localStorage.duringExecution()
-                                .temporary()
-                                .file(getJunit5PlatformVersionFileName(plugin.getArtifactId()))
-                                .create(d.getVersion().getBytes());
-                            plugin.removeDependency(dependency.get());
-                        } catch (IOException e) {
-                            throw new IllegalStateException(e);
-                        }
-                    });
                 });
             return true;
         } else {

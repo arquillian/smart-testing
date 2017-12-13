@@ -58,7 +58,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
+        File reportsDir = TemporaryInternalFiles.createTestReportDirAction(projectDir).getFile();
         softly.assertThat(reportsDir).exists();
 
         Arrays.stream(reportsDir.listFiles()).forEach(file -> {
@@ -75,7 +75,7 @@ public class SurefireReportStorageTest {
         MavenProject mavenProject = mock(MavenProject.class);
         when(mavenProject.getModel()).thenReturn(project);
         when(mavenSession.getAllProjects()).thenReturn(singletonList(mavenProject));
-        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
+        File reportsDir = TemporaryInternalFiles.createTestReportDirAction(projectDir).getFile();
 
         // when
         new LocalStorage(projectDir).duringExecution().purge(null);
@@ -93,7 +93,7 @@ public class SurefireReportStorageTest {
         copySurefireReports(project);
 
         // then
-        File reportsDir = new TemporaryInternalFiles().createTestReportDirectoryAction(projectDir).getFile();
+        File reportsDir = TemporaryInternalFiles.createTestReportDirAction(projectDir).getFile();
         softly.assertThat(reportsDir).doesNotExist();
     }
 

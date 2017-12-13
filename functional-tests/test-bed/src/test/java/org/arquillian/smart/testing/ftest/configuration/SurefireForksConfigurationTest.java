@@ -69,6 +69,8 @@ public class SurefireForksConfigurationTest {
             .inMode(SELECTING)
             .enable();
 
+        project.applyAsCommits("Added wagon-http-lightweight 2.4");
+
         Collection<TestResult> expectedTestResults = project
             .applyAsLocalChanges("Inlined variable in a method", "Adds new unit test", "fixes tests");
 

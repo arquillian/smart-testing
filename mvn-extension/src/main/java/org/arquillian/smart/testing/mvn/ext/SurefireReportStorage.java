@@ -29,7 +29,7 @@ class SurefireReportStorage {
 
     private static void copyReportsDirectory(Model model, File surefireReportsDir) {
         LocalStorageDirectoryAction reportsDirectory =
-            new TemporaryInternalFiles().createTestReportDirectoryAction(model.getProjectDirectory());
+            TemporaryInternalFiles.createTestReportDirAction(model.getProjectDirectory());
         logger.debug("Copying surefire report directory from [%s] to [%s]", surefireReportsDir,
             reportsDirectory.getPath());
 

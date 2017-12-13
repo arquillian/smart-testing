@@ -7,7 +7,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.Collection;
 import net.jcip.annotations.NotThreadSafe;
-import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import shaded.org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;

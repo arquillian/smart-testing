@@ -1,17 +1,20 @@
 package org.arquillian.smart.testing.mvn.ext.dependencies;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorageDirectoryAction;
+import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
-import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 
 public class DependencyResolver {
 
@@ -25,13 +28,11 @@ public class DependencyResolver {
 
     public void addRequiredDependencies(Model model) {
         addStrategies(model);
-        addSurefireApiDependency(model);
     }
 
     private void addStrategies(Model model) {
 
         final StrategyDependencyResolver strategyDependencyResolver = new StrategyDependencyResolver(configuration.getCustomStrategies());
-        model.addDependency(smartTestingProviderDependency());
         final Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
         final List<String> errorMessages = new ArrayList<>();
 
@@ -53,26 +54,28 @@ public class DependencyResolver {
         plugin.addDependency(smartTestingProviderDependency());
     }
 
-    public Optional<Dependency> findJUnit5PlatformDependency(Plugin plugin) {
-       return plugin.getDependencies()
-            .stream()
-            .filter(JUnit5SurefireProviderDependency::matches)
-            .findFirst();
+    public void removeAndRegisterFirstCustomProvider(Model model, Plugin plugin) {
+        final List<SurefireProviderDependency> providerDeps = findSurefireProviderDependencies(plugin);
+        if (providerDeps.isEmpty()) {
+            return;
+        }
+        final LocalStorageDirectoryAction customProvidersDir =
+            TemporaryInternalFiles.createCustomProvidersDirAction(model.getProjectDirectory(), plugin.getArtifactId());
+        SurefireProviderDependency providerDep = providerDeps.get(0);
+        try {
+            customProvidersDir.createWithFile(providerDep.getGAV(), providerDep.getProviderClassName().getBytes());
+            plugin.removeDependency(providerDep.getDependency());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
-
-    private void addSurefireApiDependency(Model model) {
-        boolean alreadyContains = model.getDependencies()
+    private List<SurefireProviderDependency> findSurefireProviderDependencies(Plugin plugin) {
+        SurefireProviderResolver surefireProviderResolver = new SurefireProviderResolver(configuration);
+        return plugin.getDependencies()
             .stream()
-            .anyMatch(SurefireApiDependency::matches);
-        if (!alreadyContains) {
-            final Optional<Plugin> surefirePlugin = model.getBuild().getPlugins().stream()
-                .filter(plugin -> ApplicablePlugins.SUREFIRE.hasSameArtifactId(plugin.getArtifactId()))
-                .findFirst();
-
-            surefirePlugin.ifPresent(plugin -> model.addDependency(
-                new SurefireApiDependency(Version.from(plugin.getVersion().trim()).toString())));
-        }
+            .map(surefireProviderResolver::createSurefireProviderDepIfMatches)
+            .collect(Collectors.toList());
     }
 
     private Dependency smartTestingProviderDependency() {
@@ -81,36 +84,7 @@ public class DependencyResolver {
         smartTestingSurefireProvider.setArtifactId("surefire-provider");
         smartTestingSurefireProvider.setVersion(ExtensionVersion.version().toString());
         smartTestingSurefireProvider.setScope("runtime");
+        smartTestingSurefireProvider.setClassifier("shaded");
         return smartTestingSurefireProvider;
-    }
-
-    static class JUnit5SurefireProviderDependency extends Dependency {
-        private static final String GROUP_ID = "org.junit.platform";
-        private static final String ARTIFACT_ID = "junit-platform-surefire-provider";
-
-        JUnit5SurefireProviderDependency() {
-            setGroupId(GROUP_ID);
-            setArtifactId(ARTIFACT_ID);
-        }
-
-        public static boolean matches(Dependency dependency) {
-            return GROUP_ID.equals(dependency.getGroupId()) && ARTIFACT_ID.equals(dependency.getArtifactId());
-        }
-    }
-
-    static class SurefireApiDependency extends Dependency {
-        private static final String GROUP_ID = "org.apache.maven.surefire";
-        private static final String ARTIFACT_ID = "surefire-api";
-
-        SurefireApiDependency(String version) {
-            setGroupId(GROUP_ID);
-            setArtifactId(ARTIFACT_ID);
-            setVersion(version);
-            setScope("runtime");
-        }
-
-        public static boolean matches(Dependency dependency) {
-            return GROUP_ID.equals(dependency.getGroupId()) && ARTIFACT_ID.equals(dependency.getArtifactId());
-        }
     }
 }

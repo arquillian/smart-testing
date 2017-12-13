@@ -68,6 +68,8 @@ public class ConfigurationTest {
         expectedConfiguration.setCustomStrategies(
             new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
                 "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});
+        expectedConfiguration.setCustomProviders(
+            new String[] {"org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl"});
 
         // when
         final Configuration actualConfiguration =

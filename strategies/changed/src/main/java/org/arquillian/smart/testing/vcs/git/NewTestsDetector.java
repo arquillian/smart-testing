@@ -47,11 +47,20 @@ public class NewTestsDetector implements TestExecutionPlanner {
     }
 
     @Override
+    public Collection<TestSelection> selectTestsFromNames(Iterable<String> testsToRun) {
+        return getTests();
+    }
+
+    @Override
+    public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) {
+        return getTests();
+    }
+
+    @Override
     public String getName() {
         return NEW;
     }
 
-    @Override
     public final Collection<TestSelection> getTests() {
         final Collection<Change> changes = changeStorage.read(projectDir)
             .orElseGet(() -> {
