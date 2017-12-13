@@ -536,7 +536,10 @@ table.CodeRay td.code>pre{padding:0}
 </li>
 <li><a href="#_configuration_file">4. Configuration File</a>
 <ul class="sectlevel2">
-<li><a href="#_configuration_file_reference">4.1. Configuration File Reference</a></li>
+<li><a href="#_how_configuration_is_applying_to_each_module">4.1. How configuration is applying to each module?</a></li>
+<li><a href="#_how_configuration_parameters_are_inherited">4.2. How Configuration parameters are inherited?</a></li>
+<li><a href="#_configuration_file_per_maven_module">4.3. Configuration File per Maven Module:</a></li>
+<li><a href="#_configuration_file_reference">4.4. Configuration File Reference</a></li>
 </ul>
 </li>
 <li><a href="#_usage">5. Usage</a>
@@ -1126,31 +1129,32 @@ All reports from previous local build are automatically copied by the maven exte
 </div>
 <div id="config-file" class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">mode</span>: <span class="string"><span class="content">ordering </span></span><i class="conum" data-value="1"></i><b>(1)</b>
-<span class="key">strategies</span>: <span class="string"><span class="content">new, changed, affected </span></span><i class="conum" data-value="2"></i><b>(2)</b>
-<span class="key">applyTo</span>: <span class="string"><span class="content">surefire </span></span><i class="conum" data-value="3"></i><b>(3)</b>
-<span class="key">debug</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="4"></i><b>(4)</b>
-<span class="key">disable</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="5"></i><b>(5)</b>
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">inherit</span>: <span class="string"><span class="content">../smart-testing.yml </span></span><i class="conum" data-value="1"></i><b>(1)</b>
+<span class="key">mode</span>: <span class="string"><span class="content">ordering </span></span><i class="conum" data-value="2"></i><b>(2)</b>
+<span class="key">strategies</span>: <span class="string"><span class="content">new, changed, affected </span></span><i class="conum" data-value="3"></i><b>(3)</b>
+<span class="key">applyTo</span>: <span class="string"><span class="content">surefire </span></span><i class="conum" data-value="4"></i><b>(4)</b>
+<span class="key">debug</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="5"></i><b>(5)</b>
+<span class="key">disable</span>: <span class="string"><span class="content">false </span></span><i class="conum" data-value="6"></i><b>(6)</b>
 <span class="key">report</span>:
-    <span class="key">enable</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="6"></i><b>(6)</b>
+    <span class="key">enable</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="7"></i><b>(7)</b>
 <span class="key">scm</span>:
     <span class="key">range</span>:
-      <span class="key">head</span>: <span class="string"><span class="content">HEAD </span></span><i class="conum" data-value="7"></i><b>(7)</b>
-      <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span><i class="conum" data-value="8"></i><b>(8)</b>
-<span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="9"></i><b>(9)</b>
-<span class="key">customStrategies</span>:  <i class="conum" data-value="10"></i><b>(10)</b>
+      <span class="key">head</span>: <span class="string"><span class="content">HEAD </span></span><i class="conum" data-value="8"></i><b>(8)</b>
+      <span class="key">tail</span>: <span class="string"><span class="content">HEAD~2 </span></span><i class="conum" data-value="9"></i><b>(9)</b>
+<span class="key">autocorrect</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="10"></i><b>(10)</b>
+<span class="key">customStrategies</span>:  <i class="conum" data-value="11"></i><b>(11)</b>
     - <span class="string"><span class="content">smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0</span></span>
     - <span class="string"><span class="content">smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0</span></span>
-<span class="key">strategiesConfiguration</span>: <i class="conum" data-value="11"></i><b>(11)</b>
+<span class="key">strategiesConfiguration</span>: <i class="conum" data-value="12"></i><b>(12)</b>
     <span class="key">affected</span>:
-      <span class="key">transitivity</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="12"></i><b>(12)</b>
-      <span class="key">exclusions</span>: <i class="conum" data-value="13"></i><b>(13)</b>
+      <span class="key">transitivity</span>: <span class="string"><span class="content">true </span></span><i class="conum" data-value="13"></i><b>(13)</b>
+      <span class="key">exclusions</span>: <i class="conum" data-value="14"></i><b>(14)</b>
          - <span class="string"><span class="content">org.package.*</span></span>
          - <span class="string"><span class="content">org.arquillian.package.*</span></span>
-      <span class="key">inclusions</span>: <i class="conum" data-value="14"></i><b>(14)</b>
+      <span class="key">inclusions</span>: <i class="conum" data-value="15"></i><b>(15)</b>
          - <span class="string"><span class="content">org.package.exclude.*</span></span>
          - <span class="string"><span class="content">org.arquillian.package.exclude.*</span></span>
-<span class="key">customProviders</span>: <i class="conum" data-value="15"></i><b>(15)</b>
+<span class="key">customProviders</span>: <i class="conum" data-value="16"></i><b>(16)</b>
     - <span class="string"><span class="content">org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl</span></span></code></pre>
 </div>
 </div>
@@ -1165,62 +1169,66 @@ All reports from previous local build are automatically copied by the maven exte
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This defines mode to be used by Smart Testing.</td>
+<td>Config file&#8217;s absolute or relative path from where Smart Testing overwrites parameters not defined in current config file.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>This defines strategies to be used while finding important tests.</td>
+<td>This defines mode to be used by Smart Testing.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>This defines plugin to be used for Smart Testing.</td>
+<td>This defines strategies to be used while finding important tests.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This enables debug logs for Smart Testing.</td>
+<td>This defines plugin to be used for Smart Testing.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>This disables Smart Testing if set to true.</td>
+<td>This enables debug logs for Smart Testing.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>This enables Smart Testing report if set to true.</td>
+<td>This disables Smart Testing if set to true.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>This sets first commit sha or <code>HEAD</code> notation for inspecting changes.</td>
+<td>This enables Smart Testing report if set to true.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>This sets last commit sha or <code>HEAD</code> notation for inspecting changes.</td>
+<td>This sets first commit sha or <code>HEAD</code> notation for inspecting changes.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>This defines if smart testing should auto correct misspelled strategies.</td>
+<td>This sets last commit sha or <code>HEAD</code> notation for inspecting changes.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>This defines the pair key/value of custom strategies as list.</td>
+<td>This defines if smart testing should auto correct misspelled strategies.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
-<td>This defines list of strategy related configurations that you want to apply while applying strategy.</td>
+<td>This defines the pair key/value of custom strategies as list.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="12"></i><b>12</b></td>
-<td>This enables transitivity.</td>
+<td>This defines list of strategy related configurations that you want to apply while applying strategy.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="13"></i><b>13</b></td>
-<td>This defines list of packages to be excluded while applying transitivity.</td>
+<td>This enables transitivity.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="14"></i><b>14</b></td>
-<td>This defines list of packages to be included while applying transitivity.</td>
+<td>This defines list of packages to be excluded while applying transitivity.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="15"></i><b>15</b></td>
+<td>This defines list of packages to be included while applying transitivity.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
 <td>GroupId and artifactId with fully qualified name of the implementation of SurefireProvider the execution should be delegated to.</td>
 </tr>
 </table>
@@ -1234,7 +1242,127 @@ You can look at <a href="#_reference_card">references</a> for default value of p
 You can look <a href="#_reference_card">references</a> for all supported system properties.</p>
 </div>
 <div class="sect2">
-<h3 id="_configuration_file_reference"><a class="anchor" href="#_configuration_file_reference"></a>4.1. Configuration File Reference</h3>
+<h3 id="_how_configuration_is_applying_to_each_module"><a class="anchor" href="#_how_configuration_is_applying_to_each_module"></a>4.1. How configuration is applying to each module?</h3>
+<div class="paragraph">
+<p>Smart Testing is looking in each module&#8217;s root dir for configuration file. If it didn&#8217;t find config file there, it&#8217;ll look recursively for the first config file in
+it&#8217;s parent dir.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_how_configuration_parameters_are_inherited"><a class="anchor" href="#_how_configuration_parameters_are_inherited"></a>4.2. How Configuration parameters are inherited?</h3>
+<div class="paragraph">
+<p>If config file has <code>inherit</code> defined with absolute or relative path of config file, then Smart Testing will
+lookup for all undefined properties in config file defined using inherit. However it won&#8217;t lookup for <code>disable</code> parameter.</p>
+</div>
+<div class="paragraph">
+<p>If config file doesn&#8217;t contain <code>inherit</code> parameter. Then Smart Testing won&#8217;t inherit any configuration properties.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_file_per_maven_module"><a class="anchor" href="#_configuration_file_per_maven_module"></a>4.3. Configuration File per Maven Module:</h3>
+<div class="paragraph">
+<p>Let&#8217;s take a look into following example:</p>
+</div>
+<div class="paragraph">
+<p>e.g.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="xml">parent
+ - config
+   - smart-testing.yml      <i class="conum" data-value="1"></i><b>(1)</b>
+   - api
+   - impl-base
+   - spi
+     - smart-testing.yml     <i class="conum" data-value="2"></i><b>(2)</b>
+ - container
+    - api
+    - impl-base
+ - smart-testing.yml         <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configuration files used in above example:</p>
+</div>
+<div class="listingblock">
+<div class="title">parent/config/smart-testing.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">inherit</span>: <span class="string"><span class="content">../smart-testing.yml</span></span>
+<span class="key">strategies</span>: <span class="string"><span class="content">affected</span></span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">parent/config/spi/smart-testing.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">strategies</span>: <span class="string"><span class="content">affected,new</span></span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">parent/smart-testing.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">strategies</span>: <span class="string"><span class="content">new</span></span>
+<span class="key">scm</span>:
+  <span class="key">lastChanges</span>: <span class="string"><span class="content">1</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Configuration file selection for the above example will be as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>config/api - parent/config/smart-testing.yml</p>
+</li>
+<li>
+<p>config/impl-base - parent/config/smart-testing.yml</p>
+</li>
+<li>
+<p>config/spi - parent/config/spi/smart-testing.yml</p>
+</li>
+<li>
+<p>container/api - parent/smart-testing.yml</p>
+</li>
+<li>
+<p>container/impl-base - parent/smart-testing.yml</p>
+</li>
+</ul>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>inside this file we have <code>inherit: ../smart-testing.yml</code>, so it will take all undefined properties in this file from the one in <code>parent/smart-testing.yml</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>inside this file we have only <code>strategies: affected,new</code>, so it won&#8217;t inherit from any other configuration file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>inside this file we have <code>strategies: new</code> &amp; <code>scm: lastChanges: 1</code> defined.(You can set it using respective system property also).</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+In case of mvn extension, whenever you are using configuration file per maven module, make sure to define strategies in project&#8217;s parent configuration file
+or using system property. If you haven&#8217;t defined strategy in parent config, Smart testing will load parent configuration having no strategy defined which will
+disable ST by saying <code>Smart Testing is disabled. Reason: strategy not defined</code>.
+If you are running tests against range of commits locally, you need to also define scm properties in project&#8217;s parent config file or using system
+properties. If you haven&#8217;t defined it in parent config, Smart Testing will use default scm configuration with head as <code>HEAD</code> &amp; tail as <code>HEAD~0</code>
+due to which Smart Testing won&#8217;t find required changes in range of commits.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_file_reference"><a class="anchor" href="#_configuration_file_reference"></a>4.4. Configuration File Reference</h3>
 <div class="paragraph">
 <p>The <code>smart-testing.yml</code> file is a <code>YAML</code> file defining required configuration to configure Smart Testing.</p>
 </div>
@@ -1262,6 +1390,14 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>inherit</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>This is used to define absolute or relative path to parent configuration file</p>
+</div></div></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>strategies</p>
@@ -1354,7 +1490,7 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </tbody>
 </table>
 <div class="sect3">
-<h4 id="_report_options"><a class="anchor" href="#_report_options"></a>4.1.1. Report Options</h4>
+<h4 id="_report_options"><a class="anchor" href="#_report_options"></a>4.4.1. Report Options</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 25%;">
@@ -1379,7 +1515,7 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_scm_options"><a class="anchor" href="#_scm_options"></a>4.1.2. Scm Options</h4>
+<h4 id="_scm_options"><a class="anchor" href="#_scm_options"></a>4.4.2. Scm Options</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 25%;">
@@ -1412,7 +1548,7 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_range_options"><a class="anchor" href="#_range_options"></a>4.1.3. Range Options</h4>
+<h4 id="_range_options"><a class="anchor" href="#_range_options"></a>4.4.3. Range Options</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 25%;">
@@ -1445,7 +1581,7 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </table>
 </div>
 <div class="sect3">
-<h4 id="_affected_configuration_options"><a class="anchor" href="#_affected_configuration_options"></a>4.1.4. Affected Configuration Options</h4>
+<h4 id="_affected_configuration_options"><a class="anchor" href="#_affected_configuration_options"></a>4.4.4. Affected Configuration Options</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 25%;">
@@ -2878,7 +3014,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-12 09:25:23 UTC
+Last updated 2017-12-13 08:01:06 UTC
 </div>
 </div>
 <script>
