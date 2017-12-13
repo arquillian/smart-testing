@@ -23,24 +23,20 @@ class CategoriesParser {
     }
 
     boolean hasCorrectCategories(Class<?> clazz) {
-        List<String> presentCategories = getPresentCategories(clazz);
-
-        if (!presentCategories.isEmpty()) {
-            if (specifiedCategories.size() > 0) {
-
-                List<String> intersection = presentCategories.stream()
-                    .filter(category -> isSpecified(category, specifiedCategories))
-                    .collect(Collectors.toList());
-
-                if (strategyConfig.isMatchAll()) {
-                    return intersection.size() == specifiedCategories.size();
-                } else {
-                    return !intersection.isEmpty();
-                }
-            }
-            return true;
+        final List<String> presentCategories = getPresentCategories(clazz);
+        if (presentCategories.isEmpty()) {
+            return false;
         }
-        return false;
+
+        final List<String> intersection = presentCategories.stream()
+            .filter(category -> isSpecified(category, specifiedCategories))
+            .collect(Collectors.toList());
+
+        if (strategyConfig.isMatchAll() || specifiedCategories.isEmpty()) {
+            return intersection.size() == specifiedCategories.size();
+        } else {
+            return !intersection.isEmpty();
+        }
     }
 
     private List<String> getPresentCategories(Class<?> clazz) {
