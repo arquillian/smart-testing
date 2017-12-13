@@ -65,8 +65,7 @@ class CategoriesParser {
     private Stream<String> retrieveCategoriesFromAnnotation(Annotation categoryAnnotation) {
         try {
             Method valueMethod = categoryAnnotation.getClass().getMethod("value");
-            return Arrays.asList((Class[]) valueMethod.invoke(categoryAnnotation))
-                .stream()
+            return Arrays.stream((Class[]) valueMethod.invoke(categoryAnnotation))
                 .map(Class::getName)
                 .collect(Collectors.toList())
                 .stream();
