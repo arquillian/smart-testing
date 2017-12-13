@@ -1,6 +1,6 @@
 == Registering Custom Strategies
 
-By default *Smart Testing* comes with a set of strategies such as `new`, `changed`, `affected` or `failed`, but you can implement your own strategies and registering them.
+By default *Smart Testing* comes with a set of strategies such as `new`, `changed`, `affected`, `failed` or `categorized`, but you can implement your own strategies and registering them.
 
 To do it you just need to follow next four steps:
 
