@@ -13,27 +13,99 @@ include::../core/src/test/resources/configuration/smart-testing.yml[]
 ----
 copyToClipboard:config-file[]
 
-<1> This defines mode to be used by Smart Testing.
-<2> This defines strategies to be used while finding important tests.
-<3> This defines plugin to be used for Smart Testing.
-<4> This enables debug logs for Smart Testing.
-<5> This disables Smart Testing if set to true.
-<6> This enables Smart Testing report if set to true.
-<7> This sets first commit sha or `HEAD` notation for inspecting changes.
-<8> This sets last commit sha or `HEAD` notation for inspecting changes.
-<9> This defines if smart testing should auto correct misspelled strategies.
-<10> This defines the pair key/value of custom strategies as list.
-<11> This defines list of strategy related configurations that you want to apply while applying strategy.
-<12> This enables transitivity.
-<13> This defines list of packages to be excluded while applying transitivity.
-<14> This defines list of packages to be included while applying transitivity.
-<15> GroupId and artifactId with fully qualified name of the implementation of SurefireProvider the execution should be delegated to.
+<1> Config file's absolute or relative path from where Smart Testing overwrites parameters not defined in current config file.
+<2> This defines mode to be used by Smart Testing.
+<3> This defines strategies to be used while finding important tests.
+<4> This defines plugin to be used for Smart Testing.
+<5> This enables debug logs for Smart Testing.
+<6> This disables Smart Testing if set to true.
+<7> This enables Smart Testing report if set to true.
+<8> This sets first commit sha or `HEAD` notation for inspecting changes.
+<9> This sets last commit sha or `HEAD` notation for inspecting changes.
+<10> This defines if smart testing should auto correct misspelled strategies.
+<11> This defines the pair key/value of custom strategies as list.
+<12> This defines list of strategy related configurations that you want to apply while applying strategy.
+<13> This enables transitivity.
+<14> This defines list of packages to be excluded while applying transitivity.
+<15> This defines list of packages to be included while applying transitivity.
+<16> GroupId and artifactId with fully qualified name of the implementation of SurefireProvider the execution should be delegated to.
 
 All parameters in configuration file are optional. If you haven't used any parameter in configuration file, Smart testing will use default value for that parameter.
 You can look at <<_reference_card, references>> for default value of parameter.
 
 However you can overwrite all configuration options using system properties supported by Smart Testing.
 You can look <<_reference_card, references>> for all supported system properties.
+
+=== How configuration is applying to each module?
+Smart Testing is looking in each module's root dir for configuration file. If it didn't find config file there, it'll look recursively for the first config file in
+it's parent dir.
+
+=== How Configuration parameters are inherited?
+If config file has `inherit` defined with absolute or relative path of config file, then Smart Testing will
+lookup for all undefined properties in config file defined using inherit. However it won't lookup for `disable` parameter.
+
+If config file doesn't contain `inherit` parameter. Then Smart Testing won't inherit any configuration properties.
+
+=== Configuration File per Maven Module:
+Let's take a look into following example:
+
+e.g.
+[source,xml]
+----
+parent
+ - config
+   - smart-testing.yml      // <1>
+   - api
+   - impl-base
+   - spi
+     - smart-testing.yml     // <2>
+ - container
+    - api
+    - impl-base
+ - smart-testing.yml         // <3>
+----
+
+Configuration files used in above example:
+
+.parent/config/smart-testing.yml
+[source,yml]
+----
+inherit: ../smart-testing.yml
+strategies: affected
+----
+
+.parent/config/spi/smart-testing.yml
+[source,yml]
+----
+strategies: affected,new
+----
+
+.parent/smart-testing.yml
+[source,yml]
+----
+strategies: new
+scm:
+  lastChanges: 1
+----
+
+Configuration file selection for the above example will be as follows:
+
+* config/api - parent/config/smart-testing.yml
+* config/impl-base - parent/config/smart-testing.yml
+* config/spi - parent/config/spi/smart-testing.yml
+* container/api - parent/smart-testing.yml
+* container/impl-base - parent/smart-testing.yml
+
+<1> inside this file we have `inherit: ../smart-testing.yml`, so it will take all undefined properties in this file from the one in `parent/smart-testing.yml`.
+<2> inside this file we have only `strategies: affected,new`, so it won't inherit from any other configuration file.
+<3> inside this file we have `strategies: new` & `scm: lastChanges: 1` defined.(You can set it using respective system property also).
+
+IMPORTANT: In case of mvn extension, whenever you are using configuration file per maven module, make sure to define strategies in project's parent configuration file
+or using system property. If you haven't defined strategy in parent config, Smart testing will load parent configuration having no strategy defined which will
+disable ST by saying `Smart Testing is disabled. Reason: strategy not defined`.
+If you are running tests against range of commits locally, you need to also define scm properties in project's parent config file or using system
+properties. If you haven't defined it in parent config, Smart Testing will use default scm configuration with head as `HEAD` & tail as `HEAD~0`
+due to which Smart Testing won't find required changes in range of commits.
 
 === Configuration File Reference
 The `const:core/src/main/java/org/arquillian/smart/testing/configuration/ConfigurationLoader.java[name="SMART_TESTING_YML"]` file is a `YAML` file defining required configuration to configure Smart Testing.
@@ -43,6 +115,9 @@ NOTE: You can use either a `.yml` or `.yaml` extension for this file.
 [cols="2,6", options="header"]
 |===
 |Field | Description
+
+a| inherit
+a| This is used to define absolute or relative path to parent configuration file
 
 a| strategies
 a| This is used to define required strategies to find important tests. Look at <<_strategies, strategies>> for all supported options.
@@ -122,5 +197,3 @@ a| Sets list of packages to be excluded while applying transitivity.
 a| inclusions
 a| Sets list of packages to be included while applying transitivity.
 |===
-
-

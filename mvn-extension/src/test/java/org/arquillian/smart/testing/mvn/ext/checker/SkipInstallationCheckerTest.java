@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.checker;
 
 import java.util.Arrays;
 import java.util.List;
@@ -6,6 +6,7 @@ import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
+import org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker;
 import org.assertj.core.api.JUnitSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,10 +14,10 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.NO_GOAL_REASON;
-import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.NO_TEST_GOAL_REASON;
-import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.SPECIFIC_CLASSES_REASON;
-import static org.arquillian.smart.testing.mvn.ext.SkipInstallationChecker.TEST_SKIPPED_REASON;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker.NO_GOAL_REASON;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker.NO_TEST_GOAL_REASON;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker.SPECIFIC_CLASSES_REASON;
+import static org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker.TEST_SKIPPED_REASON;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Category(NotThreadSafe.class)

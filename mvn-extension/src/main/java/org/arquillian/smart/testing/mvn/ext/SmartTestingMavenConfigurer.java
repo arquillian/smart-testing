@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.hub.storage.ChangeStorage;
@@ -17,6 +19,7 @@ import org.arquillian.smart.testing.hub.storage.local.LocalChangeStorage;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.mvn.ext.checker.SkipInstallationChecker;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.logger.MavenExtensionLoggerFactory;
 import org.arquillian.smart.testing.scm.Change;
@@ -26,7 +29,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 
 import static java.util.stream.StreamSupport.stream;
-import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_DISABLE;
 
 @Component(role = AbstractMavenLifecycleParticipant.class,
     description = "Entry point to install and manage Smart-Testing extension. Takes care of adding needed dependencies and "
@@ -58,14 +60,10 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         logger.debug("Applied user properties: %s", session.getUserProperties());
 
         File projectDirectory = session.getTopLevelProject().getModel().getProjectDirectory();
-        if (configuration.areStrategiesDefined()) {
-            logger.info("Enabling extension.");
-            configureExtension(session, configuration);
-            calculateChanges(projectDirectory, configuration);
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
-        } else {
-            logStrategiesNotDefined();
-        }
+        logger.info("Enabling extension.");
+        configureExtension(session, configuration);
+        calculateChanges(projectDirectory, configuration);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> purgeLocalStorageAndExportPom(session)));
     }
 
     private void loadConfigAndCheckIfInstallationShouldBeSkipped(MavenSession session) {
@@ -80,11 +78,9 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
         configuration = ConfigurationLoader.load(executionRootDirectory, this::isProjectRootDirectory);
         Log.setLoggerFactory(new MavenExtensionLoggerFactory(mavenLogger, configuration));
         logger = Log.getLogger();
-
-        if (configuration.isDisable()) {
+        if (skipInstallationChecker.shouldSkipForConfiguration(configuration)) {
             skipExtensionInstallation = true;
-            logExtensionDisableReason(logger, "System Property " + SMART_TESTING_DISABLE + " is set.");
-            return;
+            logExtensionDisableReason(logger, skipInstallationChecker.getReason());
         }
     }
 
@@ -133,16 +129,39 @@ class SmartTestingMavenConfigurer extends AbstractMavenLifecycleParticipant {
     }
 
     private void configureExtension(MavenSession session, Configuration configuration) {
-        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
-        session.getAllProjects().forEach(mavenProject -> {
-            boolean wasConfigured = mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
-            if (wasConfigured) {
-                configuration.dump(mavenProject.getBasedir());
-                if (isFailedStrategyUsed()) {
-                    SurefireReportStorage.copySurefireReports(mavenProject.getModel());
-                }
+        final Consumer<MavenProject> configureSmartTestingExtensionAction;
+        final ConfigurationChecker configurationChecker =
+            new ConfigurationChecker(session.getExecutionRootDirectory());
+        if (configurationChecker.hasModuleSpecificConfigurations()) {
+            configureSmartTestingExtensionAction = applyModuleSpecificConfiguration();
+        } else {
+            configureSmartTestingExtensionAction = mavenProject -> configureMavenProject(mavenProject, configuration);
+        }
+        session.getAllProjects().forEach(configureSmartTestingExtensionAction);
+    }
+
+    private Consumer<MavenProject> applyModuleSpecificConfiguration() {
+        return mavenProject -> {
+            Configuration mavenProjectConfiguration =
+                ConfigurationLoader.load(mavenProject.getBasedir(), this::isProjectRootDirectory);
+            final SkipInstallationChecker skipInstallationChecker = new SkipInstallationChecker(mavenProject);
+            if (skipInstallationChecker.shouldSkipForConfiguration(mavenProjectConfiguration)) {
+                logger.info(skipInstallationChecker.getReason());
+            } else {
+                configureMavenProject(mavenProject, mavenProjectConfiguration);
             }
-        });
+        };
+    }
+
+    private void configureMavenProject(MavenProject mavenProject, Configuration configuration) {
+        final MavenProjectConfigurator mavenProjectConfigurator = new MavenProjectConfigurator(configuration);
+        boolean wasConfigured = mavenProjectConfigurator.configureTestRunner(mavenProject.getModel());
+        if (wasConfigured) {
+            configuration.dump(mavenProject.getBasedir());
+            if (isFailedStrategyUsed()) {
+                SurefireReportStorage.copySurefireReports(mavenProject.getModel());
+            }
+        }
     }
 
     private boolean isFailedStrategyUsed() {

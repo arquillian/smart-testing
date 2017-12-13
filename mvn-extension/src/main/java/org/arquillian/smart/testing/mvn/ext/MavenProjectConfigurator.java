@@ -8,6 +8,7 @@ import org.apache.maven.model.Plugin;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
+import org.arquillian.smart.testing.mvn.ext.checker.SkipModuleChecker;
 import org.arquillian.smart.testing.mvn.ext.dependencies.DependencyResolver;
 import org.arquillian.smart.testing.mvn.ext.dependencies.ExtensionVersion;
 import org.arquillian.smart.testing.mvn.ext.dependencies.Version;

@@ -50,7 +50,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing-with-lastChanges.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -61,7 +61,7 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_for_scmLastChanges_from_config_file() {
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing-with-lastChanges.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing-with-lastChanges.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -72,7 +72,7 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_for_rangeHead_and_rangeTail_from_config_file() {
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -87,7 +87,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
 
         // then
         final Range range = actualConfiguration.getScm().getRange();
@@ -143,7 +143,7 @@ public class ConfigurationUsingPropertyTest {
 
         // when
         final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsPath("configuration/smart-testing.yml"));
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);

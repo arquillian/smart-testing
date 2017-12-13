@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
@@ -37,6 +38,8 @@ public class Configuration implements ConfigurationSection {
     public static final String SMART_TESTING_DISABLE = "smart.testing.disable";
     public static final String SMART_TESTING_DEBUG = "smart.testing.debug";
     public static final String SMART_TESTING_AUTOCORRECT = "smart.testing.autocorrect";
+
+    static final String INHERIT = "inherit";
 
     private String[] strategies = new String[0];
     private String[] customStrategies = new String[0];
@@ -166,25 +169,25 @@ public class Configuration implements ConfigurationSection {
     }
 
     private List<StrategyConfiguration> getStrategiesConfigurations(String... strategies) {
-        List<StrategyConfiguration> convertedList = new ArrayList<>();
-
-        StreamSupport.stream(new JavaSPILoader().all(TestExecutionPlannerFactory.class).spliterator(), false)
+        return StreamSupport.stream(new JavaSPILoader().all(TestExecutionPlannerFactory.class).spliterator(), false)
             .filter(
                 testExecutionPlannerFactory -> Arrays.asList(strategies).contains(testExecutionPlannerFactory.alias()))
             .map(TestExecutionPlannerFactory::strategyConfiguration)
             .filter(Objects::nonNull)
-            .forEach(strategyConfiguration -> {
-                final Class<StrategyConfiguration> strategyConfigurationClass =
-                    (Class<StrategyConfiguration>) strategyConfiguration.getClass();
-                final Object strategyConfig = strategiesConfig.get(strategyConfiguration.name());
-                Map<String, Object> strategyConfigMap = new HashMap<>();
-                if (strategyConfig != null) {
-                    strategyConfigMap = (Map<String, Object>) strategyConfig;
-                }
-                convertedList.add(mapToObject(strategyConfigurationClass, strategyConfigMap));
-            });
+            .map(this::loadStrategyConfiguration)
+            .collect(Collectors.toList());
+    }
 
-        return convertedList;
+    private StrategyConfiguration loadStrategyConfiguration(StrategyConfiguration strategyConfiguration) {
+        final Class<StrategyConfiguration> strategyConfigurationClass =
+            (Class<StrategyConfiguration>) strategyConfiguration.getClass();
+        final Object strategyConfig = strategiesConfig.get(strategyConfiguration.name());
+        Map<String, Object> strategyConfigMap = new HashMap<>();
+        if (strategyConfig != null) {
+            strategyConfigMap = (Map<String, Object>) strategyConfig;
+        }
+
+        return mapToObject(strategyConfigurationClass, strategyConfigMap);
     }
 
     public File dump(File rootDir) {

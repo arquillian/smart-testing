@@ -8,7 +8,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -42,10 +42,7 @@ class ObjectMapper {
         final String property = Character.toLowerCase(field.charAt(0)) + field.substring(1);
         Object configFileValue = map.get(property);
 
-        Optional<ConfigurationItem> foundConfigItem =
-            configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
-
-        Object converted = getConvertedObject(method, configFileValue, foundConfigItem);
+        Object converted = getConvertedObject(method, configFileValue, property, configItems);
 
         try {
             if (converted != null) {
@@ -56,21 +53,24 @@ class ObjectMapper {
         }
     }
 
-    private static Object getConvertedObject(Method method, Object configFileValue, Optional<ConfigurationItem> foundConfigItem) {
+    private static Object getConvertedObject(Method method, Object configFileValue,
+        String property, List<ConfigurationItem> configItems) {
+        Optional<ConfigurationItem> foundConfigItem =
+            configItems.stream().filter(item -> property.equals(item.getParamName())).findFirst();
+
         if (!foundConfigItem.isPresent()) {
             Class<?> parameterType = method.getParameterTypes()[0];
             if (!ConfigurationSection.class.isAssignableFrom(parameterType)) {
                 return null;
             } else if (configFileValue == null) {
-                return mapToObject((Class<ConfigurationSection>) parameterType, new HashMap<>(0));
+                return mapToObject((Class<ConfigurationSection>) parameterType, Collections.emptyMap());
             } else {
                 return mapToObject((Class<ConfigurationSection>) parameterType, (Map<String, Object>) configFileValue);
             }
         } else {
-            Object mappedValue = null;
             ConfigurationItem configItem = foundConfigItem.get();
+            Object mappedValue = getUserSetProperty(method, configItem, configFileValue);
 
-            mappedValue = getUserSetProperty(method, configItem, configFileValue);
             if (mappedValue == null && configItem.getDefaultValue() != null) {
                 mappedValue = configItem.getDefaultValue();
             }
@@ -101,7 +101,7 @@ class ObjectMapper {
             System.getProperties().entrySet()
                 .stream()
                 .filter(prop -> prop.getKey().toString().startsWith(sysPropKey))
-                .collect(Collectors.toMap(prop -> prop.getKey(), prop -> prop.getValue()));
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         List<Object> multipleValue = new ArrayList<>();
         if (configFileValue != null) {

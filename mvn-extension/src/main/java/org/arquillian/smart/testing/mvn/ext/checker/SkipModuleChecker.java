@@ -1,13 +1,14 @@
-package org.arquillian.smart.testing.mvn.ext;
+package org.arquillian.smart.testing.mvn.ext.checker;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.arquillian.smart.testing.mvn.ext.ApplicablePlugins;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import static org.arquillian.smart.testing.mvn.ext.ApplicablePlugins.FAILSAFE;
 import static org.arquillian.smart.testing.mvn.ext.ApplicablePlugins.SUREFIRE;
 
-class SkipModuleChecker {
+public class SkipModuleChecker {
 
     private final Model model;
     private final Plugin surefirePlugin;
@@ -18,17 +19,17 @@ class SkipModuleChecker {
     public static final String SKIP = "skip";
     public static final String MAVEN_TEST_SKIP = "maven.test.skip";
 
-    SkipModuleChecker(Model model) {
+    public SkipModuleChecker(Model model) {
         this.model = model;
         this.surefirePlugin = getPlugin(SUREFIRE);
         this.failsafePlugin = getPlugin(FAILSAFE);
     }
 
-    boolean areIntegrationTestsSkipped() {
+    public boolean areIntegrationTestsSkipped() {
         return Boolean.valueOf(System.getProperty(SKIP_ITs)) || isSkipITsSetInPom();
     }
 
-    boolean areUnitTestsSkipped() {
+    public boolean areUnitTestsSkipped() {
         if (surefirePlugin != null) {
             Xpp3Dom surefirePluginConfiguration = (Xpp3Dom) surefirePlugin.getConfiguration();
             if (surefirePluginConfiguration != null) {
@@ -39,7 +40,7 @@ class SkipModuleChecker {
         return false;
     }
 
-    boolean areAllTestsSkipped() {
+    public boolean areAllTestsSkipped() {
         return isPropertyInPom(MAVEN_TEST_SKIP) || isPropertyInPom(SKIP_TESTS);
     }
 
