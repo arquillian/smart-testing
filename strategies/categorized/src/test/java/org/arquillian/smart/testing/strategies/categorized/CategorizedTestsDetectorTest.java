@@ -51,9 +51,8 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(2);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
+            .containsExactlyInAnyOrder(FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
     }
 
     @Test
@@ -67,9 +66,8 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(2);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
+            .containsExactlyInAnyOrder(FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
     }
 
     @Test
@@ -84,9 +82,8 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(1);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(FirstAndSecondCategorizedClass.class);
+            .containsExactly(FirstAndSecondCategorizedClass.class);
     }
 
     @Test
@@ -101,9 +98,8 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(1);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(FirstAndSecondCategorizedClass.class);
+            .containsExactly(FirstAndSecondCategorizedClass.class);
     }
 
     @Test
@@ -113,9 +109,9 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(3);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(ThirdCategorizedClass.class, FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
+            .containsExactlyInAnyOrder(ThirdCategorizedClass.class, FirstAndSecondCategorizedClass.class,
+                FirstCategorizedClass.class);
     }
 
     @Test
@@ -130,8 +126,7 @@ public class CategorizedTestsDetectorTest {
             new CategorizedTestsDetector(config).selectTestsFromClasses(classesToProcess);
 
         // then
-        assertThat(testSelection).hasSize(2);
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
-            .contains(ThirdCategorizedClass.class, NonCategorizedClass.class);
+            .containsExactlyInAnyOrder(ThirdCategorizedClass.class, NonCategorizedClass.class);
     }
 }
