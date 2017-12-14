@@ -27,6 +27,8 @@
  */
 package org.arquillian.smart.testing.strategies.affected.ast;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.NotFoundException;
@@ -44,10 +46,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-class JavaAssistClassParser {
+public class JavaAssistClassParser {
     private ClassPool classPool;
 
-    JavaAssistClassParser() {
+    public JavaAssistClassParser() {
     }
 
     private ClassPool getClassPool() {
@@ -61,10 +63,13 @@ class JavaAssistClassParser {
                 Arrays.stream(getLoadedClasses()).map(URL::toExternalForm).forEach(
                     s -> {
                         try {
-                            classPool.appendClassPath(s.replace("file:", "")); // removes file prefix, as JavaAssist doesn't like it
+                            final String jarLocation = s.replace("file:", "");
+                            classPool.appendClassPath(URLDecoder.decode(jarLocation, "UTF-8")); // removes file prefix, as JavaAssist doesn't like it
                         } catch (NotFoundException e) {
                             throw new RuntimeException("Failed configuring JavaAssist ClassPool" +
                                 " while loading resources from Context Class Loader", e);
+                        } catch (UnsupportedEncodingException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 );
@@ -85,7 +90,7 @@ class JavaAssistClassParser {
 
     private final static Map<String, JavaClass> CLASSES_BY_NAME = new HashMap<>();
 
-    JavaClass getClass(String className) {
+    public JavaClass getClass(String className) {
         JavaClass clazz = CLASSES_BY_NAME.get(className);
         if (clazz == null) {
             CtClass ctClass = getCachedClass(className);

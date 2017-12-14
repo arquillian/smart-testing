@@ -88,15 +88,9 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
 
         logger.debug("Time To Build Affected Dependencies Graph %d ms", (System.currentTimeMillis() - beforeDetection));
 
-        final Set<File> mainClasses = files.stream()
-            .map(Change::getLocation)
-            .filter(testVerifier::isCore)
-            .map(Path::toFile)
-            .collect(Collectors.toSet());
-
         final long beforeFind = System.currentTimeMillis();
 
-        final Set<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(mainClasses)
+        final Set<TestSelection> affected = classDependenciesGraph.findTestsDependingOn(files)
             .stream()
             .map(s -> new TestSelection(s, "affected"))
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -107,6 +101,6 @@ public class AffectedTestsDetector implements TestExecutionPlanner {
     }
 
     private ClassDependenciesGraph configureTestClassDetector() {
-        return new ClassDependenciesGraph(testVerifier, configuration);
+        return new ClassDependenciesGraph(testVerifier, configuration, this.projectDir);
     }
 }

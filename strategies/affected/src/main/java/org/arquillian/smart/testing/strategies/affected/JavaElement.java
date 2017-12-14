@@ -3,7 +3,7 @@ package org.arquillian.smart.testing.strategies.affected;
 import java.io.File;
 import org.arquillian.smart.testing.strategies.affected.ast.JavaClass;
 
-public class JavaElement {
+public class JavaElement implements Element {
 
     private final String className;
     private final File classFile;
