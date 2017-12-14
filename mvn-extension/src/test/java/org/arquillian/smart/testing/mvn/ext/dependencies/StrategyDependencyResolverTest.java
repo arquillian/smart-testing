@@ -25,13 +25,14 @@ public class StrategyDependencyResolverTest {
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
 
         // then
-        assertThat(dependencies.values()).hasSize(4)
+        assertThat(dependencies.values()).hasSize(5)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
                       "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
                       "org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
-                      "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString());
+                      "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
+                      "org.arquillian.smart.testing:strategy-categorized:" + ExtensionVersion.version().toString());
     }
 
     @Test
@@ -64,12 +65,13 @@ public class StrategyDependencyResolverTest {
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
 
         // then
-        assertThat(dependencies.values()).hasSize(5)
+        assertThat(dependencies.values()).hasSize(6)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-categorized:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-cool:1.0.0");
     }
 
@@ -85,12 +87,13 @@ public class StrategyDependencyResolverTest {
         Map<String, Dependency> dependencies = strategyDependencyResolver.resolveDependencies();
 
         // then
-        assertThat(dependencies.values()).hasSize(5)
+        assertThat(dependencies.values()).hasSize(6)
             .extracting(
                 dependency -> dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion())
             .contains("org.arquillian.smart.testing:strategy-changed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-failed:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-affected:" + ExtensionVersion.version().toString(),
+                "org.arquillian.smart.testing:strategy-categorized:" + ExtensionVersion.version().toString(),
                 "org.arquillian.smart.testing:strategy-cool:1.0.1");
     }
 
@@ -105,6 +108,6 @@ public class StrategyDependencyResolverTest {
 
         // then
         assertThat(dependencies.keySet())
-            .containsExactlyInAnyOrder("affected", "changed", "my.cool", "new", "failed");
+            .containsExactlyInAnyOrder("affected", "changed", "my.cool", "new", "failed", "categorized");
     }
 }

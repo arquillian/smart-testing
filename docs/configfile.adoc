@@ -197,3 +197,21 @@ a| Sets list of packages to be excluded while applying transitivity.
 a| inclusions
 a| Sets list of packages to be included while applying transitivity.
 |===
+
+==== Categorized Configuration Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| categories
+a| List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes containing the annotation `@Category` are selected.
+
+a| caseSensitive
+a| Sets case sensitivity of the category names. (default is false)
+
+a| matchAll
+a| Sets that the classes should contain all categories specified in the list of the categories. (default is false)
+
+a| reversed
+a| Sets that the selection should be reversed - all classes that don't match the categories will be selected. (default is false)
+|===
+

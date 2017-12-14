@@ -48,7 +48,7 @@ Until now, you've read that smart testing is changing test execution plan runnin
 But how do we know which tests are important and which ones not?
 
 There are several strategies that you can choose from which determine what are the *important* tests.
-Currently we have following strategies in place: `new`, `changed`, `affected` and `failed`.
+Currently we have following strategies in place: `new`, `changed`, `affected`, `failed` and `categorized`.
 
 To set them you need to set Java system property `const:core/src/main/java/org/arquillian/smart/testing/configuration/Configuration.java[name="SMART_TESTING"]` to one or more strategies in comma-separated value form.
 
@@ -179,3 +179,13 @@ If none of the attributes are set, then all production classes with same package
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
 All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="TEMPORARY_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/TemporaryInternalFiles.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
 
+
+==== Categorized
+
+`Categorized` strategy selects tests based in the JUnit 4 annotation `@Category` and the classes specified in it. With this strategy, you can easily set which classes you want to run without any need of changing your `pom.xml` file with complicated profiles.
+
+You can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration). For more information about the parameters see <<_categorized_configuration_options, Configuration Options>>.
+
+****
+NOTE: It works on the level of classes, so it doesn't reflect method annotations.
+****
