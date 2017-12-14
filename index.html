@@ -877,7 +877,7 @@ But how do we know which tests are important and which ones not?</p>
 </div>
 <div class="paragraph">
 <p>There are several strategies that you can choose from which determine what are the <strong>important</strong> tests.
-Currently we have following strategies in place: <code>new</code>, <code>changed</code>, <code>affected</code> and <code>failed</code>.</p>
+Currently we have following strategies in place: <code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code> and <code>categorized</code>.</p>
 </div>
 <div class="paragraph">
 <p>To set them you need to set Java system property <code>smart.testing</code> to one or more strategies in comma-separated value form.</p>
@@ -1110,6 +1110,31 @@ With this approach your tests are resilient to package name changes.</p>
 <div class="paragraph">
 <p>This strategy uses the <em>JUnit</em> XML <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.
 All reports from previous local build are automatically copied by the maven extension to a temp directory <code>${project.directory}/.smart-testing/temporary/reports</code> and when the build is finished the directory is removed.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_categorized"><a class="anchor" href="#_categorized"></a>3.2.5. Categorized</h4>
+<div class="paragraph">
+<p><code>Categorized</code> strategy selects tests based in the JUnit 4 annotation <code>@Category</code> and the classes specified in it. With this strategy, you can easily set which classes you want to run without any need of changing your <code>pom.xml</code> file with complicated profiles.</p>
+</div>
+<div class="paragraph">
+<p>You can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration). For more information about the parameters see <a href="#_categorized_configuration_options">Configuration Options</a>.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+It works on the level of classes, so it doesn&#8217;t reflect method annotations.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1621,6 +1646,55 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_categorized_configuration_options"><a class="anchor" href="#_categorized_configuration_options"></a>4.4.5. Categorized Configuration Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>categories</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes containing the annotation <code>@Category</code> are selected.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>caseSensitive</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets case sensitivity of the category names. (default is false)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>matchAll</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets that the classes should contain all categories specified in the list of the categories. (default is false)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>reversed</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets that the selection should be reversed - all classes that don&#8217;t match the categories will be selected. (default is false)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -1829,7 +1903,7 @@ plugins' skip test functionality</a> and respects system properties <code>skipTe
 <h2 id="_registering_custom_strategies"><a class="anchor" href="#_registering_custom_strategies"></a>6. Registering Custom Strategies</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By default <strong>Smart Testing</strong> comes with a set of strategies such as <code>new</code>, <code>changed</code>, <code>affected</code> or <code>failed</code>, but you can implement your own strategies and registering them.</p>
+<p>By default <strong>Smart Testing</strong> comes with a set of strategies such as <code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code> or <code>categorized</code>, but you can implement your own strategies and registering them.</p>
 </div>
 <div class="paragraph">
 <p>To do it you just need to follow next four steps:</p>
@@ -2437,7 +2511,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set strategies in CSV</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">-</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code></p>
+<p><code>new</code>, <code>changed</code>, <code>affected</code>, <code>failed</code>, <code>categorized</code></p>
 </div></div></td>
 </tr>
 <tr>
@@ -2585,6 +2659,54 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <td class="tableblock halign-left valign-top"><div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Value is the Maven coordinates of the custom strategy</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.categorized.categories</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names)</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>categorized</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.categorized.case.sensitive</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets case sensitivity of the category names.</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>categorized</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.categorized.match.all</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets that the classes should contain all categories specified in the list of the categories.</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>categorized</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.categorized.reversed</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets that the selection should be reversed - all classes that don&#8217;t match the categories will be selected.</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>false</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>categorized</code></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -3014,7 +3136,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-13 08:01:06 UTC
+Last updated 2017-12-14 16:08:19 UTC
 </div>
 </div>
 <script>
