@@ -1,19 +1,7 @@
 package org.arquillian.smart.testing.ftest.affected;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import org.arquillian.smart.testing.RunMode;
-import org.arquillian.smart.testing.TestSelection;
-import org.arquillian.smart.testing.api.SmartTesting;
-import org.arquillian.smart.testing.configuration.Configuration;
-import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.ftest.customAssertions.SmartTestingSoftAssertions;
-import org.arquillian.smart.testing.ftest.newtests.HistoricalChangesNewTestsSelectionExecutionFunctionalTest;
-import org.arquillian.smart.testing.ftest.testbed.ProjectPersistTest;
-import org.arquillian.smart.testing.ftest.testbed.ProjectPersistUsingPropertyTest;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
@@ -89,37 +77,5 @@ public class HistoricalChangesAffectedTestsSelectionExecutionFunctionalTest {
         // then
         softly.assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults).hasSameSizeAs(expectedTestResults);
 
-        // and also
-        verifySmartTestingAPI(expectedTestResults, project);
-    }
-
-    private void verifySmartTestingAPI(Collection<TestResult> expectedTestResults, Project project) {
-        // given
-        Configuration configuration = ConfigurationLoader.load();
-        configuration.setStrategies(AFFECTED.getName());
-        configuration.setMode(RunMode.SELECTING);
-        configuration.getScm().setLastChanges("2");
-        configuration.loadStrategyConfigurations(AFFECTED.getName());
-
-        List<String> expectedTestClasses = expectedTestResults
-            .stream()
-            .map(TestResult::getClassName)
-            .collect(Collectors.toList());
-
-        ArrayList<String> toOptimize = new ArrayList<>(expectedTestClasses);
-        toOptimize.add(ProjectPersistTest.class.getName());
-        toOptimize.add(ProjectPersistUsingPropertyTest.class.getName());
-        toOptimize.add(HistoricalChangesNewTestsSelectionExecutionFunctionalTest.class.getName());
-
-        // when
-        Set<TestSelection> testSelections = SmartTesting
-            .with(test -> test.endsWith("Test") || test.endsWith("TestCase"), configuration)
-            .in(project.getRoot().toFile())
-            .applyOnNames(toOptimize);
-
-        Set<String> optimizedClassNames = SmartTesting.getNames(testSelections);
-
-        // then
-        softly.assertThat(optimizedClassNames).containsAll(expectedTestClasses).hasSameSizeAs(expectedTestClasses);
     }
 }
