@@ -1101,6 +1101,46 @@ With this approach your tests are resilient to package name changes.</p>
 <p>If none of the attributes are set, then all production classes with same package as test and its subpackages are added automatically as classes used by the test.</p>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_regular_files"><a class="anchor" href="#_regular_files"></a>Regular Files</h5>
+<div class="paragraph">
+<p>By default affected strategy uses <em>imports</em> of tests to build the graph of collaborators or if you use the <a href="#_explicitly_set">Explicitly Set</a>, you can explicitly set class dependencies from an annotation.
+This approach is fine for Java classes, but a project usually contains another kind of files such as configuration files like <code>persistence.xml</code>, deployment files like <code>kubernetes.json</code> or build tool like <code>pom.xml</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can react to these file changes as well and execute some specific tests in these cases by using a special annotation provided by <code>affected</code> strategy.</p>
+</div>
+<div class="paragraph">
+<p>The first thing you need to do is register following artifact into your build script: <code>org.arquillian.smart.testing:api:&lt;version&gt;</code>.</p>
+</div>
+<div class="paragraph">
+<p>Then you can annotate your test with <code>org.arquillian.smart.testing.strategies.affected.WatchFile</code> annotation.</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@WatchFile</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">src/main/resources/META-INF/persistence.xml</span><span class="delimiter">&quot;</span></span>)
+<span class="directive">public</span> <span class="type">class</span> <span class="class">XTest</span> {</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In previous example when <code>src/main/resources/META-INF/persistence.xml</code> file is added or modified, then the test is eligible to be run.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Location is relative to current project/module. This means that if you want to refer to a file that it is in another module, you need to navigate to parent folder by using <code>..</code> symbol. For example: <code>../myothermodule/src/main/resources/applicationcontext.xml</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_failed"><a class="anchor" href="#_failed"></a>3.2.4. Failed</h4>
@@ -3136,7 +3176,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-14 16:08:19 UTC
+Last updated 2017-12-14 17:12:45 UTC
 </div>
 </div>
 <script>
