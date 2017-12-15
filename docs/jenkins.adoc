@@ -76,3 +76,80 @@ There are few important things you have to keep in mind when adjusting your `Jen
 
 First of all you need to disable automatic checkout. Then you need to manually call checkout and store the result into  a variable. Finally you can call Maven, getting Git parameters from `scmVars`.
 
+=== Smart Testing Jenkins Pipeline Shared Library
+
+Instead of running shell script using `mvn` call, you can use *Smart Testing Jenkins Pipeline Shared Library* which simplifies the configuration of Smart Testing in Jenkins.
+
+==== Installing
+
+To install this shared library you basically have two ways:
+
+* Installing as global shared libraries in `Manage Jenkins` >> `Configure System` >> `Global Pipeline Libraries`
+* Setting repository directly inside `Jenkinsfile`. For example `@Library('github.com/organization/project@maven') _`
+
+You can read more about how to install shared libraries at https://jenkins.io/doc/book/pipeline/shared-libraries/
+
+===== Using it
+
+To use it, you just need to create the `Jenkinsfile` and add an `stage` similar to:
+
+[source, groovy]
+.Jenkinsfile
+----
+@Library('smart-testing') _ // <1>
+pipeline {
+  options { skipDefaultCheckout() } // <2>
+  agent any
+  stages {
+    stage('Compile and Test') {
+      steps {
+        script {
+            def scmVars = checkout scm // <3>
+            smartTesting(strategies: 'new, changed', scmRange: scmVars) // <4>
+        }
+      }
+    }
+  }
+}
+----
+<1> Refers a global shared library registered inside Jenkins with `smart-testing` name.
+<2> In declarative Jenkins pipeline you need to skip default checkout to get _scm_ info.
+<3> Executed the checkout process and store info into `scmVars` variable.
+<4> Calls Maven with Smart Testing parameters.
+
+Running previous script results as next shell call `mvn '-Dsmart.testing=new, changed' -Dsmart.testing.mode=ordering -Dscm.range.head=653317b065ee8c54f9e806bc801b00d4c6371a20 -Dscm.range.tail=653317b065ee8c54f9e806bc801b00d4c6371a20 clean test`
+
+==== Configuration
+
+Next configuration parameters are valid to be set in the `smartTesting` method.
+
+[cols="3*", options="header"]
+|===
+|Parameter
+|Default Value
+|Description
+
+a|`mvnHome`
+a|`mvn`
+a|Sets Maven Home. If not set, then it runs `mvn` directly.
+
+a|`goals`
+a|`clean, test`
+a|Sets goal of Maven execution.
+
+a|`profiles`
+a|
+a|Sets Maven profile.
+
+a|`strategies`
+a|
+a|Sets Smart Testing strategies.
+
+a|`scmRange`
+a|last commit
+a|Map resulting of calling `checkout scm`. If not set, last commit is used.
+
+a|`extraParams`
+a|
+a|String that is concatenated before goals. Used to set any custom parameters such as Java system properties.
+|===
