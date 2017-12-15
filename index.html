@@ -577,12 +577,13 @@ table.CodeRay td.code>pre{padding:0}
 <ul class="sectlevel2">
 <li><a href="#_jenkins_freestyle_project">9.1. Jenkins Freestyle project</a></li>
 <li><a href="#_jenkins_pipeline">9.2. Jenkins Pipeline</a></li>
+<li><a href="#_smart_testing_jenkins_pipeline_shared_library">9.3. Smart Testing Jenkins Pipeline Shared Library</a></li>
 </ul>
 </li>
 <li><a href="#_reference_card">10. Reference Card</a>
 <ul class="sectlevel2">
 <li><a href="#_installation_2">10.1. Installation</a></li>
-<li><a href="#_configuration_3">10.2. Configuration</a></li>
+<li><a href="#_configuration_4">10.2. Configuration</a></li>
 <li><a href="#_strategies_2">10.3. Strategies</a></li>
 <li><a href="#_getting_insights_of_the_execution">10.4. Getting insights of the execution</a></li>
 <li><a href="#_configuration_file_2">10.5. Configuration File</a></li>
@@ -2486,6 +2487,162 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 <p>First of all you need to disable automatic checkout. Then you need to manually call checkout and store the result into  a variable. Finally you can call Maven, getting Git parameters from <code>scmVars</code>.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_smart_testing_jenkins_pipeline_shared_library"><a class="anchor" href="#_smart_testing_jenkins_pipeline_shared_library"></a>9.3. Smart Testing Jenkins Pipeline Shared Library</h3>
+<div class="paragraph">
+<p>Instead of running shell script using <code>mvn</code> call, you can use <strong>Smart Testing Jenkins Pipeline Shared Library</strong> which simplifies the configuration of Smart Testing in Jenkins.</p>
+</div>
+<div class="sect3">
+<h4 id="_installing"><a class="anchor" href="#_installing"></a>9.3.1. Installing</h4>
+<div class="paragraph">
+<p>To install this shared library you basically have two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Installing as global shared libraries in <code>Manage Jenkins</code> &gt;&gt; <code>Configure System</code> &gt;&gt; <code>Global Pipeline Libraries</code></p>
+</li>
+<li>
+<p>Setting repository directly inside <code>Jenkinsfile</code>. For example <code>@Library('github.com/organization/project@maven') _</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can read more about how to install shared libraries at <a href="https://jenkins.io/doc/book/pipeline/shared-libraries/" class="bare">https://jenkins.io/doc/book/pipeline/shared-libraries/</a></p>
+</div>
+<div class="sect4">
+<h5 id="_using_it"><a class="anchor" href="#_using_it"></a>Using it</h5>
+<div class="paragraph">
+<p>To use it, you just need to create the <code>Jenkinsfile</code> and add an <code>stage</code> similar to:</p>
+</div>
+<div class="listingblock">
+<div class="title">Jenkinsfile</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@Library</span>(<span class="string"><span class="delimiter">'</span><span class="content">smart-testing</span><span class="delimiter">'</span></span>) _ <i class="conum" data-value="1"></i><b>(1)</b>
+pipeline {
+  options { skipDefaultCheckout() } <i class="conum" data-value="2"></i><b>(2)</b>
+  agent any
+  stages {
+    stage(<span class="string"><span class="delimiter">'</span><span class="content">Compile and Test</span><span class="delimiter">'</span></span>) {
+      steps {
+        script {
+            <span class="keyword">def</span> scmVars = checkout scm <i class="conum" data-value="3"></i><b>(3)</b>
+            smartTesting(<span class="key">strategies</span>: <span class="string"><span class="delimiter">'</span><span class="content">new, changed</span><span class="delimiter">'</span></span>, <span class="key">scmRange</span>: scmVars) <i class="conum" data-value="4"></i><b>(4)</b>
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Refers a global shared library registered inside Jenkins with <code>smart-testing</code> name.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>In declarative Jenkins pipeline you need to skip default checkout to get <em>scm</em> info.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Executed the checkout process and store info into <code>scmVars</code> variable.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Calls Maven with Smart Testing parameters.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Running previous script results as next shell call <code>mvn '-Dsmart.testing=new, changed' -Dsmart.testing.mode=ordering -Dscm.range.head=653317b065ee8c54f9e806bc801b00d4c6371a20 -Dscm.range.tail=653317b065ee8c54f9e806bc801b00d4c6371a20 clean test</code></p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>9.3.2. Configuration</h4>
+<div class="paragraph">
+<p>Next configuration parameters are valid to be set in the <code>smartTesting</code> method.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter</th>
+<th class="tableblock halign-left valign-top">Default Value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>mvnHome</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>mvn</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets Maven Home. If not set, then it runs <code>mvn</code> directly.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>goals</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>clean, test</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets goal of Maven execution.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>profiles</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets Maven profile.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>strategies</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets Smart Testing strategies.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>scmRange</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>last commit</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Map resulting of calling <code>checkout scm</code>. If not set, last commit is used.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>extraParams</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>String that is concatenated before goals. Used to set any custom parameters such as Java system properties.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2515,7 +2672,7 @@ But ultimately your software is going to be built on CI/CD server and saving tim
 </div>
 </div>
 <div class="sect2">
-<h3 id="_configuration_3"><a class="anchor" href="#_configuration_3"></a>10.2. Configuration</h3>
+<h3 id="_configuration_4"><a class="anchor" href="#_configuration_4"></a>10.2. Configuration</h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -3176,7 +3333,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-12-14 21:31:22 UTC
+Last updated 2017-12-15 17:32:08 UTC
 </div>
 </div>
 <script>
