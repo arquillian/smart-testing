@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.scm.git;
 
+import java.nio.file.Paths;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.After;
 import org.junit.Rule;
@@ -46,7 +47,7 @@ public class GitChangeResolverWithoutGitTest {
         thrown.expect(IllegalStateException.class);
 
         // when
-        gitChangeResolver.diff(gitFolder.getRoot(), ConfigurationLoader.load(), "custom");
+        gitChangeResolver.diff(gitFolder.getRoot(), ConfigurationLoader.load(Paths.get("").toFile()), "custom");
     }
 
 }

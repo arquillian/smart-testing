@@ -42,7 +42,7 @@ public class ExecutionReporterUsingPropertyTest {
         final TestSelection newTestSelection = new TestSelection(ExecutionReporterUsingPropertyTest.class.getName(), "new");
         smartTestingReportGenerator =
             new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), ConfigurationLoader
-                .load(), System.getProperty("user.dir"));
+                .load(Paths.get("").toFile()), System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.impl;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -43,7 +44,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(Paths.get("").toFile())).applyOnClasses(
                 testsToRun);
 
         // then
@@ -68,7 +69,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(Paths.get("").toFile())).applyOnClasses(
                 testsToRun);
 
         // then
@@ -93,7 +94,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(Paths.get("").toFile())).applyOnClasses(
                 testsToRun);
 
         // then
@@ -119,7 +120,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(Paths.get("").toFile())).applyOnClasses(
                 testsToRun);
 
         // then

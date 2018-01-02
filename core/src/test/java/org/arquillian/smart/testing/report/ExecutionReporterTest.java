@@ -20,7 +20,8 @@ public class ExecutionReporterTest {
         final TestSelection testSelectionNew = new TestSelection(ExecutionReporterTest.class.getName(), "new");
         final TestSelection testSelectionChanged = new TestSelection(ExecutionReporterTest.class.getName(), "changed");
         final SmartTestingReportGenerator smartTestingReportGenerator =
-            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), ConfigurationLoader.load(),
+            new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), ConfigurationLoader.load(
+                Paths.get("").toFile()),
                 System.getProperty("user.dir"));
 
         // when

@@ -54,7 +54,7 @@ public class AffectedTestsDetectorTest {
     public void should_get_affected_tests_by_a_main_class_change() {
 
         // given
-        final Configuration configuration = ConfigurationLoader.load();
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);

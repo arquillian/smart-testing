@@ -3,6 +3,7 @@ package org.arquillian.smart.testing.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
@@ -21,7 +22,6 @@ import static org.arquillian.smart.testing.configuration.Configuration.SMART_TES
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_CONFIG;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
-import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsPath;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
@@ -176,7 +176,7 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setScm(scm);
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load();
+        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -226,7 +226,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load();
+        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -259,7 +259,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load();
+        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
