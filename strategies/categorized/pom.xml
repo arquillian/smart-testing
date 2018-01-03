@@ -15,7 +15,6 @@
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
       <classifier>shaded</classifier>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
