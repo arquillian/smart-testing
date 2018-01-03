@@ -13,17 +13,14 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>junit-test-result-parser</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>known-surefire-providers</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -42,6 +39,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>

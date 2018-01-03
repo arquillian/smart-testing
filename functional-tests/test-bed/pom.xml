@@ -19,12 +19,20 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>git-rules</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <version>${version.maven}</version>
     </dependency>
     <dependency>
       <!-- Maven Extension JAR is added because we need to get version from extension_version file in case tester does not specify any version-->
@@ -46,25 +54,6 @@
     <dependency>
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
-      <version>${version.jgit}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-model</artifactId>
-      <version>${version.maven}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.github.stefanbirkner</groupId>
-      <artifactId>system-rules</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
     </dependency>
 
     <!-- for debugging purposes -->
@@ -79,6 +68,17 @@
       <artifactId>surefire-booter</artifactId>
       <version>${version.surefire}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.stefanbirkner</groupId>
+      <artifactId>system-rules</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

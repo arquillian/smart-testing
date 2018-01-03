@@ -15,11 +15,11 @@
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>core</artifactId>
       <classifier>shaded</classifier>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -34,7 +34,6 @@
     <dependency>
       <groupId>org.arquillian.smart.testing</groupId>
       <artifactId>junit-test-result-parser</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

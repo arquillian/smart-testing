@@ -88,6 +88,67 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>core</artifactId>
+        <classifier>shaded</classifier>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>junit-test-result-parser</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>known-surefire-providers</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>strategy-changed</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>strategy-affected</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>strategy-failed</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${version.javassist}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jgrapht</groupId>
+        <artifactId>jgrapht-core</artifactId>
+        <version>${version.jgrapht}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.lukehutch</groupId>
+        <artifactId>fast-classpath-scanner</artifactId>
+        <version>${version.fast-classpath-scanner}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jgit</groupId>
+        <artifactId>org.eclipse.jgit</artifactId>
+        <version>${version.jgit}</version>
+      </dependency>
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
@@ -118,24 +179,10 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>${version.javassist}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jgrapht</groupId>
-        <artifactId>jgrapht-core</artifactId>
-        <version>${version.jgrapht}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${version.snakeyaml}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.lukehutch</groupId>
-        <artifactId>fast-classpath-scanner</artifactId>
-        <version>${version.fast-classpath-scanner}</version>
+        <groupId>org.arquillian.spacelift</groupId>
+        <artifactId>arquillian-spacelift</artifactId>
+        <version>${version.arquillian.spacelift}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
