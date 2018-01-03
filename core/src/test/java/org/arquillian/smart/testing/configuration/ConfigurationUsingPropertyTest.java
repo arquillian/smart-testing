@@ -3,9 +3,9 @@ package org.arquillian.smart.testing.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.jcip.annotations.NotThreadSafe;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,18 +14,13 @@ import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
-import static java.util.Arrays.asList;
 import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
-import static org.arquillian.smart.testing.RunMode.ORDERING;
-import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
-import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_CONFIG;
+import static org.arquillian.smart.testing.configuration.ConfigurationTest.prepareConfigurationWithConfigFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationTest.prepareDefaultConfiguration;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
-import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
-import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
@@ -99,48 +94,17 @@ public class ConfigurationUsingPropertyTest {
     public void should_load_configuration_with_overwriting_system_properties_over_properties_from_config_file() {
         // given
         System.setProperty(SMART_TESTING, "changed");
-        System.setProperty(SMART_TESTING_MODE, "selecting");
         System.setProperty(SCM_RANGE_TAIL, HEAD + "~4");
         System.setProperty("smart.testing.strategy.my", "org.arquillian.smart.testing:strategy-my:1.0.0");
-        System.setProperty("smart.testing.strategy.cool", "org.arquillian.smart.testing:strategy-cool:1.0.1");
 
-        final Report report = new Report();
-        report.setEnable(true);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(HEAD + "~4");
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        Map<String, Object> affectedStrategiesConfig = new HashMap<>();
-        affectedStrategiesConfig.put("exclusions", asList("org.package.*", "org.arquillian.package.*"));
-        affectedStrategiesConfig.put("inclusions",
-            asList("org.package.exclude.*", "org.arquillian.package.exclude.*"));
-        affectedStrategiesConfig.put("transitivity", true);
-
-        Map<String, Object> strategiesConfig = new HashMap<>();
-        strategiesConfig.put("affected", affectedStrategiesConfig);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(SELECTING);
+        final Configuration expectedConfiguration = prepareConfigurationWithConfigFile();
         expectedConfiguration.setStrategies("changed");
-        expectedConfiguration.setApplyTo("surefire");
-        expectedConfiguration.setDebug(true);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setReport(report);
-        expectedConfiguration.setScm(scm);
-        expectedConfiguration.setAutocorrect(true);
-        expectedConfiguration.setStrategiesConfig(strategiesConfig);
-        expectedConfiguration.setCustomStrategies(
-            new String[] {"smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0",
-                "smart.testing.strategy.my=org.arquillian.smart.testing:strategy-my:1.0.0",
-                "smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.1"});
-        expectedConfiguration.setCustomProviders(
-            new String[] {"org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl"});
+        expectedConfiguration.getScm().setLastChanges("4");
+
+        List<String> customStrategies = new ArrayList<>();
+        Collections.addAll(customStrategies, expectedConfiguration.getCustomStrategies());
+        customStrategies.add("smart.testing.strategy.my=org.arquillian.smart.testing:strategy-my:1.0.0");
+        expectedConfiguration.setCustomStrategies(customStrategies.toArray(new String[customStrategies.size()]));
 
         // when
         final Configuration actualConfiguration =
@@ -156,25 +120,9 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING, "changed");
         System.setProperty(SMART_TESTING_REPORT_ENABLE, "true");
 
-        final Report report = new Report();
-        report.setEnable(true);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(HEAD + "~0");
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(SELECTING);
+        final Configuration expectedConfiguration = prepareDefaultConfiguration();
         expectedConfiguration.setStrategies("changed");
-        expectedConfiguration.setDebug(false);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setReport(report);
-        expectedConfiguration.setScm(scm);
+        expectedConfiguration.getReport().setEnable(true);
 
         // when
         final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
@@ -186,45 +134,10 @@ public class ConfigurationUsingPropertyTest {
     @Test
     public void should_load_configuration_file_from_a_particular_location() throws IOException {
         // given
-        final Report report = new Report();
-        report.setEnable(true);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(HEAD + "~2");
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        Map<String, Object> affectedStrategiesConfig = new HashMap<>();
-        affectedStrategiesConfig.put("exclusions", asList("org.package.*", "org.arquillian.package.*"));
-        affectedStrategiesConfig.put("inclusions",
-            asList("org.package.exclude.*", "org.arquillian.package.exclude.*"));
-        affectedStrategiesConfig.put("transitivity", true);
-
-        Map<String, Object> strategiesConfig = new HashMap<>();
-        strategiesConfig.put("affected", affectedStrategiesConfig);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(ORDERING);
-        expectedConfiguration.setStrategies("new", "changed", "affected");
-        expectedConfiguration.setApplyTo("surefire");
-        expectedConfiguration.setDebug(true);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setScm(scm);
-        expectedConfiguration.setReport(report);
-        expectedConfiguration.setAutocorrect(true);
-        expectedConfiguration.setStrategiesConfig(strategiesConfig);
-        expectedConfiguration.setCustomStrategies(
-            new String[] {"smart.testing.strategy.cool=org.arquillian.smart.testing:strategy-cool:1.0.0",
-                "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});
-        expectedConfiguration.setCustomProviders(
-            new String[] {"org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl"});
-
         final File tempConfigFile = getCustomConfigFile();
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
+
+        final Configuration expectedConfiguration = prepareConfigurationWithConfigFile();
 
         // when
         final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
@@ -236,34 +149,13 @@ public class ConfigurationUsingPropertyTest {
     @Test
     public void should_log_warning_if_directory_is_passed_as_custom_config_file() throws IOException {
         // given
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(String.join("~", HEAD, DEFAULT_LAST_COMMITS));
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        final Report report = new Report();
-        report.setEnable(false);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(SELECTING);
-        expectedConfiguration.setDebug(false);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setReport(report);
-        expectedConfiguration.setScm(scm);
-        expectedConfiguration.setAutocorrect(false);
-
         final File tempConfigFile = temporaryFolder.newFolder();
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
+        ConfigurationLoader.load(CURRENT_DIR);
 
         // then
-        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
         assertThat(systemErrOut.getLog())
             .contains("WARN: Smart Testing Extension - " + tempConfigFile.getName() + " is a directory. Using the default configuration file resolution.");
     }

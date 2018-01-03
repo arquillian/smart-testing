@@ -6,4 +6,4 @@ mode: SELECTING
 report: {enable: false, dir: target, name: report.xml}
 scm:
   range: {head: HEAD, tail: HEAD~0}
-strategies: [new]
+strategies: []
