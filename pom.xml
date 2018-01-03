@@ -112,13 +112,6 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.arquillian.smart.testing</groupId>
-        <artifactId>core</artifactId>
-        <type>test-jar</type>
-        <scope>test</scope>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.google.code.findbugs</groupId>
         <artifactId>annotations</artifactId>
         <version>${version.findbugs.annotations}</version>

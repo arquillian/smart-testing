@@ -25,7 +25,6 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
 
 import static java.util.Arrays.asList;
-import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -63,7 +62,7 @@ public class SmartTestingProviderTest {
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
 
         temporaryFolder.newFile("pom.xml");
-        ConfigurationLoader.load(CURRENT_DIR).dump(temporaryFolder.getRoot());
+        ConfigurationLoader.load(Paths.get("").toFile()).dump(temporaryFolder.getRoot());
         System.setProperty("basedir", temporaryFolder.getRoot().toString());
 
         when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));

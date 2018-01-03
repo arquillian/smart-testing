@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import static java.util.Collections.singletonList;
-import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,7 +39,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_simple_test_to_execute() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -63,7 +62,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -87,7 +86,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_test_with_multiple_main_classes() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -109,7 +108,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_multiple_tests_to_execute_against_same_main_class_avoiding_duplicates() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -134,7 +133,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_all_changes_transitive() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -156,7 +155,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_all_changes_adding_package_annotated_transitive() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -180,7 +179,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_all_changes_adding_class_package_annotated_transitive() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
         final ClassDependenciesGraph
             classDependenciesGraph = new ClassDependenciesGraph(new EndingWithTestTestVerifier(), configuration, new File("."));
@@ -206,7 +205,7 @@ public class ClassDependenciesGraphTest {
         final AffectedConfiguration affectedConfiguration = new AffectedConfiguration();
         affectedConfiguration.setTransitivity(false);
 
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
@@ -231,7 +230,7 @@ public class ClassDependenciesGraphTest {
         affectedConfiguration.setExclusions(
             singletonList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.B"));
 
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
@@ -256,7 +255,7 @@ public class ClassDependenciesGraphTest {
         affectedConfiguration.setInclusions(
             singletonList("org.arquillian.smart.testing.strategies.affected.fakeproject.main.A"));
 
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.setStrategiesConfiguration(singletonList(affectedConfiguration));
 
         final ClassDependenciesGraph
@@ -279,7 +278,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_tests_by_change_of_watched_file_from_different_module() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
@@ -305,7 +304,7 @@ public class ClassDependenciesGraphTest {
     @Test
     public void should_detect_tests_by_change_of_watched_file() {
         // given
-        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
+        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
         configuration.loadStrategyConfigurations(AFFECTED);
 
         final ClassDependenciesGraph
