@@ -58,6 +58,12 @@
       <artifactId>system-rules</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.arquillian.smart.testing</groupId>
+      <artifactId>core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 

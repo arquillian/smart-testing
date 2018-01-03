@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.strategies.affected.AffectedTestsDetector.AFFECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -54,7 +55,7 @@ public class AffectedTestsDetectorTest {
     public void should_get_affected_tests_by_a_main_class_change() {
 
         // given
-        final Configuration configuration = ConfigurationLoader.load(Paths.get("").toFile());
+        final Configuration configuration = ConfigurationLoader.load(CURRENT_DIR);
         configuration.loadStrategyConfigurations(AFFECTED);
 
         Change change = new Change(getJavaPath(MyBusinessObject.class), ChangeType.ADD);
