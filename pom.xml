@@ -137,6 +137,12 @@
         <version>${version.findbugs.annotations}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.arquillian.spacelift</groupId>
+        <artifactId>arquillian-spacelift</artifactId>
+        <version>${version.arquillian.spacelift}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

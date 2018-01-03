@@ -37,7 +37,6 @@
     <dependency>
       <groupId>org.arquillian.spacelift</groupId>
       <artifactId>arquillian-spacelift</artifactId>
-      <version>${version.arquillian.spacelift}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
