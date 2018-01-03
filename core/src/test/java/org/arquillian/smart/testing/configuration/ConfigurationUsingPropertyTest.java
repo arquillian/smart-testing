@@ -15,6 +15,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
@@ -176,7 +177,7 @@ public class ConfigurationUsingPropertyTest {
         expectedConfiguration.setScm(scm);
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
+        final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -226,7 +227,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
+        final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
@@ -259,7 +260,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
         // when
-        final Configuration actualConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
+        final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);
 
         // then
         assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);

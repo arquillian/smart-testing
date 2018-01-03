@@ -13,6 +13,7 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_MODE;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
@@ -42,7 +43,7 @@ public class ExecutionReporterUsingPropertyTest {
         final TestSelection newTestSelection = new TestSelection(ExecutionReporterUsingPropertyTest.class.getName(), "new");
         smartTestingReportGenerator =
             new SmartTestingReportGenerator(asList(newChangedTestSelection, newTestSelection), ConfigurationLoader
-                .load(Paths.get("").toFile()), System.getProperty("user.dir"));
+                .load(CURRENT_DIR), System.getProperty("user.dir"));
 
         // when
         smartTestingReportGenerator.generateReport();

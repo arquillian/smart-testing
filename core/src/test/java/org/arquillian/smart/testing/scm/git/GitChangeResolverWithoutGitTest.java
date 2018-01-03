@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GitChangeResolverWithoutGitTest {
@@ -47,7 +48,7 @@ public class GitChangeResolverWithoutGitTest {
         thrown.expect(IllegalStateException.class);
 
         // when
-        gitChangeResolver.diff(gitFolder.getRoot(), ConfigurationLoader.load(Paths.get("").toFile()), "custom");
+        gitChangeResolver.diff(gitFolder.getRoot(), ConfigurationLoader.load(CURRENT_DIR), "custom");
     }
 
 }

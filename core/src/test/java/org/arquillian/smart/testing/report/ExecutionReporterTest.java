@@ -7,6 +7,7 @@ import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
@@ -21,7 +22,7 @@ public class ExecutionReporterTest {
         final TestSelection testSelectionChanged = new TestSelection(ExecutionReporterTest.class.getName(), "changed");
         final SmartTestingReportGenerator smartTestingReportGenerator =
             new SmartTestingReportGenerator(asList(testSelectionNew, testSelectionChanged), ConfigurationLoader.load(
-                Paths.get("").toFile()),
+                CURRENT_DIR),
                 System.getProperty("user.dir"));
 
         // when

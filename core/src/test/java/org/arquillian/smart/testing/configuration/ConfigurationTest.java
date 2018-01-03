@@ -13,6 +13,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.loadConfigurationFromFile;
@@ -85,7 +86,7 @@ public class ConfigurationTest {
         Configuration expectedConfiguration = prepareDefaultConfiguration();
 
         // when
-        final Configuration defaultConfiguration = ConfigurationLoader.load(Paths.get("").toFile());
+        final Configuration defaultConfiguration = ConfigurationLoader.load(CURRENT_DIR);
 
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
