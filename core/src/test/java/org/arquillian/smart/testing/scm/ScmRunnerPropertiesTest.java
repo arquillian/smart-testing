@@ -1,6 +1,8 @@
 package org.arquillian.smart.testing.scm;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import net.jcip.annotations.NotThreadSafe;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
 import org.arquillian.smart.testing.configuration.Scm;
@@ -9,6 +11,7 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_LAST_CHANGES;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.SCM_RANGE_HEAD;
@@ -27,7 +30,7 @@ public class ScmRunnerPropertiesTest {
         System.setProperty(SCM_LAST_CHANGES, "3");
 
         // when
-        final Scm scm = ConfigurationLoader.load().getScm();
+        final Scm scm = ConfigurationLoader.load(CURRENT_DIR).getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("HEAD~3");
@@ -41,7 +44,7 @@ public class ScmRunnerPropertiesTest {
         System.setProperty(SCM_RANGE_HEAD, "07b181b");
 
         // when
-        final Scm scm = ConfigurationLoader.load().getScm();
+        final Scm scm = ConfigurationLoader.load(CURRENT_DIR).getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("32bd752");
@@ -52,7 +55,7 @@ public class ScmRunnerPropertiesTest {
     public void should_get_head_as_previous_commit_and_commit_when_no_property_set() throws IOException {
 
         // when
-        final Scm scm = ConfigurationLoader.load().getScm();
+        final Scm scm = ConfigurationLoader.load(CURRENT_DIR).getScm();
 
         // then
         assertThat(scm.getRange().getTail()).isEqualTo("HEAD~0");

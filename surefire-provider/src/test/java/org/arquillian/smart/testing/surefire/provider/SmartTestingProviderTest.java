@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,7 +62,7 @@ public class SmartTestingProviderTest {
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
 
         temporaryFolder.newFile("pom.xml");
-        ConfigurationLoader.load().dump(temporaryFolder.getRoot());
+        ConfigurationLoader.load(Paths.get("").toFile()).dump(temporaryFolder.getRoot());
         System.setProperty("basedir", temporaryFolder.getRoot().toString());
 
         when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));

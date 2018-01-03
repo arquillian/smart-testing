@@ -1,5 +1,7 @@
 package org.arquillian.smart.testing.impl;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -19,6 +21,7 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +46,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
                 testsToRun);
 
         // then
@@ -68,7 +71,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
                 testsToRun);
 
         // then
@@ -93,7 +96,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
                 testsToRun);
 
         // then
@@ -119,7 +122,7 @@ public class TestStrategyApplierUsingPropertyTest {
 
         // when
         Set<TestSelection> optimizedClasses =
-            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load()).applyOnClasses(
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader, ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
                 testsToRun);
 
         // then

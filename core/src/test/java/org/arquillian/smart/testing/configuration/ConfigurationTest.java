@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
@@ -12,11 +13,11 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static java.util.Arrays.asList;
+import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.loadConfigurationFromFile;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
-import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsPath;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.REPORT_FILE_NAME;
 import static org.arquillian.smart.testing.report.SmartTestingReportGenerator.TARGET;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.DEFAULT_LAST_COMMITS;
@@ -85,7 +86,7 @@ public class ConfigurationTest {
         Configuration expectedConfiguration = prepareDefaultConfiguration();
 
         // when
-        final Configuration defaultConfiguration = ConfigurationLoader.load();
+        final Configuration defaultConfiguration = ConfigurationLoader.load(CURRENT_DIR);
 
         // then
         assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
