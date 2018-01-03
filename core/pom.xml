@@ -10,6 +10,17 @@
   <artifactId>core</artifactId>
 
   <dependencies>
+    <!-- To be removed in the future when SCM is a Java SPI -->
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>${version.jgit}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${version.snakeyaml}</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -25,12 +36,6 @@
       <artifactId>system-rules</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- To be removed in the future when SCM is a Java SPI -->
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>${version.jgit}</version>
-    </dependency>
     <dependency>
       <groupId>org.arquillian.spacelift</groupId>
       <artifactId>arquillian-spacelift</artifactId>
@@ -41,11 +46,6 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>${version.snakeyaml}</version>
     </dependency>
   </dependencies>
   <build>

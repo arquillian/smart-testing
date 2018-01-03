@@ -88,6 +88,26 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${version.javassist}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jgrapht</groupId>
+        <artifactId>jgrapht-core</artifactId>
+        <version>${version.jgrapht}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.lukehutch</groupId>
+        <artifactId>fast-classpath-scanner</artifactId>
+        <version>${version.fast-classpath-scanner}</version>
+      </dependency>
+      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
@@ -116,26 +136,6 @@
         <artifactId>annotations</artifactId>
         <version>${version.findbugs.annotations}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>${version.javassist}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jgrapht</groupId>
-        <artifactId>jgrapht-core</artifactId>
-        <version>${version.jgrapht}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>${version.snakeyaml}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.github.lukehutch</groupId>
-        <artifactId>fast-classpath-scanner</artifactId>
-        <version>${version.fast-classpath-scanner}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
