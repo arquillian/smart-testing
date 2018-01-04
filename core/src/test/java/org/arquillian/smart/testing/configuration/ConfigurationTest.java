@@ -2,7 +2,6 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
@@ -36,6 +35,83 @@ public class ConfigurationTest {
     @Test
     public void should_load_configuration_with_default_values_if_property_is_not_specified_in_config_file() {
         // given
+        final Configuration expectedConfiguration = prepareConfigurationForConfigFile();
+
+        // when
+        final Configuration actualConfiguration =
+            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
+
+        // then
+        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    @Test
+    public void should_load_default_configuration() {
+        // given
+        final Configuration expectedConfiguration = prepareDefaultConfiguration();
+
+        // when
+        final Configuration defaultConfiguration = ConfigurationLoader.load(CURRENT_DIR);
+
+        // then
+        assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    @Test
+    public void should_load_default_configuration_and_log_warning_when_config_file_is_empty() throws IOException {
+        // given
+        final Configuration expectedConfiguration = prepareDefaultConfiguration();
+        temporaryFolder.newFile(ConfigurationLoader.SMART_TESTING_YAML);
+
+        // when
+        final Configuration defaultConfiguration = ConfigurationLoader.load(temporaryFolder.getRoot());
+
+        // then
+        assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+        assertThat(systemErrOut.getLog())
+            .contains("WARN: Smart Testing Extension - The configuration file "
+                + temporaryFolder.getRoot().getPath() + File.separator + ConfigurationLoader.SMART_TESTING_YAML
+                + " is empty");
+    }
+
+    @Test
+    public void should_load_dumped_configuration_from_file_as_configuration() {
+        // given
+        final Configuration expectedConfiguration = prepareDefaultConfiguration();
+
+        // when
+        final Configuration actualConfiguration =
+            loadConfigurationFromFile(getResourceAsFile("configuration/dumped-smart-testing.yml"));
+
+        // then
+        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
+    }
+
+    static Configuration prepareDefaultConfiguration() {
+        final Range range = new Range();
+        range.setHead(HEAD);
+        range.setTail(String.join("~", HEAD, DEFAULT_LAST_COMMITS));
+
+        final Scm scm = new Scm();
+        scm.setRange(range);
+
+        final Report report = new Report();
+        report.setEnable(false);
+        report.setDir(TARGET);
+        report.setName(REPORT_FILE_NAME);
+
+        final Configuration expectedConfiguration = new Configuration();
+        expectedConfiguration.setMode(SELECTING);
+        expectedConfiguration.setDebug(false);
+        expectedConfiguration.setDisable(false);
+        expectedConfiguration.setReport(report);
+        expectedConfiguration.setScm(scm);
+        expectedConfiguration.setAutocorrect(false);
+
+        return expectedConfiguration;
+    }
+
+    static Configuration prepareConfigurationForConfigFile() {
         final Report report = new Report();
         report.setEnable(true);
         report.setDir(TARGET);
@@ -50,7 +126,8 @@ public class ConfigurationTest {
 
         Map<String, Object> affectedStrategiesConfig = new HashMap<>();
         affectedStrategiesConfig.put("exclusions", asList("org.package.*", "org.arquillian.package.*"));
-        affectedStrategiesConfig.put("inclusions", asList("org.package.exclude.*", "org.arquillian.package.exclude.*"));
+        affectedStrategiesConfig.put("inclusions",
+            asList("org.package.exclude.*", "org.arquillian.package.exclude.*"));
         affectedStrategiesConfig.put("transitivity", true);
 
         Map<String, Object> strategiesConfig = new HashMap<>();
@@ -71,95 +148,6 @@ public class ConfigurationTest {
                 "smart.testing.strategy.experimental=org.arquillian.smart.testing:strategy-experimental:1.0.0"});
         expectedConfiguration.setCustomProviders(
             new String[] {"org.foo:my-custom-provider=fully.qualified.name.to.SurefireProviderImpl"});
-
-        // when
-        final Configuration actualConfiguration =
-            ConfigurationLoader.load(getResourceAsFile("configuration/smart-testing.yml"));
-
-        // then
-        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
-    }
-
-    @Test
-    public void should_load_default_configuration() {
-        // given
-        Configuration expectedConfiguration = prepareDefaultConfiguration();
-
-        // when
-        final Configuration defaultConfiguration = ConfigurationLoader.load(CURRENT_DIR);
-
-        // then
-        assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
-    }
-
-    @Test
-    public void should_load_default_configuration_and_log_warning_when_config_file_is_empty() throws IOException {
-        // given
-        Configuration expectedConfiguration = prepareDefaultConfiguration();
-        temporaryFolder.newFile(ConfigurationLoader.SMART_TESTING_YAML);
-
-        // when
-        final Configuration defaultConfiguration = ConfigurationLoader.load(temporaryFolder.getRoot());
-
-        // then
-        assertThat(defaultConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
-        assertThat(systemErrOut.getLog())
-            .contains("WARN: Smart Testing Extension - The configuration file "
-                + temporaryFolder.getRoot().getPath() + File.separator + ConfigurationLoader.SMART_TESTING_YAML
-                + " is empty");
-    }
-
-    @Test
-    public void should_load_dumped_configuration_from_file_as_configuration() {
-        // given
-        final Report report = new Report();
-        report.setEnable(false);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(HEAD + "~0");
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(SELECTING);
-        expectedConfiguration.setStrategies("new");
-        expectedConfiguration.setDebug(false);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setScm(scm);
-        expectedConfiguration.setReport(report);
-
-        // when
-        final Configuration actualConfiguration =
-            loadConfigurationFromFile(getResourceAsFile("configuration/dumped-smart-testing.yml"));
-
-        // then
-        assertThat(actualConfiguration).isEqualToComparingFieldByFieldRecursively(expectedConfiguration);
-    }
-
-    private Configuration prepareDefaultConfiguration() {
-        final Range range = new Range();
-        range.setHead(HEAD);
-        range.setTail(String.join("~", HEAD, DEFAULT_LAST_COMMITS));
-
-        final Scm scm = new Scm();
-        scm.setRange(range);
-
-        final Report report = new Report();
-        report.setEnable(false);
-        report.setDir(TARGET);
-        report.setName(REPORT_FILE_NAME);
-
-        final Configuration expectedConfiguration = new Configuration();
-        expectedConfiguration.setMode(SELECTING);
-        expectedConfiguration.setDebug(false);
-        expectedConfiguration.setDisable(false);
-        expectedConfiguration.setReport(report);
-        expectedConfiguration.setScm(scm);
-        expectedConfiguration.setAutocorrect(false);
 
         return expectedConfiguration;
     }
