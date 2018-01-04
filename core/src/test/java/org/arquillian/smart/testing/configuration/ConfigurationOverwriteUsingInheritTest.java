@@ -1,10 +1,12 @@
 package org.arquillian.smart.testing.configuration;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import org.arquillian.smart.testing.custom.assertions.CustomSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.arquillian.smart.testing.RunMode.ORDERING;
 import static org.arquillian.smart.testing.RunMode.SELECTING;
@@ -12,7 +14,6 @@ import static org.arquillian.smart.testing.configuration.ConfigurationFileBuilde
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YAML;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_YML;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigurationOverwriteUsingInheritTest {
 
@@ -21,6 +22,10 @@ public class ConfigurationOverwriteUsingInheritTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Rule
+    public final CustomSoftAssertions softly = new CustomSoftAssertions();
+
 
     @Test
     public void should_load_configuration_properties_from_absolute_inherit_path_if_not_defined_in_child() throws IOException {
@@ -41,9 +46,10 @@ public class ConfigurationOverwriteUsingInheritTest {
         final Configuration configuration = ConfigurationLoader.load(temporaryFolder.getRoot());
 
         // then
-        assertThat(configuration.getMode()).isEqualTo(ORDERING);
-        assertThat(configuration.getApplyTo()).isEqualTo("surefire");
-        assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
+        softly.assertThat(configuration)
+            .hasMode(ORDERING)
+            .isAppliedTo("surefire")
+            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
     }
 
     @Test
@@ -70,9 +76,10 @@ public class ConfigurationOverwriteUsingInheritTest {
         final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG, IMPL_BASE).toFile());
 
         // then
-        assertThat(configuration.getMode()).isEqualTo(SELECTING);
-        assertThat(configuration.isDebug()).isTrue();
-        assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
+        softly.assertThat(configuration)
+            .hasMode(SELECTING)
+            .hasDebugEnable(true)
+            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
     }
 
     @Test
@@ -96,9 +103,10 @@ public class ConfigurationOverwriteUsingInheritTest {
         final Configuration configuration = ConfigurationLoader.load(Paths.get(root, CONFIG).toFile());
 
         // then
-        assertThat(configuration.getMode()).isEqualTo(ORDERING);
-        assertThat(configuration.isDisable()).isTrue();
-        assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
+        softly.assertThat(configuration)
+            .hasMode(ORDERING)
+            .hasDebugEnable(false)
+            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
     }
 
     @Test
@@ -129,10 +137,13 @@ public class ConfigurationOverwriteUsingInheritTest {
 
         // then
         final Range range = configuration.getScm().getRange();
-        assertThat(configuration.getMode()).isEqualTo(ORDERING);
-        assertThat(configuration.isDisable()).isTrue();
-        assertThat(configuration.getStrategies()).isEqualTo(new String[]{"new", "changed", "affected"});
-        assertThat(range.getHead()).isEqualTo(HEAD);
-        assertThat(range.getTail()).isEqualTo(HEAD + "~1");
+
+        softly.assertThat(configuration)
+            .hasMode(ORDERING)
+            .hasDebugEnable(false)
+            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
+
+        softly.assertThat(range.getHead()).isEqualTo(HEAD);
+        softly.assertThat(range.getTail()).isEqualTo(HEAD + "~1");
     }
 }

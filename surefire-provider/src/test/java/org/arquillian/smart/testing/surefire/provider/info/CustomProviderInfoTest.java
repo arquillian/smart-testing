@@ -1,19 +1,23 @@
 package org.arquillian.smart.testing.surefire.provider.info;
 
-import java.io.IOException;
 import org.arquillian.smart.testing.hub.storage.local.TemporaryInternalFiles;
 import org.arquillian.smart.testing.surefire.provider.LoaderVersionExtractor;
+import org.arquillian.smart.testing.surefire.provider.custom.assertions.SurefireProviderSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.IOException;
+
 import static org.arquillian.smart.testing.known.surefire.providers.KnownProvider.JUNIT_5;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomProviderInfoTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
+    @Rule
+    public final SurefireProviderSoftAssertions softly = new SurefireProviderSoftAssertions();
 
     private final String junit5Coordinates = String.join(":", JUNIT_5.getGroupId(), JUNIT_5.getArtifactId(), "1.0.1");
 
@@ -27,7 +31,9 @@ public class CustomProviderInfoTest {
         customProviderInfo.retrieveCustomProviderInformation(temporaryFolder.getRoot(), "2.20");
 
         // then
-        verifyCustomProviderInfoHasJunit5(customProviderInfo);
+        softly.assertThat(customProviderInfo)
+            .hasDepCoordinates(junit5Coordinates)
+            .hasProviderClassName(JUNIT_5.getProviderClassName());
     }
 
     @Test
@@ -40,13 +46,9 @@ public class CustomProviderInfoTest {
         customProviderInfo.retrieveCustomProviderInformation(temporaryFolder.getRoot(), null);
 
         // then
-        verifyCustomProviderInfoHasJunit5(customProviderInfo);
-    }
-
-    private void verifyCustomProviderInfoHasJunit5(CustomProviderInfo customProviderInfo) {
-        assertThat(customProviderInfo.getDepCoordinates()).isEqualTo(junit5Coordinates);
-        assertThat(customProviderInfo.getProviderClassName()).isEqualTo(JUNIT_5.getProviderClassName());
-    }
+        softly.assertThat(customProviderInfo)
+            .hasDepCoordinates(junit5Coordinates)
+            .hasProviderClassName(JUNIT_5.getProviderClassName());}
 
     private void createCustomProviderInfoFileWithJunit5(String prefix) throws IOException {
         TemporaryInternalFiles
