@@ -18,7 +18,7 @@ import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING;
 import static org.arquillian.smart.testing.configuration.Configuration.SMART_TESTING_REPORT_ENABLE;
 import static org.arquillian.smart.testing.configuration.ConfigurationLoader.SMART_TESTING_CONFIG;
-import static org.arquillian.smart.testing.configuration.ConfigurationTest.prepareConfigurationWithConfigFile;
+import static org.arquillian.smart.testing.configuration.ConfigurationTest.prepareConfigurationForConfigFile;
 import static org.arquillian.smart.testing.configuration.ConfigurationTest.prepareDefaultConfiguration;
 import static org.arquillian.smart.testing.configuration.ResourceLoader.getResourceAsFile;
 import static org.arquillian.smart.testing.scm.ScmRunnerProperties.HEAD;
@@ -97,7 +97,7 @@ public class ConfigurationUsingPropertyTest {
         System.setProperty(SCM_RANGE_TAIL, HEAD + "~4");
         System.setProperty("smart.testing.strategy.my", "org.arquillian.smart.testing:strategy-my:1.0.0");
 
-        final Configuration expectedConfiguration = prepareConfigurationWithConfigFile();
+        final Configuration expectedConfiguration = prepareConfigurationForConfigFile();
         expectedConfiguration.setStrategies("changed");
         expectedConfiguration.getScm().setLastChanges("4");
 
@@ -137,7 +137,7 @@ public class ConfigurationUsingPropertyTest {
         final File tempConfigFile = getCustomConfigFile();
         System.setProperty(SMART_TESTING_CONFIG, tempConfigFile.getAbsolutePath());
 
-        final Configuration expectedConfiguration = prepareConfigurationWithConfigFile();
+        final Configuration expectedConfiguration = prepareConfigurationForConfigFile();
 
         // when
         final Configuration actualConfiguration = ConfigurationLoader.load(CURRENT_DIR);

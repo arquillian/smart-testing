@@ -2,7 +2,6 @@ package org.arquillian.smart.testing.configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import net.jcip.annotations.NotThreadSafe;
@@ -36,7 +35,7 @@ public class ConfigurationTest {
     @Test
     public void should_load_configuration_with_default_values_if_property_is_not_specified_in_config_file() {
         // given
-        final Configuration expectedConfiguration = prepareConfigurationWithConfigFile();
+        final Configuration expectedConfiguration = prepareConfigurationForConfigFile();
 
         // when
         final Configuration actualConfiguration =
@@ -112,7 +111,7 @@ public class ConfigurationTest {
         return expectedConfiguration;
     }
 
-    static Configuration prepareConfigurationWithConfigFile() {
+    static Configuration prepareConfigurationForConfigFile() {
         final Report report = new Report();
         report.setEnable(true);
         report.setDir(TARGET);
