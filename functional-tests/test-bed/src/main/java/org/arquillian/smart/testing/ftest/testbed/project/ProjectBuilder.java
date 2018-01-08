@@ -69,8 +69,7 @@ public class ProjectBuilder {
 
         buildConfigurator.enableDebugOptions();
         setCustomMavenInstallation(embeddedMaven);
-
-        System.out.println("$ mvn " + Arrays.toString(goals).replaceAll("[\\[|\\]|,]", "") + " " + printSystemProperties());
+        embeddedMaven.setDebugLoggerLevel();
 
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
@@ -127,10 +126,7 @@ public class ProjectBuilder {
         if (buildConfigurator.getMavenVersion() != null && !buildConfigurator.getMavenVersion().isEmpty()) {
             setMavenVersion(embeddedMaven);
         } else {
-            final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
-            if (mvnInstallation != null) {
-                embeddedMaven.useInstallation(new File(mvnInstallation));
-            }
+            embeddedMaven.useDefaultDistribution();
         }
     }
 
