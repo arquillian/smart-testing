@@ -18,6 +18,7 @@ cache:
     - $HOME/.m2
 
 before_install:
+  - git clone https://github.com/dipak-pawar/resolver && cd resolver && git checkout distributed_issue && mvn clean install -DskipTests && cd ..
   - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
   - MODIFIED_DOCS=$(git diff --name-only $TRAVIS_COMMIT_RANGE | grep -E 'README.adoc|^docs/.*.adoc$' | wc -l)
   - COMMITS_WITH_FORCED_GEN=$(git log --format=%B  $TRAVIS_COMMIT_RANGE | grep -i "\[gen docs\]" | wc -l)

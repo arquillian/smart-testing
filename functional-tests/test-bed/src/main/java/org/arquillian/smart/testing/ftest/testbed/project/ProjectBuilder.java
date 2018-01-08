@@ -67,9 +67,9 @@ public class ProjectBuilder {
             : Paths.get(rootPath, POM_XML);
         final PomEquippedEmbeddedMaven embeddedMaven = EmbeddedMaven.forProject(pomFile.toString());
 
+        embeddedMaven.setDebugLoggerLevel();
         buildConfigurator.enableDebugOptions();
         setCustomMavenInstallation(embeddedMaven);
-        embeddedMaven.setDebugLoggerLevel();
 
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
