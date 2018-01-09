@@ -14,8 +14,12 @@ public class DirectoryAssert extends AbstractAssert<DirectoryAssert, Path> {
         super(actual, DirectoryAssert.class);
     }
 
-    public static DirectoryAssert assertThat(Path path) {
+    public static DirectoryAssert assertThatDirectory(Path path) {
         return new DirectoryAssert(path);
+    }
+
+    public static DirectoryAssert assertThatDirectory(File file) {
+        return new DirectoryAssert(file.toPath());
     }
 
     public DirectoryAssert hasSameContentAs(Path path) {
@@ -28,7 +32,7 @@ public class DirectoryAssert extends AbstractAssert<DirectoryAssert, Path> {
             .forEach(expectedFile -> {
                 Path actualFile = actual.resolve(expectedFile.getFileName());
                 if (expectedFile.toFile().isDirectory()) {
-                    assertThat(actualFile).hasSameContentAs(expectedFile);
+                    assertThatDirectory(actualFile).hasSameContentAs(expectedFile);
                 } else {
                     Assertions.assertThat(actualFile).exists().isRegularFile().hasSameContentAs(expectedFile);
                 }

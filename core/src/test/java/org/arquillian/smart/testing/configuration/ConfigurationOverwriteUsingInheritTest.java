@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.configuration;
 
-import org.arquillian.smart.testing.custom.assertions.CustomSoftAssertions;
+import org.arquillian.smart.testing.custom.assertions.CoreSoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -24,7 +24,7 @@ public class ConfigurationOverwriteUsingInheritTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Rule
-    public final CustomSoftAssertions softly = new CustomSoftAssertions();
+    public final CoreSoftAssertions softly = new CoreSoftAssertions();
 
 
     @Test
@@ -105,7 +105,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         // then
         softly.assertThat(configuration)
             .hasMode(ORDERING)
-            .hasDebugEnable(false)
+            .hasDisableEnable(true)
             .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
     }
 
@@ -140,7 +140,7 @@ public class ConfigurationOverwriteUsingInheritTest {
 
         softly.assertThat(configuration)
             .hasMode(ORDERING)
-            .hasDebugEnable(false)
+            .hasDisableEnable(true)
             .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
 
         softly.assertThat(range.getHead()).isEqualTo(HEAD);

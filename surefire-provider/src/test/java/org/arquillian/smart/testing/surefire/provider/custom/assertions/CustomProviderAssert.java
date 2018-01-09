@@ -19,7 +19,7 @@ public class CustomProviderAssert extends AbstractAssert<CustomProviderAssert, C
         isNotNull();
 
         if (!Objects.equals(actual.getDepCoordinates(), depCoordinates)) {
-            failWithMessage("Expected DepCoordinates to be <%s> but was <%s>", depCoordinates, actual.getDepCoordinates());
+            failWithMessage("Expected Dependency Coordinates to be <%s> but was <%s>", depCoordinates, actual.getDepCoordinates());
         }
         return this;
     }

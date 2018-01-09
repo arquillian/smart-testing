@@ -28,7 +28,7 @@ public class SkipInstallationCheckerAssert extends AbstractAssert<SkipInstallati
         isNotNull();
 
         if (!actual.getReason().contains(reason)) {
-            failWithMessage("Expected reason to be <%s> but was <%s>", reason, actual.getReason());
+            failWithMessage("Expected reason to contain <%s> but was <%s>", reason, actual.getReason());
         }
         return this;
     }

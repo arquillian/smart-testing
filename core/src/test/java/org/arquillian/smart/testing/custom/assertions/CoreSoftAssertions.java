@@ -6,15 +6,22 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-public class CustomSoftAssertions extends SoftAssertions implements TestRule {
+import java.io.File;
+import java.nio.file.Path;
+
+public class CoreSoftAssertions extends SoftAssertions implements TestRule {
 
     public ConfigurationAssert assertThat(Configuration actual) {
         return proxy(ConfigurationAssert.class, Configuration.class, actual);
     }
 
-    /*public DirectoryAssert assertThat(Path actual) {
+    public DirectoryAssert assertThatDirectory(Path actual) {
         return proxy(DirectoryAssert.class, Path.class, actual);
-    }*/
+    }
+
+    public DirectoryAssert assertThatDirectory(File actual) {
+        return assertThatDirectory(actual.toPath());
+    }
 
     @Override
     public Statement apply(Statement base, Description description) {

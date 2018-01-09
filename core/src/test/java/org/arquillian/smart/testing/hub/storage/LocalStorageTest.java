@@ -1,6 +1,6 @@
 package org.arquillian.smart.testing.hub.storage;
 
-import org.arquillian.smart.testing.custom.assertions.CustomSoftAssertions;
+import org.arquillian.smart.testing.custom.assertions.CoreSoftAssertions;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.arquillian.smart.testing.custom.assertions.DirectoryAssert.assertThat;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
 import static org.arquillian.smart.testing.hub.storage.local.DuringExecutionLocalStorage.SMART_TESTING_WORKING_DIRECTORY_NAME;
@@ -28,7 +27,7 @@ public class LocalStorageTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
-    public final CustomSoftAssertions softly = new CustomSoftAssertions();
+    public final CoreSoftAssertions softly = new CoreSoftAssertions();
 
     private LocalStorage localStorage;
 
@@ -113,7 +112,7 @@ public class LocalStorageTest {
 
         // then
         Path copied = getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "copied");
-        assertThat(copied).hasSameContentAs(toCopy);
+        softly.assertThatDirectory(copied).hasSameContentAs(toCopy);
     }
 
     @Test
@@ -147,7 +146,7 @@ public class LocalStorageTest {
         File reportCopy = new File(reportingTargetDir, "report-copy");
         softly.assertThat(reportingTargetDir.listFiles()).hasSize(1).contains(reportCopy);
 
-        assertThat(reportCopy.toPath()).hasSameContentAs(toCopy);
+        softly.assertThatDirectory(reportCopy).hasSameContentAs(toCopy);
     }
 
     @Test
@@ -196,8 +195,8 @@ public class LocalStorageTest {
             .hasSize(2)
             .contains(duringTargetDir, afterTargetDir);
 
-        assertThat(duringTargetDir.toPath()).hasSameContentAs(duringDir);
-        assertThat(afterTargetDir.toPath()).hasSameContentAs(afterDir);
+        softly.assertThatDirectory(duringTargetDir.toPath()).hasSameContentAs(duringDir);
+        softly.assertThatDirectory(afterTargetDir.toPath()).hasSameContentAs(afterDir);
     }
 
     private void feedDummyDirectory(Path dirRoot) throws IOException {

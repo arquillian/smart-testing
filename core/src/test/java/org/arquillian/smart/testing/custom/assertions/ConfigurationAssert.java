@@ -2,6 +2,7 @@ package org.arquillian.smart.testing.custom.assertions;
 
 import org.arquillian.smart.testing.RunMode;
 import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.configuration.Range;
 import org.assertj.core.api.AbstractAssert;
 
 import java.util.Arrays;
@@ -50,6 +51,24 @@ public class ConfigurationAssert extends AbstractAssert<ConfigurationAssert, Con
 
         if (!Objects.equals(actual.isDebug(), debug)) {
             failWithMessage("Expected debug to be <%s> but was <%s>", debug, actual.isDebug());
+        }
+        return this;
+    }
+
+    public ConfigurationAssert hasDisableEnable(boolean disable) {
+        isNotNull();
+
+        if (!Objects.equals(actual.isDisable(), disable)) {
+            failWithMessage("Expected disable to be <%s> but was <%s>", disable, actual.isDisable());
+        }
+        return this;
+    }
+
+    public ConfigurationAssert hasScmRange(Range range) {
+        isNotNull();
+
+        if(Objects.deepEquals(actual.getScm().getRange(), range)) {
+            failWithMessage("Expected SCM range to be <%s> but was <%s>", range, actual.getScm().getRange());
         }
         return this;
     }
