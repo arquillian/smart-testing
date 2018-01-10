@@ -49,7 +49,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         softly.assertThat(configuration)
             .hasMode(ORDERING)
             .isAppliedTo("surefire")
-            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
+            .hasAppliedStrategies("new", "changed", "affected");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         softly.assertThat(configuration)
             .hasMode(SELECTING)
             .hasDebugEnable(true)
-            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
+            .hasAppliedStrategies("new", "changed", "affected");
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         softly.assertThat(configuration)
             .hasMode(ORDERING)
             .hasDisableEnable(true)
-            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
+            .hasAppliedStrategies("new", "changed", "affected");
     }
 
     @Test
@@ -141,7 +141,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         softly.assertThat(configuration)
             .hasMode(ORDERING)
             .hasDisableEnable(true)
-            .hasAppliedStrategies(new String[]{"new", "changed", "affected"});
+            .hasAppliedStrategies("new", "changed", "affected");
 
         softly.assertThat(range.getHead()).isEqualTo(HEAD);
         softly.assertThat(range.getTail()).isEqualTo(HEAD + "~1");

@@ -58,7 +58,7 @@ public class ConfigurationOverwriteUsingInheritWithSystemPropertyTest {
 
         // then
         softly.assertThat(configuration)
-            .hasAppliedStrategies(new String[] {"changed"})
+            .hasAppliedStrategies("changed")
             .hasMode(ORDERING)
             .hasScmRange(range);
     }

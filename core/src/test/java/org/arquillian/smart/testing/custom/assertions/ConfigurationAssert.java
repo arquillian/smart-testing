@@ -36,7 +36,7 @@ public class ConfigurationAssert extends AbstractAssert<ConfigurationAssert, Con
         return this;
     }
 
-    public ConfigurationAssert hasAppliedStrategies(String[] strategies) {
+    public ConfigurationAssert hasAppliedStrategies(String... strategies) {
         isNotNull();
 
         if (!Arrays.equals(actual.getStrategies(), strategies)) {
