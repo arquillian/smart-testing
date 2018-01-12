@@ -1,20 +1,20 @@
 package org.arquillian.smart.testing.hub.storage;
 
+import org.arquillian.smart.testing.custom.assertions.CoreSoftAssertions;
+import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
-import org.assertj.core.api.JUnitSoftAssertions;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.REPORTING_SUBDIRECTORY;
 import static org.arquillian.smart.testing.hub.storage.local.AfterExecutionLocalStorage.SMART_TESTING_TARGET_DIRECTORY_NAME;
@@ -27,7 +27,7 @@ public class LocalStorageTest {
     public final TemporaryFolder folder = new TemporaryFolder();
 
     @Rule
-    public final JUnitSoftAssertions softly = new JUnitSoftAssertions();
+    public final CoreSoftAssertions softly = new CoreSoftAssertions();
 
     private LocalStorage localStorage;
 
@@ -112,7 +112,7 @@ public class LocalStorageTest {
 
         // then
         Path copied = getSmartTestingSubdirectory(TEMPORARY_SUBDIRECTORY, "copied");
-        assertThatDirectoriesHaveSameContent(copied, toCopy);
+        softly.assertThatDirectory(copied).hasSameContentAs(toCopy);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class LocalStorageTest {
         File reportCopy = new File(reportingTargetDir, "report-copy");
         softly.assertThat(reportingTargetDir.listFiles()).hasSize(1).contains(reportCopy);
 
-        assertThatDirectoriesHaveSameContent(reportCopy.toPath(), toCopy);
+        softly.assertThatDirectory(reportCopy).hasSameContentAs(toCopy);
     }
 
     @Test
@@ -190,24 +190,13 @@ public class LocalStorageTest {
             new File(target + File.separator + SMART_TESTING_TARGET_DIRECTORY_NAME, REPORTING_SUBDIRECTORY);
         File duringTargetDir = new File(reportingTargetDir, "during-dir");
         File afterTargetDir = new File(reportingTargetDir, "after-dir");
-        softly.assertThat(reportingTargetDir.listFiles()).hasSize(2).contains(duringTargetDir, afterTargetDir);
-        assertThatDirectoriesHaveSameContent(duringTargetDir.toPath(), duringDir);
-        assertThatDirectoriesHaveSameContent(afterTargetDir.toPath(), afterDir);
-    }
 
-    private void assertThatDirectoriesHaveSameContent(Path actualDir, Path expectedDir) {
-        softly.assertThat(actualDir).exists().isDirectory();
-        Arrays
-            .stream(expectedDir.toFile().listFiles())
-            .map(File::toPath)
-            .forEach(expectedFile -> {
-                Path actualFile = actualDir.resolve(expectedFile.getFileName());
-                if (expectedFile.toFile().isDirectory()) {
-                    assertThatDirectoriesHaveSameContent(actualFile, expectedFile);
-                } else {
-                    softly.assertThat(actualFile).exists().isRegularFile().hasSameContentAs(expectedFile);
-                }
-            });
+        softly.assertThat(reportingTargetDir.listFiles())
+            .hasSize(2)
+            .contains(duringTargetDir, afterTargetDir);
+
+        softly.assertThatDirectory(duringTargetDir.toPath()).hasSameContentAs(duringDir);
+        softly.assertThatDirectory(afterTargetDir.toPath()).hasSameContentAs(afterDir);
     }
 
     private void feedDummyDirectory(Path dirRoot) throws IOException {
