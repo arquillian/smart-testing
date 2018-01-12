@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.categorized.project;
+package org.arquillian.smart.testing.strategies.categorized.project.categories;
 
 import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategory;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.SecondCategory;

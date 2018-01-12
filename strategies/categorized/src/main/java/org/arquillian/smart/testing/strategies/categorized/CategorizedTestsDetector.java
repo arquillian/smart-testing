@@ -46,9 +46,9 @@ public class CategorizedTestsDetector implements TestExecutionPlanner {
 
     private boolean hasCorrectCategoriesMatchingReversed(Class<?> clazz) {
         if (strategyConfig.isReversed()) {
-            return !categoriesParser.hasCorrectCategories(clazz) && !tagsParser.hasCorrectTags(clazz);
+            return !categoriesParser.hasCorrectCategories(clazz) && !tagsParser.hasCorrectCategories(clazz);
         }
-        return categoriesParser.hasCorrectCategories(clazz) || tagsParser.hasCorrectTags(clazz);
+        return categoriesParser.hasCorrectCategories(clazz) || tagsParser.hasCorrectCategories(clazz);
     }
 
     @Override

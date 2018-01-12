@@ -12,39 +12,18 @@ import java.util.stream.Stream;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 
-class TagsParser {
+class TagsParser extends AbstractParser {
 
     public static final String TAG = "org.junit.jupiter.api.Tag";
     public static final String TAGS = "org.junit.jupiter.api.Tags";
     private final Logger logger = Log.getLogger();
-    private final CategorizedConfiguration strategyConfig;
-    private final List<String> specifiedCategories;
 
     TagsParser(CategorizedConfiguration strategyConfig) {
-        this.strategyConfig = strategyConfig;
-        specifiedCategories = Arrays.stream(strategyConfig.getCategories())
-            .map(this::changeIfNonCaseSensitive)
-            .collect(Collectors.toList());
+        super(strategyConfig);
     }
 
-    boolean hasCorrectTags(Class<?> clazz) {
-        final List<String> presentCategories = getPresentCategories(clazz);
-        if (presentCategories.isEmpty()) {
-            return false;
-        }
-
-        final List<String> intersection = presentCategories.stream()
-            .filter(specifiedCategories::contains)
-            .collect(Collectors.toList());
-
-        if (strategyConfig.isMatchAll() || specifiedCategories.isEmpty()) {
-            return intersection.size() == specifiedCategories.size();
-        } else {
-            return !intersection.isEmpty();
-        }
-    }
-
-    private List<String> getPresentCategories(Class<?> clazz) {
+    @Override
+    protected List<String> findCategories(Class<?> clazz) {
 
         return Arrays.stream(clazz.getAnnotations())
             .map(annotation -> this.findJUnit5TagAnnotation(annotation))
@@ -54,8 +33,9 @@ class TagsParser {
             .collect(Collectors.toList());
     }
 
-    private String changeIfNonCaseSensitive(String category) {
-        return strategyConfig.isCaseSensitive() ? category : category.toLowerCase();
+    @Override
+    protected boolean isSpecified(String category, List<String> specifiedCategories) {
+        return specifiedCategories.contains(category);
     }
 
     private Stream<String> retrieveTagFromAnnotation(Annotation tagsAnnotation) {

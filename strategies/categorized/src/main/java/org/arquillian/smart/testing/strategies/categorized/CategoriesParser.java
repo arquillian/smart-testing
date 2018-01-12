@@ -9,37 +9,16 @@ import java.util.stream.Stream;
 import org.arquillian.smart.testing.logger.Log;
 import org.arquillian.smart.testing.logger.Logger;
 
-class CategoriesParser {
+class CategoriesParser extends AbstractParser {
 
     private final Logger logger = Log.getLogger();
-    private final CategorizedConfiguration strategyConfig;
-    private final List<String> specifiedCategories;
 
     CategoriesParser(CategorizedConfiguration strategyConfig) {
-        this.strategyConfig = strategyConfig;
-        specifiedCategories = Arrays.stream(strategyConfig.getCategories())
-            .map(this::changeIfNonCaseSensitive)
-            .collect(Collectors.toList());
+        super(strategyConfig);
     }
 
-    boolean hasCorrectCategories(Class<?> clazz) {
-        final List<String> presentCategories = getPresentCategories(clazz);
-        if (presentCategories.isEmpty()) {
-            return false;
-        }
-
-        final List<String> intersection = presentCategories.stream()
-            .filter(category -> isSpecified(category, specifiedCategories))
-            .collect(Collectors.toList());
-
-        if (strategyConfig.isMatchAll() || specifiedCategories.isEmpty()) {
-            return intersection.size() == specifiedCategories.size();
-        } else {
-            return !intersection.isEmpty();
-        }
-    }
-
-    private List<String> getPresentCategories(Class<?> clazz) {
+    @Override
+    protected List<String> findCategories(Class<?> clazz) {
         return Arrays.stream(clazz.getAnnotations())
             .filter(this::isJUnit4Category)
             .flatMap(this::retrieveCategoriesFromAnnotation)
@@ -47,7 +26,8 @@ class CategoriesParser {
             .collect(Collectors.toList());
     }
 
-    private boolean isSpecified(String category, List<String> specifiedCategories) {
+    @Override
+    protected boolean isSpecified(String category, List<String> specifiedCategories) {
         if (!specifiedCategories.contains(category)) {
             if (category.contains(".")) {
                 String categoryClassName = category.substring(category.lastIndexOf(".") + 1);
@@ -56,10 +36,6 @@ class CategoriesParser {
             return false;
         }
         return true;
-    }
-
-    private String changeIfNonCaseSensitive(String category) {
-        return strategyConfig.isCaseSensitive() ? category : category.toLowerCase();
     }
 
     private Stream<String> retrieveCategoriesFromAnnotation(Annotation categoryAnnotation) {

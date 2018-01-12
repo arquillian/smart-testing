@@ -1,10 +1,10 @@
 package org.arquillian.smart.testing.strategies.categorized;
 
-import org.arquillian.smart.testing.strategies.categorized.project.FastTaggedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.FirstAndSecondTaggedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.FirstTaggedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.NonTaggedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.ThirdTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FastTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstAndSecondTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.NonTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.ThirdTaggedClass;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isTrue();
@@ -30,7 +30,7 @@ public class TagsParserTest {
         TagsParser tagParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagParser.hasCorrectTags(NonTaggedClass.class);
+        boolean hasCorrectTags = tagParser.hasCorrectCategories(NonTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isFalse();
@@ -44,7 +44,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstAndSecondTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isTrue();
@@ -58,7 +58,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FastTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FastTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isTrue();
@@ -72,7 +72,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(ThirdTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(ThirdTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isFalse();
@@ -87,7 +87,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstAndSecondTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isTrue();
@@ -102,7 +102,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isFalse();
@@ -117,7 +117,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstAndSecondTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isFalse();
@@ -133,7 +133,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstAndSecondTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isTrue();
@@ -149,7 +149,7 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectTags(FirstAndSecondTaggedClass.class);
+        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
 
         // then
         Assertions.assertThat(hasCorrectTags).isFalse();
