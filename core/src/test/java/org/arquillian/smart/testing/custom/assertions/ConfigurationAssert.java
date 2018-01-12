@@ -46,7 +46,7 @@ public class ConfigurationAssert extends AbstractAssert<ConfigurationAssert, Con
         return this;
     }
 
-    public ConfigurationAssert hasDebugEnable(boolean debug) {
+    public ConfigurationAssert hasDebugLogEnabled(boolean debug) {
         isNotNull();
 
         if (!Objects.equals(actual.isDebug(), debug)) {
@@ -55,7 +55,7 @@ public class ConfigurationAssert extends AbstractAssert<ConfigurationAssert, Con
         return this;
     }
 
-    public ConfigurationAssert hasDisableEnable(boolean disable) {
+    public ConfigurationAssert hasSmartTestingDisabled(boolean disable) {
         isNotNull();
 
         if (!Objects.equals(actual.isDisable(), disable)) {

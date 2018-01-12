@@ -78,7 +78,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         // then
         softly.assertThat(configuration)
             .hasMode(SELECTING)
-            .hasDebugEnable(true)
+            .hasDebugLogEnabled(true)
             .hasAppliedStrategies("new", "changed", "affected");
     }
 
@@ -105,7 +105,7 @@ public class ConfigurationOverwriteUsingInheritTest {
         // then
         softly.assertThat(configuration)
             .hasMode(ORDERING)
-            .hasDisableEnable(true)
+            .hasSmartTestingDisabled(true)
             .hasAppliedStrategies("new", "changed", "affected");
     }
 
@@ -140,7 +140,7 @@ public class ConfigurationOverwriteUsingInheritTest {
 
         softly.assertThat(configuration)
             .hasMode(ORDERING)
-            .hasDisableEnable(true)
+            .hasSmartTestingDisabled(true)
             .hasAppliedStrategies("new", "changed", "affected");
 
         softly.assertThat(range.getHead()).isEqualTo(HEAD);
