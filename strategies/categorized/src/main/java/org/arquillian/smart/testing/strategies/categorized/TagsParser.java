@@ -60,6 +60,7 @@ class TagsParser extends AbstractParser {
                 Arrays.stream(tagAnnotations)
                 .filter(Objects::nonNull)
                 .map(this::getTagName)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList())
             );
         } catch (Exception e) {
