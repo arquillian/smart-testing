@@ -14,8 +14,8 @@ import org.arquillian.smart.testing.logger.Logger;
 
 class TagsParser extends AbstractParser {
 
-    public static final String TAG = "org.junit.jupiter.api.Tag";
-    public static final String TAGS = "org.junit.jupiter.api.Tags";
+    private static final String TAG = "org.junit.jupiter.api.Tag";
+    private static final String TAGS = "org.junit.jupiter.api.Tags";
     private final Logger logger = Log.getLogger();
 
     TagsParser(CategorizedConfiguration strategyConfig) {
@@ -26,7 +26,7 @@ class TagsParser extends AbstractParser {
     protected List<String> findCategories(Class<?> clazz) {
 
         return Arrays.stream(clazz.getAnnotations())
-            .map(annotation -> this.findJUnit5TagAnnotation(annotation))
+            .map(this::findJUnit5TagAnnotation)
             .filter(Objects::nonNull)
             .flatMap(this::retrieveTagFromAnnotation)
             .map(this::changeIfNonCaseSensitive)
@@ -41,7 +41,10 @@ class TagsParser extends AbstractParser {
     private Stream<String> retrieveTagFromAnnotation(Annotation tagsAnnotation) {
         final List<String> tags = new ArrayList<>();
         if (TAG.equals(tagsAnnotation.annotationType().getName())) {
-            tags.add(getTagName(tagsAnnotation));
+            final String tagName = getTagName(tagsAnnotation);
+            if (tagName != null) {
+                tags.add(tagName);
+            }
         } else {
             tags.addAll(getMultipleTagNames(tagsAnnotation));
         }
@@ -80,8 +83,8 @@ class TagsParser extends AbstractParser {
     }
 
     private Annotation findJUnit5TagAnnotation(Annotation annotation) {
-        String fgn = annotation.annotationType().getName();
-        boolean isDirectlyTagged = TAG.equals(fgn) || TAGS.equals(fgn);
+        String annotationName = annotation.annotationType().getName();
+        boolean isDirectlyTagged = TAG.equals(annotationName) || TAGS.equals(annotationName);
 
         if (!isDirectlyTagged) {
             final Annotation[] metaAnnotations = annotation.annotationType().getAnnotations();
