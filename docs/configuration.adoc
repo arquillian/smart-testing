@@ -206,8 +206,9 @@ All reports from previous local build are automatically copied by the maven exte
 
 `Categorized` strategy selects tests based in the JUnit 4 annotation `@Category` and the classes specified in it. With this strategy, you can easily set which classes you want to run without any need of changing your `pom.xml` file with complicated profiles.
 
-You can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration). For more information about the parameters see <<_categorized_configuration_options, Configuration Options>>.
+You can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration).
+For more information about the parameters see <<_categorized_configuration_options, Configuration Options>>.
 
-****
+This strategy also supports JUnit 5 annotations `@Tag` and `@Tags` as well as meta annotations.
+
 NOTE: It works on the level of classes, so it doesn't reflect method annotations.
-****

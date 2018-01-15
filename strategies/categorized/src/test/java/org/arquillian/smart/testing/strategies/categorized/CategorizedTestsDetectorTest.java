@@ -8,10 +8,15 @@ import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.api.SmartTesting;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
-import org.arquillian.smart.testing.strategies.categorized.project.FirstAndSecondCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.FirstCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.NonCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.ThirdCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FastTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstAndSecondCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstAndSecondTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.NonCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.NonTaggedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.ThirdCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.tags.ThirdTaggedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategory;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.SecondCategory;
 import org.junit.Before;
@@ -29,6 +34,10 @@ public class CategorizedTestsDetectorTest {
     private List<Class<?>> classesToProcess =
         Arrays.asList(ThirdCategorizedClass.class, FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class,
             NonCategorizedClass.class);
+
+    private List<Class<?>> taggedClassesToProcess =
+        Arrays.asList(ThirdTaggedClass.class, FirstAndSecondTaggedClass.class, FirstTaggedClass.class,
+            NonTaggedClass.class, FastTaggedClass.class);
 
     private Configuration config;
     private CategorizedConfiguration categorizedConfig;
@@ -68,6 +77,38 @@ public class CategorizedTestsDetectorTest {
         // then
         assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
             .containsExactlyInAnyOrder(FirstAndSecondCategorizedClass.class, FirstCategorizedClass.class);
+    }
+
+    @Test
+    public void should_return_classes_with_first_and_second_category_based_on_tags() {
+        // given
+        categorizedConfig.setCategories(
+            new String[] {"first", "second"});
+
+        // when
+        Collection<TestSelection> testSelection =
+            new CategorizedTestsDetector(config).selectTestsFromClasses(taggedClassesToProcess);
+
+        // then
+        assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
+            .containsExactlyInAnyOrder(FirstAndSecondTaggedClass.class, FirstTaggedClass.class);
+    }
+
+    @Test
+    public void should_return_classes_with_metatags() {
+
+        // given
+        categorizedConfig.setCategories(
+            new String[] {"fast"});
+
+        // when
+        Collection<TestSelection> testSelection =
+            new CategorizedTestsDetector(config).selectTestsFromClasses(taggedClassesToProcess);
+
+        // then
+        assertThat(SmartTesting.getClasses(new HashSet<>(testSelection)))
+            .containsExactlyInAnyOrder(FastTaggedClass.class);
+
     }
 
     @Test

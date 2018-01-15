@@ -1,9 +1,9 @@
 package org.arquillian.smart.testing.strategies.categorized;
 
-import org.arquillian.smart.testing.strategies.categorized.project.FirstAndSecondCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.FirstCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.NonCategorizedClass;
-import org.arquillian.smart.testing.strategies.categorized.project.ThirdCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstAndSecondCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.NonCategorizedClass;
+import org.arquillian.smart.testing.strategies.categorized.project.categories.ThirdCategorizedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategory;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.SecondCategory;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.ThirdCategory;

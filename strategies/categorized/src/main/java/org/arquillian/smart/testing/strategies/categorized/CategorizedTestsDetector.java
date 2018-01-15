@@ -14,10 +14,12 @@ public class CategorizedTestsDetector implements TestExecutionPlanner {
 
     private final CategorizedConfiguration strategyConfig;
     private final CategoriesParser categoriesParser;
+    private final TagsParser tagsParser;
 
     public CategorizedTestsDetector(Configuration configuration) {
         strategyConfig = (CategorizedConfiguration) configuration.getStrategyConfiguration(CATEGORIZED);
         categoriesParser = new CategoriesParser(strategyConfig);
+        tagsParser = new TagsParser(strategyConfig);
     }
 
     @Override
@@ -44,9 +46,9 @@ public class CategorizedTestsDetector implements TestExecutionPlanner {
 
     private boolean hasCorrectCategoriesMatchingReversed(Class<?> clazz) {
         if (strategyConfig.isReversed()) {
-            return !categoriesParser.hasCorrectCategories(clazz);
+            return !categoriesParser.hasCorrectCategories(clazz) && !tagsParser.hasCorrectCategories(clazz);
         }
-        return categoriesParser.hasCorrectCategories(clazz);
+        return categoriesParser.hasCorrectCategories(clazz) || tagsParser.hasCorrectCategories(clazz);
     }
 
     @Override
