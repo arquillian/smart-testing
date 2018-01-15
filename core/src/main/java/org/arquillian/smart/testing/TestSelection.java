@@ -2,8 +2,10 @@ package org.arquillian.smart.testing;
 
 import java.lang.reflect.Array;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -14,23 +16,28 @@ public class TestSelection {
 
     private final String className;
 
-    private final Collection<String> types; // TODO or strategy instead (misleading name)
+    private final Collection<String> appliedStrategies;
 
-    public TestSelection(Path location, String... type) {
-        this(new ClassNameExtractor().extractFullyQualifiedName(location), type);
+    private final List<String> testMethodNames;
+
+    public static final TestSelection NOT_MATCHED = new TestSelection("");
+
+    public TestSelection(Path location, String... appliedStrategies) {
+        this(new ClassNameExtractor().extractFullyQualifiedName(location), appliedStrategies);
     }
 
-    public TestSelection(String className, String ... type) {
+    public TestSelection(String className, String ... appliedStrategies) {
         this.className = className;
-        this.types = new LinkedHashSet<>(asList(type));
+        this.appliedStrategies = new LinkedHashSet<>(asList(appliedStrategies));
+        this.testMethodNames = new ArrayList<>();
     }
 
     public String getClassName() {
         return className;
     }
 
-    public Collection<String> getTypes() {
-        return types; // TODO should we return clone to avoid manipulation?
+    public Collection<String> getAppliedStrategies() {
+        return appliedStrategies; // TODO should we return clone to avoid manipulation?
     }
 
     @Override
@@ -52,7 +59,7 @@ public class TestSelection {
 
     @Override
     public String toString() {
-        return "TestSelection{" + "className='" + className + '\'' + ", types=" + types + '}';
+        return "TestSelection{" + "className='" + className + '\'' + ", appliedStrategies=" + appliedStrategies + '}';
     }
 
     public TestSelection merge(TestSelection other) {
@@ -63,9 +70,9 @@ public class TestSelection {
                     other.getClassName()));
         }
 
-        final String[] types = getTypes().toArray(new String[getTypes().size()]);
-        final String[] typesOfOther = other.getTypes().toArray(new String[other.getTypes().size()]);
-        return new TestSelection(getClassName(), concat(types, typesOfOther));
+        final String[] appliedStrategies = getAppliedStrategies().toArray(new String[getAppliedStrategies().size()]);
+        final String[] otherAppliedStrategies = other.getAppliedStrategies().toArray(new String[other.getAppliedStrategies().size()]);
+        return new TestSelection(getClassName(), concat(appliedStrategies, otherAppliedStrategies));
     }
 
     private String[] concat(String[] first, String[] second) {
@@ -73,5 +80,9 @@ public class TestSelection {
         arraycopy(first, 0, result, 0, first.length);
         arraycopy(second, 0, result, first.length, second.length);
         return result;
+    }
+
+    public List<String> getTestMethodNames() {
+        return testMethodNames;
     }
 }

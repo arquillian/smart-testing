@@ -46,7 +46,7 @@ public class TestSelectorTest {
         // then
         Assertions.assertThat(testSelections)
             .hasSize(1)
-            .flatExtracting("types").containsExactly("new", "changed");
+            .flatExtracting("appliedStrategies").containsExactly("new", "changed");
     }
 
     @Test
@@ -72,7 +72,7 @@ public class TestSelectorTest {
         // then
         Assertions.assertThat(testSelections)
             .hasSize(2)
-            .flatExtracting("types").containsExactly("new", "changed");
+            .flatExtracting("appliedStrategies").containsExactly("new", "changed");
     }
 
     private TestExecutionPlannerLoader prepareLoader(final Set<Class<?>> testsToRun) {

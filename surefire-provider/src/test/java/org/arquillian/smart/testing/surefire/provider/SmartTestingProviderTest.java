@@ -2,8 +2,11 @@ package org.arquillian.smart.testing.surefire.provider;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,9 +16,14 @@ import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
 import org.apache.maven.surefire.report.DefaultConsoleReporter;
+import org.apache.maven.surefire.testset.ResolvedTest;
+import org.apache.maven.surefire.testset.TestListResolver;
 import org.apache.maven.surefire.testset.TestRequest;
+import org.apache.maven.surefire.testset.TestSetFailedException;
 import org.apache.maven.surefire.util.TestsToRun;
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.configuration.ConfigurationLoader;
+import org.arquillian.smart.testing.surefire.provider.custom.assertions.SurefireProviderSoftAssertions;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +31,7 @@ import org.junit.contrib.java.lang.system.RestoreSystemProperties;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Mockito;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,8 +50,12 @@ public class SmartTestingProviderTest {
     @Rule
     public final RestoreSystemProperties restoreSystemProperties = new RestoreSystemProperties();
 
+    @Rule
+    public final SurefireProviderSoftAssertions softly = new SurefireProviderSoftAssertions();
+
     private final Set<Class<?>> expectedClassesToRun = new LinkedHashSet<>(asList(ATest.class, BTest.class));
     private ProviderParameters providerParameters;
+    private TestRequest testRequest;
     private SurefireProviderFactory providerFactory;
 
     private SurefireProvider surefireProvider;
@@ -55,10 +68,9 @@ public class SmartTestingProviderTest {
         when(surefireProvider.getSuites()).thenReturn(new TestsToRun(expectedClassesToRun));
 
         providerFactory = mock(SurefireProviderFactory.class);
-        when(providerFactory.createInstance()).thenReturn(surefireProvider);
+        when(providerFactory.createInstance(Mockito.any())).thenReturn(surefireProvider);
 
-        TestRequest testRequest = mock(TestRequest.class);
-        when(testRequest.getTestSourceDirectory()).thenReturn(temporaryFolder.getRoot());
+        testRequest = new TestRequest(null, temporaryFolder.getRoot(), TestListResolver.getEmptyTestListResolver());
         when(providerParameters.getTestRequest()).thenReturn(testRequest);
 
         temporaryFolder.newFile("pom.xml");
@@ -123,12 +135,67 @@ public class SmartTestingProviderTest {
             iterable -> iterableContains(iterable, expectedClassesToRun)));
     }
 
+    @Test
+    public void should_add_test_method_selection_to_test_list_resolver() throws TestSetFailedException, InvocationTargetException {
+        // given
+        TestSelection strategy = new TestSelection(ATest.class.getName(), "strategy");
+        strategy.getTestMethodNames().add("firstMethod");
+        strategy.getTestMethodNames().add("secondMethod");
+
+        prepareTestListResolver();
+
+        SmartTestingInvoker smartTestingInvoker = prepareSTInvoker(Arrays.asList(strategy));
+        SmartTestingSurefireProvider provider =
+            new SmartTestingSurefireProvider(providerParameters, providerFactory, smartTestingInvoker);
+
+        // when
+        provider.invoke(null);
+
+        // then
+        softly.assertThat(testRequest.getTestListResolver())
+            .hasMethodPatterns(true)
+            .hasIncludedMethodPatterns(true)
+            .hasExcludedMethodPatterns(true)
+            .includedPatterns()
+            .containsExactlyInAnyOrder(
+                new ResolvedTest(ATest.class.getName(), "firstMethod", false),
+                new ResolvedTest(ATest.class.getName(), "secondMethod", false));
+
+        softly.assertThat(testRequest.getTestListResolver())
+            .excludedPatterns()
+            .containsExactly(new ResolvedTest(ATest.class.getName(), "thirdMethod", false));
+    }
+
+    private SmartTestingInvoker prepareSTInvoker(List<TestSelection> selectionToReturn) {
+        SmartTestingInvoker smartTestingInvoker = mock(SmartTestingInvoker.class);
+        when(smartTestingInvoker.invokeSmartTestingAPI(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(
+            new HashSet<>(selectionToReturn));
+        return smartTestingInvoker;
+    }
+
+    private void prepareTestListResolver(){
+        TestListResolver testListResolver =
+            new TestListResolver(Arrays.asList("*Test*", "!" + ATest.class.getName() + "#thirdMethod"));
+        testRequest = new TestRequest(null, temporaryFolder.getRoot(), testListResolver);
+        when(providerParameters.getTestRequest()).thenReturn(testRequest);
+    }
+
     private boolean iterableContains(Iterable<Class> iterable, Set expectedClasses) {
         List<Class> actualCall = StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toList());
         return actualCall.size() == expectedClasses.size() && actualCall.containsAll(expectedClasses);
     }
 
-    private static class ATest {}
+    private static class ATest {
+
+        void firstMethod() {
+        }
+
+        void secondMethod() {
+        }
+
+        void thirdMethod() {
+        }
+    }
 
     private static class BTest {}
 }
