@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.arquillian.smart.testing.logger.Log;
@@ -23,9 +22,9 @@ class TagsParser extends AbstractParser {
     }
 
     @Override
-    protected List<String> findCategories(Class<?> clazz) {
+    protected List<String> findCategories(Annotation[] annotations) {
 
-        return Arrays.stream(clazz.getAnnotations())
+        return Arrays.stream(annotations)
             .map(this::findJUnit5TagAnnotation)
             .filter(Objects::nonNull)
             .flatMap(this::retrieveTagFromAnnotation)
@@ -106,6 +105,12 @@ class TagsParser extends AbstractParser {
 
         return annotation;
 
+    }
+
+    @Override
+    protected boolean isTestMethod(Method method) {
+        return Arrays.stream(method.getAnnotations())
+            .anyMatch(annotation -> annotation.annotationType().getName().equals("org.junit.jupiter.api.Test"));
     }
 }
 

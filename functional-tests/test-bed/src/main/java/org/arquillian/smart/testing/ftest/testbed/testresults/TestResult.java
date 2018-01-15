@@ -44,7 +44,24 @@ public class TestResult {
             throw new IllegalArgumentException(
                 "Too many arguments passed to create TestResult. Expected to get status code and name, got [" + Arrays.toString(testResultParts) + "]");
         }
-        return new TestResult(testResultParts[1], "*", Status.from(testResultParts[0]));
+
+        String className;
+        String methodName;
+
+        if (expectedTestContainsSpecificMethodDefinition(testResultParts[1])) {
+            String[] classWithMethod = testResultParts[1].split("#");
+            className = classWithMethod[0];
+            methodName = classWithMethod[1];
+
+        } else {
+            className = testResultParts[1];
+            methodName = "*";
+        }
+        return new TestResult(className, methodName, Status.from(testResultParts[0]));
+    }
+
+    private static boolean expectedTestContainsSpecificMethodDefinition(String expectedTest) {
+        return expectedTest.contains("#");
     }
 
     @Override

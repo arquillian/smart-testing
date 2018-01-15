@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.categorized;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,16 +40,16 @@ public class CategorizedTestsDetector implements TestExecutionPlanner {
     @Override
     public Collection<TestSelection> selectTestsFromClasses(Iterable<Class<?>> testsToRun) {
         return StreamSupport.stream(testsToRun.spliterator(), false)
-            .filter(this::hasCorrectCategoriesMatchingReversed)
-            .map(clazz -> new TestSelection(clazz.getName(), CATEGORIZED))
+            .map(this::getSelectionForClass)
+            .filter(testSelection -> !testSelection.equals(TestSelection.NOT_MATCHED))
             .collect(Collectors.toList());
     }
 
-    private boolean hasCorrectCategoriesMatchingReversed(Class<?> clazz) {
-        if (strategyConfig.isReversed()) {
-            return !categoriesParser.hasCorrectCategories(clazz) && !tagsParser.hasCorrectCategories(clazz);
+    TestSelection getSelectionForClass(Class clazz){
+        if (Arrays.stream(clazz.getDeclaredMethods()).anyMatch(tagsParser::isTestMethod)) {
+            return tagsParser.getTestSelectionIfMatched(clazz);
         }
-        return categoriesParser.hasCorrectCategories(clazz) || tagsParser.hasCorrectCategories(clazz);
+        return categoriesParser.getTestSelectionIfMatched(clazz);
     }
 
     @Override

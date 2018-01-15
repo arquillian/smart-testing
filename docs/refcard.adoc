@@ -98,6 +98,11 @@ a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/stra
 a| `false`
 a|`categorized`
 
+a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_METHODS"]`
+| Sets if the resolution of categories/tags should be performed only on test classes or also on test methods.
+a| `true`
+a|`categorized`
+
 a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_MATCH_ALL"]`
 | Sets that the classes should contain all categories specified in the list of the categories.
 a| `false`
