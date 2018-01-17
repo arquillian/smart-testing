@@ -84,25 +84,22 @@ class SecurityUtils {
     }
 
     public static Field getField(final Class<?> source, final String name) {
-        Field declaredAccessibleField = AccessController.doPrivileged(new PrivilegedAction<Field>() {
-            public Field run() {
-                Field foundField = null;
-                Class<?> nextSource = source;
-                while (nextSource != Object.class) {
-                    try {
-                        foundField = nextSource.getDeclaredField(name);
-                        if (!foundField.isAccessible()) {
-                            foundField.setAccessible(true);
-                        }
-                        break;
-                    } catch (NoSuchFieldException e) {
-                        // Nothing to do - just scan the super class
+        return AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+            Field foundField = null;
+            Class<?> nextSource = source;
+            while (nextSource != Object.class) {
+                try {
+                    foundField = nextSource.getDeclaredField(name);
+                    if (!foundField.isAccessible()) {
+                        foundField.setAccessible(true);
                     }
-                    nextSource = nextSource.getSuperclass();
+                    break;
+                } catch (NoSuchFieldException e) {
+                    // Nothing to do - just scan the super class
                 }
-                return foundField;
+                nextSource = nextSource.getSuperclass();
             }
+            return foundField;
         });
-        return declaredAccessibleField;
     }
 }
