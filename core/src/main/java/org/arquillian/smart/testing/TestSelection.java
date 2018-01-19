@@ -4,8 +4,8 @@ import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -18,7 +18,7 @@ public class TestSelection {
 
     private final Collection<String> appliedStrategies;
 
-    private final List<String> testMethodNames;
+    private final Collection<String> testMethodNames;
 
     public static final TestSelection NOT_MATCHED = new TestSelection("");
 
@@ -27,9 +27,13 @@ public class TestSelection {
     }
 
     public TestSelection(String className, String ... appliedStrategies) {
+        this(className, new ArrayList<>(), appliedStrategies);
+    }
+
+    public TestSelection(String className, Collection<String> testMethodNames, String ... appliedStrategies) {
         this.className = className;
         this.appliedStrategies = new LinkedHashSet<>(asList(appliedStrategies));
-        this.testMethodNames = new ArrayList<>();
+        this.testMethodNames = testMethodNames;
     }
 
     public String getClassName() {
@@ -37,7 +41,11 @@ public class TestSelection {
     }
 
     public Collection<String> getAppliedStrategies() {
-        return appliedStrategies; // TODO should we return clone to avoid manipulation?
+        return Collections.unmodifiableCollection(appliedStrategies);
+    }
+
+    public Collection<String> getTestMethodNames() {
+        return Collections.unmodifiableCollection(testMethodNames);
     }
 
     @Override
@@ -80,9 +88,5 @@ public class TestSelection {
         arraycopy(first, 0, result, 0, first.length);
         arraycopy(second, 0, result, first.length, second.length);
         return result;
-    }
-
-    public List<String> getTestMethodNames() {
-        return testMethodNames;
     }
 }

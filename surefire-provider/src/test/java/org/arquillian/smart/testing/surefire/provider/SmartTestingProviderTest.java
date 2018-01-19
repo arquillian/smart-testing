@@ -138,9 +138,8 @@ public class SmartTestingProviderTest {
     @Test
     public void should_add_test_method_selection_to_test_list_resolver() throws TestSetFailedException, InvocationTargetException {
         // given
-        TestSelection strategy = new TestSelection(ATest.class.getName(), "strategy");
-        strategy.getTestMethodNames().add("firstMethod");
-        strategy.getTestMethodNames().add("secondMethod");
+        TestSelection strategy =
+            new TestSelection(ATest.class.getName(), Arrays.asList("firstMethod", "secondMethod"), "strategy");
 
         prepareTestListResolver();
 
