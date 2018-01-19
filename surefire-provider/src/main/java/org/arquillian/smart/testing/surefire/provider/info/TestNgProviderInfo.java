@@ -31,7 +31,7 @@ public class TestNgProviderInfo implements ProviderInfo {
         // remove threadcount property where the value is lower than 1 or is not numeric
         // workaround for https://issues.apache.org/jira/browse/SUREFIRE-1398
         String threadCount = providerParameters.getProviderProperties().get(THREADCOUNT_PROP);
-        if (isNumeric(threadCount) || Integer.parseInt(threadCount) < 1) {
+        if (!isNumeric(threadCount) || Integer.parseInt(threadCount) < 1) {
             providerParameters.getProviderProperties().remove(THREADCOUNT_PROP);
         }
         return providerParameters;
