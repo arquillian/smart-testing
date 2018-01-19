@@ -37,7 +37,7 @@ public class TestNgProviderInfo implements ProviderInfo {
         return providerParameters;
     }
 
-    private boolean isNumeric(String str) {
-        return str.matches("\\d+");
+    boolean isNumeric(String str) {
+        return str != null && str.matches("\\d+");
     }
 }
