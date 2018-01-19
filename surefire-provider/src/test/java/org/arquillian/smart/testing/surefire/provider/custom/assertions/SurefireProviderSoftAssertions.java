@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.surefire.provider.custom.assertions;
 
+import org.apache.maven.surefire.testset.TestListResolver;
 import org.arquillian.smart.testing.surefire.provider.info.CustomProviderInfo;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.rules.TestRule;
@@ -10,6 +11,10 @@ public class SurefireProviderSoftAssertions extends SoftAssertions implements Te
 
     public CustomProviderAssert assertThat(CustomProviderInfo actual) {
         return proxy(CustomProviderAssert.class, CustomProviderInfo.class, actual);
+    }
+
+    public TestListResolverAssert assertThat(TestListResolver actual) {
+        return proxy(TestListResolverAssert.class, TestListResolver.class, actual);
     }
 
     @Override

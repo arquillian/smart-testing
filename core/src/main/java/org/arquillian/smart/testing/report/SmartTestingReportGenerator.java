@@ -45,7 +45,7 @@ public class SmartTestingReportGenerator {
     private TestConfiguration getTestConfiguration(TestSelection testSelection) {
         return TestConfiguration.builder()
             .withName(testSelection.getClassName())
-            .withStrategies(testSelection.getTypes())
+            .withStrategies(testSelection.getAppliedStrategies())
             .build();
     }
 

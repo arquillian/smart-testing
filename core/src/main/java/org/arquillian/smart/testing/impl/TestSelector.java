@@ -103,7 +103,7 @@ abstract class TestSelector<CLASS_INFO_TYPE> {
             final StrategiesComparator byStrategies = new StrategiesComparator(strategies);
 
             return testSelections.stream()
-                .sorted(Comparator.comparing(TestSelection::getTypes, byStrategies))
+                .sorted(Comparator.comparing(TestSelection::getAppliedStrategies, byStrategies))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 

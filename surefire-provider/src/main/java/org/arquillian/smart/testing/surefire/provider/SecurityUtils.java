@@ -1,6 +1,7 @@
 package org.arquillian.smart.testing.surefire.provider;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
@@ -80,5 +81,25 @@ class SecurityUtils {
                 }
             }
         }
+    }
+
+    public static Field getField(final Class<?> source, final String name) {
+        return AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+            Field foundField = null;
+            Class<?> nextSource = source;
+            while (nextSource != Object.class) {
+                try {
+                    foundField = nextSource.getDeclaredField(name);
+                    if (!foundField.isAccessible()) {
+                        foundField.setAccessible(true);
+                    }
+                    break;
+                } catch (NoSuchFieldException e) {
+                    // Nothing to do - just scan the super class
+                }
+                nextSource = nextSource.getSuperclass();
+            }
+            return foundField;
+        });
     }
 }

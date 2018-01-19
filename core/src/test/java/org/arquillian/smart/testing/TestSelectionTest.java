@@ -28,7 +28,7 @@ public class TestSelectionTest {
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(CLASS_NAME_1, CHANGED));
         
         // then
-        assertThat(mergedTestSelection.getTypes()).containsExactly(NEW, CHANGED);
+        assertThat(mergedTestSelection.getAppliedStrategies()).containsExactly(NEW, CHANGED);
         assertThat(mergedTestSelection.getClassName()).isEqualTo(CLASS_NAME_1);
     }
 
@@ -41,7 +41,7 @@ public class TestSelectionTest {
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(CLASS_NAME_1, CHANGED));
 
         // then
-        assertThat(mergedTestSelection.getTypes()).containsExactly(NEW, AFFECTED, CHANGED);
+        assertThat(mergedTestSelection.getAppliedStrategies()).containsExactly(NEW, AFFECTED, CHANGED);
         assertThat(mergedTestSelection.getClassName()).isEqualTo(CLASS_NAME_1);
     }
 
@@ -68,7 +68,7 @@ public class TestSelectionTest {
         final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(path, NEW));
 
         // then
-        assertThat(mergedTestSelection.getTypes()).containsExactly(AFFECTED, NEW);
+        assertThat(mergedTestSelection.getAppliedStrategies()).containsExactly(AFFECTED, NEW);
     }
 
     private Path getPath(String fileName) {

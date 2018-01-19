@@ -12,12 +12,10 @@ import org.arquillian.smart.testing.surefire.provider.info.TestNgProviderInfo;
 public class SurefireProviderFactory {
 
     private final ProviderInfo providerInfo;
-    private final ProviderParameters providerParameters;
     private final Class<SurefireProvider> surefireProviderClass;
 
     SurefireProviderFactory(ProviderParametersParser paramParser, File projectDir) {
         providerInfo = detectProvider(paramParser, projectDir);
-        providerParameters = paramParser.getProviderParameters();
         surefireProviderClass = loadProviderClass();
     }
 
@@ -32,7 +30,7 @@ public class SurefireProviderFactory {
         return autoDetectOneProvider(wellKnownProviders);
     }
 
-    public SurefireProvider createInstance() {
+    public SurefireProvider createInstance(ProviderParameters providerParameters) {
         return SecurityUtils.newInstance(surefireProviderClass, new Class[] {ProviderParameters.class},
             new Object[] {providerInfo.convertProviderParameters(providerParameters)});
     }
