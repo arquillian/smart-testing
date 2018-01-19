@@ -111,22 +111,16 @@ public class ProjectBuilder {
         return properties;
     }
 
-    private String printSystemProperties() {
-        final StringBuilder sb = new StringBuilder();
-        final Map<String, String> systemProperties = this.buildConfigurator.getSystemProperties()
-            .entrySet()
-            .stream()
-            .sorted(comparingByKey())
-            .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        systemProperties.forEach((key, value) -> sb.append("-D").append(key).append('=').append(value).append(" "));
-        return sb.toString();
-    }
-
     private void setCustomMavenInstallation(PomEquippedEmbeddedMaven embeddedMaven) {
         if (buildConfigurator.getMavenVersion() != null && !buildConfigurator.getMavenVersion().isEmpty()) {
             setMavenVersion(embeddedMaven);
         } else {
-            embeddedMaven.useDefaultDistribution();
+            final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
+            if (mvnInstallation != null) {
+                embeddedMaven.useInstallation(new File(mvnInstallation));
+            } else {
+                embeddedMaven.useDefaultDistribution();
+            }
         }
     }
 
