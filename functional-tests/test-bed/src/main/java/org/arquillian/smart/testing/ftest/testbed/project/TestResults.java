@@ -52,4 +52,8 @@ public class TestResults {
             .filter(testResult -> expectedStatuses.contains(testResult.getStatus()))
             .collect(Collectors.toList());
     }
+
+    public List<TestResult> getTestResults() {
+        return testResults;
+    }
 }

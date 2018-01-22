@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.categorized;
 
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.strategies.categorized.project.tags.FastTaggedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstAndSecondTaggedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.tags.FirstTaggedClass;
@@ -17,23 +18,23 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
     public void should_return_false_for_class_containing_no_tag_when_no_category_set() {
         // given
         CategorizedConfiguration categorizedConfig = prepareConfig();
-        TagsParser tagParser = new TagsParser(categorizedConfig);
+        TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagParser.hasCorrectCategories(NonTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(NonTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -44,10 +45,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -58,10 +59,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FastTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FastTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -72,10 +73,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(ThirdTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(ThirdTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -87,10 +88,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -102,10 +103,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -117,10 +118,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -133,10 +134,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -149,10 +150,10 @@ public class TagsParserTest {
         TagsParser tagsParser = new TagsParser(categorizedConfig);
 
         // when
-        boolean hasCorrectTags = tagsParser.hasCorrectCategories(FirstAndSecondTaggedClass.class);
+        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectTags).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     private CategorizedConfiguration prepareConfig(String... categories) {

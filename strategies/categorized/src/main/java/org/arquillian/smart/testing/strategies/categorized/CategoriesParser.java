@@ -18,8 +18,8 @@ class CategoriesParser extends AbstractParser {
     }
 
     @Override
-    protected List<String> findCategories(Class<?> clazz) {
-        return Arrays.stream(clazz.getAnnotations())
+    protected List<String> findCategories(Annotation[] annotations) {
+        return Arrays.stream(annotations)
             .filter(this::isJUnit4Category)
             .flatMap(this::retrieveCategoriesFromAnnotation)
             .map(this::changeIfNonCaseSensitive)
@@ -36,6 +36,12 @@ class CategoriesParser extends AbstractParser {
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected boolean isTestMethod(Method method) {
+        return Arrays.stream(method.getAnnotations())
+            .anyMatch(annotation -> annotation.annotationType().getName().equals("org.junit.Test"));
     }
 
     private Stream<String> retrieveCategoriesFromAnnotation(Annotation categoryAnnotation) {

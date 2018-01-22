@@ -13,10 +13,12 @@ public class CategorizedConfiguration implements StrategyConfiguration {
     private static final String SMART_TESTING_CATEGORIZED_MATCH_ALL = "smart.testing.categorized.match.all";
     private static final String SMART_TESTING_CATEGORIZED_CASE_SENSITIVE = "smart.testing.categorized.case.sensitive";
     private static final String SMART_TESTING_CATEGORIZED_REVERSED = "smart.testing.categorized.reversed";
+    private static final String SMART_TESTING_CATEGORIZED_METHODS = "smart.testing.categorized.methods";
     private String[] categories;
     private boolean matchAll;
     private boolean caseSensitive;
     private boolean reversed;
+    private boolean methods;
 
     @Override
     public String name() {
@@ -30,6 +32,7 @@ public class CategorizedConfiguration implements StrategyConfiguration {
         items.add(new ConfigurationItem("matchAll", SMART_TESTING_CATEGORIZED_MATCH_ALL, false));
         items.add(new ConfigurationItem("caseSensitive", SMART_TESTING_CATEGORIZED_CASE_SENSITIVE, false));
         items.add(new ConfigurationItem("reversed", SMART_TESTING_CATEGORIZED_REVERSED, false));
+        items.add(new ConfigurationItem("methods", SMART_TESTING_CATEGORIZED_METHODS, true));
         return items;
     }
 
@@ -63,5 +66,13 @@ public class CategorizedConfiguration implements StrategyConfiguration {
 
     public void setReversed(boolean reversed) {
         this.reversed = reversed;
+    }
+
+    public boolean isMethods() {
+        return methods;
+    }
+
+    public void setMethods(boolean methods) {
+        this.methods = methods;
     }
 }

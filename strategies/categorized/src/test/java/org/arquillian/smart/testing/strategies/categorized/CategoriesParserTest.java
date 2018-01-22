@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.categorized;
 
+import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstAndSecondCategorizedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.FirstCategorizedClass;
 import org.arquillian.smart.testing.strategies.categorized.project.categories.NonCategorizedClass;
@@ -19,10 +20,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -32,10 +33,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(NonCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(NonCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -46,10 +47,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstAndSecondCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstAndSecondCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -60,10 +61,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(ThirdCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(ThirdCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -75,10 +76,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstAndSecondCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstAndSecondCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -90,10 +91,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -105,10 +106,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstAndSecondCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstAndSecondCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -121,10 +122,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstAndSecondCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstAndSecondCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isTrue();
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -137,10 +138,10 @@ public class CategoriesParserTest {
         CategoriesParser categoriesParser = new CategoriesParser(categorizedConfig);
 
         // when
-        boolean hasCorrectCategories = categoriesParser.hasCorrectCategories(FirstAndSecondCategorizedClass.class);
+        TestSelection selection = categoriesParser.getTestSelectionIfMatched(FirstAndSecondCategorizedClass.class);
 
         // then
-        Assertions.assertThat(hasCorrectCategories).isFalse();
+        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
     private CategorizedConfiguration prepareConfig(String... categories) {

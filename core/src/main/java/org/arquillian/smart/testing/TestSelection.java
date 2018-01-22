@@ -67,7 +67,9 @@ public class TestSelection {
 
     @Override
     public String toString() {
-        return "TestSelection{" + "className='" + className + '\'' + ", appliedStrategies=" + appliedStrategies + '}';
+        return "TestSelection{" + "className='" + className + '\''
+            + ", appliedStrategies=" + appliedStrategies + '\''
+            + ", testMethodNames=" + testMethodNames + '}';
     }
 
     public TestSelection merge(TestSelection other) {

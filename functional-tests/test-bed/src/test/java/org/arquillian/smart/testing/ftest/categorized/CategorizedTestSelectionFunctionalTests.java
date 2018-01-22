@@ -49,4 +49,33 @@ public class CategorizedTestSelectionFunctionalTests {
         assertThat(actualTestResults.accumulatedPerTestClass()).containsAll(expectedTestResults)
             .hasSameSizeAs(expectedTestResults);
     }
+
+    @Test
+    public void should_run_test_methods_with_categories_either_event_or_exception() throws Exception {
+        // given
+        final Project project = testBed.getProject();
+        project
+            .configureSmartTesting()
+            .executionOrder(CATEGORIZED)
+            .inMode(SELECTING)
+            .enable();
+
+        final Collection<TestResult> expectedTestResults =
+            project.applyAsCommits("Added categories to test methods in core/impl-base");
+
+        // when
+        final TestResults actualTestResults =
+            project.build("core/impl-base")
+                .options()
+                .withSystemProperties(
+                    "smart.testing.categorized.categories", "exceptionCategory,EventCategory",
+                    "test", "Event*,*Impl*,Observer*",
+                    "failIfNoTests", "false")
+                .configure()
+                .run();
+
+        // then
+        assertThat(actualTestResults.getTestResults()).containsAll(expectedTestResults)
+            .hasSameSizeAs(expectedTestResults);
+    }
 }
