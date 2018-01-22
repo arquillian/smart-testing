@@ -67,10 +67,9 @@ public class ProjectBuilder {
             : Paths.get(rootPath, POM_XML);
         final PomEquippedEmbeddedMaven embeddedMaven = EmbeddedMaven.forProject(pomFile.toString());
 
+        embeddedMaven.setDebugLoggerLevel();
         buildConfigurator.enableDebugOptions();
         setCustomMavenInstallation(embeddedMaven);
-
-        System.out.println("$ mvn " + Arrays.toString(goals).replaceAll("[\\[|\\]|,]", "") + " " + printSystemProperties());
 
         final BuiltProject build = embeddedMaven
                     .setShowVersion(true)
@@ -112,17 +111,6 @@ public class ProjectBuilder {
         return properties;
     }
 
-    private String printSystemProperties() {
-        final StringBuilder sb = new StringBuilder();
-        final Map<String, String> systemProperties = this.buildConfigurator.getSystemProperties()
-            .entrySet()
-            .stream()
-            .sorted(comparingByKey())
-            .collect(toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        systemProperties.forEach((key, value) -> sb.append("-D").append(key).append('=').append(value).append(" "));
-        return sb.toString();
-    }
-
     private void setCustomMavenInstallation(PomEquippedEmbeddedMaven embeddedMaven) {
         if (buildConfigurator.getMavenVersion() != null && !buildConfigurator.getMavenVersion().isEmpty()) {
             setMavenVersion(embeddedMaven);
@@ -130,6 +118,8 @@ public class ProjectBuilder {
             final String mvnInstallation = System.getenv("TEST_BED_M2_HOME");
             if (mvnInstallation != null) {
                 embeddedMaven.useInstallation(new File(mvnInstallation));
+            } else {
+                embeddedMaven.useDefaultDistribution();
             }
         }
     }
