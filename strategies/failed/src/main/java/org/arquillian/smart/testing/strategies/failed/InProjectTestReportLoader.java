@@ -30,9 +30,9 @@ public class InProjectTestReportLoader implements TestReportLoader {
     }
 
     @Override
-    public Set<String> loadTestResults() {
+    public Set<TestResult> loadTestResults() {
 
-        final Set<String> testResults = new HashSet<>();
+        final Set<TestResult> testResults = new HashSet<>();
 
         final Path reportDir = TemporaryInternalFiles.createTestReportDirAction(rootDirectory).getPath();
 
@@ -40,7 +40,7 @@ public class InProjectTestReportLoader implements TestReportLoader {
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(reportDir)) {
 
-                final Set<String> testFailures = StreamSupport.stream(directoryStream.spliterator(), false)
+                final Set<TestResult> testFailures = StreamSupport.stream(directoryStream.spliterator(), false)
                     .map(path -> {
                         try {
                             return Files.newInputStream(path);
@@ -57,8 +57,6 @@ public class InProjectTestReportLoader implements TestReportLoader {
                         return testResultParser.get().parse(is);
                     })
                     .flatMap(Set::stream)
-                    .filter(TestResult::isFailing)
-                    .map(TestResult::getClassName)
                     .collect(Collectors.toSet());
 
                 testResults.addAll(testFailures);

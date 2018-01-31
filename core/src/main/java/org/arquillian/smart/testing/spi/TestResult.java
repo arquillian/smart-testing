@@ -14,8 +14,8 @@ public class TestResult {
         this.result = result;
     }
 
-    public TestResult(String className, Result result) {
-        this(className, "", 0f, result);
+    public TestResult(String className, String testMethod, Result result) {
+        this(className, testMethod, 0f, result);
     }
 
     public TestResult(String className, String testMethod, Float testDuration) {

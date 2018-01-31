@@ -1,13 +1,14 @@
 package org.arquillian.smart.testing.strategies.failed;
 
 import java.util.Set;
+import org.arquillian.smart.testing.spi.TestResult;
 
 public interface TestReportLoader {
 
     /**
-     * Returns all test class names that contains failures.
-     * @return Test classes with failing methods.
+     * Returns all test results
+     * @return Loaded test results
      */
-    Set<String> loadTestResults();
+    Set<TestResult> loadTestResults();
 
 }

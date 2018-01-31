@@ -1,4 +1,4 @@
-package org.arquillian.smart.testing.strategies.categorized.custom.assertions;
+package org.arquillian.smart.testing.custom.assertions;
 
 import java.util.ArrayList;
 import java.util.Arrays;

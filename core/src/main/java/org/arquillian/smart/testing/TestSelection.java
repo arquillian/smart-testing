@@ -3,9 +3,11 @@ package org.arquillian.smart.testing;
 import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 
 import static java.lang.String.format;
@@ -82,7 +84,20 @@ public class TestSelection {
 
         final String[] appliedStrategies = getAppliedStrategies().toArray(new String[getAppliedStrategies().size()]);
         final String[] otherAppliedStrategies = other.getAppliedStrategies().toArray(new String[other.getAppliedStrategies().size()]);
-        return new TestSelection(getClassName(), concat(appliedStrategies, otherAppliedStrategies));
+
+        List<String> mergedListOfMethods = getMergedTestMethods(other);
+
+        return new TestSelection(getClassName(), mergedListOfMethods, concat(appliedStrategies, otherAppliedStrategies));
+    }
+
+    private List<String> getMergedTestMethods(TestSelection other) {
+        if (getTestMethodNames().size() == 0 || other.getTestMethodNames().size() == 0) {
+            return new ArrayList<>();
+        }
+        final String[] testMethodNames = getTestMethodNames().toArray(new String[getTestMethodNames().size()]);
+        final String[] otherTestMethodNames =
+            other.getTestMethodNames().toArray(new String[other.getTestMethodNames().size()]);
+        return Arrays.asList(concat(testMethodNames, otherTestMethodNames));
     }
 
     private String[] concat(String[] first, String[] second) {
