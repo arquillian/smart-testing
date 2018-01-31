@@ -112,6 +112,11 @@ a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/stra
 | Sets that the selection should be reversed - all classes that don't match the categories will be selected.
 a| `false`
 a|`categorized`
+
+a| `const:strategies/failed/src/main/java/org/arquillian/smart/testing/strategies/failed/FailedConfiguration.java[name="SMART_TESTING_FAILED_METHODS"]`
+| Sets if the strategy should select the particular failed test methods or take the whole classes
+a| `true`
+a|`failed`
 |===
 
 === Getting insights of the execution

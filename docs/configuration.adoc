@@ -196,7 +196,7 @@ IMPORTANT: Location is relative to current project/module. This means that if yo
 
 ==== Failed
 
-`Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_).
+`Failed` strategy just gets all tests that failed from previous executions and mark them as *important* tests to run first (_ordering_) or not filtered (_selecting_). When the _selecting_ mode is used then, by default, the resolution is on the test methods level (selects the particular failed test methods) - you can disable it by setting the parameter `-Dconst:strategies/failed/src/main/java/org/arquillian/smart/testing/strategies/failed/FailedConfiguration.java[name="SMART_TESTING_FAILED_METHODS"]=false`
 
 This strategy uses the _JUnit_ XML https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd[report] for reading past executions.
 All reports from previous local build are automatically copied by the maven extension to a temp directory `${project.directory}/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="SMART_TESTING_WORKING_DIRECTORY_NAME"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/DuringExecutionLocalStorage.java[name="TEMPORARY_SUBDIRECTORY"]/const:core/src/main/java/org/arquillian/smart/testing/hub/storage/local/TemporaryInternalFiles.java[name="TEMP_REPORT_DIR"]` and when the build is finished the directory is removed.
