@@ -91,7 +91,7 @@ public class TestSelection {
     }
 
     private List<String> getMergedTestMethods(TestSelection other) {
-        if (getTestMethodNames().size() == 0 || other.getTestMethodNames().size() == 0) {
+        if (getTestMethodNames().isEmpty() || other.getTestMethodNames().isEmpty()) {
             return new ArrayList<>();
         }
         final String[] testMethodNames = getTestMethodNames().toArray(new String[getTestMethodNames().size()]);
