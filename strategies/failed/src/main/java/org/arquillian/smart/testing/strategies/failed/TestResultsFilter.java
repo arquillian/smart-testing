@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.arquillian.smart.testing.TestSelection;
 import org.arquillian.smart.testing.spi.TestResult;
 
-public class TestResultsFilter {
+class TestResultsFilter {
 
     static Collection<TestSelection> getFailedTests(FailedConfiguration strategyConfig, Set<TestResult> testResults) {
 
