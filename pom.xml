@@ -191,6 +191,13 @@
         <version>${version.arquillian.spacelift}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.arquillian.smart.testing</groupId>
+        <artifactId>core</artifactId>
+        <version>${project.version}</version>
+        <classifier>tests</classifier>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
