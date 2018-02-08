@@ -53,7 +53,6 @@ include::../strategies/failed/src/main/java/org/arquillian/smart/testing/strateg
 ----
 <1> Method that returns list of tests to execute based on the provided set of fully qualified class names of tests that were previously selected to be executed.
 <2> Method that returns list of tests to execute based on the provided set of tests classes that were previously selected to be executed.
-<3> `TestSelection` requires fully qualified test class name and the strategy where is calculated
 
 ==== ChangeStorage, ChangeResolver and TestResultParser
 

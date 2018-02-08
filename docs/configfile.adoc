@@ -218,3 +218,12 @@ a| reversed
 a| Sets that the selection should be reversed - all classes that don't match the categories will be selected. (default is false)
 |===
 
+==== Failed Configuration Options
+[cols="2,6", options="header"]
+|===
+|Field | Description
+a| methods
+a| Sets if the strategy should select the particular failed test methods or take the whole classes. (default is true)
+
+|===
+

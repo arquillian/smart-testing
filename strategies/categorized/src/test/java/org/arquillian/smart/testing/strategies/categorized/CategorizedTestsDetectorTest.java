@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import static org.arquillian.smart.testing.strategies.categorized.CategorizedTestsDetector.CATEGORIZED;
-import static org.arquillian.smart.testing.strategies.categorized.custom.assertions.TestSelectionCollectionAssert.assertThat;
+import static org.arquillian.smart.testing.custom.assertions.TestSelectionCollectionAssert.assertThat;
 
 public class CategorizedTestsDetectorTest {
 

@@ -1,7 +1,5 @@
 package org.arquillian.smart.testing.impl;
 
-import java.io.File;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;

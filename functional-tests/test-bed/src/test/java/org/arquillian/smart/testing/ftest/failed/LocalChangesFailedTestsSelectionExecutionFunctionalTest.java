@@ -47,14 +47,14 @@ public class LocalChangesFailedTestsSelectionExecutionFunctionalTest {
             .enable();
 
         final Collection<TestResult> expectedTestResults =
-            project.applyAsLocalChanges("fix: Introduces error by changing return value");
+            project.applyAsLocalChanges("fix: Introduces error in test method by changing return value");
 
 
         // when
         final TestResults actualTestResults = project.build("container/impl-base").run();
 
         // then
-        softly.assertThat(actualTestResults.accumulatedPerTestClass())
+        softly.assertThat(actualTestResults.getTestResults())
             .containsAll(expectedTestResults)
             .hasSameSizeAs(expectedTestResults);
 

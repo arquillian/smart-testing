@@ -1,10 +1,10 @@
 package org.arquillian.smart.testing.strategies.failed;
 //tag::documentation[]
+
 import java.io.File;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
 import org.arquillian.smart.testing.TestSelection;
+import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.spi.JavaSPILoader;
 import org.arquillian.smart.testing.spi.TestExecutionPlanner;
 
@@ -13,9 +13,11 @@ public class FailedTestsDetector implements TestExecutionPlanner {
     static final String FAILED = "failed";
 
     private final File projectDir;
+    private final FailedConfiguration strategyConfig;
 
-    public FailedTestsDetector(File projectDir) {
+    public FailedTestsDetector(File projectDir, Configuration configuration) {
         this.projectDir = projectDir;
+        strategyConfig = (FailedConfiguration) configuration.getStrategyConfiguration(FAILED);
     }
 
     @Override
@@ -29,11 +31,8 @@ public class FailedTestsDetector implements TestExecutionPlanner {
     }
 
     public Collection<TestSelection> getTests() {
-        TestReportLoader testReportLoader = new InProjectTestReportLoader(new JavaSPILoader(), projectDir);
-        return testReportLoader.loadTestResults()
-            .stream()
-            .map(result -> new TestSelection(result, getName())) // <3>
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+        InProjectTestReportLoader reportLoader = new InProjectTestReportLoader(new JavaSPILoader(), projectDir);
+        return TestResultsFilter.getFailedTests(strategyConfig, reportLoader.loadTestResults());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing;
 
+import java.util.Arrays;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -69,6 +70,33 @@ public class TestSelectionTest {
 
         // then
         assertThat(mergedTestSelection.getAppliedStrategies()).containsExactly(AFFECTED, NEW);
+    }
+
+    @Test
+    public void should_merge_test_methods_selection_when_in_both_are_specified() {
+        // given
+        final String className = "TestClass.java";
+        final TestSelection testSelection = new TestSelection(className, Arrays.asList("firstTestMethod"), AFFECTED);
+
+        // when
+        final TestSelection mergedTestSelection =
+            testSelection.merge(new TestSelection(className, Arrays.asList("secondTestMethod"), NEW));
+
+        // then
+        assertThat(mergedTestSelection.getTestMethodNames()).containsExactly("firstTestMethod", "secondTestMethod");
+    }
+
+    @Test
+    public void should_return_merged_test_selection_without_methods_when_the_other_one_does_not_contain_any() {
+        // given
+        final String className = "TestClass.java";
+        final TestSelection testSelection = new TestSelection(className, Arrays.asList("firstTestMethod"), AFFECTED);
+
+        // when
+        final TestSelection mergedTestSelection = testSelection.merge(new TestSelection(className, NEW));
+
+        // then
+        assertThat(mergedTestSelection.getTestMethodNames()).isEmpty();
     }
 
     private Path getPath(String fileName) {
