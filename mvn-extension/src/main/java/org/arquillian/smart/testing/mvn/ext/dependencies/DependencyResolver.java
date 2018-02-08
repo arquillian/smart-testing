@@ -47,7 +47,6 @@ public class DependencyResolver {
             final Dependency dependency = dependencies.get(strategy);
             model.addDependency(dependency);
         });
-        configuration.loadStrategyConfigurations(strategies);
     }
 
     public void addAsPluginDependency(Plugin plugin) {
