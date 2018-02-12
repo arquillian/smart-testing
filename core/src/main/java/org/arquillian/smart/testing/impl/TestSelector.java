@@ -39,7 +39,10 @@ abstract class TestSelector<CLASS_INFO_TYPE> {
     protected abstract TestSelection createTestSelection(CLASS_INFO_TYPE testClass);
 
     Set<TestSelection> orderTests() {
-        final Set<TestSelection> orderedTests = new LinkedHashSet<>(selectTests());
+        final Set<TestSelection> orderedTests = new LinkedHashSet<>();
+         selectTests().stream()
+            .forEachOrdered(selection -> orderedTests.add(createSelectionWithoutMethods(selection)));
+
         getTestsToRun()
             .iterator()
             .forEachRemaining(testClass -> orderedTests.add(createTestSelection(testClass)));
@@ -76,6 +79,11 @@ abstract class TestSelector<CLASS_INFO_TYPE> {
         }
 
         return new LinkedHashSet<>(testSelections);
+    }
+
+    private TestSelection createSelectionWithoutMethods(TestSelection selection) {
+        return new TestSelection(selection.getClassName(),
+            selection.getAppliedStrategies().toArray(new String[selection.getAppliedStrategies().size()]));
     }
 
     private List<String> retrieveStrategies() {

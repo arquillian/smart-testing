@@ -20,6 +20,7 @@ import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
 import static org.arquillian.smart.testing.Constants.CURRENT_DIR;
+import static org.arquillian.smart.testing.custom.assertions.TestSelectionCollectionAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -127,6 +128,61 @@ public class TestStrategyApplierUsingPropertyTest {
         Assertions.assertThat(SmartTesting.getClasses(optimizedClasses))
             .hasSize(1)
             .containsExactly(TestSelectionTest.class);
+    }
+
+    @Test
+    public void should_not_return_method_selection_when_ordering_mode_is_used() {
+        // given
+        System.setProperty(Configuration.SMART_TESTING_MODE, "ordering");
+        System.setProperty(Configuration.SMART_TESTING, "static");
+
+        final Set<Class<?>> testsToRun =
+            createTestsToRun(ClassNameExtractorTest.class, TestSelectionTest.class, FilesCodecTest.class);
+
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestSelectionTest.class.getName(), Arrays.asList("testMethod"), "static"));
+        strategyTests.add(new TestSelection(FilesCodecTest.class.getName(), "static"));
+
+        TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
+
+        // when
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader,
+                ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
+                testsToRun);
+
+        // then
+        assertThat(optimizedClasses)
+            .containsTestClassSelectionsExactlyInAnyOrder(
+                new TestSelection(TestSelectionTest.class.getName(), "static"),
+                new TestSelection(FilesCodecTest.class.getName(), "static"),
+                new TestSelection(ClassNameExtractorTest.class.getName()));
+    }
+
+    @Test
+    public void should_return_method_selection_when_selecting_mode_is_used() {
+        // given
+        System.setProperty(Configuration.SMART_TESTING_MODE, "selecting");
+        System.setProperty(Configuration.SMART_TESTING, "static");
+
+        final Set<Class<?>> testsToRun = createTestsToRun(ClassNameExtractorTest.class, TestSelectionTest.class);
+
+        final Set<TestSelection> strategyTests = new LinkedHashSet<>();
+        strategyTests.add(new TestSelection(TestSelectionTest.class.getName(), Arrays.asList("testMethod"), "static"));
+        strategyTests.add(new TestSelection(FilesCodecTest.class.getName(), "static"));
+
+        TestExecutionPlannerLoader testExecutionPlannerLoader = prepareLoader(testsToRun, strategyTests);
+
+        // when
+        Set<TestSelection> optimizedClasses =
+            new ConfiguredSmartTestingImpl(testExecutionPlannerLoader,
+                ConfigurationLoader.load(CURRENT_DIR)).applyOnClasses(
+                testsToRun);
+
+        // then
+        assertThat(optimizedClasses)
+            .containsTestClassSelectionsExactlyInAnyOrder(
+                new TestSelection(TestSelectionTest.class.getName(), Arrays.asList("testMethod"), "static"));
     }
 
     private TestExecutionPlannerLoader prepareLoader(final Set<Class<?>> testsToRun, Set<TestSelection> strategyTests) {
