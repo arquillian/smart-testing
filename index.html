@@ -1146,7 +1146,7 @@ Location is relative to current project/module. This means that if you want to r
 <div class="sect3">
 <h4 id="_failed"><a class="anchor" href="#_failed"></a>3.2.4. Failed</h4>
 <div class="paragraph">
-<p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>).</p>
+<p><code>Failed</code> strategy just gets all tests that failed from previous executions and mark them as <strong>important</strong> tests to run first (<em>ordering</em>) or not filtered (<em>selecting</em>). When the <em>selecting</em> mode is used then, by default, the resolution is on the test methods level (selects the particular failed test methods) - you can disable it by setting the parameter <code>-Dsmart.testing.failed.methods=false</code></p>
 </div>
 <div class="paragraph">
 <p>This strategy uses the <em>JUnit</em> XML <a href="https://github.com/apache/maven-surefire/blob/master/maven-surefire-plugin/src/site/resources/xsd/surefire-test-report.xsd">report</a> for reading past executions.
@@ -1729,6 +1729,31 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </tbody>
 </table>
 </div>
+<div class="sect3">
+<h4 id="_failed_configuration_options"><a class="anchor" href="#_failed_configuration_options"></a>4.4.6. Failed Configuration Options</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>methods</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets if the strategy should select the particular failed test methods or take the whole classes. (default is true)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -1990,7 +2015,7 @@ You need to implement three simple methods, two related with the name of the str
 
     <span class="annotation">@Override</span>
     <span class="directive">public</span> TestExecutionPlanner create(<span class="predefined-type">File</span> projectDir, TestVerifier verifier, <span class="predefined-type">Configuration</span> configuration) {
-        <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector(projectDir);
+        <span class="keyword">return</span> <span class="keyword">new</span> FailedTestsDetector(projectDir, configuration);
     } <i class="conum" data-value="2"></i><b>(2)</b>
 
     <span class="annotation">@Override</span>
@@ -2047,9 +2072,8 @@ There is only one call of one of these two methods - it won&#8217;t happen that 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">java.io.File</span>;
 <span class="keyword">import</span> <span class="include">java.util.Collection</span>;
-<span class="keyword">import</span> <span class="include">java.util.LinkedHashSet</span>;
-<span class="keyword">import</span> <span class="include">java.util.stream.Collectors</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.TestSelection</span>;
+<span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.configuration.Configuration</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.JavaSPILoader</span>;
 <span class="keyword">import</span> <span class="include">org.arquillian.smart.testing.spi.TestExecutionPlanner</span>;
 
@@ -2058,9 +2082,11 @@ There is only one call of one of these two methods - it won&#8217;t happen that 
     <span class="directive">static</span> <span class="directive">final</span> <span class="predefined-type">String</span> FAILED = <span class="string"><span class="delimiter">&quot;</span><span class="content">failed</span><span class="delimiter">&quot;</span></span>;
 
     <span class="directive">private</span> <span class="directive">final</span> <span class="predefined-type">File</span> projectDir;
+    <span class="directive">private</span> <span class="directive">final</span> FailedConfiguration strategyConfig;
 
-    <span class="directive">public</span> FailedTestsDetector(<span class="predefined-type">File</span> projectDir) {
+    <span class="directive">public</span> FailedTestsDetector(<span class="predefined-type">File</span> projectDir, <span class="predefined-type">Configuration</span> configuration) {
         <span class="local-variable">this</span>.projectDir = projectDir;
+        strategyConfig = (FailedConfiguration) configuration.getStrategyConfiguration(FAILED);
     }
 
     <span class="annotation">@Override</span>
@@ -2074,11 +2100,8 @@ There is only one call of one of these two methods - it won&#8217;t happen that 
     }
 
     <span class="directive">public</span> <span class="predefined-type">Collection</span>&lt;TestSelection&gt; getTests() {
-        TestReportLoader testReportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader(), projectDir);
-        <span class="keyword">return</span> testReportLoader.loadTestResults()
-            .stream()
-            .map(result -&gt; <span class="keyword">new</span> TestSelection(result, getName())) <i class="conum" data-value="3"></i><b>(3)</b>
-            .collect(Collectors.toCollection(<span class="predefined-type">LinkedHashSet</span>::<span class="keyword">new</span>));
+        InProjectTestReportLoader reportLoader = <span class="keyword">new</span> InProjectTestReportLoader(<span class="keyword">new</span> JavaSPILoader(), projectDir);
+        <span class="keyword">return</span> TestResultsFilter.getFailedTests(strategyConfig, reportLoader.loadTestResults());
     }
 
     <span class="annotation">@Override</span>
@@ -2097,10 +2120,6 @@ There is only one call of one of these two methods - it won&#8217;t happen that 
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Method that returns list of tests to execute based on the provided set of tests classes that were previously selected to be executed.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>TestSelection</code> requires fully qualified test class name and the strategy where is calculated</td>
 </tr>
 </table>
 </div>
@@ -2911,6 +2930,18 @@ pipeline {
 <p><code>categorized</code></p>
 </div></div></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.failed.methods</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sets if the strategy should select the particular failed test methods or take the whole classes</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>true</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>failed</code></p>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -3338,7 +3369,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-01-22 18:35:31 UTC
+Last updated 2018-02-13 10:52:19 UTC
 </div>
 </div>
 <script>
