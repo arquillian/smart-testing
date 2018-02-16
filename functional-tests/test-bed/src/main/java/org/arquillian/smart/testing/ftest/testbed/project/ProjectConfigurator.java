@@ -2,9 +2,9 @@ package org.arquillian.smart.testing.ftest.testbed.project;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -14,6 +14,9 @@ import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Mode;
 import org.arquillian.smart.testing.ftest.testbed.configuration.Strategy;
 import org.arquillian.smart.testing.ftest.testbed.configuration.builder.ConfigurationBuilder;
+import org.arquillian.smart.testing.spi.JavaSPILoader;
+import org.arquillian.smart.testing.spi.StrategyConfiguration;
+import org.arquillian.smart.testing.spi.TestExecutionPlannerFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.Property;
@@ -133,27 +136,33 @@ public class ProjectConfigurator {
     }
 
     private void dumpConfiguration(Path configFilePath) {
-        try (FileWriter fileWriter = new FileWriter(configFilePath.toFile())) {
-            DumperOptions options = new DumperOptions();
-            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.FLOW);
 
-            Representer representer = new Representer() {
-                @Override
-                protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue,Tag customTag) {
-                    // if value of property is null, ignore it.
-                    if (propertyValue == null) {
-                        return null;
-                    }
-                    else {
-                        return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
-                    }
+        Representer representer = new Representer() {
+            @Override
+            protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue,
+                Tag customTag) {
+                // if value of property is null, ignore it.
+                if (propertyValue == null) {
+                    return null;
+                } else {
+                    return super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
                 }
-            };
+            }
+        };
 
-            representer.addClassTag(Configuration.class, Tag.MAP);
+        representer.addClassTag(Configuration.class, Tag.MAP);
 
-            Yaml yaml = new Yaml(representer, options);
-            yaml.dump(configuration, fileWriter);
+        Yaml yaml = new Yaml(representer, options);
+        String config = yaml.dump(configuration);
+
+        for (TestExecutionPlannerFactory factory : new JavaSPILoader().all(TestExecutionPlannerFactory.class)) {
+            StrategyConfiguration strategyConfig = factory.strategyConfiguration();
+            config = config.replaceAll("!!" + strategyConfig.getClass().getName(), strategyConfig.name() + ":");
+        }
+        try {
+            Files.write(configFilePath, config.getBytes());
         } catch (IOException e) {
             throw new RuntimeException("Failed to dump configuration in file " + configFilePath, e);
         }

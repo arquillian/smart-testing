@@ -1,11 +1,14 @@
 package org.arquillian.smart.testing.ftest.categorized;
 
 import java.util.Collection;
+import org.arquillian.smart.testing.configuration.Configuration;
+import org.arquillian.smart.testing.ftest.testbed.configuration.builder.ConfigurationBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
 import org.arquillian.smart.testing.ftest.testbed.project.TestResults;
 import org.arquillian.smart.testing.ftest.testbed.testresults.TestResult;
 import org.arquillian.smart.testing.rules.TestBed;
 import org.arquillian.smart.testing.rules.git.GitClone;
+import org.arquillian.smart.testing.strategies.categorized.CategorizedConfiguration;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,10 +30,21 @@ public class CategorizedTestSelectionFunctionalTests {
     public void should_run_test_with_categories_loader_and_service() throws Exception {
         // given
         final Project project = testBed.getProject();
+        CategorizedConfiguration categorizedConfiguration = new CategorizedConfiguration();
+        categorizedConfiguration.setCategories(new String[] {"LoaderCategory", "serviceCategory"});
+        categorizedConfiguration.setMatchAll(true);
+        Configuration config = new ConfigurationBuilder()
+            .strategies(CATEGORIZED)
+            .strategiesConfiguration()
+            .add(categorizedConfiguration)
+            .build()
+            .build();
+
         project
             .configureSmartTesting()
             .executionOrder(CATEGORIZED)
             .inMode(SELECTING)
+            .withConfiguration(config).createConfigFile()
             .enable();
 
         final Collection<TestResult> expectedTestResults =
@@ -39,10 +53,6 @@ public class CategorizedTestSelectionFunctionalTests {
         // when
         final TestResults actualTestResults =
             project.build("core/impl-base")
-                .options()
-                .withSystemProperties("smart.testing.categorized.categories", "LoaderCategory,serviceCategory",
-                    "smart.testing.categorized.match.all", "true")
-                .configure()
                 .run();
 
         // then
