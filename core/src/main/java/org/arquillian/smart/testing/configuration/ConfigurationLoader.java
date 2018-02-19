@@ -113,7 +113,7 @@ public class ConfigurationLoader {
                 configuration.setRawStrategyConfigurations((Map<String, Object>) strategiesConfiguration);
 
             } else if (strategiesConfiguration instanceof List) {
-                HashMap<String, Object> configMap = new HashMap<>();
+                Map<String, Object> configMap = new HashMap<>();
                 ((List) strategiesConfiguration).stream()
                     .filter(item -> item instanceof Map)
                     .forEach(config -> configMap.putAll((Map) config));
