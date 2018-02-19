@@ -3,8 +3,9 @@ package org.arquillian.smart.testing.configuration;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.arquillian.smart.testing.hub.storage.local.LocalStorage;
@@ -108,7 +109,16 @@ public class ConfigurationLoader {
 
         final Configuration configuration = mapToObject(Configuration.class, yamlConfiguration);
         if (strategiesConfiguration != null) {
-            configuration.setStrategiesConfig((Map<String, Object>) strategiesConfiguration);
+            if (strategiesConfiguration instanceof Map) {
+                configuration.setRawStrategyConfigurations((Map<String, Object>) strategiesConfiguration);
+
+            } else if (strategiesConfiguration instanceof List) {
+                Map<String, Object> configMap = new HashMap<>();
+                ((List) strategiesConfiguration).stream()
+                    .filter(item -> item instanceof Map)
+                    .forEach(config -> configMap.putAll((Map) config));
+                configuration.setRawStrategyConfigurations(configMap);
+            }
         }
         return configuration;
     }

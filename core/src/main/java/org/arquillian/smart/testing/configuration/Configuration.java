@@ -54,7 +54,7 @@ public class Configuration implements ConfigurationSection {
     private Report report;
     private Scm scm;
 
-    private Map<String, Object> strategiesConfig = new HashMap<>();
+    private Map<String, Object> rawStrategyConfigurations = new HashMap<>();
 
     private List<StrategyConfiguration> strategiesConfiguration = new ArrayList<>();
 
@@ -139,8 +139,13 @@ public class Configuration implements ConfigurationSection {
         this.strategiesConfiguration = strategiesConfiguration;
     }
 
-    public void setStrategiesConfig(Map<String, Object> strategiesConfig) {
-        this.strategiesConfig = strategiesConfig;
+    public void setRawStrategyConfigurations(Map<String, Object> rawStrategyConfigurations) {
+        this.rawStrategyConfigurations = rawStrategyConfigurations;
+    }
+
+    @SuppressWarnings("unused") // Used to map YAML data to Java Objects in snakeYAML
+    public Map<String, Object> getRawStrategyConfigurations() {
+        return rawStrategyConfigurations;
     }
 
     public String[] getCustomProviders() {
@@ -181,7 +186,7 @@ public class Configuration implements ConfigurationSection {
     private StrategyConfiguration loadStrategyConfiguration(StrategyConfiguration strategyConfiguration) {
         final Class<StrategyConfiguration> strategyConfigurationClass =
             (Class<StrategyConfiguration>) strategyConfiguration.getClass();
-        final Object strategyConfig = strategiesConfig.get(strategyConfiguration.name());
+        final Object strategyConfig = rawStrategyConfigurations.get(strategyConfiguration.name());
         Map<String, Object> strategyConfigMap = new HashMap<>();
         if (strategyConfig != null) {
             strategyConfigMap = (Map<String, Object>) strategyConfig;
