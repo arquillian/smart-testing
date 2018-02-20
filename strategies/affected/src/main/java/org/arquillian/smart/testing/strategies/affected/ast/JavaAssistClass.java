@@ -43,6 +43,20 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.ByteMemberValue;
+import javassist.bytecode.annotation.CharMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
+import javassist.bytecode.annotation.DoubleMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.FloatMemberValue;
+import javassist.bytecode.annotation.IntegerMemberValue;
+import javassist.bytecode.annotation.LongMemberValue;
+import javassist.bytecode.annotation.MemberValueVisitor;
+import javassist.bytecode.annotation.ShortMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 import static javassist.bytecode.AnnotationsAttribute.invisibleTag;
 import static javassist.bytecode.AnnotationsAttribute.visibleTag;
@@ -146,8 +160,74 @@ public class JavaAssistClass extends AbstractJavaClass {
         if (annotations != null) {
             for (Annotation each : annotations.getAnnotations()) {
                 imports.add(each.getTypeName());
+
+                final Set<String> memberNames = each.getMemberNames();
+
+                for (String memberName : memberNames) {
+                    addSubtypes(imports, each, memberName);
+                }
             }
         }
+    }
+
+    private void addSubtypes(Collection<String> imports, Annotation each, String memberName) {
+        each.getMemberValue(memberName).accept(new MemberValueVisitor() {
+            @Override
+            public void visitAnnotationMemberValue(AnnotationMemberValue node) {
+            }
+
+            @Override
+            public void visitArrayMemberValue(ArrayMemberValue node) {
+                final String clazz = node.getType().toString();
+                imports.add(clazz.substring(0, clazz.lastIndexOf(".class")));
+            }
+
+            @Override
+            public void visitBooleanMemberValue(BooleanMemberValue node) {
+            }
+
+            @Override
+            public void visitByteMemberValue(ByteMemberValue node) {
+            }
+
+            @Override
+            public void visitCharMemberValue(CharMemberValue node) {
+            }
+
+            @Override
+            public void visitDoubleMemberValue(DoubleMemberValue node) {
+            }
+
+            @Override
+            public void visitEnumMemberValue(EnumMemberValue node) {
+                imports.add(node.getType());
+            }
+
+            @Override
+            public void visitFloatMemberValue(FloatMemberValue node) {
+            }
+
+            @Override
+            public void visitIntegerMemberValue(IntegerMemberValue node) {
+            }
+
+            @Override
+            public void visitLongMemberValue(LongMemberValue node) {
+            }
+
+            @Override
+            public void visitShortMemberValue(ShortMemberValue node) {
+            }
+
+            @Override
+            public void visitStringMemberValue(StringMemberValue node) {
+            }
+
+            @Override
+            public void visitClassMemberValue(ClassMemberValue node) {
+                imports.add(node.getValue());
+            }
+        });
     }
 
     private void addDependenciesFromConstantPool(CtClass ctClass, Collection<String> imports) {

@@ -1,5 +1,6 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
+import java.util.Arrays;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,6 +37,20 @@ public class JavaAssistClassParserTest {
             .containsExactlyInAnyOrder("java.nio.file.Files",
                 "org.arquillian.smart.testing.strategies.affected.ast.DuplicateClassNameDifferentPackagesAsField",
                 "java.lang.Object", "org.assertj.core.util.Files", "org.arquillian.smart.testing.FilesCodec");
+    }
+
+    @Test
+    public void should_resolve_classes_inside_annotation() {
+        // given
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
+
+        // when
+        final JavaClass annotationClass =
+            javaAssistClassParser.getClass(AnnotationAtClassLevelWithClassValue.class.getName());
+
+        assertThat(annotationClass.getImports())
+            .containsExactlyInAnyOrder("org.arquillian.smart.testing.strategies.affected.ast.AnnotationAtClassLevelWithClassValue", "java.lang.Object",
+                "org.arquillian.smart.testing.strategies.affected.ast.SimpleImportsClass", "org.arquillian.smart.testing.strategies.affected.ast.Import");
     }
 
     @Test
