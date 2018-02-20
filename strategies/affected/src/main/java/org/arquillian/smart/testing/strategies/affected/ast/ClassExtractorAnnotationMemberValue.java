@@ -13,6 +13,7 @@ import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.FloatMemberValue;
 import javassist.bytecode.annotation.IntegerMemberValue;
 import javassist.bytecode.annotation.LongMemberValue;
+import javassist.bytecode.annotation.MemberValue;
 import javassist.bytecode.annotation.MemberValueVisitor;
 import javassist.bytecode.annotation.ShortMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
@@ -27,8 +28,11 @@ class ClassExtractorAnnotationMemberValue implements MemberValueVisitor {
 
     @Override
     public void visitArrayMemberValue(ArrayMemberValue node) {
-        final String clazz = node.getType().toString();
-        imports.add(clazz.substring(0, clazz.lastIndexOf(".class")));
+        final MemberValue type = node.getType();
+        if (type != null && type.toString().endsWith(".class")) {
+            final String clazz = type.toString();
+            imports.add(extractClass(clazz));
+        }
     }
 
     @Override
@@ -49,7 +53,9 @@ class ClassExtractorAnnotationMemberValue implements MemberValueVisitor {
 
     @Override
     public void visitEnumMemberValue(EnumMemberValue node) {
-        imports.add(node.getType());
+        if (node.getType() != null) {
+            imports.add(node.getType());
+        }
     }
 
     @Override
@@ -76,6 +82,11 @@ class ClassExtractorAnnotationMemberValue implements MemberValueVisitor {
     public void visitClassMemberValue(ClassMemberValue node) {
         imports.add(node.getValue());
     }
+
+    private String extractClass(String clazz) {
+        return clazz.substring(0, clazz.lastIndexOf(".class"));
+    }
+
 
     Collection<String> getImports() {
         return imports;
