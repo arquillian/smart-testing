@@ -163,71 +163,20 @@ public class JavaAssistClass extends AbstractJavaClass {
 
                 final Set<String> memberNames = each.getMemberNames();
 
-                for (String memberName : memberNames) {
-                    addSubtypes(imports, each, memberName);
+                if (memberNames != null) {
+                    for (String memberName : memberNames) {
+                        imports.addAll(addSubtypes(each, memberName));
+                    }
                 }
             }
         }
     }
 
-    private void addSubtypes(Collection<String> imports, Annotation each, String memberName) {
-        each.getMemberValue(memberName).accept(new MemberValueVisitor() {
-            @Override
-            public void visitAnnotationMemberValue(AnnotationMemberValue node) {
-            }
+    private Collection<String> addSubtypes(Annotation each, String memberName) {
+        final ClassExtractorAnnotationMemberValue classExtractorAnnotationMemberValue  = new ClassExtractorAnnotationMemberValue();
+        each.getMemberValue(memberName).accept(classExtractorAnnotationMemberValue);
 
-            @Override
-            public void visitArrayMemberValue(ArrayMemberValue node) {
-                final String clazz = node.getType().toString();
-                imports.add(clazz.substring(0, clazz.lastIndexOf(".class")));
-            }
-
-            @Override
-            public void visitBooleanMemberValue(BooleanMemberValue node) {
-            }
-
-            @Override
-            public void visitByteMemberValue(ByteMemberValue node) {
-            }
-
-            @Override
-            public void visitCharMemberValue(CharMemberValue node) {
-            }
-
-            @Override
-            public void visitDoubleMemberValue(DoubleMemberValue node) {
-            }
-
-            @Override
-            public void visitEnumMemberValue(EnumMemberValue node) {
-                imports.add(node.getType());
-            }
-
-            @Override
-            public void visitFloatMemberValue(FloatMemberValue node) {
-            }
-
-            @Override
-            public void visitIntegerMemberValue(IntegerMemberValue node) {
-            }
-
-            @Override
-            public void visitLongMemberValue(LongMemberValue node) {
-            }
-
-            @Override
-            public void visitShortMemberValue(ShortMemberValue node) {
-            }
-
-            @Override
-            public void visitStringMemberValue(StringMemberValue node) {
-            }
-
-            @Override
-            public void visitClassMemberValue(ClassMemberValue node) {
-                imports.add(node.getValue());
-            }
-        });
+        return classExtractorAnnotationMemberValue.getImports();
     }
 
     private void addDependenciesFromConstantPool(CtClass ctClass, Collection<String> imports) {

@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.strategies.affected.ast;
 
-import java.util.Arrays;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
