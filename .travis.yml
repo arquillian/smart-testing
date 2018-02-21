@@ -35,6 +35,9 @@ before_install:
     fi'
 
 before_script:
+  - mkdir -p /home/travis/.arquillian/mvn
+  - wget https://archive.apache.org/dist/maven/maven-3/3.5.2/binaries/apache-maven-3.5.2-bin.tar.gz -P /home/travis/.arquillian/resolver/maven/download
+  - tar -xf /home/travis/.arquillian/resolver/maven/download/apache-maven-3.5.2-bin.tar.gz -C ~/.arquillian/mvn
   # Cleanup PR doc previews - until we figure out how to have a webhook on closing the PR
   - 'if [ "${BRANCH}" == "master" ] && [ $GENERATE_DOC -eq 0 ]; then
         cd gh-pages;
@@ -58,7 +61,11 @@ before_script:
       fi
   '
 
+env:
+  - TEST_BED_M2_HOME=/home/travis/.arquillian/mvn/apache-maven-3.5.2
+
 script:
+
   - ./mvnw clean verify -P travis -DJAVA_OPTS="-XX:-UseLoopPredicate"
   - 'if [ $GENERATE_DOC -eq 0 ]; then
         ./.asciidoctor/generate.sh --keep;
