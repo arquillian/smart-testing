@@ -39,6 +39,20 @@ public class JavaAssistClassParserTest {
     }
 
     @Test
+    public void should_resolve_classes_inside_annotation() {
+        // given
+        final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();
+
+        // when
+        final JavaClass annotationClass =
+            javaAssistClassParser.getClass(AnnotationAtClassLevelWithClassValue.class.getName());
+
+        assertThat(annotationClass.getImports())
+            .containsExactlyInAnyOrder("org.arquillian.smart.testing.strategies.affected.ast.AnnotationAtClassLevelWithClassValue", "java.lang.Object",
+                "org.arquillian.smart.testing.strategies.affected.ast.SimpleImportsClass", "org.arquillian.smart.testing.strategies.affected.ast.Import");
+    }
+
+    @Test
     public void should_resolve_different_packages_with_same_class_name_local_variables() {
         // given
         final JavaAssistClassParser javaAssistClassParser = new JavaAssistClassParser();

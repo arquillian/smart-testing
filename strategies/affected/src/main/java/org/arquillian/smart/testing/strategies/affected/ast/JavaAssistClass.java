@@ -43,6 +43,20 @@ import javassist.bytecode.ConstPool;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+import javassist.bytecode.annotation.AnnotationMemberValue;
+import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.BooleanMemberValue;
+import javassist.bytecode.annotation.ByteMemberValue;
+import javassist.bytecode.annotation.CharMemberValue;
+import javassist.bytecode.annotation.ClassMemberValue;
+import javassist.bytecode.annotation.DoubleMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
+import javassist.bytecode.annotation.FloatMemberValue;
+import javassist.bytecode.annotation.IntegerMemberValue;
+import javassist.bytecode.annotation.LongMemberValue;
+import javassist.bytecode.annotation.MemberValueVisitor;
+import javassist.bytecode.annotation.ShortMemberValue;
+import javassist.bytecode.annotation.StringMemberValue;
 
 import static javassist.bytecode.AnnotationsAttribute.invisibleTag;
 import static javassist.bytecode.AnnotationsAttribute.visibleTag;
@@ -146,8 +160,23 @@ public class JavaAssistClass extends AbstractJavaClass {
         if (annotations != null) {
             for (Annotation each : annotations.getAnnotations()) {
                 imports.add(each.getTypeName());
+
+                final Set<String> memberNames = each.getMemberNames();
+
+                if (memberNames != null) {
+                    for (String memberName : memberNames) {
+                        imports.addAll(addSubtypes(each, memberName));
+                    }
+                }
             }
         }
+    }
+
+    private Collection<String> addSubtypes(Annotation each, String memberName) {
+        final ClassExtractorAnnotationMemberValue classExtractorAnnotationMemberValue  = new ClassExtractorAnnotationMemberValue();
+        each.getMemberValue(memberName).accept(classExtractorAnnotationMemberValue);
+
+        return classExtractorAnnotationMemberValue.getImports();
     }
 
     private void addDependenciesFromConstantPool(CtClass ctClass, Collection<String> imports) {
