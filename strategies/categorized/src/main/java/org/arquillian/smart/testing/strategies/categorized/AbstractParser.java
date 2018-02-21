@@ -81,7 +81,7 @@ public abstract class AbstractParser {
     }
 
     private List<Method> getTestMethods(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredMethods())
+        return Arrays.stream(clazz.getMethods())
             .filter(this::isTestMethod)
             .collect(Collectors.toList());
     }
