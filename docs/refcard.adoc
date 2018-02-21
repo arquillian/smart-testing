@@ -93,6 +93,11 @@ a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/stra
 a| -
 a|`categorized`
 
+a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_EXCLUDED_CATEGORIES"]`
+| List of categories the strategy should exclude from looking for (can be either whole fully qualified names or only simple class names)
+a| -
+a|`categorized`
+
 a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_CASE_SENSITIVE"]`
 | Sets case sensitivity of the category names.
 a| `false`
@@ -103,20 +108,11 @@ a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/stra
 a| `true`
 a|`categorized`
 
-a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_MATCH_ALL"]`
-| Sets that the classes should contain all categories specified in the list of the categories.
-a| `false`
-a|`categorized`
-
-a| `const:strategies/categorized/src/main/java/org/arquillian/smart/testing/strategies/categorized/CategorizedConfiguration.java[name="SMART_TESTING_CATEGORIZED_REVERSED"]`
-| Sets that the selection should be reversed - all classes that don't match the categories will be selected.
-a| `false`
-a|`categorized`
-
 a| `const:strategies/failed/src/main/java/org/arquillian/smart/testing/strategies/failed/FailedConfiguration.java[name="SMART_TESTING_FAILED_METHODS"]`
 | Sets if the strategy should select the particular failed test methods or take the whole classes
 a| `true`
 a|`failed`
+
 |===
 
 === Getting insights of the execution
