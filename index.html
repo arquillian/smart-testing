@@ -1156,7 +1156,9 @@ All reports from previous local build are automatically copied by the maven exte
 <div class="sect3">
 <h4 id="_categorized"><a class="anchor" href="#_categorized"></a>3.2.5. Categorized</h4>
 <div class="paragraph">
-<p><code>Categorized</code> strategy selects tests based in the JUnit 4 annotation <code>@Category</code> or JUnit 5 annotations <code>@Tag</code> and <code>@Tags</code> (including meta annotations). With this strategy, you can easily set which classes or methods you want to run without any need of changing your <code>pom.xml</code> file with complicated profiles.</p>
+<p><code>Categorized</code> strategy selects tests based in the JUnit 4 annotation <code>@Category</code> or JUnit 5 annotations <code>@Tag</code> and <code>@Tags</code> (including meta annotations).
+With this strategy, you can easily set which classes or methods you want to run (or don&#8217;t want to run)
+as you would in the configuration of the <code>maven-surefire-plugin</code> without any need of changing your <code>pom.xml</code> file with complicated profiles.</p>
 </div>
 <div class="paragraph">
 <p>In case of JUnit 4, you can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration).
@@ -1691,7 +1693,15 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 <p>categories</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes containing the annotation <code>@Category</code> are selected.</p>
+<p>List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes are selected.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>excludedCategories</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>List of categories the strategy should exclude from looking for (can be either whole fully qualified names or only simple class names)</p>
 </div></div></td>
 </tr>
 <tr>
@@ -1708,22 +1718,6 @@ You can use either a <code>.yml</code> or <code>.yaml</code> extension for this 
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Sets if the resolution of categories/tags should be performed only on test classes or also on test methods. (default is true)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>matchAll</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Sets that the classes should contain all categories specified in the list of the categories. (default is false)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>reversed</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Sets that the selection should be reversed - all classes that don&#8217;t match the categories will be selected. (default is false)</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -2884,6 +2878,18 @@ pipeline {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>smart.testing.categorized.excluded.categories</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">List of categories the strategy should exclude from looking for (can be either whole fully qualified names or only simple class names)</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>-</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p><code>categorized</code></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>smart.testing.categorized.case.sensitive</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Sets case sensitivity of the category names.</p></td>
@@ -2901,30 +2907,6 @@ pipeline {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Sets if the resolution of categories/tags should be performed only on test classes or also on test methods.</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>true</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>categorized</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart.testing.categorized.match.all</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets that the classes should contain all categories specified in the list of the categories.</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>false</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>categorized</code></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>smart.testing.categorized.reversed</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Sets that the selection should be reversed - all classes that don&#8217;t match the categories will be selected.</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p><code>false</code></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p><code>categorized</code></p>
@@ -3369,7 +3351,7 @@ the same build outside of test execution for further analysis in case of failure
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2018-02-21 12:03:17 UTC
+Last updated 2018-02-22 12:58:28 UTC
 </div>
 </div>
 <script>
