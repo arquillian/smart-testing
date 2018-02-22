@@ -258,7 +258,7 @@
           <pushChanges>false</pushChanges>
           <localCheckout>true</localCheckout>
           <preparationGoals>clean install</preparationGoals>
-          <releaseProfiles>attach-javadoc-and-sources,skip-tests-while-performing-release</releaseProfiles>
+          <releaseProfiles>attach-javadoc-and-sources</releaseProfiles>
         </configuration>
       </plugin>
     </plugins>
@@ -271,13 +271,7 @@
         <surefire.fork.count>2</surefire.fork.count>
         <surefire.thread.count>2</surefire.thread.count>
       </properties>
-    </profile>
-    <profile>
-      <id>skip-tests-while-performing-release</id>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
+    </profile>    
     <profile>
       <id>attach-javadoc-and-sources</id>
       <build>
