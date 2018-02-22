@@ -63,11 +63,9 @@ public abstract class AbstractParser {
 
     private TestSelection getSelectionWithMethods(Class<?> clazz) {
         List<String> classLevelCategories = findCategories(clazz.getAnnotations());
-        List<CategorizedMethod> categorizedMethods = getTestMethods(clazz)
+        List<String> applicableMethodNames = getTestMethods(clazz)
             .stream()
             .map(method -> new CategorizedMethod(method, classLevelCategories))
-            .collect(Collectors.toList());
-        List<String> applicableMethodNames = categorizedMethods.stream()
             .filter(method -> areCategoriesIncluded(method.getCategories()))
             .map(CategorizedMethod::getName)
             .collect(Collectors.toList());
