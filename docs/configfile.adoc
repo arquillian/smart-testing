@@ -203,7 +203,7 @@ a| Sets list of packages to be included while applying transitivity.
 |===
 |Field | Description
 a| categories
-a| List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes containing the annotation `@Category` are selected.
+a| List of categories the strategy should be looking for (can be either whole fully qualified names or only simple class names). If nothing is set, but the strategy is used, then all classes are selected.
 
 a| excludedCategories
 a| List of categories the strategy should exclude from looking for (can be either whole fully qualified names or only simple class names)
