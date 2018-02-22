@@ -10,14 +10,12 @@ import static org.arquillian.smart.testing.strategies.categorized.CategorizedTes
 public class CategorizedConfiguration implements StrategyConfiguration {
 
     private static final String SMART_TESTING_CATEGORIZED_CATEGORIES = "smart.testing.categorized.categories";
-    private static final String SMART_TESTING_CATEGORIZED_MATCH_ALL = "smart.testing.categorized.match.all";
+    private static final String SMART_TESTING_CATEGORIZED_EXCLUDED_CATEGORIES = "smart.testing.categorized.excluded.categories";
     private static final String SMART_TESTING_CATEGORIZED_CASE_SENSITIVE = "smart.testing.categorized.case.sensitive";
-    private static final String SMART_TESTING_CATEGORIZED_REVERSED = "smart.testing.categorized.reversed";
     private static final String SMART_TESTING_CATEGORIZED_METHODS = "smart.testing.categorized.methods";
+    private String[] excludedCategories;
     private String[] categories;
-    private boolean matchAll;
     private boolean caseSensitive;
-    private boolean reversed;
     private boolean methods;
 
     @Override
@@ -29,9 +27,8 @@ public class CategorizedConfiguration implements StrategyConfiguration {
     public List<ConfigurationItem> registerConfigurationItems() {
         ArrayList<ConfigurationItem> items = new ArrayList<>();
         items.add(new ConfigurationItem("categories", SMART_TESTING_CATEGORIZED_CATEGORIES, new String[0]));
-        items.add(new ConfigurationItem("matchAll", SMART_TESTING_CATEGORIZED_MATCH_ALL, false));
+        items.add(new ConfigurationItem("excludedCategories", SMART_TESTING_CATEGORIZED_EXCLUDED_CATEGORIES, new String[0]));
         items.add(new ConfigurationItem("caseSensitive", SMART_TESTING_CATEGORIZED_CASE_SENSITIVE, false));
-        items.add(new ConfigurationItem("reversed", SMART_TESTING_CATEGORIZED_REVERSED, false));
         items.add(new ConfigurationItem("methods", SMART_TESTING_CATEGORIZED_METHODS, true));
         return items;
     }
@@ -44,12 +41,12 @@ public class CategorizedConfiguration implements StrategyConfiguration {
         this.categories = categories;
     }
 
-    public boolean isMatchAll() {
-        return matchAll;
+    public String[] getExcludedCategories() {
+        return excludedCategories;
     }
 
-    public void setMatchAll(boolean matchAll) {
-        this.matchAll = matchAll;
+    public void setExcludedCategories(String[] excludedCategories) {
+        this.excludedCategories = excludedCategories;
     }
 
     public boolean isCaseSensitive() {
@@ -58,14 +55,6 @@ public class CategorizedConfiguration implements StrategyConfiguration {
 
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
-    }
-
-    public boolean isReversed() {
-        return reversed;
-    }
-
-    public void setReversed(boolean reversed) {
-        this.reversed = reversed;
     }
 
     public boolean isMethods() {

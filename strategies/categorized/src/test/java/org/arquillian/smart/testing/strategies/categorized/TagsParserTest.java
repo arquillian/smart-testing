@@ -12,20 +12,8 @@ import org.junit.Test;
 public class TagsParserTest {
 
     @Test
-    public void should_return_true_for_class_containing_tag_when_no_category_set() {
-        // given
-        CategorizedConfiguration categorizedConfig = prepareConfig();
-        TagsParser tagsParser = new TagsParser(categorizedConfig);
+    public void should_return_true_for_class_containing_no_tag_when_no_category_set() {
 
-        // when
-        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstTaggedClass.class);
-
-        // then
-        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
-    }
-
-    @Test
-    public void should_return_false_for_class_containing_no_tag_when_no_category_set() {
         // given
         CategorizedConfiguration categorizedConfig = prepareConfig();
         TagsParser tagsParser = new TagsParser(categorizedConfig);
@@ -34,7 +22,7 @@ public class TagsParserTest {
         TestSelection selection = tagsParser.getTestSelectionIfMatched(NonTaggedClass.class);
 
         // then
-        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
+        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
     }
 
     @Test
@@ -80,36 +68,6 @@ public class TagsParserTest {
     }
 
     @Test
-    public void should_return_true_for_class_containing_all_of_the_set_categories_when_matching_all() {
-        // given
-        CategorizedConfiguration categorizedConfig =
-            prepareConfig("first", "second");
-        categorizedConfig.setMatchAll(true);
-        TagsParser tagsParser = new TagsParser(categorizedConfig);
-
-        // when
-        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
-
-        // then
-        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
-    }
-
-    @Test
-    public void should_return_false_for_class_not_containing_all_of_the_set_categories_when_matching_all() {
-        // given
-        CategorizedConfiguration categorizedConfig =
-            prepareConfig("first", "second");
-        categorizedConfig.setMatchAll(true);
-        TagsParser tagsParser = new TagsParser(categorizedConfig);
-
-        // when
-        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstTaggedClass.class);
-
-        // then
-        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
-    }
-
-    @Test
     public void should_return_false_for_class_not_containing_any_of_the_set_tags_when_case_sensitive() {
         // given
         CategorizedConfiguration categorizedConfig = prepareConfig("First",
@@ -124,42 +82,10 @@ public class TagsParserTest {
         Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
     }
 
-    @Test
-    public void should_return_true_for_class_containing_all_of_the_set_tags_when_matching_all_and_case_sensitive() {
-        // given
-        CategorizedConfiguration categorizedConfig =
-            prepareConfig("first", "second");
-        categorizedConfig.setMatchAll(true);
-        categorizedConfig.setCaseSensitive(true);
-        TagsParser tagsParser = new TagsParser(categorizedConfig);
-
-        // when
-        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
-
-        // then
-        Assertions.assertThat(selection).isNotEqualTo(TestSelection.NOT_MATCHED);
-    }
-
-    @Test
-    public void should_return_false_for_class_not_containing_all_of_the_set_tags_when_matching_all_and_case_sensitive() {
-        // given
-        CategorizedConfiguration categorizedConfig =
-            prepareConfig("first", "Second");
-        categorizedConfig.setMatchAll(true);
-        categorizedConfig.setCaseSensitive(true);
-        TagsParser tagsParser = new TagsParser(categorizedConfig);
-
-        // when
-        TestSelection selection = tagsParser.getTestSelectionIfMatched(FirstAndSecondTaggedClass.class);
-
-        // then
-        Assertions.assertThat(selection).isEqualTo(TestSelection.NOT_MATCHED);
-    }
-
     private CategorizedConfiguration prepareConfig(String... categories) {
         CategorizedConfiguration categorizedConfig = new CategorizedConfiguration();
         categorizedConfig.setCategories(categories);
+        categorizedConfig.setExcludedCategories(new String[0]);
         return categorizedConfig;
     }
-
 }

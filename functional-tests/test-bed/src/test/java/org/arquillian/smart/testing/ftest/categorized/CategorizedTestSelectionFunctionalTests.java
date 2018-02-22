@@ -32,7 +32,6 @@ public class CategorizedTestSelectionFunctionalTests {
         final Project project = testBed.getProject();
         CategorizedConfiguration categorizedConfiguration = new CategorizedConfiguration();
         categorizedConfiguration.setCategories(new String[] {"LoaderCategory", "serviceCategory"});
-        categorizedConfiguration.setMatchAll(true);
         Configuration config = new ConfigurationBuilder()
             .strategies(CATEGORIZED)
             .strategiesConfiguration()

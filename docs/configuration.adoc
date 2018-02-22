@@ -204,7 +204,9 @@ All reports from previous local build are automatically copied by the maven exte
 
 ==== Categorized
 
-`Categorized` strategy selects tests based in the JUnit 4 annotation `@Category` or JUnit 5 annotations `@Tag` and `@Tags` (including meta annotations). With this strategy, you can easily set which classes or methods you want to run without any need of changing your `pom.xml` file with complicated profiles.
+`Categorized` strategy selects tests based in the JUnit 4 annotation `@Category` or JUnit 5 annotations `@Tag` and `@Tags` (including meta annotations).
+With this strategy, you can easily set which classes or methods you want to run (or don't want to run)
+as you would in the configuration of the `maven-surefire-plugin` without any need of changing your `pom.xml` file with complicated profiles.
 
 In case of JUnit 4, you can say which categories should be executed by saying either the fully qualified names of the classes or just simple class names (case sensitivity can be set via configuration).
 For more information about the parameters see <<_categorized_configuration_options, Configuration Options>>.
