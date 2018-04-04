@@ -1,21 +1,9 @@
 package org.arquillian.smart.testing.surefire.provider;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.maven.surefire.providerapi.ProviderParameters;
 import org.apache.maven.surefire.providerapi.SurefireProvider;
-import org.apache.maven.surefire.report.DefaultConsoleReporter;
+import org.apache.maven.surefire.report.DefaultDirectConsoleReporter;
 import org.apache.maven.surefire.testset.ResolvedTest;
 import org.apache.maven.surefire.testset.TestListResolver;
 import org.apache.maven.surefire.testset.TestRequest;
@@ -32,6 +20,19 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,7 +78,7 @@ public class SmartTestingProviderTest {
         ConfigurationLoader.load(Paths.get("").toFile()).dump(temporaryFolder.getRoot());
         System.setProperty("basedir", temporaryFolder.getRoot().toString());
 
-        when(providerParameters.getConsoleLogger()).thenReturn(new DefaultConsoleReporter(new PrintStream(System.out)));
+        when(providerParameters.getConsoleLogger()).thenReturn(new DefaultDirectConsoleReporter(new PrintStream(System.out)));
     }
 
     @Test

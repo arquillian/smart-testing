@@ -1,6 +1,5 @@
 package org.arquillian.smart.testing.ftest.categorized;
 
-import java.util.Collection;
 import org.arquillian.smart.testing.configuration.Configuration;
 import org.arquillian.smart.testing.ftest.testbed.configuration.builder.ConfigurationBuilder;
 import org.arquillian.smart.testing.ftest.testbed.project.Project;
@@ -12,6 +11,8 @@ import org.arquillian.smart.testing.strategies.categorized.CategorizedConfigurat
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.Collection;
 
 import static org.arquillian.smart.testing.ftest.testbed.TestRepository.testRepository;
 import static org.arquillian.smart.testing.ftest.testbed.configuration.Mode.SELECTING;
@@ -27,11 +28,11 @@ public class CategorizedTestSelectionFunctionalTests {
     public final TestBed testBed = new TestBed(GIT_CLONE);
 
     @Test
-    public void should_run_test_with_categories_loader_and_service() throws Exception {
+    public void should_run_test_with_categories_loader_and_service() {
         // given
         final Project project = testBed.getProject();
         CategorizedConfiguration categorizedConfiguration = new CategorizedConfiguration();
-        categorizedConfiguration.setCategories(new String[] {"LoaderCategory", "serviceCategory"});
+        categorizedConfiguration.setCategories(new String[] {"LoaderCategory", "ServiceCategory"});
         Configuration config = new ConfigurationBuilder()
             .strategies(CATEGORIZED)
             .strategiesConfiguration()
@@ -52,6 +53,7 @@ public class CategorizedTestSelectionFunctionalTests {
         // when
         final TestResults actualTestResults =
             project.build("core/impl-base")
+                    .options().logBuildOutput().withDebugOutput().configure() // FIXME remove before closing PR
                 .run();
 
         // then
@@ -60,7 +62,7 @@ public class CategorizedTestSelectionFunctionalTests {
     }
 
     @Test
-    public void should_run_test_methods_with_categories_either_event_or_exception() throws Exception {
+    public void should_run_test_methods_with_categories_either_event_or_exception() {
         // given
         final Project project = testBed.getProject();
         project
