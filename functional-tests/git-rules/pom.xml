@@ -13,7 +13,7 @@
   <description>JUnit 4.x rules to work with git from your unit tests</description>
 
   <properties>
-    <version.jetty>9.4.11.v20180605</version.jetty>
+    <version.jetty>9.4.12.v20180830</version.jetty>
   </properties>
 
   <dependencies>
