@@ -55,7 +55,7 @@
     <version.mockito>2.21.0</version.mockito>
     <version.jgit>5.0.2.201807311906-r</version.jgit>
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
-    <version.findbugs.annotations>3.0.1</version.findbugs.annotations>
+    <version.findbugs.annotations>3.0.1u2</version.findbugs.annotations>
 
     <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
     <version.maven.plugin.deploy>2.8.2</version.maven.plugin.deploy>
