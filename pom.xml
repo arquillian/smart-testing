@@ -57,7 +57,7 @@
     <version.arquillian.spacelift>1.0.2</version.arquillian.spacelift>
     <version.findbugs.annotations>3.0.1u2</version.findbugs.annotations>
 
-    <version.maven.plugin.shade>3.0.0</version.maven.plugin.shade>
+    <version.maven.plugin.shade>3.2.0</version.maven.plugin.shade>
     <version.maven.plugin.deploy>2.8.2</version.maven.plugin.deploy>
 
     <!-- default settings for surefire parallel execution. Overwritten for travis due to JVM crashes -->
