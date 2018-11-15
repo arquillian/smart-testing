@@ -46,7 +46,7 @@
     <version.surefire>2.19.1</version.surefire>
     <version.maven>3.3.9</version.maven>
     <version.assertj-core>3.11.1</version.assertj-core>
-    <version.system-rules>1.18.0</version.system-rules>
+    <version.system-rules>1.19.0</version.system-rules>
     <version.javassist>3.21.0-GA</version.javassist>
     <version.fast-classpath-scanner>2.9.3</version.fast-classpath-scanner>
     <version.jgrapht>1.1.0</version.jgrapht>
