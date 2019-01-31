@@ -48,7 +48,7 @@
     <version.assertj-core>3.11.1</version.assertj-core>
     <version.system-rules>1.19.0</version.system-rules>
     <version.javassist>3.24.1-GA</version.javassist>
-    <version.fast-classpath-scanner>2.9.3</version.fast-classpath-scanner>
+    <version.fast-classpath-scanner>3.1.15</version.fast-classpath-scanner>
     <version.jgrapht>1.1.0</version.jgrapht>
     <version.shrinkwrap.resolver>3.1.3</version.shrinkwrap.resolver>
     <version.snakeyaml>1.23</version.snakeyaml>
