@@ -44,7 +44,7 @@
     <version.junit>4.12</version.junit>
     <version.junit5>5.4.1</version.junit5>
     <version.surefire>2.19.1</version.surefire>
-    <version.maven>3.3.9</version.maven>
+    <version.maven>3.6.0</version.maven>
     <version.assertj-core>3.12.2</version.assertj-core>
     <version.system-rules>1.19.0</version.system-rules>
     <version.javassist>3.24.1-GA</version.javassist>
