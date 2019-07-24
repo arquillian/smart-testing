@@ -43,7 +43,7 @@
   <properties>
     <version.junit>4.12</version.junit>
     <version.junit5>5.5.1</version.junit5>
-    <version.surefire>2.19.1</version.surefire>
+    <version.surefire>2.22.2</version.surefire>
     <version.maven>3.3.9</version.maven>
     <version.assertj-core>3.12.2</version.assertj-core>
     <version.system-rules>1.19.0</version.system-rules>
