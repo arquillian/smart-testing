@@ -41,7 +41,7 @@
   </developers>
 
   <properties>
-    <version.junit>4.12</version.junit>
+    <version.junit>4.13.1</version.junit>
     <version.junit5>5.5.1</version.junit5>
     <version.surefire>2.19.1</version.surefire>
     <version.maven>3.3.9</version.maven>
